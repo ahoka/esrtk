@@ -15,7 +15,10 @@ loader.o: Loader/loader.s
 kmain.o: Loader/kmain.cpp
 	${CXX} ${CXXFLAGS} -o kmain.o -c Loader/kmain.cpp
 
-kernel.elf: kmain.o loader.o
+Console.o: Drivers/Console/Console.cpp
+	${CXX} ${CXXFLAGS} -o Console.o -c Drivers/Console/Console.cpp
+
+kernel.elf: kmain.o loader.o Console.o
 	${LD} -T Build/linker.ld -o kernel.elf loader.o kmain.o
 
 kernel.img: kernel.elf

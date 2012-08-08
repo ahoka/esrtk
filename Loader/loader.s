@@ -14,7 +14,9 @@
 
 # reserve initial kernel stack space
 .set STACKSIZE, 0x4000                  # that is, 16k.
-.comm stack, STACKSIZE, 32             # reserve 16k stack on a doubleword boundary
+
+#.comm stack, STACKSIZE, 32             # reserve 16k stack on a doubleword boundary
+.lcomm stack, STACKSIZE
 .comm  mbd, 4                           # we will use this in kmain
 .comm  magic, 4                         # we will use this in kmain
 
