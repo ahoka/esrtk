@@ -8,11 +8,16 @@
 #ifndef VGACONSOLE_H
 #define	VGACONSOLE_H
 
-class VgaConsole {
+#include "../Console/ConsoleInterface.hh"
+
+class VgaConsole : ConsoleInterface {
 public:
 	VgaConsole();
 	
 	virtual ~VgaConsole();
+	
+	int getChar(int x, int y);
+	int getColumns();
 private:
 	VgaConsole(const VgaConsole& orig);
 
