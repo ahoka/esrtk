@@ -7,6 +7,14 @@ CXXFLAGS=	-Wall -Wextra -Werror \
 		-nostdlib -fno-builtin -nostartfiles -nodefaultlibs \
 		-fno-exceptions -fno-rtti -fno-stack-protector -std=c++0x
 
+CPPFILES=	Drivers/Console/Console.cpp \
+		Drivers/Console/Color.cpp \
+		Drivers/X86/VgaConsole.cpp \
+		Supervisor/Power.cpp \
+		Supervisor/Debug.cpp \
+		Loader/kmain.cpp
+
+
 all:	kernel.img
 
 loader.o: Loader/loader.s
@@ -18,7 +26,16 @@ kmain.o: Loader/kmain.cpp
 Console.o: Drivers/Console/Console.cpp
 	${CXX} ${CXXFLAGS} -o Console.o -c Drivers/Console/Console.cpp
 
-kernel.elf: kmain.o loader.o Console.o
+VgaConsole.o: Drivers/X86/VgaConsole.cpp
+	${CXX} ${CXXFLAGS} -o VgaConsole.o -c Drivers/X86/VgaConsole.cpp
+
+Power.o: Supervisor/Power.cpp
+	${CXX} ${CXXFLAGS} -o Power.o -c Supervisor/Power.cpp
+
+Debug.o: Supervisor/Debug.cpp
+	${CXX} ${CXXFLAGS} -o Debug.o -c Supervisor/Debug.cpp
+
+kernel.elf: kmain.o loader.o Console.o VgaConsole.o Power.o Debug.o
 	${LD} -T Build/linker.ld -o kernel.elf loader.o kmain.o
 
 kernel.img: kernel.elf
@@ -27,3 +44,6 @@ kernel.img: kernel.elf
 
 clean:
 	-rm *.o *.elf pad *.img
+
+run:
+	qemu -fda kernel.img
