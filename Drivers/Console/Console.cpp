@@ -18,7 +18,8 @@ Console::write(const char* /*string*/)
 void
 Console::putChar(int ch)
 {
-	interface->putChar(ch, currentColumn, currentRow);
+	//interface->putChar(ch, currentColumn, currentRow);
+	interface->putChar(ch);
 
 	// incrementColumn() ->
 	if (currentColumn > interface->getColumns() - 1) {

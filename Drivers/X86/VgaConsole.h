@@ -16,8 +16,9 @@ public:
 	
 	virtual ~VgaConsole();
 	
-	int getChar(int x, int y);
+	int getChar();
 	int getColumns();
+	int getRows();
 private:
 	VgaConsole(const VgaConsole& orig);
 

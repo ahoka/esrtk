@@ -19,3 +19,20 @@ VgaConsole::~VgaConsole()
 {
 }
 
+int
+VgaConsole::getColumns()
+{
+	return 80;
+}
+
+int
+VgaConsole::getRows()
+{
+	return 25;
+}
+
+int
+VgaConsole::getChar()
+{
+	return 'a';
+}
