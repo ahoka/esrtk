@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="84">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <df name="kernel" root=".">
+      <df name="Build">
+      </df>
+      <df name="Drivers">
+        <df name="Console">
+          <in>Color.cpp</in>
+          <in>Console.cpp</in>
+          <in>Console.hh</in>
+          <in>ConsoleInterface.hh</in>
+        </df>
+        <df name="Foundation">
+          <in>DriverManager.cpp</in>
+          <in>DriverManager.h</in>
+          <in>Function.cpp</in>
+          <in>Function.h</in>
+        </df>
+        <df name="X86">
+          <in>VgaConsole.cpp</in>
+          <in>VgaConsole.h</in>
+        </df>
+      </df>
+      <df name="Loader">
+        <in>kmain.cpp</in>
+        <in>loader.s</in>
+      </df>
+      <df name="Supervisor">
+        <in>CompilerSupport.cpp</in>
+        <in>Debug.cpp</in>
+        <in>Debug.h</in>
+        <in>Definitions.h</in>
+        <in>MemoryManager.cpp</in>
+        <in>MemoryManager.h</in>
+        <in>MemoryOperators.cpp</in>
+        <in>Power.cpp</in>
+        <in>Power.h</in>
+        <in>Supervisor.cpp</in>
+        <in>Supervisor.h</in>
+      </df>
+    </df>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false"
+                   kind="IMPORTANT_FILES_FOLDER">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceFolderFilter>^(nbproject)$</sourceFolderFilter>
+  <sourceRootList>
+    <Elem>.</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Default" type="0">
+      <toolsSet>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
+        <compilerSet>default</compilerSet>
+      </toolsSet>
+      <codeAssistance>
+      </codeAssistance>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>.</buildCommandWorkingDir>
+          <buildCommand>${MAKE} -f Makefile</buildCommand>
+          <cleanCommand>${MAKE} -f Makefile clean</cleanCommand>
+          <executablePath></executablePath>
+          <ccTool>
+            <incDir>
+              <pElem>.</pElem>
+            </incDir>
+            <undefinedList>
+              <Elem>__EXCEPTIONS</Elem>
+              <Elem>__GXX_RTTI</Elem>
+            </undefinedList>
+          </ccTool>
+        </makeTool>
+      </makefileType>
+      <item path="Drivers/Console/Color.cpp" ex="true" tool="1" flavor2="0">
+      </item>
+      <item path="Drivers/Console/Console.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="Loader/kmain.cpp" ex="false" tool="1" flavor2="8">
+        <ccTool>
+        </ccTool>
+      </item>
+      <item path="Loader/loader.s" ex="true" tool="4" flavor2="0">
+      </item>
+    </conf>
+  </confs>
+</configurationDescriptor>
