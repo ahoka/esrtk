@@ -1,8 +1,9 @@
-#include "Console.hh"
+#include "Console.h"
 
-Console::Console(ConsoleInterface* interface)
+Console::Console()
+  : currentRow(0),
+    currentColumn(0)
 {
-	setInterface(interface);
 }
 
 Console::~Console()
@@ -16,28 +17,19 @@ Console::write(const char* /*string*/)
 }
 
 void
-Console::putChar(int ch)
+Console::putChar(char ch)
 {
-	//interface->putChar(ch, currentColumn, currentRow);
-	interface->putChar(ch);
-
-	// incrementColumn() ->
-	if (currentColumn > interface->getColumns() - 1) {
-		currentColumn %= interface->getColumns();
-
-		// incrementRow() ->
-		currentRow++;
-
-		if (currentRow > interface->getRows() - 1) {
-			// generic scroll or smart scroll by driver?
-			//scrollScreen();
-			currentRow = 0; // just flow over to the top now
-		}
-	}
-}
-
-void
-Console::setInterface(ConsoleInterface* interface)
-{
-	this->interface = interface;
+   putChar(ch, currentColumn, currentRow);
+   
+   currentColumn++;
+   if (currentColumn > getColumns() - 1) {
+      currentColumn = 0;
+      currentRow++;
+      
+      if (currentRow > getRows() - 1) {
+	 // generic scroll or smart scroll by driver?
+	 //scrollScreen();
+	 currentRow = 0; // just flow over to the top now
+      }
+   }
 }

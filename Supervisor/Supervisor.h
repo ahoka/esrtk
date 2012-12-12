@@ -15,7 +15,9 @@ public:
 	Supervisor();
 	virtual ~Supervisor();
 
-	DriverManager driverManager;
+	void run();
+
+	//	DriverManager driverManager;
 	// ...
 private:
 	Supervisor(const Supervisor& orig);

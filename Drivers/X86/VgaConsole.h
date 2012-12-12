@@ -8,9 +8,11 @@
 #ifndef VGACONSOLE_H
 #define	VGACONSOLE_H
 
-#include "../Console/ConsoleInterface.hh"
+#include <Console/Console.h>
 
-class VgaConsole : ConsoleInterface {
+typedef unsigned short VgaCharacter;
+
+class VgaConsole : public Console {
 public:
 	VgaConsole();
 	
@@ -19,10 +21,12 @@ public:
 	int getChar();
 	int getColumns();
 	int getRows();
+	void putChar(int ch, int row, int column);
+	using Console::putChar;
 private:
 	VgaConsole(const VgaConsole& orig);
 
-	static const unsigned long vram = 0xb8000;
+	static constexpr VgaCharacter* vram = (VgaCharacter* )0xb8000;
 };
 
 #endif	/* VGACONSOLE_H */

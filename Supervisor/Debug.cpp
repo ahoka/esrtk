@@ -19,3 +19,8 @@ Debug::~Debug()
 {
 }
 
+static void
+panic(const char* /*message*/)
+{
+}
+

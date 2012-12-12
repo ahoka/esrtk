@@ -2,11 +2,18 @@ AS=		as
 CC=		gcc
 CXX=		g++
 LD=		ld
+QEMU=		qemu-system-i386
 
-CXXFLAGS=	-Wall -Wextra -Werror \
+CXXFLAGS=	-Wall -Wextra \
 		-nostdlib -fno-builtin -nostartfiles -nodefaultlibs \
 		-fno-exceptions -fno-rtti -fno-stack-protector -std=c++0x \
-		-I${PWD} -fcheck-new
+		-I${PWD} -fcheck-new -march=i686
+
+
+# x86
+CXXFLAGS+=	-I${PWD}/Supervisor
+CXXFLAGS+=	-I${PWD}/Drivers
+CXXFLAGS+=	-I${PWD}/Drivers/X86
 
 CPPFILES:=	$(shell find . -name '*.cpp')
 
@@ -33,4 +40,4 @@ clean:
 	-rm loader.o kernel.elf pad kernel.img ${CPPFILES:.cpp=.o}
 
 run:
-	qemu -fda kernel.img
+	${QEMU} -fda kernel.img

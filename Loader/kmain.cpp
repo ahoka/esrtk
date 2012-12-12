@@ -19,6 +19,7 @@ kmain(void)
 	//char * boot_loader_name =(char*) ((long*)mbd)[16];
 	
 	Supervisor supervisor;
+	supervisor.run();
  
 	/* Print a letter to screen to see everything is working: */
 //	unsigned char *vram = (unsigned char *) 0xb8000;

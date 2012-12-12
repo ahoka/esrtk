@@ -8,7 +8,7 @@
 #ifndef DEBUG_H
 #define	DEBUG_H
 
-#define KASSERT(x) if 
+#define KASSERT(x) if (!(x)) { Debug::panic("Assertion (" #x ") failed at " __FILE__ ":" __LINE__ "\n") }
 
 class Debug {
 private:
@@ -17,7 +17,7 @@ private:
 	virtual ~Debug();
 public:
 	static void panic(const char*);
+	static void printConsole(const char*);
 };
 
 #endif	/* DEBUG_H */
-
