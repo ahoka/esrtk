@@ -6,9 +6,11 @@
  */
 
 #include "VgaConsole.h"
+#include "IoPort.h"
 
 VgaConsole::VgaConsole()
 {
+   clearScreen();
 }
 
 VgaConsole::VgaConsole(const VgaConsole& /*orig*/)
@@ -49,4 +51,28 @@ VgaConsole::putChar(int ch, int row, int column)
    short repr = (ch & 0xff) | (0x07 << 8);
 
    vram[row * getColumns() + column] = repr;
+}
+
+void
+VgaConsole::clearScreen()
+{
+   for (int column = 0; column < getColumns(); column++)
+   {
+      for (int row = 0; row < getRows(); row++)
+      {
+	 putChar(' ', row, column);
+      }
+   }
+}
+
+void
+VgaConsole::setCursor(int row, int column)
+{
+   uint16_t cursorIndex = row * getColumns() + column;
+
+   outb(VGA_INDEX_PORT, VGA_CURSOR_LOW);
+   outb(VGA_DATA_PORT, cursorIndex & 0xff);
+
+   outb(VGA_INDEX_PORT, VGA_CURSOR_HIGH);
+   outb(VGA_DATA_PORT, (cursorIndex >> 8) & 0xff);
 }

@@ -16,12 +16,16 @@ CXXFLAGS+=	-I${PWD}/Drivers
 CXXFLAGS+=	-I${PWD}/Drivers/X86
 
 CPPFILES:=	$(shell find . -name '*.cpp')
+ASMFILES:=	$(shell find . -name '*.S')
 
 all:	kernel.img
 	echo done
 
-%.c:
+%.cpp:
 	${CXX} ${CXXFLAGS} -o $*.o $*.cpp
+
+%.S:
+	${AS} $*.S
 
 loader.o: Loader/loader.s
 	${AS} -o loader.o Loader/loader.s
@@ -29,7 +33,7 @@ loader.o: Loader/loader.s
 kmain.o: Loader/kmain.cpp
 	${CXX} ${CXXFLAGS} -o kmain.o -c Loader/kmain.cpp
 
-kernel.elf: ${CPPFILES:.cpp=.o} loader.o
+kernel.elf: ${CPPFILES:.cpp=.o} ${ASMFILES:.S=.o} loader.o
 	${LD} -T Build/linker.ld -o $@ $^
 
 kernel.img: kernel.elf
@@ -37,7 +41,7 @@ kernel.img: kernel.elf
 	cat Loader/stage1 Loader/stage2 pad $< > $@
 
 clean:
-	-rm loader.o kernel.elf pad kernel.img ${CPPFILES:.cpp=.o}
+	-rm loader.o kernel.elf pad kernel.img ${CPPFILES:.cpp=.o} ${ASMFILES:.S=.o} 2>/dev/null
 
 run:
 	${QEMU} -fda kernel.img

@@ -11,25 +11,52 @@ Console::~Console()
 }
 
 void
-Console::write(const char* /*string*/)
+Console::write(const char* string)
 {
-	//
+   while (*string)
+   {
+      putChar(*string++);
+   }
+   
+   setCursor(currentRow, currentColumn);
+}
+
+void
+Console::stepRow()
+{
+   currentRow++;
+      
+   if (currentRow > getRows() - 1) {
+      // generic scroll or smart scroll by driver?
+      //scrollScreen();
+      currentRow = 0; // just flow over to the top now
+   }
+}
+
+void
+Console::stepColumn()
+{
+      currentColumn++;
+      if (currentColumn > getColumns() - 1) {
+	 currentColumn = 0;
+	 stepRow();
+      }
 }
 
 void
 Console::putChar(char ch)
 {
-   putChar(ch, currentColumn, currentRow);
-   
-   currentColumn++;
-   if (currentColumn > getColumns() - 1) {
-      currentColumn = 0;
-      currentRow++;
-      
-      if (currentRow > getRows() - 1) {
-	 // generic scroll or smart scroll by driver?
-	 //scrollScreen();
-	 currentRow = 0; // just flow over to the top now
-      }
+   switch (ch)
+   {
+      case '\n':
+	 stepRow();
+	 currentColumn = 0;
+	 break;
+      case '\r':
+	 break;
+      default:
+	 putChar(ch, currentRow, currentColumn);
+	 stepColumn();
+	 break;
    }
 }
