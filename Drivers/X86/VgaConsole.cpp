@@ -66,6 +66,20 @@ VgaConsole::clearScreen()
 }
 
 void
+VgaConsole::scrollScreen()
+{
+   for (int i = 0; i < getRows() * (getColumns() - 1); i++)
+   {
+      vram[i] = vram[i + getColumns()];
+   }
+   
+   for (int i = getRows() * (getColumns() - 1); i < getRows() * getColumns(); i++)
+   {
+      vram[i] = 0x0720;
+   }
+}
+
+void
 VgaConsole::setCursor(int row, int column)
 {
    uint16_t cursorIndex = row * getColumns() + column;

@@ -27,6 +27,7 @@ public:
 	int getRows();
 	void putChar(int ch, int row, int column);
 	void setCursor(int row, int column);
+	void scrollScreen();
 	void clearScreen();
 	using Console::putChar;
 
@@ -37,4 +38,3 @@ private:
 };
 
 #endif	/* VGACONSOLE_H */
-

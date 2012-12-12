@@ -25,7 +25,11 @@ Supervisor::run()
    
    console.write("Supervisor started\n");
    console.write("Test\nTest\nTest\n\nT e s t\n");
-   console.write("Just a test string...");
+   for (int i = 0; i < 30; i++)
+   {
+      console.write("Just a test string...\n");
+   }
+   console.write("Supervisor...");
 
    for (;;)
    {

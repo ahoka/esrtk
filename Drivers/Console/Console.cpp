@@ -25,11 +25,14 @@ void
 Console::stepRow()
 {
    currentRow++;
-      
-   if (currentRow > getRows() - 1) {
+  
+   if (currentRow > getRows() - 1)
+   {
       // generic scroll or smart scroll by driver?
-      //scrollScreen();
-      currentRow = 0; // just flow over to the top now
+      scrollScreen();
+      currentColumn = 0;
+      currentRow = getRows() - 1; // just flow over to the top now
+      setCursor(getRows() - 1, 0);
    }
 }
 
