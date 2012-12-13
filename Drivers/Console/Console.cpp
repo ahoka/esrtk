@@ -1,5 +1,7 @@
 #include "Console.h"
 
+#include <stdarg.h>
+
 Console::Console()
   : currentRow(0),
     currentColumn(0)
@@ -74,25 +76,29 @@ enum {
 int
 Console::printf(const char* format, ...)
 {
+   va_list ap;
    int retval = 0;
+
+   va_start(ap);
 
    while (*format != 0)
    {
-      if (format != '%')
+      if (*format != '%')
       {
 	 putChar(*format++);
 	 retval++;
       }
       else
       {
+	 int flags = 0;
 	 // let's see what's after %
 	 format++; 
 
 	 // "%d %llu %hd"
-
-	 int flags = 0;
 	 switch (*format)
 	 {
+	    case 0:
+	       break;
 	    case 'd':
 	       flags |= PRINTF_FLAG_SIGNED;
 	       format++;
@@ -117,4 +123,9 @@ Console::printf(const char* format, ...)
 	 
       }
    }
+
+out:
+   va_end(ap);
+
+   return retval;
 }
