@@ -63,3 +63,58 @@ Console::putChar(char ch)
 	 break;
    }
 }
+
+enum {
+   PRINTF_FLAG_SIGNED = 1,
+   PRINTF_FLAG_UNSIGNED = 1 << 1,
+   PRINTF_FLAG_LOWERHEX = 1 << 2,
+   PRINTF_FLAG_UPPERHEX = 1 << 3
+};
+
+int
+Console::printf(const char* format, ...)
+{
+   int retval = 0;
+
+   while (*format != 0)
+   {
+      if (format != '%')
+      {
+	 putChar(*format++);
+	 retval++;
+      }
+      else
+      {
+	 // let's see what's after %
+	 format++; 
+
+	 // "%d %llu %hd"
+
+	 int flags = 0;
+	 switch (*format)
+	 {
+	    case 'd':
+	       flags |= PRINTF_FLAG_SIGNED;
+	       format++;
+	       break;
+	    case 'u':
+	       flags |= PRINTF_FLAG_UNSIGNED;
+	       format++;
+	       break;
+	    case 'x':
+	       flags |= PRINTF_FLAG_LOWERHEX;
+	       format++;
+	       break;
+	    case 'X':
+	       flags |= PRINTF_FLAG_UPPERHEX;
+	       format++;
+	       break;
+	    default:
+	       // just print whatever it was...	
+	       putChar(*format++);
+	       retval++;
+	 }
+	 
+      }
+   }
+}

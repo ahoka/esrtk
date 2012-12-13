@@ -13,6 +13,9 @@ public:
    virtual void setCursor(int row, int column) = 0;
    virtual void scrollScreen() = 0;
 
+   // doesnt belong here
+   int printf(const char* format, ...);
+
 protected:
    virtual int getRows() = 0;
    virtual int getColumns() = 0;
