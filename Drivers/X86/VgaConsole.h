@@ -2,6 +2,7 @@
 #define	VGACONSOLE_H
 
 #include <Console/Console.h>
+#include <stdint.h>
 
 const int VGA_VRAM_BASE = 0xb8000;
 
@@ -15,7 +16,7 @@ enum {
    VGA_CURSOR_LOW = 15
 };
 
-typedef unsigned short VgaCharacter;
+typedef uint16_t VgaCharacter;
 
 class VgaConsole : public Console {
 public:
@@ -34,7 +35,7 @@ public:
 private:
 	VgaConsole(const VgaConsole& orig);
 
-	static constexpr VgaCharacter* vram = (VgaCharacter* )VGA_VRAM_BASE;
+	VgaCharacter* vram;
 };
 
 #endif	/* VGACONSOLE_H */

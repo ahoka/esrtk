@@ -9,6 +9,7 @@
 #include "IoPort.h"
 
 VgaConsole::VgaConsole()
+  :  vram((VgaCharacter* )VGA_VRAM_BASE)
 {
    clearScreen();
 }
