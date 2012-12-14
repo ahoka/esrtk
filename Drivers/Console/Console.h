@@ -1,6 +1,8 @@
 #ifndef _COLOR_H_
 #define _COLOR_H_
 
+#include <stdarg.h>
+
 class Console {
 public:
    Console();
@@ -22,6 +24,9 @@ protected:
    virtual int getChar() = 0;
 
 private:
+   static const int printfBufferSize = 128;
+   char printfBuffer[printfBufferSize];
+   int doVaPrint(va_list* ap, int flags);
    void stepRow();
    void stepColumn();
    int currentRow;
