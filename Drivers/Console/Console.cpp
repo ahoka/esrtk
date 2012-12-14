@@ -70,8 +70,14 @@ enum {
    PRINTF_FLAG_SIGNED = 1,
    PRINTF_FLAG_UNSIGNED = 1 << 1,
    PRINTF_FLAG_LOWERHEX = 1 << 2,
-   PRINTF_FLAG_UPPERHEX = 1 << 3
+   PRINTF_FLAG_UPPERHEX = 1 << 3,
+   PRINTF_FLAG_LONG = 1 << 4,
+   PRINTF_FLAG_LONGLONG = 1 << 5,
+   PRINTF_FLAG_SHORT = 1 << 6,
+   PRINTF_FLAG_SHORTSHORT = 1 << 7
 };
+
+#define PRINTF_PUTCHAR(x) (putChar(x), retval++)
 
 int
 Console::printf(const char* format, ...)
@@ -92,39 +98,78 @@ Console::printf(const char* format, ...)
       {
 	 int flags = 0;
 	 // let's see what's after %
-	 format++; 
-
 	 // "%d %llu %hd"
-	 switch (*format)
+	 bool finished = false;
+	 while (!finished && *++format != 0)
 	 {
-	    case 0:
-	       break;
-	    case 'd':
-	       flags |= PRINTF_FLAG_SIGNED;
-	       format++;
-	       break;
-	    case 'u':
-	       flags |= PRINTF_FLAG_UNSIGNED;
-	       format++;
-	       break;
-	    case 'x':
-	       flags |= PRINTF_FLAG_LOWERHEX;
-	       format++;
-	       break;
-	    case 'X':
-	       flags |= PRINTF_FLAG_UPPERHEX;
-	       format++;
-	       break;
-	    default:
-	       // just print whatever it was...	
-	       putChar(*format++);
-	       retval++;
+	    switch (*format)
+	    {
+	       case 'l':
+		  if (flags & PRINTF_FLAG_LONGLONG ||
+		      flags & PRINTF_FLAG_SHORT)
+		  {
+		     finished = true;
+		     // TODO print all stuff interpreted so far
+		     PRINTF_PUTCHAR(*format++);
+		     // putChar(*format++);
+		     // retval++;
+		  }
+		  else if (flags & PRINTF_FLAG_LONG)
+		  {
+		     flags |= PRINTF_FLAG_LONGLONG;
+		  }
+		  else
+		  {
+		     flags |= PRINTF_FLAG_LONG;
+		  }
+		  break;
+	       case 'h':
+		  if (flags & PRINTF_FLAG_LONG ||
+		      flags & PRINTF_FLAG_SHORTSHORT)
+		  {
+		     finished = true;
+		     // TODO print all stuff interpreted so far
+		     PRINTF_PUTCHAR(*format++);
+		     // putChar(*format++);
+		     // retval++;
+		  }
+		  else if (flags & PRINTF_FLAG_SHORT)
+		  {
+		     flags |= PRINTF_FLAG_SHORTSHORT;
+		  }
+		  else
+		  {
+		     flags |= PRINTF_FLAG_SHORT;
+		  }
+		  break;
+	       case 'd':
+		  flags |= PRINTF_FLAG_SIGNED;
+		  finished = true;
+		  break;
+	       case 'u':
+		  flags |= PRINTF_FLAG_UNSIGNED;
+		  finished = true;
+		  break;
+	       case 'x':
+		  flags |= PRINTF_FLAG_LOWERHEX;
+		  finished = true;
+		  break;
+	       case 'X':
+		  flags |= PRINTF_FLAG_UPPERHEX;
+		  finished = true;
+		  break;
+	       default:
+		  // something unexpected
+		  // just print whatever it was...
+		  finished = true;
+		  PRINTF_PUTCHAR(*format++);
+		  // putChar(*format++);
+		  // retval++;
+	    }
 	 }
-	 
       }
    }
 
-out:
    va_end(ap);
 
    return retval;
