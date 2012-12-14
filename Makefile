@@ -5,11 +5,20 @@ QEMU=		qemu-system-i386
 #COMPILER=	clang
 COMPILER=	gnu
 
+ASFLAGS=	-march=i686 --32
+
+LDFLAGS=	-melf_i386
+
+CFLAGS=		-Wall -Wextra -std=c99 \
+		-nostdlib -fno-builtin \
+		-fno-stack-protector \
+		-m32 -march=i686
+
 CXXFLAGS=	-Wall -Wextra -std=c++11 \
 		-nostdlib -fno-builtin \
 		-fno-exceptions -fno-rtti \
 		-fno-stack-protector \
-		-march=i686
+		-m32 -march=i686
 
 ifeq (${COMPILER}, clang)
 #CXXFLAGS+= 
@@ -20,7 +29,6 @@ CXX=		g++
 CC=		gcc
 CXXFLAGS+= -fcheck-new -nostartfiles -nodefaultlibs
 endif
-
 
 
 # x86
@@ -38,14 +46,14 @@ ASMFILES:=	$(shell find . -name '*.S')
 all:	kernel.img
 	echo done
 
-%.cpp:
-	${CXX} ${CXXFLAGS} -o $*.o $*.cpp
+%.o: %.cpp
+	${CXX} ${CXXFLAGS} -c -o $*.o $*.cpp
 
-%.S:
-	${AS} -o $*.o $*.S
+%.o: %.S
+	${AS} ${ASFLAGS} -o $*.o $*.S
 
 kernel.elf: ${CPPFILES:.cpp=.o} ${ASMFILES:.S=.o}
-	${LD} -T Build/linker.ld -o $@ $^
+	${LD} ${LDFLAGS} -T Build/linker.ld -o $@ $^
 
 kernel.img: kernel.elf
 	dd if=/dev/zero of=pad bs=1 count=750

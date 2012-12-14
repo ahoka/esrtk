@@ -79,7 +79,7 @@ Console::printf(const char* format, ...)
    va_list ap;
    int retval = 0;
 
-   va_start(ap);
+   va_start(ap, format);
 
    while (*format != 0)
    {
