@@ -9,16 +9,16 @@ ASFLAGS=	-march=i686 --32
 
 LDFLAGS=	-melf_i386
 
-CFLAGS=		-Wall -Wextra -std=c99 \
+COPTS=		-O2 -march=i386 -m32 \
+		-Wall -Wextra \
 		-nostdlib -fno-builtin \
 		-fno-stack-protector \
-		-m32 -march=i686
+		-Wlong-long
 
-CXXFLAGS=	-Wall -Wextra -std=c++11 \
-		-nostdlib -fno-builtin \
+CFLAGS=		${COPTS} -std=c99
+
+CXXFLAGS=	${COPTS} -std=c++11 \
 		-fno-exceptions -fno-rtti \
-		-fno-stack-protector \
-		-m32 -march=i686
 
 ifeq (${COMPILER}, clang)
 #CXXFLAGS+= 

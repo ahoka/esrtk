@@ -48,6 +48,8 @@ Console::stepColumn()
       }
 }
 
+#define TABSIZE 8
+
 void
 Console::putChar(char ch)
 {
@@ -59,6 +61,17 @@ Console::putChar(char ch)
 	 break;
       case '\r':
 	 break;
+      case '\t':
+      {
+	 // TODO Refactor!
+	 int newcol = ((currentColumn + TABSIZE) / TABSIZE) * TABSIZE;
+	 int steps = newcol - currentColumn;
+	 for (int i = 0; i < steps; i++)
+	 {
+	    stepColumn();
+	 }
+	 break;
+      }
       default:
 	 putChar(ch, currentRow, currentColumn);
 	 stepColumn();
@@ -79,6 +92,72 @@ enum {
 };
 
 #define PRINTF_PUTCHAR(x) (putChar(x), retval++)
+
+unsigned long n
+getUnsignedFromVa(va_list* pa, int flags)
+{
+      // no long long for now
+      unsigned long n = 0;
+      if (flags & PRINTF_FLAG_LONG)
+      {
+	 n = va_arg(*ap, unsigned long);
+      }
+      else if (flags & PRINTF_FLAG_LONGLONG)
+      {
+	 //n = va_arg(*ap, unsigned long long);
+	 n = va_arg(*ap, unsigned long);
+      }
+      else if (flags & PRINTF_FLAG_SHORT)
+      {
+	 n = va_arg(*ap, unsigned int);
+	 n &= 0xffff;
+      }
+      else if (flags & PRINTF_FLAG_SHORTSHORT)
+      {
+	 n = va_arg(*ap, unsigned int);
+	 n &= 0xff;
+      }
+      else
+      {
+	 n = va_arg(*ap, unsigned int);
+      }
+      
+      return n;
+}
+
+long n
+getSignedFromVa(va_list* pa, int flags)
+{
+      // no long long for now
+      long n = 0;
+
+      if (flags & PRINTF_FLAG_LONG)
+      {
+	 n = va_arg(*ap, long);
+      }
+      else if (flags & PRINTF_FLAG_LONGLONG)
+      {
+	 //n = va_arg(*ap,  long long);
+	 n = va_arg(*ap, long);
+	 tmp discard = va_arg(*ap, long);
+      }
+      else if (flags & PRINTF_FLAG_SHORT)
+      {
+	 n = va_arg(*ap, int);
+	 n &= 0xffff;
+      }
+      else if (flags & PRINTF_FLAG_SHORTSHORT)
+      {
+	 n = va_arg(*ap, int);
+	 n &= 0xff;
+      }
+      else
+      {
+	 n = va_arg(*ap, int);
+      }
+      
+      return n;
+}
 
 int
 Console::doVaPrint(va_list* ap, int flags)
@@ -101,7 +180,8 @@ Console::doVaPrint(va_list* ap, int flags)
       }
       else if (flags & PRINTF_FLAG_LONGLONG)
       {
-	 n = va_arg(*ap, unsigned long long);
+	 //n = va_arg(*ap, unsigned long long);
+	 n = va_arg(*ap, unsigned long);
       }
       else if (flags & PRINTF_FLAG_SHORT)
       {
@@ -120,15 +200,16 @@ Console::doVaPrint(va_list* ap, int flags)
 
       char *bufp = printfBuffer;
       int base = 10;
-      while (n)
+      do
       {
 	 *bufp++ = (n % base + '0');
 	 n /= base;
-      }
+      } while(n);
 
+      bufp--;
       do {
 	 PRINTF_PUTCHAR(*bufp);
-      } while (bufp++ != printfBuffer);
+      } while (bufp-- != printfBuffer);
    }
 
    return retval;
@@ -153,7 +234,7 @@ Console::printf(const char* format, ...)
       {
 	 int flags = 0;
 	 bool finished = false;
-	 while (!finished && *++format != 0)
+	 while (*++format != 0 && !finished)
 	 {
 	    switch (*format)
 	    {
@@ -223,22 +304,7 @@ Console::printf(const char* format, ...)
 	    // do the actual conversion
 	    if (finished)
 	    {
-	       if (flags & PRINTF_FLAG_UNSIGNED)
-	       {
-	       }
-	       else if (flags & PRINTF_FLAG_SIGNED)
-	       {
-	       }
-	       else if (flags & PRINTF_FLAG_LOWERHEX)
-	       {
-	       }
-	       else if (flags & PRINTF_FLAG_UPPERHEX)
-	       {
-	       }
-	       else if (flags & PRINTF_FLAG_STRING)
-	       {
-	       }
-	       // incomplete flags end up here too
+	      retval += doVaPrint(&ap, flags);
 	    }
 	 }
       }
@@ -246,5 +312,6 @@ Console::printf(const char* format, ...)
 
    va_end(ap);
 
+   setCursor(currentRow, currentColumn);
    return retval;
 }
