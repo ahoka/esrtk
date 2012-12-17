@@ -12,15 +12,18 @@ Console::~Console()
 {
 }
 
-void
-Console::write(const char* string)
+int
+Console::putString(const char* str)
 {
-   while (*string)
+   int retval = 0;
+
+   while (*str)
    {
-      putChar(*string++);
+      putChar(*str++);
+      retval++;
    }
-   
-   setCursor(currentRow, currentColumn);
+
+   return retval;
 }
 
 void
@@ -80,15 +83,20 @@ Console::putChar(char ch)
 }
 
 enum {
-   PRINTF_FLAG_SIGNED = 1,
-   PRINTF_FLAG_UNSIGNED = 1 << 1,
-   PRINTF_FLAG_LOWERHEX = 1 << 2,
-   PRINTF_FLAG_UPPERHEX = 1 << 3,
-   PRINTF_FLAG_STRING = 1 << 4,
    PRINTF_FLAG_LONG = 1 << 5,
    PRINTF_FLAG_LONGLONG = 1 << 6,
    PRINTF_FLAG_SHORT = 1 << 7,
-   PRINTF_FLAG_SHORTSHORT = 1 << 8
+   PRINTF_FLAG_SHORTSHORT = 1 << 8,
+};
+
+enum {
+   PRINTF_TYPE_INVALID,
+   PRINTF_TYPE_DECIMAL,
+   PRINTF_TYPE_UNSIGNED,
+   PRINTF_TYPE_LOWERHEX,
+   PRINTF_TYPE_UPPERHEX,
+   PRINTF_TYPE_STRING,
+   PRINTF_TYPE_CHARACTER
 };
 
 #define PRINTF_PUTCHAR(x) (putChar(x), retval++)
@@ -105,8 +113,8 @@ getUnsignedFromVa(va_list* ap, int flags, unsigned long* high)
       else if (flags & PRINTF_FLAG_LONGLONG)
       {
 	 //n = va_arg(*ap, unsigned long long);
-	 n = va_arg(*ap, unsigned long);
 	 unsigned long tmp = va_arg(*ap, unsigned long);
+	 n = va_arg(*ap, unsigned long);
 
 	 if (high != 0)
 	 {
@@ -116,12 +124,10 @@ getUnsignedFromVa(va_list* ap, int flags, unsigned long* high)
       else if (flags & PRINTF_FLAG_SHORT)
       {
 	 n = va_arg(*ap, unsigned int);
-	 n &= 0xffff;
       }
       else if (flags & PRINTF_FLAG_SHORTSHORT)
       {
 	 n = va_arg(*ap, unsigned int);
-	 n &= 0xff;
       }
       else
       {
@@ -144,8 +150,8 @@ getSignedFromVa(va_list* ap, int flags, long* high)
       else if (flags & PRINTF_FLAG_LONGLONG)
       {
 	 //n = va_arg(*ap,  long long);
-	 n = va_arg(*ap, long);
 	 long tmp = va_arg(*ap, long);
+	 n = va_arg(*ap, long);
 
 	 if (high != 0)
 	 {
@@ -155,12 +161,10 @@ getSignedFromVa(va_list* ap, int flags, long* high)
       else if (flags & PRINTF_FLAG_SHORT)
       {
 	 n = va_arg(*ap, int);
-	 n &= 0xffff;
       }
       else if (flags & PRINTF_FLAG_SHORTSHORT)
       {
 	 n = va_arg(*ap, int);
-	 n &= 0xff;
       }
       else
       {
@@ -171,7 +175,7 @@ getSignedFromVa(va_list* ap, int flags, long* high)
 }
 
 int
-Console::doVaPrint(va_list* ap, int flags)
+Console::doVaPrint(va_list* ap, int type, int flags)
 {
    const char hexl[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
 		       'a', 'b', 'c', 'd', 'e', 'f' };
@@ -182,11 +186,11 @@ Console::doVaPrint(va_list* ap, int flags)
    char* bufp = printfBuffer;
    int retval = 0;
 
-   if (flags & PRINTF_FLAG_UNSIGNED || flags & PRINTF_FLAG_SIGNED)
+   if (type == PRINTF_TYPE_UNSIGNED || type == PRINTF_TYPE_DECIMAL)
    {
       unsigned long n;
 
-      if (flags & PRINTF_FLAG_SIGNED)
+      if (type == PRINTF_TYPE_DECIMAL)
       {
 	 long sn = getSignedFromVa(ap, flags, 0);
 	 if (sn < 0)
@@ -210,14 +214,14 @@ Console::doVaPrint(va_list* ap, int flags)
       while(n);
 
    }
-   else if (flags & PRINTF_FLAG_LOWERHEX || flags & PRINTF_FLAG_UPPERHEX)
+   else if (type == PRINTF_TYPE_LOWERHEX || type == PRINTF_TYPE_UPPERHEX)
    {
       const char* hex;
 
       unsigned long high = 0;
       unsigned long n = getUnsignedFromVa(ap, flags, &high);
 
-      if (flags & PRINTF_FLAG_LOWERHEX)
+      if (type == PRINTF_TYPE_LOWERHEX)
       {
 	 hex = hexl;
       }
@@ -231,7 +235,7 @@ Console::doVaPrint(va_list* ap, int flags)
 	 *bufp++ = hex[n & 0x0f];
 	 n >>= 4;
       }
-      while(n);
+      while (n != 0);
 
       if (high != 0)
       {
@@ -240,8 +244,19 @@ Console::doVaPrint(va_list* ap, int flags)
 	    *bufp++ = hex[high & 0x0f];
 	    high >>= 4;
 	 }
-	 while(high);
+	 while (high != 0);
       }
+   }
+   else if (type == PRINTF_TYPE_STRING)
+   {
+      const char* str = va_arg(*ap, const char*);
+      retval += putString(str);
+   }
+   else if (type == PRINTF_TYPE_CHARACTER)
+   {
+      unsigned char ch = va_arg(*ap, int);
+      putChar(ch);
+      retval += 1;
    }
 
    if (bufp != printfBuffer)
@@ -275,6 +290,7 @@ Console::printf(const char* format, ...)
       else
       {
 	 int flags = 0;
+	 int type = PRINTF_TYPE_INVALID;
 	 bool finished = false;
 	 while (*++format != 0 && !finished)
 	 {
@@ -292,7 +308,9 @@ Console::printf(const char* format, ...)
 		  }
 		  else if (flags & PRINTF_FLAG_LONG)
 		  {
-		     flags |= PRINTF_FLAG_LONGLONG;
+		     //flags |= PRINTF_FLAG_LONGLONG;
+		     flags = 0;
+		     finished = true;
 		  }
 		  else
 		  {
@@ -319,19 +337,44 @@ Console::printf(const char* format, ...)
 		  }
 		  break;
 	       case 'd':
-		  flags |= PRINTF_FLAG_SIGNED;
+	       case 'i':
+		  type = PRINTF_TYPE_DECIMAL;
 		  finished = true;
 		  break;
 	       case 'u':
-		  flags |= PRINTF_FLAG_UNSIGNED;
+		  type = PRINTF_TYPE_UNSIGNED;
 		  finished = true;
 		  break;
 	       case 'x':
-		  flags |= PRINTF_FLAG_LOWERHEX;
+		  type = PRINTF_TYPE_LOWERHEX;
 		  finished = true;
 		  break;
 	       case 'X':
-		  flags |= PRINTF_FLAG_UPPERHEX;
+		  type = PRINTF_TYPE_UPPERHEX;
+		  finished = true;
+		  break;
+	       case 's':
+		  // l modifier is valid, but unimplemented
+		  if (flags == PRINTF_FLAG_LONG || flags == 0)
+		  {
+		     type = PRINTF_TYPE_STRING;
+		  }
+		  else
+		  {
+		     type = PRINTF_TYPE_INVALID;
+		  }
+		  finished = true;
+		  break;
+	       case 'c':
+		  // l modifier is valid, but unimplemented
+		  if (flags == PRINTF_FLAG_LONG || flags == 0)
+		  {
+		     type = PRINTF_TYPE_CHARACTER;
+		  }
+		  else
+		  {
+		     type = PRINTF_TYPE_INVALID;
+		  }
 		  finished = true;
 		  break;
 	       default:
@@ -339,14 +382,12 @@ Console::printf(const char* format, ...)
 		  // just print whatever it was...
 		  finished = true;
 		  PRINTF_PUTCHAR(*format++);
-		  // putChar(*format++);
-		  // retval++;
 	    }
 
 	    // do the actual conversion
 	    if (finished)
 	    {
-	      retval += doVaPrint(&ap, flags);
+	       retval += doVaPrint(&ap, type, flags);
 	    }
 	 }
       }

@@ -12,12 +12,13 @@ LDFLAGS=	-melf_i386
 COPTS=		-O2 -march=i386 -m32 \
 		-Wall -Wextra \
 		-nostdlib -fno-builtin \
-		-fno-stack-protector \
-		-Wlong-long
+		-fno-stack-protector
 
-CFLAGS=		${COPTS} -std=c99
+#		-Wlong-long
 
-CXXFLAGS=	${COPTS} -std=c++11 \
+CFLAGS=		-std=c99 ${COPTS}
+
+CXXFLAGS=	-std=c++11 ${COPTS} \
 		-fno-exceptions -fno-rtti \
 
 ifeq (${COMPILER}, clang)
@@ -46,10 +47,10 @@ ASMFILES:=	$(shell find . -name '*.S')
 all:	kernel.img
 	echo done
 
-%.o: %.cpp
+%.o: %.cpp Makefile
 	${CXX} ${CXXFLAGS} -c -o $*.o $*.cpp
 
-%.o: %.S
+%.o: %.S Makefile
 	${AS} ${ASFLAGS} -o $*.o $*.S
 
 kernel.elf: ${CPPFILES:.cpp=.o} ${ASMFILES:.S=.o}
@@ -63,4 +64,7 @@ clean:
 	-rm kernel.elf pad kernel.img ${CPPFILES:.cpp=.o} ${ASMFILES:.S=.o} 2>/dev/null
 
 run:
+	${QEMU} -kernel kernel.elf
+
+run-grub:
 	${QEMU} -fda kernel.img

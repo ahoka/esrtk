@@ -9,7 +9,7 @@ public:
    virtual ~Console();
 
    void putChar(char ch);
-   void write(const char* string);
+   int putString(const char* str);
    virtual void putChar(int ch, int row, int column) = 0;
    virtual void clearScreen() = 0;
    virtual void setCursor(int row, int column) = 0;
@@ -26,7 +26,7 @@ protected:
 private:
    static const int printfBufferSize = 128;
    char printfBuffer[printfBufferSize];
-   int doVaPrint(va_list* ap, int flags);
+   int doVaPrint(va_list* ap, int type, int flags);
    void stepRow();
    void stepColumn();
    int currentRow;
