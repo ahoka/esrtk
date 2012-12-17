@@ -95,6 +95,7 @@ enum {
    PRINTF_TYPE_UNSIGNED,
    PRINTF_TYPE_LOWERHEX,
    PRINTF_TYPE_UPPERHEX,
+   PRINTF_TYPE_OCTAL,
    PRINTF_TYPE_STRING,
    PRINTF_TYPE_CHARACTER
 };
@@ -102,7 +103,7 @@ enum {
 #define PRINTF_PUTCHAR(x) (putChar(x), retval++)
 
 unsigned long
-getUnsignedFromVa(va_list* ap, int flags, unsigned long* high)
+getUnsignedFromVa(va_list* ap, int flags)
 {
       // no long long for now
       unsigned long n = 0;
@@ -115,11 +116,6 @@ getUnsignedFromVa(va_list* ap, int flags, unsigned long* high)
 	 //n = va_arg(*ap, unsigned long long);
 	 unsigned long tmp = va_arg(*ap, unsigned long);
 	 n = va_arg(*ap, unsigned long);
-
-	 if (high != 0)
-	 {
-	    *high = tmp;
-	 }
       }
       else if (flags & PRINTF_FLAG_SHORT)
       {
@@ -138,7 +134,7 @@ getUnsignedFromVa(va_list* ap, int flags, unsigned long* high)
 }
 
 long
-getSignedFromVa(va_list* ap, int flags, long* high)
+getSignedFromVa(va_list* ap, int flags)
 {
       // no long long for now
       long n = 0;
@@ -152,11 +148,6 @@ getSignedFromVa(va_list* ap, int flags, long* high)
 	 //n = va_arg(*ap,  long long);
 	 long tmp = va_arg(*ap, long);
 	 n = va_arg(*ap, long);
-
-	 if (high != 0)
-	 {
-	    *high = tmp;
-	 }
       }
       else if (flags & PRINTF_FLAG_SHORT)
       {
@@ -192,7 +183,7 @@ Console::doVaPrint(va_list* ap, int type, int flags)
 
       if (type == PRINTF_TYPE_DECIMAL)
       {
-	 long sn = getSignedFromVa(ap, flags, 0);
+	 long sn = getSignedFromVa(ap, flags);
 	 if (sn < 0)
 	 {
 	    PRINTF_PUTCHAR('-');
@@ -203,7 +194,7 @@ Console::doVaPrint(va_list* ap, int type, int flags)
       }
       else
       {
-	 n = getUnsignedFromVa(ap, flags, 0);
+	 n = getUnsignedFromVa(ap, flags);
       }
 
       do
@@ -218,8 +209,7 @@ Console::doVaPrint(va_list* ap, int type, int flags)
    {
       const char* hex;
 
-      unsigned long high = 0;
-      unsigned long n = getUnsignedFromVa(ap, flags, &high);
+      unsigned long n = getUnsignedFromVa(ap, flags);
 
       if (type == PRINTF_TYPE_LOWERHEX)
       {
@@ -236,16 +226,17 @@ Console::doVaPrint(va_list* ap, int type, int flags)
 	 n >>= 4;
       }
       while (n != 0);
+   }
+   else if (type == PRINTF_TYPE_OCTAL)
+   {
+      unsigned long n = getUnsignedFromVa(ap, flags);
 
-      if (high != 0)
+      do
       {
-	 do
-	 {
-	    *bufp++ = hex[high & 0x0f];
-	    high >>= 4;
-	 }
-	 while (high != 0);
+	 *bufp++ = (n & 07) + '0';
+	 n >>= 3;
       }
+      while (n != 0);
    }
    else if (type == PRINTF_TYPE_STRING)
    {
@@ -351,6 +342,10 @@ Console::printf(const char* format, ...)
 		  break;
 	       case 'X':
 		  type = PRINTF_TYPE_UPPERHEX;
+		  finished = true;
+		  break;
+	       case 'o':
+		  type = PRINTF_TYPE_OCTAL;
 		  finished = true;
 		  break;
 	       case 's':

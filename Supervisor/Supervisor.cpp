@@ -56,19 +56,23 @@ Supervisor::run()
    console.printf("ushort:\t\t0x%hx\n", ushort);
    console.printf("uchar:\t\t0x%hhx\n", uchar);
    console.printf("ulong:\t\t0x%lx\n", ulong);
-   console.printf("ulonglong:\t0x%llx\n\n", ulonglong);
 #if 0
    console.printf("uint:\t\t0X%X\n", 0);
    console.printf("uint:\t\t0X%X\n", uint);
    console.printf("ushort:\t\t0X%hX\n", ushort);
    console.printf("uchar:\t\t0X%hhX\n", uchar);
    console.printf("ulong:\t\t0X%lX\n", ulong);
-   console.printf("ulonglong:\t0X%llX\n\n", ulonglong);
 #endif
 
    console.printf("string: %s\n", s);
 
    console.printf("%c%c%c", 'a', '3', '\n');
+
+   console.printf("uint:\t\t0%o\n", 0);
+   console.printf("uint:\t\t0%o\n", uint);
+   console.printf("ushort:\t\t0%ho\n", ushort);
+   console.printf("uchar:\t\t0%hho\n", uchar);
+   console.printf("ulong:\t\t0%lo\n", ulong);
 
    for (;;)
    {
