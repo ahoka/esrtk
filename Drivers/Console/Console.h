@@ -3,6 +3,14 @@
 
 #include <stdarg.h>
 
+#ifdef HAS_LONGLONG
+typedef unsigned long long  printf_uint_t;
+typedef long long printf_int_t;
+#else
+typedef unsigned long printf_uint_t;
+typedef long printf_int_t;
+#endif
+
 class Console {
 public:
    Console();
@@ -25,7 +33,6 @@ protected:
 
 private:
    static const int printfBufferSize = 128;
-   char printfBuffer[printfBufferSize];
    int doVaPrint(va_list* ap, int type, int flags);
    void stepRow();
    void stepColumn();

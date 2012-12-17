@@ -74,6 +74,8 @@ Supervisor::run()
    console.printf("uchar:\t\t0%hho\n", uchar);
    console.printf("ulong:\t\t0%lo\n", ulong);
 
+   console.printf("ptr:\t\t%p\n", (void *)s);
+
    for (;;)
    {
       asm volatile("hlt");

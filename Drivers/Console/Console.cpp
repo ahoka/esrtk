@@ -97,7 +97,8 @@ enum {
    PRINTF_TYPE_UPPERHEX,
    PRINTF_TYPE_OCTAL,
    PRINTF_TYPE_STRING,
-   PRINTF_TYPE_CHARACTER
+   PRINTF_TYPE_CHARACTER,
+   PRINTF_TYPE_POINTER
 };
 
 #define PRINTF_PUTCHAR(x) (putChar(x), retval++)
@@ -174,8 +175,25 @@ Console::doVaPrint(va_list* ap, int type, int flags)
    const char hexu[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
 		       'A', 'B', 'C', 'D', 'E', 'F' };
 
+   char printfBuffer[128];
    char* bufp = printfBuffer;
    int retval = 0;
+
+   if (type == PRINTF_TYPE_POINTER)
+   {
+      // XXX uintptr_t ?
+      unsigned long p = (unsigned long)va_arg(*ap, void*);
+
+      putChar('0');
+      putChar('x');
+      retval += 2;
+      
+      for (unsigned int i = 0; i < sizeof(p) * 2; i++)
+      {
+	 *bufp++ = hexl[p & 0x0f];
+	 p >>= 4;
+      }
+   }
 
    if (type == PRINTF_TYPE_UNSIGNED || type == PRINTF_TYPE_DECIMAL)
    {
@@ -346,6 +364,10 @@ Console::printf(const char* format, ...)
 		  break;
 	       case 'o':
 		  type = PRINTF_TYPE_OCTAL;
+		  finished = true;
+		  break;
+	       case 'p':
+		  type = PRINTF_TYPE_POINTER;
 		  finished = true;
 		  break;
 	       case 's':
