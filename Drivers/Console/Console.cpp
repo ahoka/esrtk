@@ -93,8 +93,8 @@ enum {
 
 #define PRINTF_PUTCHAR(x) (putChar(x), retval++)
 
-unsigned long n
-getUnsignedFromVa(va_list* pa, int flags)
+unsigned long
+getUnsignedFromVa(va_list* ap, int flags, unsigned long* high)
 {
       // no long long for now
       unsigned long n = 0;
@@ -106,6 +106,12 @@ getUnsignedFromVa(va_list* pa, int flags)
       {
 	 //n = va_arg(*ap, unsigned long long);
 	 n = va_arg(*ap, unsigned long);
+	 unsigned long tmp = va_arg(*ap, unsigned long);
+
+	 if (high != 0)
+	 {
+	    *high = tmp;
+	 }
       }
       else if (flags & PRINTF_FLAG_SHORT)
       {
@@ -125,8 +131,8 @@ getUnsignedFromVa(va_list* pa, int flags)
       return n;
 }
 
-long n
-getSignedFromVa(va_list* pa, int flags)
+long
+getSignedFromVa(va_list* ap, int flags, long* high)
 {
       // no long long for now
       long n = 0;
@@ -139,7 +145,12 @@ getSignedFromVa(va_list* pa, int flags)
       {
 	 //n = va_arg(*ap,  long long);
 	 n = va_arg(*ap, long);
-	 tmp discard = va_arg(*ap, long);
+	 long tmp = va_arg(*ap, long);
+
+	 if (high != 0)
+	 {
+	    *high = tmp;
+	 }
       }
       else if (flags & PRINTF_FLAG_SHORT)
       {
@@ -168,48 +179,79 @@ Console::doVaPrint(va_list* ap, int flags)
    const char hexu[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
 		       'A', 'B', 'C', 'D', 'E', 'F' };
 
+   char* bufp = printfBuffer;
    int retval = 0;
 
-   if (flags & PRINTF_FLAG_UNSIGNED)
+   if (flags & PRINTF_FLAG_UNSIGNED || flags & PRINTF_FLAG_SIGNED)
    {
-      // no long long for now
-      unsigned long n = 0;
-      if (flags & PRINTF_FLAG_LONG)
+      unsigned long n;
+
+      if (flags & PRINTF_FLAG_SIGNED)
       {
-	 n = va_arg(*ap, unsigned long);
-      }
-      else if (flags & PRINTF_FLAG_LONGLONG)
-      {
-	 //n = va_arg(*ap, unsigned long long);
-	 n = va_arg(*ap, unsigned long);
-      }
-      else if (flags & PRINTF_FLAG_SHORT)
-      {
-	 n = va_arg(*ap, unsigned int);
-	 n &= 0xffff;
-      }
-      else if (flags & PRINTF_FLAG_SHORTSHORT)
-      {
-	 n = va_arg(*ap, unsigned int);
-	 n &= 0xff;
+	 long sn = getSignedFromVa(ap, flags, 0);
+	 if (sn < 0)
+	 {
+	    PRINTF_PUTCHAR('-');
+	    n = sn * -1;
+	 } else {
+	    n = sn;
+	 }
       }
       else
       {
-	 n = va_arg(*ap, unsigned int);
+	 n = getUnsignedFromVa(ap, flags, 0);
       }
 
-      char *bufp = printfBuffer;
-      int base = 10;
       do
       {
-	 *bufp++ = (n % base + '0');
-	 n /= base;
-      } while(n);
+	 *bufp++ = n % 10 + '0';
+	 n /= 10;
+      }
+      while(n);
 
+   }
+   else if (flags & PRINTF_FLAG_LOWERHEX || flags & PRINTF_FLAG_UPPERHEX)
+   {
+      const char* hex;
+
+      unsigned long high = 0;
+      unsigned long n = getUnsignedFromVa(ap, flags, &high);
+
+      if (flags & PRINTF_FLAG_LOWERHEX)
+      {
+	 hex = hexl;
+      }
+      else
+      {
+	 hex = hexu;
+      }
+
+      do
+      {
+	 *bufp++ = hex[n & 0x0f];
+	 n >>= 4;
+      }
+      while(n);
+
+      if (high != 0)
+      {
+	 do
+	 {
+	    *bufp++ = hex[high & 0x0f];
+	    high >>= 4;
+	 }
+	 while(high);
+      }
+   }
+
+   if (bufp != printfBuffer)
+   {
       bufp--;
-      do {
+      do
+      {
 	 PRINTF_PUTCHAR(*bufp);
-      } while (bufp-- != printfBuffer);
+      }
+      while (bufp-- != printfBuffer);
    }
 
    return retval;
