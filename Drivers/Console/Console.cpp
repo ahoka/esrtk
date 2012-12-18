@@ -83,10 +83,19 @@ Console::putChar(char ch)
 }
 
 enum {
-   PRINTF_FLAG_LONG = 1 << 5,
-   PRINTF_FLAG_LONGLONG = 1 << 6,
-   PRINTF_FLAG_SHORT = 1 << 7,
-   PRINTF_FLAG_SHORTSHORT = 1 << 8,
+   PRINTF_MODIFIER_LONG = (1 << 0),
+   PRINTF_MODIFIER_LONGLONG = (1 << 1),
+   PRINTF_MODIFIER_SHORT = (1 << 2),
+   PRINTF_MODIFIER_SHORTSHORT = (1 << 3),
+};
+
+enum {
+   PRINTF_FLAGS_THOUSAND = (1 << 0),
+   PRINTF_FLAGS_LEFTJUSTIFIED = (1 << 1),
+   PRINTF_FLAGS_SIGN = (1 << 2),
+   PRINTF_FLAGS_SPACE = (1 << 3),
+   PRINTF_FLAGS_ALTERNATIVE = (1 << 4),
+   PRINTF_FLAGS_ZEROPADDING = (1 << 5)
 };
 
 enum {
@@ -104,25 +113,25 @@ enum {
 #define PRINTF_PUTCHAR(x) (putChar(x), retval++)
 
 unsigned long
-getUnsignedFromVa(va_list* ap, int flags)
+getUnsignedFromVa(va_list* ap, int modifiers)
 {
       // no long long for now
       unsigned long n = 0;
-      if (flags & PRINTF_FLAG_LONG)
+      if (modifiers & PRINTF_MODIFIER_LONG)
       {
 	 n = va_arg(*ap, unsigned long);
       }
-      else if (flags & PRINTF_FLAG_LONGLONG)
+      else if (modifiers & PRINTF_MODIFIER_LONGLONG)
       {
 	 //n = va_arg(*ap, unsigned long long);
 	 unsigned long tmp = va_arg(*ap, unsigned long);
 	 n = va_arg(*ap, unsigned long);
       }
-      else if (flags & PRINTF_FLAG_SHORT)
+      else if (modifiers & PRINTF_MODIFIER_SHORT)
       {
 	 n = va_arg(*ap, unsigned int);
       }
-      else if (flags & PRINTF_FLAG_SHORTSHORT)
+      else if (modifiers & PRINTF_MODIFIER_SHORTSHORT)
       {
 	 n = va_arg(*ap, unsigned int);
       }
@@ -135,26 +144,26 @@ getUnsignedFromVa(va_list* ap, int flags)
 }
 
 long
-getSignedFromVa(va_list* ap, int flags)
+getSignedFromVa(va_list* ap, int modifiers)
 {
       // no long long for now
       long n = 0;
 
-      if (flags & PRINTF_FLAG_LONG)
+      if (modifiers & PRINTF_MODIFIER_LONG)
       {
 	 n = va_arg(*ap, long);
       }
-      else if (flags & PRINTF_FLAG_LONGLONG)
+      else if (modifiers & PRINTF_MODIFIER_LONGLONG)
       {
 	 //n = va_arg(*ap,  long long);
 	 long tmp = va_arg(*ap, long);
 	 n = va_arg(*ap, long);
       }
-      else if (flags & PRINTF_FLAG_SHORT)
+      else if (modifiers & PRINTF_MODIFIER_SHORT)
       {
 	 n = va_arg(*ap, int);
       }
-      else if (flags & PRINTF_FLAG_SHORTSHORT)
+      else if (modifiers & PRINTF_MODIFIER_SHORTSHORT)
       {
 	 n = va_arg(*ap, int);
       }
@@ -167,7 +176,7 @@ getSignedFromVa(va_list* ap, int flags)
 }
 
 int
-Console::doVaPrint(va_list* ap, int type, int flags)
+Console::doVaPrint(va_list* ap, int type, int modifiers, int flags)
 {
    const char hexl[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
 		       'a', 'b', 'c', 'd', 'e', 'f' };
@@ -201,18 +210,26 @@ Console::doVaPrint(va_list* ap, int type, int flags)
 
       if (type == PRINTF_TYPE_DECIMAL)
       {
-	 long sn = getSignedFromVa(ap, flags);
+	 long sn = getSignedFromVa(ap, modifiers);
 	 if (sn < 0)
 	 {
 	    PRINTF_PUTCHAR('-');
 	    n = sn * -1;
 	 } else {
+	    if (flags & PRINTF_FLAGS_SIGN)
+	    {
+	       PRINTF_PUTCHAR('+');
+	    }
+	    else if (flags & PRINTF_FLAGS_SPACE)
+	    {
+	       PRINTF_PUTCHAR(' ');
+	    }
 	    n = sn;
 	 }
       }
       else
       {
-	 n = getUnsignedFromVa(ap, flags);
+	 n = getUnsignedFromVa(ap, modifiers);
       }
 
       do
@@ -227,14 +244,24 @@ Console::doVaPrint(va_list* ap, int type, int flags)
    {
       const char* hex;
 
-      unsigned long n = getUnsignedFromVa(ap, flags);
+      unsigned long n = getUnsignedFromVa(ap, modifiers);
 
       if (type == PRINTF_TYPE_LOWERHEX)
       {
+	 if (flags & PRINTF_FLAGS_ALTERNATIVE && n != 0)
+	 {
+	    PRINTF_PUTCHAR('0');
+	    PRINTF_PUTCHAR('x');
+	 }
 	 hex = hexl;
       }
       else
       {
+	 if (flags & PRINTF_FLAGS_ALTERNATIVE && n != 0)
+	 {
+	    PRINTF_PUTCHAR('0');
+	    PRINTF_PUTCHAR('X');
+	 }
 	 hex = hexu;
       }
 
@@ -247,7 +274,12 @@ Console::doVaPrint(va_list* ap, int type, int flags)
    }
    else if (type == PRINTF_TYPE_OCTAL)
    {
-      unsigned long n = getUnsignedFromVa(ap, flags);
+      unsigned long n = getUnsignedFromVa(ap, modifiers);
+      
+      if (flags & PRINTF_FLAGS_ALTERNATIVE && n != 0)
+      {
+	 PRINTF_PUTCHAR('0');
+      }
 
       do
       {
@@ -298,6 +330,7 @@ Console::printf(const char* format, ...)
       }
       else
       {
+	 int modifiers = 0;
 	 int flags = 0;
 	 int type = PRINTF_TYPE_INVALID;
 	 bool finished = false;
@@ -305,9 +338,27 @@ Console::printf(const char* format, ...)
 	 {
 	    switch (*format)
 	    {
+	       case '\'':
+		  flags |= PRINTF_FLAGS_THOUSAND;
+		  break;
+	       case '-':
+		  flags |= PRINTF_FLAGS_LEFTJUSTIFIED;
+		  break;
+	       case '+':
+		  flags |= PRINTF_FLAGS_SIGN;
+		  break;
+	       case ' ':
+		  flags |= PRINTF_FLAGS_SPACE;
+		  break;
+	       case '#':
+		  flags |= PRINTF_FLAGS_ALTERNATIVE;
+		  break;
+	       case '0':
+		  flags |= PRINTF_FLAGS_ZEROPADDING;
+		  break;
 	       case 'l':
-		  if (flags & PRINTF_FLAG_LONGLONG ||
-		      flags & PRINTF_FLAG_SHORT)
+		  if (modifiers & PRINTF_MODIFIER_LONGLONG ||
+		      modifiers & PRINTF_MODIFIER_SHORT)
 		  {
 		     finished = true;
 		     // TODO print all stuff interpreted so far
@@ -315,20 +366,20 @@ Console::printf(const char* format, ...)
 		     // putChar(*format++);
 		     // retval++;
 		  }
-		  else if (flags & PRINTF_FLAG_LONG)
+		  else if (modifiers & PRINTF_MODIFIER_LONG)
 		  {
-		     //flags |= PRINTF_FLAG_LONGLONG;
-		     flags = 0;
+		     //modifiers |= PRINTF_MODIFIER_LONGLONG;
+		     modifiers = 0;
 		     finished = true;
 		  }
 		  else
 		  {
-		     flags |= PRINTF_FLAG_LONG;
+		     modifiers |= PRINTF_MODIFIER_LONG;
 		  }
 		  break;
 	       case 'h':
-		  if (flags & PRINTF_FLAG_LONG ||
-		      flags & PRINTF_FLAG_SHORTSHORT)
+		  if (modifiers & PRINTF_MODIFIER_LONG ||
+		      modifiers & PRINTF_MODIFIER_SHORTSHORT)
 		  {
 		     finished = true;
 		     // TODO print all stuff interpreted so far
@@ -336,13 +387,13 @@ Console::printf(const char* format, ...)
 		     // putChar(*format++);
 		     // retval++;
 		  }
-		  else if (flags & PRINTF_FLAG_SHORT)
+		  else if (modifiers & PRINTF_MODIFIER_SHORT)
 		  {
-		     flags |= PRINTF_FLAG_SHORTSHORT;
+		     modifiers |= PRINTF_MODIFIER_SHORTSHORT;
 		  }
 		  else
 		  {
-		     flags |= PRINTF_FLAG_SHORT;
+		     modifiers |= PRINTF_MODIFIER_SHORT;
 		  }
 		  break;
 	       case 'd':
@@ -372,7 +423,7 @@ Console::printf(const char* format, ...)
 		  break;
 	       case 's':
 		  // l modifier is valid, but unimplemented
-		  if (flags == PRINTF_FLAG_LONG || flags == 0)
+		  if (modifiers == PRINTF_MODIFIER_LONG || modifiers == 0)
 		  {
 		     type = PRINTF_TYPE_STRING;
 		  }
@@ -384,7 +435,7 @@ Console::printf(const char* format, ...)
 		  break;
 	       case 'c':
 		  // l modifier is valid, but unimplemented
-		  if (flags == PRINTF_FLAG_LONG || flags == 0)
+		  if (modifiers == PRINTF_MODIFIER_LONG || modifiers == 0)
 		  {
 		     type = PRINTF_TYPE_CHARACTER;
 		  }
@@ -404,7 +455,7 @@ Console::printf(const char* format, ...)
 	    // do the actual conversion
 	    if (finished)
 	    {
-	       retval += doVaPrint(&ap, type, flags);
+	       retval += doVaPrint(&ap, type, modifiers, flags);
 	    }
 	 }
       }

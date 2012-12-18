@@ -33,7 +33,7 @@ protected:
 
 private:
    static const int printfBufferSize = 128;
-   int doVaPrint(va_list* ap, int type, int flags);
+   int doVaPrint(va_list* ap, int type, int modifiers, int flags);
    void stepRow();
    void stepColumn();
    int currentRow;

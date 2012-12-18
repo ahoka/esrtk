@@ -76,6 +76,17 @@ Supervisor::run()
 
    console.printf("ptr:\t\t%p\n", (void *)s);
 
+   console.printf("%+d\n", sint);
+   console.printf("%+d\n", uint);
+   console.printf("% d\n", sint);
+   console.printf("% d\n", uint);
+
+   console.printf("%#x\n", 12346);
+   console.printf("%#x\n", 0);
+   console.printf("%#o\n", 12346);
+   console.printf("%#o\n", 0);
+
+
    for (;;)
    {
       asm volatile("hlt");
