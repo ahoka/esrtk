@@ -276,6 +276,7 @@ Console::doVaPrint(va_list* ap, int type, int modifiers, int flags)
    {
       unsigned long n = getUnsignedFromVa(ap, modifiers);
       
+      // XXX this will be incorrect when we have field width!
       if (flags & PRINTF_FLAGS_ALTERNATIVE && n != 0)
       {
 	 PRINTF_PUTCHAR('0');
