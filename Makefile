@@ -25,12 +25,12 @@ ifeq (${COMPILER}, clang)
 #CXXFLAGS+= 
 CC=		clang
 CXX=		clang
-else
+endif
+ifeq (${COMPILER}, gcc)
 CXX=		g++
 CC=		gcc
 CXXFLAGS+= -fcheck-new -nostartfiles -nodefaultlibs
 endif
-
 
 # x86
 # TODO: make an Include directory with public API only

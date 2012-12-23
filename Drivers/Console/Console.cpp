@@ -23,8 +23,24 @@ Console::putString(const char* str)
       retval++;
    }
 
+   setCursor(currentRow, currentColumn);
+
    return retval;
 }
+
+int
+Console::write(const char* str, int size)
+{
+   for (int i = 0; i < size; i++)
+   {
+      putChar(*str++);
+   }
+
+   setCursor(currentRow, currentColumn);
+
+   return size;
+}
+
 
 void
 Console::stepRow()

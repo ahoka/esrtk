@@ -18,6 +18,7 @@ public:
 
    void putChar(char ch);
    int putString(const char* str);
+   int write(const char* str, int size);
    virtual void putChar(int ch, int row, int column) = 0;
    virtual void clearScreen() = 0;
    virtual void setCursor(int row, int column) = 0;
