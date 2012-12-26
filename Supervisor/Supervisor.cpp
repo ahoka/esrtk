@@ -87,17 +87,15 @@ Supervisor::run()
    console.printf("%#o\n", 12346);
    console.printf("%#o\n", 0);
 
-   console.printf("Reading CPUID: ");
-   
-   uint32_t regs[4];
-   cpuid(0, regs);
+   char id[13];
+   uint32_t level = cpuid0(id);
 
-   cpuid_t* c = (cpuid_t *)regs;
+   console.printf("CPU Vendor ID: %s, Largest Standard Function: 0x%x\n",
+		  id, level);
 
-   console.write((const char *)&c->ebx, 4);
-   console.write((const char *)&c->edx, 4);
-   console.write((const char *)&c->ecx, 4);
-   //   console.printf(" 0x%x 0x%x 0x%x 0x%x\n", c->eax, c->ebx, c->ecx, c->edx);
+   uint32_t eflags = getEflags();
+
+   console.printf("EFLAGS: 0x%x\n", eflags);
 
    for (;;)
    {

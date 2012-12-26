@@ -39,3 +39,37 @@ cpuid:
 	popl %edi
 	popl %ebx
 	ret
+
+// u32 cpuid0(char* vendorid)
+.global cpuid0
+cpuid0:
+	pushl %ebx
+	pushl %edi
+	movl 12(%esp), %edi
+	xorl %eax, %eax
+	xorl %ecx, %ecx
+	xorl %ebx, %ebx
+	xorl %edx, %edx
+	cpuid
+	movl %ebx, 0(%edi)
+	movl %edx, 4(%edi)
+	movl %ecx, 8(%edi)
+	movb $0, 12(%edi)
+	popl %edi
+	popl %ebx
+	ret
+
+.global getEflags
+getEflags:
+	pushfl
+	popl %eax
+	ret
+
+
+.global setEflags
+setEflags:
+	movl 4(%esp), %eax
+	pushl %eax
+	popfl
+	ret
+
