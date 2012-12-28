@@ -23,11 +23,12 @@ void
 Supervisor::run()
 {
    VgaConsole console;
-
-   const char* s = "Hello World!";
-   
+  
    console.printf("Supervisor started\n\n");
 
+#if 0
+
+   const char* s = "Hello World!";
    unsigned int uint = 123456789u;
    unsigned short ushort = 12345;
    unsigned char uchar = 213;
@@ -86,16 +87,15 @@ Supervisor::run()
    console.printf("%#x\n", 0);
    console.printf("%#o\n", 12346);
    console.printf("%#o\n", 0);
-
+#endif
    char id[13];
    uint32_t level = cpuid0(id);
 
    console.printf("CPU Vendor ID: %s, Largest Standard Function: 0x%x\n",
 		  id, level);
 
-   uint32_t eflags = getEflags();
-
-   console.printf("EFLAGS: 0x%x\n", eflags);
+   int eflags = getEflags();
+   console.printf("eflags: 0x%x\n", eflags);
 
    for (;;)
    {

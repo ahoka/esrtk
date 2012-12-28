@@ -1,3 +1,4 @@
+#if 0
 // the descriptors
 .section rodata
 .align 16
@@ -24,6 +25,7 @@ gdtEntries:
 .byte 0x0 # attributes 1
 .byte 0x0 # attributes 2
 .byte 0x0 # base high
+#endif
 
 .text
 .align 16
