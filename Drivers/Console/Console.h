@@ -24,8 +24,9 @@ public:
    virtual void setCursor(int row, int column) = 0;
    virtual void scrollScreen() = 0;
 
-   // doesnt belong here
+   // should be moved to elsewhere and used through FILE(?)
    int printf(const char* format, ...);
+   int vprintf(const char* format, va_list ap);
 
 protected:
    virtual int getRows() = 0;
@@ -34,7 +35,7 @@ protected:
 
 private:
    static const int printfBufferSize = 128;
-   int doVaPrint(va_list* ap, int type, int modifiers, int flags);
+   int doVaPrint(va_list ap, int type, int modifiers, int flags);
    void stepRow();
    void stepColumn();
    int currentRow;

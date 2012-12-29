@@ -5,7 +5,7 @@
 #include "Supervisor.h"
 #include "Debug.h"
 #include <Assembly.h>
-#include <VgaConsole.h>
+#include <stdio.h>
 
 Supervisor::Supervisor()
 {
@@ -22,9 +22,9 @@ Supervisor::~Supervisor()
 void
 Supervisor::run()
 {
-   VgaConsole console;
+//   VgaConsole console;
   
-   console.printf("Supervisor started\n\n");
+   printf("Supervisor started\n\n");
 
 #if 0
 
@@ -91,11 +91,11 @@ Supervisor::run()
    char id[13];
    uint32_t level = cpuid0(id);
 
-   console.printf("CPU Vendor ID: %s, Largest Standard Function: 0x%x\n",
-		  id, level);
+   printf("CPU Vendor ID: %s, Largest Standard Function: 0x%x\n",
+	  id, level);
 
    int eflags = getEflags();
-   console.printf("eflags: 0x%x\n", eflags);
+   printf("eflags: 0x%x\n", eflags);
 
    for (;;)
    {
