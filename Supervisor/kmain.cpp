@@ -1,4 +1,5 @@
 #include <Supervisor/Supervisor.h>
+#include <Gdt.h>
 
 extern "C" void
 kmain(void)
@@ -17,7 +18,7 @@ kmain(void)
 	/* (http://www.gnu.org/software/grub/manual/multiboot/multiboot.html#multiboot_002eh) */
 	/* or do your offsets yourself. The following is merely an example. */
 	//char * boot_loader_name =(char*) ((long*)mbd)[16];
-	
+
 	Supervisor supervisor;
 	supervisor.run();
  

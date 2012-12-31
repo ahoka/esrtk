@@ -1,35 +1,35 @@
-#if 0
 // the descriptors
 .section .rodata
 .align 16
 
-.global gdtEntries
-gdtEntries:
-.word 0x0 # segment limit
-.word 0x0 # base low
-.byte 0x0 # base middle
-.byte 0x0 # attributes 1
-.byte 0x0 # attributes 2
-.byte 0x0 # base high
+gdt:
+.long 0x00000000
+.long 0x00000000
 
-.word 0xffff # segment limit
-.word 0x0 # base low
-.byte 0x0 # base middle
-.byte 0x0 # attributes 1
-.byte 0x0 # attributes 2
-.byte 0x0 # base high
+.long 0x0000ffff
+.long 0x00cf9a00
 
-.word 0xffff # segment limit
-.word 0x0 # base low
-.byte 0x0 # base middle
-.byte 0x0 # attributes 1
-.byte 0x0 # attributes 2
-.byte 0x0 # base high
-#endif
+.long 0x0000ffff
+.long 0x00cf9200
+egdt:
+
+gdtr:
+.word egdt - gdt - 1
+.long gdt
 
 .text
 .align 16
 
-.global setupGdt
-setupGdt:
-	nop
+.global gdtinit
+gdtinit:
+	movl $gdtr, %eax
+	lgdt (%eax)
+	ljmp $0x08, $gdtflush
+gdtflush:
+	movl $0x10, %eax
+	movl %eax, %ds
+	movl %eax, %es
+	movl %eax, %fs
+	movl %eax, %gs
+	movl %eax, %ss
+	ret
