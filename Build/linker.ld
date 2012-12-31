@@ -7,19 +7,28 @@ SECTIONS
     .text ALIGN (0x1000) :
     {
         *(.text)
+	*(.text.startup)
         *(.gnu.linkonce.t*)
+    }
+
+    .ctors ALIGN (0x1000) :
+    {
+        __start_ctors = .;
+        *(SORT(.ctors))
+        *(SORT(.init_array))
+        __end_ctors = .;
+    }
+
+    .dtors ALIGN (0x1000) :
+    {
+        __start_dtors = .;
+        *(SORT(.dtors))
+	*(SORT(.fini_array))
+        __end_dtors = .;
     }
 
     .rodata ALIGN (0x1000) :
     {
-        start_ctors = .;
-        *(SORT(.ctors.*))  /* Note the "SORT" */
-        end_ctors = .;
-
-        start_dtors = .;
-        *(SORT(.dtors.*))
-        end_dtors = .;
-
         *(.rodata*)
         *(.gnu.linkonce.r*)
     }
@@ -32,16 +41,17 @@ SECTIONS
 
     .bss :
     {
-        sbss = .;
+        __sbss = .;
         *(COMMON)
         *(.bss)
         *(.gnu.linkonce.b*)
-        ebss = .;
+        __ebss = .;
     }
 
     /DISCARD/ :
     {
         *(.comment)
+        *(.comment.*)
         *(.eh_frame) /* discard this, unless you are implementing runtime support for C++ exceptions. */
     }
 }

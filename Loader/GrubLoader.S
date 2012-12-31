@@ -25,24 +25,24 @@ loader:
 	movl  %eax, magic                   # Multiboot magic number
 	movl  %ebx, mbd                     # Multiboot data structure
 
-	mov  $start_ctors, %ebx             # call the constructors
+	mov  $__start_ctors, %ebx             # call the constructors
 	jmp  2f
 1:
 	call *(%ebx)
 	add  $4, %ebx
 2:
-	cmp  $end_ctors, %ebx
+	cmp  $__end_ctors, %ebx
 	jb   1b
 
 	call kmain                          # call kernel proper
 
-	mov  $end_dtors, %ebx               # call the destructors
+	mov  $__end_dtors, %ebx               # call the destructors
 	jmp  4f
 3:
 	sub  $4, %ebx
 	call *(%ebx)
 4:
-	cmp  $start_dtors, %ebx
+	cmp  $__start_dtors, %ebx
 	ja   3b
 
 	cli

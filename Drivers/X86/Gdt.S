@@ -1,6 +1,6 @@
 #if 0
 // the descriptors
-.section rodata
+.section .rodata
 .align 16
 
 .global gdtEntries
