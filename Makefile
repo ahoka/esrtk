@@ -39,6 +39,7 @@ CXXFLAGS+=	-I${PWD}/Supervisor
 CXXFLAGS+=	-I${PWD}/Drivers
 CXXFLAGS+=	-I${PWD}/Drivers/X86
 CXXFLAGS+=	-I${PWD}/Drivers/Console
+CXXFLAGS+=	-I${PWD}/Drivers/Pci
 
 # The blessed extensions are cpp, h and S
 CPPFILES:=	$(shell find . -name '*.cpp')

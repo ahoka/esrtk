@@ -6,6 +6,8 @@
 #include "Debug.h"
 #include <Assembly.h>
 #include <stdio.h>
+#include <Pci.h>
+#include <System.h>
 
 Supervisor::Supervisor()
 {
@@ -91,11 +93,46 @@ Supervisor::run()
    char id[13];
    uint32_t level = cpuid0(id);
 
-   printf("CPU Vendor ID: %s, Largest Standard Function: 0x%x\n",
+   printf("CPU Vendor ID: %s, Largest Standard Function: %d\n",
 	  id, level);
+   
+   // uint32_t pciid = Pci::readConfigurationRegister32(0, 0, 0, 0);
+//   uint32_t v;
+//   uint32_t d;
+   
+   // v = Pci::getDeviceId(0, 0, 0);
+   // d = Pci::getVendorId(0, 0, 0);
 
-   int eflags = getEflags();
-   printf("eflags: 0x%x\n", eflags);
+   // printf("Vendor ID: 0x%x\n", v);
+   // printf("Device ID: 0x%x\n", d);
+
+//   v = Pci::getVendorId(0, 1, 0);
+//   d = Pci::getDeviceId(0, 1, 0);
+
+//   printf("Vendor ID: 0x%x\n", v);
+//   printf("Device ID: 0x%x\n", d);
+
+   for (int bus = 0; bus < 256; bus++)
+   {
+      for (int dev = 0; dev < 32; dev++)
+      {
+         int vid = Pci::getVendorId(bus, dev, 0);
+   	   if (vid != 0xffff)
+	      {
+	         int did = Pci::getDeviceId(bus, dev, 0);
+	         printf("pci%d: D%d:F%d: 0x%x:0x%x\n", bus, dev, 0, vid, did);
+	      }
+      }
+   }
+
+   printf("done\n");
+
+   // printf("Vendor/Device ID: 0x%x\n", pciid);
+   // printf("Vendor ID: 0x%x\n", vendor);
+   // printf("Device ID: 0x%x\n", device);
+
+   //   int eflags = getEflags();
+   //   printf("eflags: 0x%x\n", eflags);
 
    for (;;)
    {
