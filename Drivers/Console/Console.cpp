@@ -129,70 +129,70 @@ enum {
 #define PRINTF_PUTCHAR(x) (putChar(x), retval++)
 
 unsigned long
-getUnsignedFromVa(va_list ap, int modifiers)
+getUnsignedFromVa(va_list* ap, int modifiers)
 {
       // no long long for now
       unsigned long n = 0;
       if (modifiers & PRINTF_MODIFIER_LONG)
       {
-	 n = va_arg(ap, unsigned long);
+	 n = va_arg(*ap, unsigned long);
       }
       else if (modifiers & PRINTF_MODIFIER_LONGLONG)
       {
-	 //n = va_arg(ap, unsigned long long);
-	 unsigned long tmp = va_arg(ap, unsigned long);
-	 n = va_arg(ap, unsigned long);
+	 //n = va_arg(*ap, unsigned long long);
+	 unsigned long tmp = va_arg(*ap, unsigned long);
+	 n = va_arg(*ap, unsigned long);
       }
       else if (modifiers & PRINTF_MODIFIER_SHORT)
       {
-	 n = va_arg(ap, unsigned int);
+	 n = va_arg(*ap, unsigned int);
       }
       else if (modifiers & PRINTF_MODIFIER_SHORTSHORT)
       {
-	 n = va_arg(ap, unsigned int);
+	 n = va_arg(*ap, unsigned int);
       }
       else
       {
-	 n = va_arg(ap, unsigned int);
+	 n = va_arg(*ap, unsigned int);
       }
       
       return n;
 }
 
 long
-getSignedFromVa(va_list ap, int modifiers)
+getSignedFromVa(va_list* ap, int modifiers)
 {
       // no long long for now
       long n = 0;
 
       if (modifiers & PRINTF_MODIFIER_LONG)
       {
-	 n = va_arg(ap, long);
+	 n = va_arg(*ap, long);
       }
       else if (modifiers & PRINTF_MODIFIER_LONGLONG)
       {
-	 //n = va_arg(ap,  long long);
-	 long tmp = va_arg(ap, long);
-	 n = va_arg(ap, long);
+	 //n = va_arg(*ap,  long long);
+	 long tmp = va_arg(*ap, long);
+	 n = va_arg(*ap, long);
       }
       else if (modifiers & PRINTF_MODIFIER_SHORT)
       {
-	 n = va_arg(ap, int);
+	 n = va_arg(*ap, int);
       }
       else if (modifiers & PRINTF_MODIFIER_SHORTSHORT)
       {
-	 n = va_arg(ap, int);
+	 n = va_arg(*ap, int);
       }
       else
       {
-	 n = va_arg(ap, int);
+	 n = va_arg(*ap, int);
       }
       
       return n;
 }
 
 int
-Console::doVaPrint(va_list ap, int type, int modifiers, int flags)
+Console::doVaPrint(va_list* ap, int type, int modifiers, int flags)
 {
    const char hexl[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
 		       'a', 'b', 'c', 'd', 'e', 'f' };
@@ -207,7 +207,7 @@ Console::doVaPrint(va_list ap, int type, int modifiers, int flags)
    if (type == PRINTF_TYPE_POINTER)
    {
       // XXX uintptr_t ?
-      unsigned long p = (unsigned long)va_arg(ap, void*);
+      unsigned long p = (unsigned long)va_arg(*ap, void*);
 
       putChar('0');
       putChar('x');
@@ -226,7 +226,7 @@ Console::doVaPrint(va_list ap, int type, int modifiers, int flags)
 
       if (type == PRINTF_TYPE_DECIMAL)
       {
-	 long sn = getSignedFromVa(ap, modifiers);
+      	 long sn = getSignedFromVa(ap, modifiers);
 	 if (sn < 0)
 	 {
 	    PRINTF_PUTCHAR('-');
@@ -307,12 +307,12 @@ Console::doVaPrint(va_list ap, int type, int modifiers, int flags)
    }
    else if (type == PRINTF_TYPE_STRING)
    {
-      const char* str = va_arg(ap, const char*);
+      const char* str = va_arg(*ap, const char*);
       retval += putString(str);
    }
    else if (type == PRINTF_TYPE_CHARACTER)
    {
-      unsigned char ch = va_arg(ap, int);
+      unsigned char ch = va_arg(*ap, int);
       putChar(ch);
       retval += 1;
    }
@@ -484,7 +484,7 @@ Console::vprintf(const char* format, va_list ap)
 	    // do the actual conversion
 	    if (finished)
 	    {
-	       retval += doVaPrint(ap, type, modifiers, flags);
+	       retval += doVaPrint(&ap, type, modifiers, flags);
 	    }
 	 }
       }
