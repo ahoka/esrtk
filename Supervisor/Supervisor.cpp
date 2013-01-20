@@ -100,18 +100,18 @@ Supervisor::run()
 //   uint32_t v;
 //   uint32_t d;
    
-   // v = Pci::getDeviceId(0, 0, 0);
-   // d = Pci::getVendorId(0, 0, 0);
-
-   // printf("Vendor ID: 0x%x\n", v);
-   // printf("Device ID: 0x%x\n", d);
-
-//   v = Pci::getVendorId(0, 1, 0);
-//   d = Pci::getDeviceId(0, 1, 0);
+//   v = Pci::getDeviceId(0, 0, 0);
+//   d = Pci::getVendorId(0, 0, 0);
 
 //   printf("Vendor ID: 0x%x\n", v);
 //   printf("Device ID: 0x%x\n", d);
 
+   // v = Pci::getVendorId(0, 1, 0);
+   // d = Pci::getDeviceId(0, 1, 0);
+
+   // printf("Vendor ID: 0x%x\n", v);
+   // printf("Device ID: 0x%x\n", d);
+#if 1
    for (int bus = 0; bus < 256; bus++)
    {
       for (int dev = 0; dev < 32; dev++)
@@ -124,7 +124,7 @@ Supervisor::run()
 	      }
       }
    }
-
+#endif
    printf("done\n");
 
    // printf("Vendor/Device ID: 0x%x\n", pciid);
