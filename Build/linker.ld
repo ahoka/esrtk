@@ -4,6 +4,11 @@ SECTIONS
 {
     . = 0x00100000;
 
+    .magic :
+    {
+	*(.magic)
+    }
+
     .text ALIGN (0x1000) :
     {
         *(.text)
@@ -52,6 +57,6 @@ SECTIONS
     {
         *(.comment)
         *(.comment.*)
-        *(.eh_frame) /* discard this, unless you are implementing runtime support for C++ exceptions. */
+        *(.eh_frame) /* C++ exceptions. */
     }
 }

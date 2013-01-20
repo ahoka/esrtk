@@ -7,18 +7,22 @@
 .set MAGIC,    0x1BADB002               # 'magic number' lets bootloader find the header
 .set CHECKSUM, -(MAGIC + FLAGS)         # checksum required
 
-.align 4
+#.section .magic
+#.balign 4
 .long MAGIC
 .long FLAGS
 .long CHECKSUM
 
 # reserve initial kernel stack space
-.set STACKSIZE, 0x4000                  # that is, 16k.
+.set STACKSIZE, 0x8000
 
-.comm stack, STACKSIZE, 32             # reserve 16k stack on a doubleword boundary
+.comm stack, STACKSIZE, 32             # reserve stack on a doubleword boundary
 #.lcomm stack, STACKSIZE
 .comm  mbd, 4                           # we will use this in kmain
 .comm  magic, 4                         # we will use this in kmain
+
+#.section .text
+#.balign 16
 
 loader:
 	mov   $(stack + STACKSIZE), %esp    # set up the stack
