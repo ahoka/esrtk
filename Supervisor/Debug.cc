@@ -10,8 +10,8 @@
 #include <Power.hh>
 #include <stdio.h>
 
-static void
-panic(const char* message)
+void
+Debug::panic(const char* message)
 {
    printf("Supervisor check: %s\n", message);
 
