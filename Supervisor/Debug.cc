@@ -8,6 +8,7 @@
 #include <Debug.hh>
 #include <StackTrace.hh>
 #include <Power.hh>
+#include <stdio.h>
 
 static void
 panic(const char* message)

@@ -1,7 +1,7 @@
 #ifndef VGACONSOLE_H
 #define	VGACONSOLE_H
 
-#include <Console/Console.hh>
+#include <Console.hh>
 #include <stdint.h>
 
 const int VGA_VRAM_BASE = 0xb8000;

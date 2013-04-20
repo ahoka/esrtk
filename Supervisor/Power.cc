@@ -5,7 +5,7 @@
  * Created on August 17, 2012, 1:39 PM
  */
 
-#include "Power.h"
+#include "Power.hh"
 
 Power::Power()
 {

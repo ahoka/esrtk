@@ -1,6 +1,7 @@
 #include <Pci.hh>
-#include <stdio.hh>
 #include <IoPort.hh>
+
+#include <stdio.h>
 
 class X86Pci
 {

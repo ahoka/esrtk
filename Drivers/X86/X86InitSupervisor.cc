@@ -1,6 +1,6 @@
 #ifdef __i386__
 
-#include "VgaConsole.h"
+#include "VgaConsole.hh"
 
 namespace System {
    VgaConsole console;

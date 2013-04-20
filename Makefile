@@ -27,21 +27,17 @@ ifeq (${COMPILER}, clang)
 CC=		clang
 CXX=		clang++
 endif
-ifeq (${COMPILER}, gcc)
+ifeq (${COMPILER}, gnu)
 CXX=		g++
 CC=		gcc
-CXXFLAGS+= -fcheck-new -nostartfiles -nodefaultlibs
+CXXFLAGS+= 	-fcheck-new -nostartfiles -nodefaultlibs
 endif
 
 # x86
 # TODO: make an Include directory with public API only
-CXXFLAGS+=	-I${PWD}
-CXXFLAGS+=	-I${PWD}/Supervisor
-CXXFLAGS+=	-I${PWD}/Drivers
+CXXFLAGS+=	-I${PWD}/Library
+CXXFLAGS+=	-I${PWD}/Include
 CXXFLAGS+=	-I${PWD}/Drivers/X86
-CXXFLAGS+=	-I${PWD}/Drivers/Console
-CXXFLAGS+=	-I${PWD}/Drivers/Pci
-CXXFLAGS+=	-I${PWD}/Drivers/Foundation
 
 # The blessed extensions are c, hh and S
 CPPFILES:=	$(shell find . -name '*.cc')

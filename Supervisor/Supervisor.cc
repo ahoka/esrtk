@@ -2,13 +2,14 @@
  * Main class for the supervisor
  */
 
-#include <Supervisor.hh>
+#include "Supervisor.hh"
 #include <Debug.hh>
 #include <Assembly.hh>
-#include <stdio.hh>
 #include <Pci.hh>
 #include <System.hh>
 #include <IoPort.hh>
+
+#include <stdio.h>
 
 Supervisor::Supervisor()
 {

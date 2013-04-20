@@ -5,8 +5,8 @@
  * Created on August 17, 2012, 1:36 PM
  */
 
-#include "VgaConsole.h"
-#include "IoPort.h"
+#include "VgaConsole.hh"
+#include "IoPort.hh"
 
 VgaConsole::VgaConsole()
   :  vram((VgaCharacter* )VGA_VRAM_BASE)
