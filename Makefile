@@ -43,20 +43,20 @@ CXXFLAGS+=	-I${PWD}/Drivers/Console
 CXXFLAGS+=	-I${PWD}/Drivers/Pci
 CXXFLAGS+=	-I${PWD}/Drivers/Foundation
 
-# The blessed extensions are cpp, h and S
-CPPFILES:=	$(shell find . -name '*.cpp')
+# The blessed extensions are c, hh and S
+CPPFILES:=	$(shell find . -name '*.cc')
 ASMFILES:=	$(shell find . -name '*.S')
 
 all:	kernel.img
 	echo done
 
-%.o: %.cpp Makefile
-	${CXX} ${CXXFLAGS} -c -o $*.o $*.cpp
+%.o: %.cc Makefile
+	${CXX} ${CXXFLAGS} -c -o $*.o $*.cc
 
 %.o: %.S Makefile
 	${AS} ${ASFLAGS} -o $*.o $*.S
 
-kernel.elf: Loader/GrubLoader.o ${CPPFILES:.cpp=.o} ${ASMFILES:.S=.o}
+kernel.elf: Loader/GrubLoader.o ${CPPFILES:.cc=.o} ${ASMFILES:.S=.o}
 	${LD} ${LDFLAGS} -T Build/linker.ld -o $@ $^
 
 kernel.img: kernel.elf
@@ -64,7 +64,7 @@ kernel.img: kernel.elf
 	cat Loader/stage1 Loader/stage2 pad $< > $@
 
 clean:
-	-rm kernel.elf pad kernel.img ${CPPFILES:.cpp=.o} ${ASMFILES:.S=.o} 2>/dev/null
+	-rm kernel.elf pad kernel.img ${CPPFILES:.cc=.o} ${ASMFILES:.S=.o} 2>/dev/null
 
 run:
 	${QEMU} -kernel kernel.elf
