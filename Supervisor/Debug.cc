@@ -5,9 +5,9 @@
  * Created on August 17, 2012, 1:39 PM
  */
 
-#include "Debug.h"
+#include <Debug.hh>
 #include <StackTrace.hh>
-#include <Power.h>
+#include <Power.hh>
 
 static void
 panic(const char* message)

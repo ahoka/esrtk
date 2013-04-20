@@ -1,4 +1,4 @@
-#include <Idt.h>
+#include <Idt.hh>
 
 #define NUMIDT 256
 
