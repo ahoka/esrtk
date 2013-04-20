@@ -6,21 +6,16 @@
  */
 
 #include "Debug.h"
-
-Debug::Debug()
-{
-}
-
-Debug::Debug(const Debug& /*orig*/)
-{
-}
-
-Debug::~Debug()
-{
-}
+#include <StackTrace.hh>
+#include <Power.h>
 
 static void
-panic(const char* /*message*/)
+panic(const char* message)
 {
+   printf("Supervisor check: %s\n", message);
+
+   StackTrace::printStackTrace();
+
+   Power::halt();
 }
 

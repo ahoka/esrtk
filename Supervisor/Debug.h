@@ -12,12 +12,12 @@
 
 class Debug {
 private:
-	Debug();
-	Debug(const Debug& orig);
-	virtual ~Debug();
+   Debug() {};
+   Debug(const Debug& orig) {};
+   ~Debug() {};
 public:
-	static void panic(const char*);
-	static void printConsole(const char*);
+   static void panic(const char*);
+   static void printConsole(const char*);
 };
 
 #endif	/* DEBUG_H */

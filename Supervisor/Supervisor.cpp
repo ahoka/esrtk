@@ -154,7 +154,7 @@ Supervisor::run()
    //   int eflags = getEflags();
    //   printf("eflags: 0x%x\n", eflags);
 
-   printf("\n\CPU will now halt.\n");
+   printf("\n\nCPU will now halt.\n");
    for (;;)
    {
       asm volatile("hlt");

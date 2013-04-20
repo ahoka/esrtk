@@ -14,7 +14,7 @@ private:
 	Power(const Power& orig);
 	virtual ~Power();
 public:
-	static void halt(const char*);
+	static void halt();
 	static void reboot();
 };
 

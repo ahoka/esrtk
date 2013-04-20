@@ -20,11 +20,12 @@ CFLAGS=		-std=c99 ${COPTS}
 
 CXXFLAGS=	-std=c++11 ${COPTS} \
 		-fno-exceptions -fno-rtti \
+		-Weffc++
 
 ifeq (${COMPILER}, clang)
 #CXXFLAGS+= 
 CC=		clang
-CXX=		clang
+CXX=		clang++
 endif
 ifeq (${COMPILER}, gcc)
 CXX=		g++
@@ -40,6 +41,7 @@ CXXFLAGS+=	-I${PWD}/Drivers
 CXXFLAGS+=	-I${PWD}/Drivers/X86
 CXXFLAGS+=	-I${PWD}/Drivers/Console
 CXXFLAGS+=	-I${PWD}/Drivers/Pci
+CXXFLAGS+=	-I${PWD}/Drivers/Foundation
 
 # The blessed extensions are cpp, h and S
 CPPFILES:=	$(shell find . -name '*.cpp')
