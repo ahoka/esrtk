@@ -8,6 +8,7 @@
 #include <Pci.hh>
 #include <System.hh>
 #include <IoPort.hh>
+#include <Power.hh>
 
 #include <stdio.h>
 
@@ -154,7 +155,7 @@ Supervisor::run()
 
    //   int eflags = getEflags();
    //   printf("eflags: 0x%x\n", eflags);
-
+   
    Debug::panic("Nothing to do here");
 
    //   KASSERT(1 == 1);
