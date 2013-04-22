@@ -52,7 +52,7 @@ all:	kernel.img
 %.o: %.S Makefile
 	${AS} ${ASFLAGS} -o $*.o $*.S
 
-kernel.elf: Loader/GrubLoader.o ${CPPFILES:.cc=.o} ${ASMFILES:.S=.o}
+kernel.elf: Loader/MultiLoader.o ${CPPFILES:.cc=.o} ${ASMFILES:.S=.o}
 	${LD} ${LDFLAGS} -T Build/linker.ld -o $@ $^
 
 kernel.img: kernel.elf
