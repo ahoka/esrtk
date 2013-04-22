@@ -37,7 +37,7 @@ endif
 # TODO: make an Include directory with public API only
 CXXFLAGS+=	-I${PWD}/Library
 CXXFLAGS+=	-I${PWD}/Include
-CXXFLAGS+=	-I${PWD}/Drivers/X86
+CXXFLAGS+=	-I${PWD}/Include/X86
 
 # The blessed extensions are c, hh and S
 CPPFILES:=	$(shell find . -name '*.cc')
