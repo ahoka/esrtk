@@ -20,22 +20,24 @@ typedef uint16_t VgaCharacter;
 
 class VgaConsole : public Console {
 public:
-	VgaConsole();
-	virtual ~VgaConsole();
+   VgaConsole();
+   virtual ~VgaConsole();
 
-	int getChar();
-	int getColumns();
-	int getRows();
-	void putChar(int ch, int row, int column);
-	void setCursor(int row, int column);
-	void scrollScreen();
-	void clearScreen();
-	using Console::putChar;
+   int getChar();
+   int getColumns();
+   int getRows();
+   void putChar(int ch, int row, int column);
+   void setCursor(int row, int column);
+   void scrollScreen();
+   void clearScreen();
+   using Console::putChar;
 
 private:
-	VgaConsole(const VgaConsole& orig);
+   VgaConsole(const VgaConsole& orig);
+   VgaConsole& operator=(const VgaConsole& orig);
+   
 
-	VgaCharacter* vram;
+   VgaCharacter* vram;
 };
 
 #endif	/* VGACONSOLE_H */

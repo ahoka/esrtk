@@ -1,5 +1,6 @@
 #include <Pci.hh>
 #include <IoPort.hh>
+#include <Debug.hh>
 
 #include <stdio.h>
 
@@ -49,4 +50,41 @@ Pci::readConfigurationRegister32(uint8_t bus, uint8_t device, uint8_t function, 
    outl(X86Pci::PCI_CONFIG_ADDRESS, tag);
 
    return inl(X86Pci::PCI_CONFIG_DATA);
+}
+
+void
+Pci::init()
+{
+   outl(PCI_MODE1_ADDRESS_REG, PCI_MODE1_ENABLE);
+   outb(PCI_MODE1_ADDRESS_REG + 3, 0);
+   outw(PCI_MODE1_ADDRESS_REG + 2, 0);
+   uint32_t val = inl(PCI_MODE1_ADDRESS_REG);
+   if ((val & 0x80fffffc) != PCI_MODE1_ENABLE) {
+      Debug::panic("PCI: Not Mode1");
+   } else {
+      printf("PCI init OK.\n");
+   }
+}
+
+void
+Pci::listDevices()
+{
+   printf("\nListing PCI devices on system:\n");
+
+   for (int bus = 0; bus < 256; bus++)
+   {
+      for (int dev = 0; dev < 32; dev++)
+      {
+	 for (int fun = 0; fun < 8; fun++)
+	 {
+	 
+	    int vid = Pci::getVendorId(bus, dev, fun);
+	    if (vid != 0xffff)
+	    {
+	       int did = Pci::getDeviceId(bus, dev, fun);
+	       printf("PCI%d: D%d:F%d: 0x%x:0x%x\n", bus, dev, fun, vid, did);
+	    }
+	 }
+      }
+   }
 }

@@ -120,39 +120,8 @@ Supervisor::run()
    // printf("Vendor ID: 0x%x\n", v);
    // printf("Device ID: 0x%x\n", d);
 
-#if 1
-#define	PCI_MODE1_ENABLE	0x80000000UL
-#define	PCI_MODE1_ADDRESS_REG	0x0cf8
-#define	PCI_MODE1_DATA_REG	0x0cfc
-
-   outl(PCI_MODE1_ADDRESS_REG, PCI_MODE1_ENABLE);
-   outb(PCI_MODE1_ADDRESS_REG + 3, 0);
-   outw(PCI_MODE1_ADDRESS_REG + 2, 0);
-   uint32_t val = inl(PCI_MODE1_ADDRESS_REG);
-   if ((val & 0x80fffffc) != PCI_MODE1_ENABLE) {
-      printf("not mode1?\n");
-   } else {
-      printf("PCI OK.\n");
-   }
-   
-   printf("\nListing PCI devices on system:\n");
-   for (int bus = 0; bus < 256; bus++)
-   {
-      for (int dev = 0; dev < 32; dev++)
-      {
-	 for (int fun = 0; fun < 8; fun++)
-	 {
-	 
-	    int vid = Pci::getVendorId(bus, dev, fun);
-	    if (vid != 0xffff)
-	    {
-	       int did = Pci::getDeviceId(bus, dev, fun);
-	       printf("PCI%d: D%d:F%d: 0x%x:0x%x\n", bus, dev, fun, vid, did);
-	    }
-	 }
-      }
-   }
-#endif
+   Pci::init();
+   Pci::listDevices();
 
    // printf("Vendor/Device ID: 0x%x\n", pciid);
    // printf("Vendor ID: 0x%x\n", vendor);

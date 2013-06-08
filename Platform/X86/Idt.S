@@ -30,7 +30,7 @@ isr0:
 	pushw $0
 	pushw $0
 
-	jmpl call_isr
+	jmp call_isr
 
 call_isr:
 	push_context
