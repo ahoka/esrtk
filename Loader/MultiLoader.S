@@ -29,7 +29,12 @@ loader:
 	movl  %eax, magic                   # Multiboot magic number
 	movl  %ebx, mbd                     # Multiboot data structure
 
-	call gdtinit
+//	cli
+	
+	call initGdt
+	call initSupervisor
+
+//	sti
 
 	mov  $__start_ctors, %ebx             # call the constructors
 	jmp  2f

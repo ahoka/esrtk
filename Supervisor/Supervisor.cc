@@ -24,12 +24,17 @@ Supervisor::~Supervisor()
 {
 }
 
+extern uint32_t mbd;
+extern uint32_t magic;
+
 void
 Supervisor::run()
 {
 //   VgaConsole console;
   
    printf("Supervisor started\n\n");
+
+//   printf("Magic: 0x%x, MultiBoot: 0x%x\n", magic, mbd);
 
 #if 0
 
@@ -155,8 +160,14 @@ Supervisor::run()
 
    //   int eflags = getEflags();
    //   printf("eflags: 0x%x\n", eflags);
-   
+
+   // printf("divzero!\n");
+   // volatile int a = val / 0;
+   // printf("done!\n");
+         
    Debug::panic("Nothing to do here");
 
    //   KASSERT(1 == 1);
+
+   for(;;) volatile int vola = 1;
 }

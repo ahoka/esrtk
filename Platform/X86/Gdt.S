@@ -20,8 +20,8 @@ gdtr:
 .text
 .align 16
 
-.global gdtinit
-gdtinit:
+.global initGdt
+initGdt:
 	movl $gdtr, %eax
 	lgdt (%eax)
 	ljmp $0x08, $gdtflush

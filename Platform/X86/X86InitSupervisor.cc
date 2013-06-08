@@ -6,9 +6,14 @@ namespace System {
    VgaConsole console;
 }
 
-void
+extern "C" void initGdt();
+extern "C" void initInterrupts();
+
+extern "C" void
 initSupervisor()
 {
+   //  initGdt();
+   initInterrupts();
 }
 
 #endif

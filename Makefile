@@ -9,7 +9,7 @@ ASFLAGS=	-march=i686 --32
 
 LDFLAGS=	-melf_i386
 
-COPTS=		-O2 -march=i386 -m32 \
+COPTS=		-O0 -march=i386 -m32 -g3 \
 		-Wall -Wextra \
 		-nostdlib -fno-builtin \
 		-fno-stack-protector
