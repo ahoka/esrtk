@@ -39,9 +39,20 @@ CXXFLAGS+=	-I${PWD}/Library
 CXXFLAGS+=	-I${PWD}/Include
 CXXFLAGS+=	-I${PWD}/Include/X86
 
+SOURCES_MI:=	Supervisor Library Drivers/Mi
+SOURCES_X86:=	Drivers/X86 Platform/X86
+
 # The blessed extensions are c, hh and S
-CPPFILES:=	$(shell find . -name '*.cc')
-ASMFILES:=	$(shell find . -name '*.S')
+# CPPFILES:=	$(shell find Supervisor -name '*.cc')
+# CPPFILES+=	$(shell find Library -name '*.cc')
+# CPPFILES+=	$(shell find Drivers/Mi -name '*.cc')
+# CPPFILES+=	$(shell find Drivers/X86 -name '*.cc')
+
+CPPFILES:=	$(shell find $(SOURCES_MI) -name '*.cc')
+CPPFILES+=	$(shell find $(SOURCES_X86) -name '*.cc')
+
+ASMFILES:=	$(shell find $(SOURCES_MI) -name '*.S')
+ASMFILES+=	$(shell find $(SOURCES_X86) -name '*.S')
 
 all:	kernel.img
 	echo done
