@@ -49,7 +49,7 @@ VgaConsole::putChar(int ch, int row, int column)
       return;
    }
 
-   short repr = (ch & 0xff) | (0x07 << 8);
+   short repr = (ch & 0xff) | (0x1f << 8);
 
    vram[row * getColumns() + column] = repr;
 }

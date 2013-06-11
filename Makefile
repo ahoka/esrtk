@@ -3,7 +3,7 @@ LD=		ld
 QEMU=		qemu-system-i386
 
 #COMPILER=	clang
-COMPILER=	gnu
+COMPILER?=	gnu
 
 ASFLAGS=	-march=i686 --32
 
@@ -39,8 +39,8 @@ CXXFLAGS+=	-I${PWD}/Library
 CXXFLAGS+=	-I${PWD}/Include
 CXXFLAGS+=	-I${PWD}/Include/X86
 
-SOURCES_MI:=	Supervisor Library Drivers/Mi
-SOURCES_X86:=	Drivers/X86 Platform/X86
+SOURCES_MI:=	Supervisor Library Drivers
+SOURCES_X86:=	Drivers Platform
 
 # The blessed extensions are c, hh and S
 # CPPFILES:=	$(shell find Supervisor -name '*.cc')
@@ -74,7 +74,7 @@ clean:
 	-rm kernel.elf pad kernel.img ${CPPFILES:.cc=.o} ${ASMFILES:.S=.o} 2>/dev/null
 
 run:
-	${QEMU} -kernel kernel.elf
+	${QEMU} -kernel kernel.elf -monitor stdio -boot order=c 
 
 run-grub:
 	${QEMU} -fda kernel.img

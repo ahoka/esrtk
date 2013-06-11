@@ -130,13 +130,17 @@ Supervisor::run()
    //   int eflags = getEflags();
    //   printf("eflags: 0x%x\n", eflags);
 
-   // printf("divzero!\n");
-   // volatile int a = val / 0;
-   // printf("done!\n");
+   printf("divzero!\n");
+   volatile int a = 1;
+   volatile int b = a / 0;
+   printf("done!\n");
          
    Debug::panic("Nothing to do here");
 
    //   KASSERT(1 == 1);
 
-   for(;;) volatile int vola = 1;
+   for (;;)
+   {
+      asm volatile("pause");
+   }
 }

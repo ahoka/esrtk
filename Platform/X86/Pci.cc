@@ -60,7 +60,8 @@ Pci::init()
    outw(PCI_MODE1_ADDRESS_REG + 2, 0);
    uint32_t val = inl(PCI_MODE1_ADDRESS_REG);
    if ((val & 0x80fffffc) != PCI_MODE1_ENABLE) {
-      Debug::panic("PCI: Not Mode1");
+//      Debug::panic("PCI: Not Mode1");
+      printf("PCI init FAILED! Not MODE1 PCI?\n");
    } else {
       printf("PCI init OK.\n");
    }
