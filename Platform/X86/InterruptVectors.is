@@ -1,0 +1,1786 @@
+.global isr0
+isr0:
+	 cli
+	 pushl $0
+	 pushl $0
+	 jmp call_isr
+
+.global isr1
+isr1:
+	 cli
+	 pushl $0
+	 pushl $1
+	 jmp call_isr
+
+.global isr2
+isr2:
+	 cli
+	 pushl $0
+	 pushl $2
+	 jmp call_isr
+
+.global isr3
+isr3:
+	 cli
+	 pushl $0
+	 pushl $3
+	 jmp call_isr
+
+.global isr4
+isr4:
+	 cli
+	 pushl $0
+	 pushl $4
+	 jmp call_isr
+
+.global isr5
+isr5:
+	 cli
+	 pushl $0
+	 pushl $5
+	 jmp call_isr
+
+.global isr6
+isr6:
+	 cli
+	 pushl $0
+	 pushl $6
+	 jmp call_isr
+
+.global isr7
+isr7:
+	 cli
+	 pushl $0
+	 pushl $7
+	 jmp call_isr
+
+.global isr8
+isr8:
+	 cli
+	 pushl $0
+	 pushl $8
+	 jmp call_isr
+
+.global isr9
+isr9:
+	 cli
+	 pushl $0
+	 pushl $9
+	 jmp call_isr
+
+.global isr10
+isr10:
+	 cli
+	 pushl $10
+	 jmp call_isr
+
+.global isr11
+isr11:
+	 cli
+	 pushl $11
+	 jmp call_isr
+
+.global isr12
+isr12:
+	 cli
+	 pushl $12
+	 jmp call_isr
+
+.global isr13
+isr13:
+	 cli
+	 pushl $13
+	 jmp call_isr
+
+.global isr14
+isr14:
+	 cli
+	 pushl $14
+	 jmp call_isr
+
+.global isr15
+isr15:
+	 cli
+	 pushl $0
+	 pushl $15
+	 jmp call_isr
+
+.global isr16
+isr16:
+	 cli
+	 pushl $0
+	 pushl $16
+	 jmp call_isr
+
+.global isr17
+isr17:
+	 cli
+	 pushl $17
+	 jmp call_isr
+
+.global isr18
+isr18:
+	 cli
+	 pushl $0
+	 pushl $18
+	 jmp call_isr
+
+.global isr19
+isr19:
+	 cli
+	 pushl $0
+	 pushl $19
+	 jmp call_isr
+
+.global isr20
+isr20:
+	 cli
+	 pushl $0
+	 pushl $20
+	 jmp call_isr
+
+.global isr21
+isr21:
+	 cli
+	 pushl $0
+	 pushl $21
+	 jmp call_isr
+
+.global isr22
+isr22:
+	 cli
+	 pushl $0
+	 pushl $22
+	 jmp call_isr
+
+.global isr23
+isr23:
+	 cli
+	 pushl $0
+	 pushl $23
+	 jmp call_isr
+
+.global isr24
+isr24:
+	 cli
+	 pushl $0
+	 pushl $24
+	 jmp call_isr
+
+.global isr25
+isr25:
+	 cli
+	 pushl $0
+	 pushl $25
+	 jmp call_isr
+
+.global isr26
+isr26:
+	 cli
+	 pushl $0
+	 pushl $26
+	 jmp call_isr
+
+.global isr27
+isr27:
+	 cli
+	 pushl $0
+	 pushl $27
+	 jmp call_isr
+
+.global isr28
+isr28:
+	 cli
+	 pushl $0
+	 pushl $28
+	 jmp call_isr
+
+.global isr29
+isr29:
+	 cli
+	 pushl $0
+	 pushl $29
+	 jmp call_isr
+
+.global isr30
+isr30:
+	 cli
+	 pushl $0
+	 pushl $30
+	 jmp call_isr
+
+.global isr31
+isr31:
+	 cli
+	 pushl $0
+	 pushl $31
+	 jmp call_isr
+
+.global isr32
+isr32:
+	 cli
+	 pushl $0
+	 pushl $32
+	 jmp call_isr
+
+.global isr33
+isr33:
+	 cli
+	 pushl $0
+	 pushl $33
+	 jmp call_isr
+
+.global isr34
+isr34:
+	 cli
+	 pushl $0
+	 pushl $34
+	 jmp call_isr
+
+.global isr35
+isr35:
+	 cli
+	 pushl $0
+	 pushl $35
+	 jmp call_isr
+
+.global isr36
+isr36:
+	 cli
+	 pushl $0
+	 pushl $36
+	 jmp call_isr
+
+.global isr37
+isr37:
+	 cli
+	 pushl $0
+	 pushl $37
+	 jmp call_isr
+
+.global isr38
+isr38:
+	 cli
+	 pushl $0
+	 pushl $38
+	 jmp call_isr
+
+.global isr39
+isr39:
+	 cli
+	 pushl $0
+	 pushl $39
+	 jmp call_isr
+
+.global isr40
+isr40:
+	 cli
+	 pushl $0
+	 pushl $40
+	 jmp call_isr
+
+.global isr41
+isr41:
+	 cli
+	 pushl $0
+	 pushl $41
+	 jmp call_isr
+
+.global isr42
+isr42:
+	 cli
+	 pushl $0
+	 pushl $42
+	 jmp call_isr
+
+.global isr43
+isr43:
+	 cli
+	 pushl $0
+	 pushl $43
+	 jmp call_isr
+
+.global isr44
+isr44:
+	 cli
+	 pushl $0
+	 pushl $44
+	 jmp call_isr
+
+.global isr45
+isr45:
+	 cli
+	 pushl $0
+	 pushl $45
+	 jmp call_isr
+
+.global isr46
+isr46:
+	 cli
+	 pushl $0
+	 pushl $46
+	 jmp call_isr
+
+.global isr47
+isr47:
+	 cli
+	 pushl $0
+	 pushl $47
+	 jmp call_isr
+
+.global isr48
+isr48:
+	 cli
+	 pushl $0
+	 pushl $48
+	 jmp call_isr
+
+.global isr49
+isr49:
+	 cli
+	 pushl $0
+	 pushl $49
+	 jmp call_isr
+
+.global isr50
+isr50:
+	 cli
+	 pushl $0
+	 pushl $50
+	 jmp call_isr
+
+.global isr51
+isr51:
+	 cli
+	 pushl $0
+	 pushl $51
+	 jmp call_isr
+
+.global isr52
+isr52:
+	 cli
+	 pushl $0
+	 pushl $52
+	 jmp call_isr
+
+.global isr53
+isr53:
+	 cli
+	 pushl $0
+	 pushl $53
+	 jmp call_isr
+
+.global isr54
+isr54:
+	 cli
+	 pushl $0
+	 pushl $54
+	 jmp call_isr
+
+.global isr55
+isr55:
+	 cli
+	 pushl $0
+	 pushl $55
+	 jmp call_isr
+
+.global isr56
+isr56:
+	 cli
+	 pushl $0
+	 pushl $56
+	 jmp call_isr
+
+.global isr57
+isr57:
+	 cli
+	 pushl $0
+	 pushl $57
+	 jmp call_isr
+
+.global isr58
+isr58:
+	 cli
+	 pushl $0
+	 pushl $58
+	 jmp call_isr
+
+.global isr59
+isr59:
+	 cli
+	 pushl $0
+	 pushl $59
+	 jmp call_isr
+
+.global isr60
+isr60:
+	 cli
+	 pushl $0
+	 pushl $60
+	 jmp call_isr
+
+.global isr61
+isr61:
+	 cli
+	 pushl $0
+	 pushl $61
+	 jmp call_isr
+
+.global isr62
+isr62:
+	 cli
+	 pushl $0
+	 pushl $62
+	 jmp call_isr
+
+.global isr63
+isr63:
+	 cli
+	 pushl $0
+	 pushl $63
+	 jmp call_isr
+
+.global isr64
+isr64:
+	 cli
+	 pushl $0
+	 pushl $64
+	 jmp call_isr
+
+.global isr65
+isr65:
+	 cli
+	 pushl $0
+	 pushl $65
+	 jmp call_isr
+
+.global isr66
+isr66:
+	 cli
+	 pushl $0
+	 pushl $66
+	 jmp call_isr
+
+.global isr67
+isr67:
+	 cli
+	 pushl $0
+	 pushl $67
+	 jmp call_isr
+
+.global isr68
+isr68:
+	 cli
+	 pushl $0
+	 pushl $68
+	 jmp call_isr
+
+.global isr69
+isr69:
+	 cli
+	 pushl $0
+	 pushl $69
+	 jmp call_isr
+
+.global isr70
+isr70:
+	 cli
+	 pushl $0
+	 pushl $70
+	 jmp call_isr
+
+.global isr71
+isr71:
+	 cli
+	 pushl $0
+	 pushl $71
+	 jmp call_isr
+
+.global isr72
+isr72:
+	 cli
+	 pushl $0
+	 pushl $72
+	 jmp call_isr
+
+.global isr73
+isr73:
+	 cli
+	 pushl $0
+	 pushl $73
+	 jmp call_isr
+
+.global isr74
+isr74:
+	 cli
+	 pushl $0
+	 pushl $74
+	 jmp call_isr
+
+.global isr75
+isr75:
+	 cli
+	 pushl $0
+	 pushl $75
+	 jmp call_isr
+
+.global isr76
+isr76:
+	 cli
+	 pushl $0
+	 pushl $76
+	 jmp call_isr
+
+.global isr77
+isr77:
+	 cli
+	 pushl $0
+	 pushl $77
+	 jmp call_isr
+
+.global isr78
+isr78:
+	 cli
+	 pushl $0
+	 pushl $78
+	 jmp call_isr
+
+.global isr79
+isr79:
+	 cli
+	 pushl $0
+	 pushl $79
+	 jmp call_isr
+
+.global isr80
+isr80:
+	 cli
+	 pushl $0
+	 pushl $80
+	 jmp call_isr
+
+.global isr81
+isr81:
+	 cli
+	 pushl $0
+	 pushl $81
+	 jmp call_isr
+
+.global isr82
+isr82:
+	 cli
+	 pushl $0
+	 pushl $82
+	 jmp call_isr
+
+.global isr83
+isr83:
+	 cli
+	 pushl $0
+	 pushl $83
+	 jmp call_isr
+
+.global isr84
+isr84:
+	 cli
+	 pushl $0
+	 pushl $84
+	 jmp call_isr
+
+.global isr85
+isr85:
+	 cli
+	 pushl $0
+	 pushl $85
+	 jmp call_isr
+
+.global isr86
+isr86:
+	 cli
+	 pushl $0
+	 pushl $86
+	 jmp call_isr
+
+.global isr87
+isr87:
+	 cli
+	 pushl $0
+	 pushl $87
+	 jmp call_isr
+
+.global isr88
+isr88:
+	 cli
+	 pushl $0
+	 pushl $88
+	 jmp call_isr
+
+.global isr89
+isr89:
+	 cli
+	 pushl $0
+	 pushl $89
+	 jmp call_isr
+
+.global isr90
+isr90:
+	 cli
+	 pushl $0
+	 pushl $90
+	 jmp call_isr
+
+.global isr91
+isr91:
+	 cli
+	 pushl $0
+	 pushl $91
+	 jmp call_isr
+
+.global isr92
+isr92:
+	 cli
+	 pushl $0
+	 pushl $92
+	 jmp call_isr
+
+.global isr93
+isr93:
+	 cli
+	 pushl $0
+	 pushl $93
+	 jmp call_isr
+
+.global isr94
+isr94:
+	 cli
+	 pushl $0
+	 pushl $94
+	 jmp call_isr
+
+.global isr95
+isr95:
+	 cli
+	 pushl $0
+	 pushl $95
+	 jmp call_isr
+
+.global isr96
+isr96:
+	 cli
+	 pushl $0
+	 pushl $96
+	 jmp call_isr
+
+.global isr97
+isr97:
+	 cli
+	 pushl $0
+	 pushl $97
+	 jmp call_isr
+
+.global isr98
+isr98:
+	 cli
+	 pushl $0
+	 pushl $98
+	 jmp call_isr
+
+.global isr99
+isr99:
+	 cli
+	 pushl $0
+	 pushl $99
+	 jmp call_isr
+
+.global isr100
+isr100:
+	 cli
+	 pushl $0
+	 pushl $100
+	 jmp call_isr
+
+.global isr101
+isr101:
+	 cli
+	 pushl $0
+	 pushl $101
+	 jmp call_isr
+
+.global isr102
+isr102:
+	 cli
+	 pushl $0
+	 pushl $102
+	 jmp call_isr
+
+.global isr103
+isr103:
+	 cli
+	 pushl $0
+	 pushl $103
+	 jmp call_isr
+
+.global isr104
+isr104:
+	 cli
+	 pushl $0
+	 pushl $104
+	 jmp call_isr
+
+.global isr105
+isr105:
+	 cli
+	 pushl $0
+	 pushl $105
+	 jmp call_isr
+
+.global isr106
+isr106:
+	 cli
+	 pushl $0
+	 pushl $106
+	 jmp call_isr
+
+.global isr107
+isr107:
+	 cli
+	 pushl $0
+	 pushl $107
+	 jmp call_isr
+
+.global isr108
+isr108:
+	 cli
+	 pushl $0
+	 pushl $108
+	 jmp call_isr
+
+.global isr109
+isr109:
+	 cli
+	 pushl $0
+	 pushl $109
+	 jmp call_isr
+
+.global isr110
+isr110:
+	 cli
+	 pushl $0
+	 pushl $110
+	 jmp call_isr
+
+.global isr111
+isr111:
+	 cli
+	 pushl $0
+	 pushl $111
+	 jmp call_isr
+
+.global isr112
+isr112:
+	 cli
+	 pushl $0
+	 pushl $112
+	 jmp call_isr
+
+.global isr113
+isr113:
+	 cli
+	 pushl $0
+	 pushl $113
+	 jmp call_isr
+
+.global isr114
+isr114:
+	 cli
+	 pushl $0
+	 pushl $114
+	 jmp call_isr
+
+.global isr115
+isr115:
+	 cli
+	 pushl $0
+	 pushl $115
+	 jmp call_isr
+
+.global isr116
+isr116:
+	 cli
+	 pushl $0
+	 pushl $116
+	 jmp call_isr
+
+.global isr117
+isr117:
+	 cli
+	 pushl $0
+	 pushl $117
+	 jmp call_isr
+
+.global isr118
+isr118:
+	 cli
+	 pushl $0
+	 pushl $118
+	 jmp call_isr
+
+.global isr119
+isr119:
+	 cli
+	 pushl $0
+	 pushl $119
+	 jmp call_isr
+
+.global isr120
+isr120:
+	 cli
+	 pushl $0
+	 pushl $120
+	 jmp call_isr
+
+.global isr121
+isr121:
+	 cli
+	 pushl $0
+	 pushl $121
+	 jmp call_isr
+
+.global isr122
+isr122:
+	 cli
+	 pushl $0
+	 pushl $122
+	 jmp call_isr
+
+.global isr123
+isr123:
+	 cli
+	 pushl $0
+	 pushl $123
+	 jmp call_isr
+
+.global isr124
+isr124:
+	 cli
+	 pushl $0
+	 pushl $124
+	 jmp call_isr
+
+.global isr125
+isr125:
+	 cli
+	 pushl $0
+	 pushl $125
+	 jmp call_isr
+
+.global isr126
+isr126:
+	 cli
+	 pushl $0
+	 pushl $126
+	 jmp call_isr
+
+.global isr127
+isr127:
+	 cli
+	 pushl $0
+	 pushl $127
+	 jmp call_isr
+
+.global isr128
+isr128:
+	 cli
+	 pushl $0
+	 pushl $128
+	 jmp call_isr
+
+.global isr129
+isr129:
+	 cli
+	 pushl $0
+	 pushl $129
+	 jmp call_isr
+
+.global isr130
+isr130:
+	 cli
+	 pushl $0
+	 pushl $130
+	 jmp call_isr
+
+.global isr131
+isr131:
+	 cli
+	 pushl $0
+	 pushl $131
+	 jmp call_isr
+
+.global isr132
+isr132:
+	 cli
+	 pushl $0
+	 pushl $132
+	 jmp call_isr
+
+.global isr133
+isr133:
+	 cli
+	 pushl $0
+	 pushl $133
+	 jmp call_isr
+
+.global isr134
+isr134:
+	 cli
+	 pushl $0
+	 pushl $134
+	 jmp call_isr
+
+.global isr135
+isr135:
+	 cli
+	 pushl $0
+	 pushl $135
+	 jmp call_isr
+
+.global isr136
+isr136:
+	 cli
+	 pushl $0
+	 pushl $136
+	 jmp call_isr
+
+.global isr137
+isr137:
+	 cli
+	 pushl $0
+	 pushl $137
+	 jmp call_isr
+
+.global isr138
+isr138:
+	 cli
+	 pushl $0
+	 pushl $138
+	 jmp call_isr
+
+.global isr139
+isr139:
+	 cli
+	 pushl $0
+	 pushl $139
+	 jmp call_isr
+
+.global isr140
+isr140:
+	 cli
+	 pushl $0
+	 pushl $140
+	 jmp call_isr
+
+.global isr141
+isr141:
+	 cli
+	 pushl $0
+	 pushl $141
+	 jmp call_isr
+
+.global isr142
+isr142:
+	 cli
+	 pushl $0
+	 pushl $142
+	 jmp call_isr
+
+.global isr143
+isr143:
+	 cli
+	 pushl $0
+	 pushl $143
+	 jmp call_isr
+
+.global isr144
+isr144:
+	 cli
+	 pushl $0
+	 pushl $144
+	 jmp call_isr
+
+.global isr145
+isr145:
+	 cli
+	 pushl $0
+	 pushl $145
+	 jmp call_isr
+
+.global isr146
+isr146:
+	 cli
+	 pushl $0
+	 pushl $146
+	 jmp call_isr
+
+.global isr147
+isr147:
+	 cli
+	 pushl $0
+	 pushl $147
+	 jmp call_isr
+
+.global isr148
+isr148:
+	 cli
+	 pushl $0
+	 pushl $148
+	 jmp call_isr
+
+.global isr149
+isr149:
+	 cli
+	 pushl $0
+	 pushl $149
+	 jmp call_isr
+
+.global isr150
+isr150:
+	 cli
+	 pushl $0
+	 pushl $150
+	 jmp call_isr
+
+.global isr151
+isr151:
+	 cli
+	 pushl $0
+	 pushl $151
+	 jmp call_isr
+
+.global isr152
+isr152:
+	 cli
+	 pushl $0
+	 pushl $152
+	 jmp call_isr
+
+.global isr153
+isr153:
+	 cli
+	 pushl $0
+	 pushl $153
+	 jmp call_isr
+
+.global isr154
+isr154:
+	 cli
+	 pushl $0
+	 pushl $154
+	 jmp call_isr
+
+.global isr155
+isr155:
+	 cli
+	 pushl $0
+	 pushl $155
+	 jmp call_isr
+
+.global isr156
+isr156:
+	 cli
+	 pushl $0
+	 pushl $156
+	 jmp call_isr
+
+.global isr157
+isr157:
+	 cli
+	 pushl $0
+	 pushl $157
+	 jmp call_isr
+
+.global isr158
+isr158:
+	 cli
+	 pushl $0
+	 pushl $158
+	 jmp call_isr
+
+.global isr159
+isr159:
+	 cli
+	 pushl $0
+	 pushl $159
+	 jmp call_isr
+
+.global isr160
+isr160:
+	 cli
+	 pushl $0
+	 pushl $160
+	 jmp call_isr
+
+.global isr161
+isr161:
+	 cli
+	 pushl $0
+	 pushl $161
+	 jmp call_isr
+
+.global isr162
+isr162:
+	 cli
+	 pushl $0
+	 pushl $162
+	 jmp call_isr
+
+.global isr163
+isr163:
+	 cli
+	 pushl $0
+	 pushl $163
+	 jmp call_isr
+
+.global isr164
+isr164:
+	 cli
+	 pushl $0
+	 pushl $164
+	 jmp call_isr
+
+.global isr165
+isr165:
+	 cli
+	 pushl $0
+	 pushl $165
+	 jmp call_isr
+
+.global isr166
+isr166:
+	 cli
+	 pushl $0
+	 pushl $166
+	 jmp call_isr
+
+.global isr167
+isr167:
+	 cli
+	 pushl $0
+	 pushl $167
+	 jmp call_isr
+
+.global isr168
+isr168:
+	 cli
+	 pushl $0
+	 pushl $168
+	 jmp call_isr
+
+.global isr169
+isr169:
+	 cli
+	 pushl $0
+	 pushl $169
+	 jmp call_isr
+
+.global isr170
+isr170:
+	 cli
+	 pushl $0
+	 pushl $170
+	 jmp call_isr
+
+.global isr171
+isr171:
+	 cli
+	 pushl $0
+	 pushl $171
+	 jmp call_isr
+
+.global isr172
+isr172:
+	 cli
+	 pushl $0
+	 pushl $172
+	 jmp call_isr
+
+.global isr173
+isr173:
+	 cli
+	 pushl $0
+	 pushl $173
+	 jmp call_isr
+
+.global isr174
+isr174:
+	 cli
+	 pushl $0
+	 pushl $174
+	 jmp call_isr
+
+.global isr175
+isr175:
+	 cli
+	 pushl $0
+	 pushl $175
+	 jmp call_isr
+
+.global isr176
+isr176:
+	 cli
+	 pushl $0
+	 pushl $176
+	 jmp call_isr
+
+.global isr177
+isr177:
+	 cli
+	 pushl $0
+	 pushl $177
+	 jmp call_isr
+
+.global isr178
+isr178:
+	 cli
+	 pushl $0
+	 pushl $178
+	 jmp call_isr
+
+.global isr179
+isr179:
+	 cli
+	 pushl $0
+	 pushl $179
+	 jmp call_isr
+
+.global isr180
+isr180:
+	 cli
+	 pushl $0
+	 pushl $180
+	 jmp call_isr
+
+.global isr181
+isr181:
+	 cli
+	 pushl $0
+	 pushl $181
+	 jmp call_isr
+
+.global isr182
+isr182:
+	 cli
+	 pushl $0
+	 pushl $182
+	 jmp call_isr
+
+.global isr183
+isr183:
+	 cli
+	 pushl $0
+	 pushl $183
+	 jmp call_isr
+
+.global isr184
+isr184:
+	 cli
+	 pushl $0
+	 pushl $184
+	 jmp call_isr
+
+.global isr185
+isr185:
+	 cli
+	 pushl $0
+	 pushl $185
+	 jmp call_isr
+
+.global isr186
+isr186:
+	 cli
+	 pushl $0
+	 pushl $186
+	 jmp call_isr
+
+.global isr187
+isr187:
+	 cli
+	 pushl $0
+	 pushl $187
+	 jmp call_isr
+
+.global isr188
+isr188:
+	 cli
+	 pushl $0
+	 pushl $188
+	 jmp call_isr
+
+.global isr189
+isr189:
+	 cli
+	 pushl $0
+	 pushl $189
+	 jmp call_isr
+
+.global isr190
+isr190:
+	 cli
+	 pushl $0
+	 pushl $190
+	 jmp call_isr
+
+.global isr191
+isr191:
+	 cli
+	 pushl $0
+	 pushl $191
+	 jmp call_isr
+
+.global isr192
+isr192:
+	 cli
+	 pushl $0
+	 pushl $192
+	 jmp call_isr
+
+.global isr193
+isr193:
+	 cli
+	 pushl $0
+	 pushl $193
+	 jmp call_isr
+
+.global isr194
+isr194:
+	 cli
+	 pushl $0
+	 pushl $194
+	 jmp call_isr
+
+.global isr195
+isr195:
+	 cli
+	 pushl $0
+	 pushl $195
+	 jmp call_isr
+
+.global isr196
+isr196:
+	 cli
+	 pushl $0
+	 pushl $196
+	 jmp call_isr
+
+.global isr197
+isr197:
+	 cli
+	 pushl $0
+	 pushl $197
+	 jmp call_isr
+
+.global isr198
+isr198:
+	 cli
+	 pushl $0
+	 pushl $198
+	 jmp call_isr
+
+.global isr199
+isr199:
+	 cli
+	 pushl $0
+	 pushl $199
+	 jmp call_isr
+
+.global isr200
+isr200:
+	 cli
+	 pushl $0
+	 pushl $200
+	 jmp call_isr
+
+.global isr201
+isr201:
+	 cli
+	 pushl $0
+	 pushl $201
+	 jmp call_isr
+
+.global isr202
+isr202:
+	 cli
+	 pushl $0
+	 pushl $202
+	 jmp call_isr
+
+.global isr203
+isr203:
+	 cli
+	 pushl $0
+	 pushl $203
+	 jmp call_isr
+
+.global isr204
+isr204:
+	 cli
+	 pushl $0
+	 pushl $204
+	 jmp call_isr
+
+.global isr205
+isr205:
+	 cli
+	 pushl $0
+	 pushl $205
+	 jmp call_isr
+
+.global isr206
+isr206:
+	 cli
+	 pushl $0
+	 pushl $206
+	 jmp call_isr
+
+.global isr207
+isr207:
+	 cli
+	 pushl $0
+	 pushl $207
+	 jmp call_isr
+
+.global isr208
+isr208:
+	 cli
+	 pushl $0
+	 pushl $208
+	 jmp call_isr
+
+.global isr209
+isr209:
+	 cli
+	 pushl $0
+	 pushl $209
+	 jmp call_isr
+
+.global isr210
+isr210:
+	 cli
+	 pushl $0
+	 pushl $210
+	 jmp call_isr
+
+.global isr211
+isr211:
+	 cli
+	 pushl $0
+	 pushl $211
+	 jmp call_isr
+
+.global isr212
+isr212:
+	 cli
+	 pushl $0
+	 pushl $212
+	 jmp call_isr
+
+.global isr213
+isr213:
+	 cli
+	 pushl $0
+	 pushl $213
+	 jmp call_isr
+
+.global isr214
+isr214:
+	 cli
+	 pushl $0
+	 pushl $214
+	 jmp call_isr
+
+.global isr215
+isr215:
+	 cli
+	 pushl $0
+	 pushl $215
+	 jmp call_isr
+
+.global isr216
+isr216:
+	 cli
+	 pushl $0
+	 pushl $216
+	 jmp call_isr
+
+.global isr217
+isr217:
+	 cli
+	 pushl $0
+	 pushl $217
+	 jmp call_isr
+
+.global isr218
+isr218:
+	 cli
+	 pushl $0
+	 pushl $218
+	 jmp call_isr
+
+.global isr219
+isr219:
+	 cli
+	 pushl $0
+	 pushl $219
+	 jmp call_isr
+
+.global isr220
+isr220:
+	 cli
+	 pushl $0
+	 pushl $220
+	 jmp call_isr
+
+.global isr221
+isr221:
+	 cli
+	 pushl $0
+	 pushl $221
+	 jmp call_isr
+
+.global isr222
+isr222:
+	 cli
+	 pushl $0
+	 pushl $222
+	 jmp call_isr
+
+.global isr223
+isr223:
+	 cli
+	 pushl $0
+	 pushl $223
+	 jmp call_isr
+
+.global isr224
+isr224:
+	 cli
+	 pushl $0
+	 pushl $224
+	 jmp call_isr
+
+.global isr225
+isr225:
+	 cli
+	 pushl $0
+	 pushl $225
+	 jmp call_isr
+
+.global isr226
+isr226:
+	 cli
+	 pushl $0
+	 pushl $226
+	 jmp call_isr
+
+.global isr227
+isr227:
+	 cli
+	 pushl $0
+	 pushl $227
+	 jmp call_isr
+
+.global isr228
+isr228:
+	 cli
+	 pushl $0
+	 pushl $228
+	 jmp call_isr
+
+.global isr229
+isr229:
+	 cli
+	 pushl $0
+	 pushl $229
+	 jmp call_isr
+
+.global isr230
+isr230:
+	 cli
+	 pushl $0
+	 pushl $230
+	 jmp call_isr
+
+.global isr231
+isr231:
+	 cli
+	 pushl $0
+	 pushl $231
+	 jmp call_isr
+
+.global isr232
+isr232:
+	 cli
+	 pushl $0
+	 pushl $232
+	 jmp call_isr
+
+.global isr233
+isr233:
+	 cli
+	 pushl $0
+	 pushl $233
+	 jmp call_isr
+
+.global isr234
+isr234:
+	 cli
+	 pushl $0
+	 pushl $234
+	 jmp call_isr
+
+.global isr235
+isr235:
+	 cli
+	 pushl $0
+	 pushl $235
+	 jmp call_isr
+
+.global isr236
+isr236:
+	 cli
+	 pushl $0
+	 pushl $236
+	 jmp call_isr
+
+.global isr237
+isr237:
+	 cli
+	 pushl $0
+	 pushl $237
+	 jmp call_isr
+
+.global isr238
+isr238:
+	 cli
+	 pushl $0
+	 pushl $238
+	 jmp call_isr
+
+.global isr239
+isr239:
+	 cli
+	 pushl $0
+	 pushl $239
+	 jmp call_isr
+
+.global isr240
+isr240:
+	 cli
+	 pushl $0
+	 pushl $240
+	 jmp call_isr
+
+.global isr241
+isr241:
+	 cli
+	 pushl $0
+	 pushl $241
+	 jmp call_isr
+
+.global isr242
+isr242:
+	 cli
+	 pushl $0
+	 pushl $242
+	 jmp call_isr
+
+.global isr243
+isr243:
+	 cli
+	 pushl $0
+	 pushl $243
+	 jmp call_isr
+
+.global isr244
+isr244:
+	 cli
+	 pushl $0
+	 pushl $244
+	 jmp call_isr
+
+.global isr245
+isr245:
+	 cli
+	 pushl $0
+	 pushl $245
+	 jmp call_isr
+
+.global isr246
+isr246:
+	 cli
+	 pushl $0
+	 pushl $246
+	 jmp call_isr
+
+.global isr247
+isr247:
+	 cli
+	 pushl $0
+	 pushl $247
+	 jmp call_isr
+
+.global isr248
+isr248:
+	 cli
+	 pushl $0
+	 pushl $248
+	 jmp call_isr
+
+.global isr249
+isr249:
+	 cli
+	 pushl $0
+	 pushl $249
+	 jmp call_isr
+
+.global isr250
+isr250:
+	 cli
+	 pushl $0
+	 pushl $250
+	 jmp call_isr
+
+.global isr251
+isr251:
+	 cli
+	 pushl $0
+	 pushl $251
+	 jmp call_isr
+
+.global isr252
+isr252:
+	 cli
+	 pushl $0
+	 pushl $252
+	 jmp call_isr
+
+.global isr253
+isr253:
+	 cli
+	 pushl $0
+	 pushl $253
+	 jmp call_isr
+
+.global isr254
+isr254:
+	 cli
+	 pushl $0
+	 pushl $254
+	 jmp call_isr
+
+.global isr255
+isr255:
+	 cli
+	 pushl $0
+	 pushl $255
+	 jmp call_isr
+

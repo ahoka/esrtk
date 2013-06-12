@@ -6,22 +6,31 @@
 IdtEntry idtEntries[NUMIDT];
 IdtPointer idtPointer;
 
+void initIsr(int n, void (*handler)());
+
+#include "InterruptVectorsInit.icc"
+
 extern "C" void
-defaultIsr()
+defaultIsr(InterruptFrame* frame)
 {
-//   printf("UNHANDLED INTERRUPT!\n");
-   Debug::panic("unhandled interrupt");
-   // for (;;)
-   // {
-   //    asm volatile("pause");
-   // }
+   if (frame->error)
+   {
+      Debug::panic("\n\nUnhandled Interrupt: %u\n", frame->interrupt);
+   }
+   else
+   {
+      Debug::panic("\n\nUnhandled Interrupt: %u, Error Code: 0x%x\n", frame->interrupt, frame->error);
+   }
+
+   // printf("\nInterrupt frame:\n");
+   // frame->print();
+   // printf("\n");
 }
 
 extern "C" void
 isrDispatcher(InterruptFrame* frame)
 {
-   frame->print();
-   defaultIsr();
+   defaultIsr(frame);
 }
 
 void
@@ -43,27 +52,8 @@ initInterrupts()
    idtPointer.base = (uint32_t )&idtEntries;
    idtPointer.limit = sizeof(IdtEntry) * NUMIDT - 1;
 
-   for (int i = 0; i < NUMIDT; i++)
-   {
-      initIsr(i, &defaultIsr);
-   }
-
-   initIsr(0, isr0);
-   initIsr(1, isr1);
-   initIsr(2, isr2);
-   initIsr(3, isr3);
-   initIsr(4, isr4);
-   initIsr(5, isr5);
-   initIsr(6, isr6);
-   initIsr(7, isr7);
-   initIsr(8, isr8);
-   initIsr(9, isr9);
-   initIsr(10, isr10);
-   initIsr(11, isr11);
-   initIsr(12, isr12);
-   initIsr(13, isr13);
-   initIsr(14, isr14);
-   initIsr(16, isr16);
+   // generated function
+   initInterruptVectors();
 
    idtinit();
 }

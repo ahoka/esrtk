@@ -11,9 +11,16 @@
 #include <stdio.h>
 
 void
-Debug::panic(const char* message)
+Debug::panic(const char* message, ...)
 {
-   printf("Supervisor check: %s\n", message);
+   va_list va;
+   va_start(va, message);
+
+   printf("Supervisor Error: ");
+   vprintf(message, va);
+   printf("\n");
+
+   va_end(va);
 
    StackTrace::printStackTrace();
 

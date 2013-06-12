@@ -1,5 +1,6 @@
 AS=		as
 LD=		ld
+CPP=		cpp
 QEMU=		qemu-system-i386
 
 #COMPILER=	clang
@@ -61,7 +62,7 @@ all:	kernel.img
 	${CXX} ${CXXFLAGS} -c -o $*.o $*.cc
 
 %.o: %.S Makefile
-	${AS} ${ASFLAGS} -o $*.o $*.S
+	 ${CPP} $*.S | ${AS} ${ASFLAGS} -o $*.o
 
 kernel.elf: Loader/MultiLoader.o ${CPPFILES:.cc=.o} ${ASMFILES:.S=.o}
 	${LD} ${LDFLAGS} -T Build/linker.ld -o $@ $^

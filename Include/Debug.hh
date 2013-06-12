@@ -16,8 +16,7 @@ private:
    Debug(const Debug& orig) {};
    ~Debug() {};
 public:
-   static void panic(const char*);
-//   static void printConsole(const char*);
+   static void panic(const char*, ...);
 };
 
 #endif	/* DEBUG_H */
