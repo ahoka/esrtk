@@ -139,6 +139,7 @@ getUnsignedFromVa(va_list* ap, int modifiers)
       else if (modifiers & PRINTF_MODIFIER_LONGLONG)
       {
 	 n = va_arg(*ap, unsigned long long);
+//         n |= va_arg(*ap, unsigned long) << 32;
 //	 unsigned long tmp = va_arg(*ap, unsigned long);
 // 	 n = va_arg(*ap, unsigned long);
       }
