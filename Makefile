@@ -3,8 +3,8 @@ LD=		ld
 CPP=		cpp
 QEMU=		qemu-system-i386
 
-#COMPILER=	clang
-COMPILER?=	gnu
+COMPILER?=	clang
+#COMPILER?=	gnu
 
 ASFLAGS=	-march=i686 --32
 
@@ -75,7 +75,7 @@ clean:
 	-rm kernel.elf pad kernel.img ${CPPFILES:.cc=.o} ${ASMFILES:.S=.o} 2>/dev/null
 
 run:
-	${QEMU} -kernel kernel.elf -monitor stdio -boot order=c 
+	${QEMU} -net none -kernel kernel.elf -monitor stdio -boot order=c 
 
 run-grub:
 	${QEMU} -fda kernel.img
