@@ -4,14 +4,20 @@
 .text
 .align 16
 
-// rdmsr(u32 address)
+// rdmsr(in u32 address, out u32 eax, out u32 edx)
 .global rdmsr
 rdmsr:
-	movl 4(%esp), %ecx
+        pushl %edi
+	movl 8(%esp), %ecx
 	rdmsr
+        movl 12(%esp), %edi
+        movl %eax, (%edi)
+        movl 16(%esp), %edi
+        movl %edx, (%edi)
+        popl %edi
 	ret
 
-// wrmsr(u32 address, u64 value)
+// wrmsr(in u32 address, in u32 eax, in u32 edx)
 .global wrmsr
 wrmsr:	
 	movl 4(%esp), %ecx

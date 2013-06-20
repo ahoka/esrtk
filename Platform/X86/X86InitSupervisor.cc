@@ -1,6 +1,7 @@
 #ifdef __i386__
 
-#include "VgaConsole.hh"
+#include <VgaConsole.hh>
+#include <Apic.hh>
 
 namespace System {
    VgaConsole console;
@@ -14,6 +15,8 @@ initSupervisor()
 {
    //  initGdt();
    initInterrupts();
+
+   apic.init();
 }
 
 #endif

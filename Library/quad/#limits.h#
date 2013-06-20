@@ -1,0 +1,95 @@
+/*$NetBSD: limits.h,v 1.17 2003/08/07 16:27:59 agc Exp $*/
+
+/*
+ * Copyright (c) 1988 The Regents of the University of California.
+ * All rights reserved.
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions
+ * are met:
+ * 1. Redistributions of source code must retain the above copyright
+ *    notice, this list of conditions and the following disclaimer.
+ * 2. Redistributions in binary form must reproduce the above copyright
+ *    notice, this list of conditions and the following disclaimer in the
+ *    documentation and/or other materials provided with the distribution.
+ * 3. Neither the name of the University nor the names of its contributors
+ *    may be used to endorse or promote products derived from this software
+ *    without specific prior written permission.
+ *
+ * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+ * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+ * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+ * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+ * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+ * HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+ * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+ * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+ * SUCH DAMAGE.
+ *
+ *@(#)limits.h7.2 (Berkeley) 6/28/90
+ */
+
+#ifndef_I386_LIMITS_H_
+#define_I386_LIMITS_H_
+
+#include <sys/featuretest.h>
+
+#defineCHAR_BIT8/* number of bits in a char */
+#defineMB_LEN_MAX32/* no multibyte characters */
+
+#defineSCHAR_MAX0x7f/* max value for a signed char */
+#define SCHAR_MIN(-0x7f-1)/* min value for a signed char */
+
+#defineUCHAR_MAX0xffU/* max value for an unsigned char */
+#defineCHAR_MAX0x7f/* max value for a char */
+#defineCHAR_MIN(-0x7f-1)/* min value for a char */
+
+#defineUSHRT_MAX0xffffU/* max value for an unsigned short */
+#defineSHRT_MAX0x7fff/* max value for a short */
+#define SHRT_MIN        (-0x7fff-1)     /* min value for a short */
+
+#defineUINT_MAX0xffffffffU/* max value for an unsigned int */
+#defineINT_MAX0x7fffffff/* max value for an int */
+#defineINT_MIN(-0x7fffffff-1)/* min value for an int */
+
+#defineULONG_MAX0xffffffffUL/* max value for an unsigned long */
+#defineLONG_MAX0x7fffffffL/* max value for a long */
+#defineLONG_MIN(-0x7fffffffL-1)/* min value for a long */
+
+#if defined(_POSIX_C_SOURCE) || defined(_XOPEN_SOURCE) || \
+   defined(_NETBSD_SOURCE)
+#defineSSIZE_MAXINT_MAX/* max value for a ssize_t */
+
+#if defined(_ISOC99_SOURCE) || (__STDC_VERSION__ - 0) >= 199901L || \
+   defined(_NETBSD_SOURCE)
+#defineULLONG_MAX0xffffffffffffffffULL/* max unsigned long long */
+#defineLLONG_MAX0x7fffffffffffffffLL/* max signed long long */
+#defineLLONG_MIN(-0x7fffffffffffffffLL-1) /* min signed long long */
+#endif
+
+#if defined(_NETBSD_SOURCE)
+#defineSIZE_T_MAXUINT_MAX/* max value for a size_t */
+
+#defineUQUAD_MAX0xffffffffffffffffULL/* max unsigned quad */
+#defineQUAD_MAX0x7fffffffffffffffLL/* max signed quad */
+#defineQUAD_MIN(-0x7fffffffffffffffLL-1)/* min signed quad */
+
+#endif /* _NETBSD_SOURCE */
+#endif /* _POSIX_C_SOURCE || _XOPEN_SOURCE || _NETBSD_SOURCE */
+
+#if defined(_XOPEN_SOURCE) || defined(_NETBSD_SOURCE)
+#define LONG_BIT32
+#define WORD_BIT32
+
+#define DBL_DIG15
+#define DBL_MAX1.7976931348623157E+308
+#define DBL_MIN2.2250738585072014E-308
+
+#define FLT_DIG6
+#define FLT_MAX3.40282347E+38F
+#define FLT_MIN1.17549435E-38F
+#endif
+
+#endif /* _i386_LIMITS_H_ *

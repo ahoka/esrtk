@@ -8,7 +8,7 @@
 #ifndef DEBUG_H
 #define	DEBUG_H
 
-#define KASSERT(x) if (!(x)) { Debug::panic("Assertion (" #x ") failed at " __FILE__ ":" __LINE__ "\n") }
+#define KASSERT(x) if (!(x)) { Debug::panic("Assertion (" #x ") failed at " __FILE__ ":%d\n", __LINE__); }
 
 class Debug {
 private:

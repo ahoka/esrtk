@@ -128,20 +128,19 @@ enum {
 
 #define PRINTF_PUTCHAR(x) (putChar(x), retval++)
 
-unsigned long
+unsigned long long
 getUnsignedFromVa(va_list* ap, int modifiers)
 {
-      // no long long for now
-      unsigned long n = 0;
+      unsigned long long n = 0;
       if (modifiers & PRINTF_MODIFIER_LONG)
       {
 	 n = va_arg(*ap, unsigned long);
       }
       else if (modifiers & PRINTF_MODIFIER_LONGLONG)
       {
-	 //n = va_arg(*ap, unsigned long long);
-	 unsigned long tmp = va_arg(*ap, unsigned long);
-	 n = va_arg(*ap, unsigned long);
+	 n = va_arg(*ap, unsigned long long);
+//	 unsigned long tmp = va_arg(*ap, unsigned long);
+// 	 n = va_arg(*ap, unsigned long);
       }
       else if (modifiers & PRINTF_MODIFIER_SHORT)
       {
@@ -159,11 +158,10 @@ getUnsignedFromVa(va_list* ap, int modifiers)
       return n;
 }
 
-long
+long long
 getSignedFromVa(va_list* ap, int modifiers)
 {
-      // no long long for now
-      long n = 0;
+      long long n = 0;
 
       if (modifiers & PRINTF_MODIFIER_LONG)
       {
@@ -171,9 +169,9 @@ getSignedFromVa(va_list* ap, int modifiers)
       }
       else if (modifiers & PRINTF_MODIFIER_LONGLONG)
       {
-	 //n = va_arg(*ap,  long long);
-	 long tmp = va_arg(*ap, long);
-	 n = va_arg(*ap, long);
+	 n = va_arg(*ap,  long long);
+	 // long tmp = va_arg(*ap, long);
+	 // n = va_arg(*ap, long);
       }
       else if (modifiers & PRINTF_MODIFIER_SHORT)
       {
@@ -222,11 +220,11 @@ Console::doVaPrint(va_list* ap, int type, int modifiers, int flags)
 
    if (type == PRINTF_TYPE_UNSIGNED || type == PRINTF_TYPE_DECIMAL)
    {
-      unsigned long n;
+      unsigned long long n;
 
       if (type == PRINTF_TYPE_DECIMAL)
       {
-      	 long sn = getSignedFromVa(ap, modifiers);
+      	 long long sn = getSignedFromVa(ap, modifiers);
 	 if (sn < 0)
 	 {
 	    PRINTF_PUTCHAR('-');
@@ -260,7 +258,7 @@ Console::doVaPrint(va_list* ap, int type, int modifiers, int flags)
    {
       const char* hex;
 
-      unsigned long n = getUnsignedFromVa(ap, modifiers);
+      unsigned long long n = getUnsignedFromVa(ap, modifiers);
 
       if (type == PRINTF_TYPE_LOWERHEX)
       {
@@ -290,7 +288,7 @@ Console::doVaPrint(va_list* ap, int type, int modifiers, int flags)
    }
    else if (type == PRINTF_TYPE_OCTAL)
    {
-      unsigned long n = getUnsignedFromVa(ap, modifiers);
+      unsigned long long n = getUnsignedFromVa(ap, modifiers);
       
       // XXX this will be incorrect when we have field width!
       if (flags & PRINTF_FLAGS_ALTERNATIVE && n != 0)
@@ -397,9 +395,9 @@ Console::vprintf(const char* format, va_list ap)
 		  }
 		  else if (modifiers & PRINTF_MODIFIER_LONG)
 		  {
-		     //modifiers |= PRINTF_MODIFIER_LONGLONG;
-		     modifiers = 0;
-		     finished = true;
+		     modifiers |= PRINTF_MODIFIER_LONGLONG;
+//		     modifiers = 0;
+//		     finished = true;
 		  }
 		  else
 		  {

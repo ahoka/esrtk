@@ -9,6 +9,7 @@
 #include <System.hh>
 #include <IoPort.hh>
 #include <Power.hh>
+#include <Apic.hh>
 
 #include <stdio.h>
 
@@ -120,6 +121,9 @@ Supervisor::run()
    // printf("Vendor ID: 0x%x\n", v);
    // printf("Device ID: 0x%x\n", d);
 
+   unsigned long long ulonglong = 123456789123456789ull;
+   printf("%llu\n", ulonglong / 2);
+
    Pci::init();
    Pci::listDevices();
 
@@ -130,14 +134,25 @@ Supervisor::run()
    //   int eflags = getEflags();
    //   printf("eflags: 0x%x\n", eflags);
 
-   printf("divzero!\n");
-   volatile int a = 1;
-   volatile int b = a / 0;
-   printf("done!\n");
+   // printf("divzero!\n");
+   // volatile int a = 1;
+   // volatile int b = a / 0;
+   // printf("done!\n");
          
-   Debug::panic("Nothing to do here");
+   // Debug::panic("Nothing to do here");
 
-   //   KASSERT(1 == 1);
+   // //   KASSERT(1 == 1);
+
+   if (!apic.probe())
+   {
+      printf("x2APIC not present\n");
+   }
+
+   apic.printInformation();
+
+   uint32_t apicId;
+   apic.read32(0x20, &apicId);
+   printf("LAPIC ID: 0x%x\n", (apicId >> 24) & 0xf);
 
    for (;;)
    {

@@ -36,9 +36,12 @@ endif
 
 # x86
 # TODO: make an Include directory with public API only
-CXXFLAGS+=	-I${PWD}/Library
-CXXFLAGS+=	-I${PWD}/Include
-CXXFLAGS+=	-I${PWD}/Include/X86
+IFLAGS+=	-I${PWD}/Library
+IFLAGS+=	-I${PWD}/Include
+IFLAGS+=	-I${PWD}/Include/X86
+
+CXXFLAGS+=	${IFLAGS}
+CFLAGS+=	${IFLAGS}
 
 SOURCES_MI:=	Supervisor Library Drivers
 SOURCES_X86:=	Drivers Platform
@@ -52,6 +55,8 @@ SOURCES_X86:=	Drivers Platform
 CPPFILES:=	$(shell find $(SOURCES_MI) -name '*.cc')
 CPPFILES+=	$(shell find $(SOURCES_X86) -name '*.cc')
 
+CFILES:=	$(shell find $(SOURCES_MI) -name '*.c')
+
 ASMFILES:=	$(shell find $(SOURCES_MI) -name '*.S')
 ASMFILES+=	$(shell find $(SOURCES_X86) -name '*.S')
 
@@ -61,10 +66,13 @@ all:	kernel.img
 %.o: %.cc Makefile
 	${CXX} ${CXXFLAGS} -c -o $*.o $*.cc
 
+%.o: %.c Makefile
+	${CC} ${CFLAGS} -c -o $*.o $*.c
+
 %.o: %.S Makefile
 	 ${CPP} $*.S | ${AS} ${ASFLAGS} -o $*.o
 
-kernel.elf: Loader/MultiLoader.o ${CPPFILES:.cc=.o} ${ASMFILES:.S=.o}
+kernel.elf: Loader/MultiLoader.o ${CPPFILES:.cc=.o} ${ASMFILES:.S=.o} ${CFILES:.c=.o}
 	${LD} ${LDFLAGS} -T Build/linker.ld -o $@ $^
 
 kernel.img: kernel.elf
@@ -72,10 +80,10 @@ kernel.img: kernel.elf
 	cat Loader/stage1 Loader/stage2 pad $< > $@
 
 clean:
-	-rm kernel.elf pad kernel.img ${CPPFILES:.cc=.o} ${ASMFILES:.S=.o} 2>/dev/null
+	-rm kernel.elf pad kernel.img ${CPPFILES:.cc=.o} ${ASMFILES:.S=.o} ${CFILES:.c=.o} 2>/dev/null
 
 run:
-	${QEMU} -net none -kernel kernel.elf -monitor stdio -boot order=c 
+	${QEMU} -net none -kernel kernel.elf -monitor stdio -boot order=c
 
 run-grub:
 	${QEMU} -fda kernel.img
