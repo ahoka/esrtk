@@ -5,7 +5,7 @@
 void
 Power::halt()
 {
-   printf("\n\Halting CPU.\n");
+   printf("\nHalting CPU.\n");
 
    for (;;)
    {
