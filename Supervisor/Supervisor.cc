@@ -33,7 +33,9 @@ Supervisor::run()
 {
 //   VgaConsole console;
   
-   printf("Supervisor started\n\n");
+   printf("========================\n");
+   printf("      kernal pls        \n");
+   printf("========================\n");
 
 //   printf("Magic: 0x%x, MultiBoot: 0x%x\n", magic, mbd);
 
