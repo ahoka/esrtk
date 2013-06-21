@@ -1,0 +1,5 @@
+.*\.o
+.*~
+pad
+kernel.elf
+kernel.img
