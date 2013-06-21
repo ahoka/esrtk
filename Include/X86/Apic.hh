@@ -66,6 +66,7 @@ public:
                                    LvtDeliveryMode deliveryMode,
                                    uint8_t vector);
 
+   uint32_t getLocalApicId();
 private:
    uint32_t apicAddress;
    bool isBsp;

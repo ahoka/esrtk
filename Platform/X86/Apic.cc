@@ -69,3 +69,14 @@ Apic::printInformation()
    printf("APIC CPU type: %s\n", isBsp ? "BSP" : "APU");
    printf("APIC state: %s\n", isEnabled ? "enabled" : "disabled");
 }
+
+uint32_t
+Apic::getLocalApicId()
+{
+   uint32_t apicId;
+   
+   apic.read32(0x20, &apicId);
+   
+   // XXX
+   return (apicId >> 24) & 0xf;
+}
