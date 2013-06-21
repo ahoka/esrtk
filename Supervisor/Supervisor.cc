@@ -157,6 +157,45 @@ Supervisor::run()
    apic.read32(0x20, &apicId);
    printf("LAPIC ID: 0x%x\n", (apicId >> 24) & 0xf);
 
+   printf("looking for RSDP:\n");
+
+
+   struct Rsdt
+   {
+      uint8_t signature[8];
+      uint8_t checksum;
+      uint8_t oemId[6];
+      uint8_t revision;
+      uint32_t rsdtAddress;
+      uint32_t length;
+      uint64_t xsdtAddress;
+      uint8_t extendedChecksum;
+      uint8_t _reserved[3];
+   } __attribute__((packed));
+
+   for (char* mem = (char*)0x0e0000; mem < (char*)0x0fffff; mem += 16)
+   {
+      if (mem[0] == 'R' && mem[1] == 'S' && mem[2] == 'D' &&
+          mem[3] == ' ' && mem[4] == 'P' && mem[5] == 'T' &&
+          mem[6] == 'R' && mem[7] == ' ')
+      {
+         printf("Found it at: 0x%x\n", mem);
+         
+         Rsdt* rsdt = (Rsdt* )mem;
+
+         printf("rev: %hhu, len: %u, rsdt: %p\n", rsdt->revision,
+                rsdt->length, rsdt->rsdtAddress);
+
+         printf("OEM ID: %c%c%c%c%c%c\n", rsdt->oemId[0], rsdt->oemId[1],
+                rsdt->oemId[2], rsdt->oemId[3], rsdt->oemId[4],
+                rsdt->oemId[5]);
+
+         break;
+      }
+   }
+
+   printf("done\n");
+
    for (;;)
    {
       asm volatile("pause");
