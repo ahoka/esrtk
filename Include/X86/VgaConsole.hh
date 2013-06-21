@@ -4,18 +4,6 @@
 #include <Console.hh>
 #include <stdint.h>
 
-const int VGA_VRAM_BASE = 0xb8000;
-
-enum {
-   VGA_INDEX_PORT = 0x3d4,
-   VGA_DATA_PORT = 0x3d5,
-};
-
-enum {
-   VGA_CURSOR_HIGH = 14,
-   VGA_CURSOR_LOW = 15
-};
-
 typedef uint16_t VgaCharacter;
 
 class VgaConsole : public Console {
@@ -26,7 +14,7 @@ public:
    int getChar();
    int getColumns();
    int getRows();
-   void putChar(int ch, int row, int column);
+   int putChar(int ch, int row, int column);
    void setCursor(int row, int column);
    void scrollScreen();
    void clearScreen();
@@ -35,9 +23,18 @@ public:
 private:
    VgaConsole(const VgaConsole& orig);
    VgaConsole& operator=(const VgaConsole& orig);
-   
 
-   VgaCharacter* vram;
+   VgaCharacter* const vram = reinterpret_cast<VgaCharacter*>(0xb8000);
+
+   enum {
+      VgaIndexPort = 0x3d4,
+      VgaDataPort = 0x3d5,
+   };
+
+   enum {
+      VgaCursorHigh = 14,
+      VgaCursorLow = 15
+   };
 };
 
 #endif	/* VGACONSOLE_H */

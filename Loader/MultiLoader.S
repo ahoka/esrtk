@@ -30,7 +30,8 @@ loader:
 	movl  %ebx, mbd                     # Multiboot data structure
 
 //	cli
-	
+
+//	call initConsole
 	call initGdt
 	call initSupervisor
 

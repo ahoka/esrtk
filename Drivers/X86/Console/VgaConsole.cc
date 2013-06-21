@@ -1,15 +1,7 @@
-/* 
- * File:   VgaConsole.cpp
- * Author: edmmhka
- * 
- * Created on August 17, 2012, 1:36 PM
- */
-
 #include "VgaConsole.hh"
 #include "IoPort.hh"
 
 VgaConsole::VgaConsole()
-  :  vram((VgaCharacter* )VGA_VRAM_BASE)
 {
    clearScreen();
 }
@@ -25,33 +17,35 @@ VgaConsole::~VgaConsole()
 int
 VgaConsole::getColumns()
 {
-	return 80;
+   return 80;
 }
 
 int
 VgaConsole::getRows()
 {
-	return 25;
+   return 25;
 }
 
 int
 VgaConsole::getChar()
 {
-	return 'a';
+   return 'a';
 }
 
-void
+int
 VgaConsole::putChar(int ch, int row, int column)
 {
    if (row > getRows() + 1 || column > getColumns() + 1)
    {
       // error!
-      return;
+      return 0;
    }
 
    short repr = (ch & 0xff) | (0x1f << 8);
 
    vram[row * getColumns() + column] = repr;
+
+   return 1;
 }
 
 void
@@ -85,9 +79,9 @@ VgaConsole::setCursor(int row, int column)
 {
    uint16_t cursorIndex = row * getColumns() + column;
 
-   outb(VGA_INDEX_PORT, VGA_CURSOR_LOW);
-   outb(VGA_DATA_PORT, cursorIndex & 0xff);
+   outb(VgaIndexPort, VgaCursorLow);
+   outb(VgaDataPort, cursorIndex & 0xff);
 
-   outb(VGA_INDEX_PORT, VGA_CURSOR_HIGH);
-   outb(VGA_DATA_PORT, (cursorIndex >> 8) & 0xff);
+   outb(VgaIndexPort, VgaCursorHigh);
+   outb(VgaDataPort, (cursorIndex >> 8) & 0xff);
 }

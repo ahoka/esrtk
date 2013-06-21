@@ -11,6 +11,13 @@ extern "C" void initGdt();
 extern "C" void initInterrupts();
 
 extern "C" void
+initConsole()
+{
+   System::console.init();
+   System::console.clearScreen();
+}
+
+extern "C" void
 initSupervisor()
 {
    //  initGdt();
