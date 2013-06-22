@@ -44,6 +44,22 @@ struct Multiboot
    uint32_t vbeInterfaceOffset;
    uint32_t vbeInterfaceLength;
 
+   struct MemoryMap
+   {
+      uint32_t size;
+      uint64_t address;
+      uint64_t length;
+      uint32_t type;
+
+      enum MemoryType
+      {
+	 Available = 1,
+	 Reserved,
+	 Acpi,
+	 Nvs
+      };
+   };
+
    enum
    {
       MemoryValid = (1 << 0),
@@ -60,22 +76,45 @@ struct Multiboot
       VbeValid = (1 << 11)
    };
 
-   enum MemoryType
-   {
-      Available = 1,
-      Reserved,
-      Acpi,
-      Nvs
-   };
-
    inline void printField(const char* name, uint32_t value)
    {
       printf("%s: 0x%x (%u)\n", name, value, value);
    }
 
+   // inline void printField(const char* name, uint64_t value)
+   // {
+   //    printf("%s: 0x%llx (%llu)\n", name, value, value);
+   // }
+
    inline void printField(const char* name, const char* value)
    {
       printf("%s: %s\n", name, value, value);
+   }
+
+   inline void printField(MemoryMap* mmap)
+   {
+      const char* typeName;
+      switch (mmap->type)
+      {
+	 case MemoryMap::Available:
+	    typeName = "Available";
+	    break;
+	 case MemoryMap::Reserved:
+	    typeName = "Reserved";
+	    break;
+	 case MemoryMap::Acpi:
+	    typeName = "ACPI";
+	    break;
+	 case MemoryMap::Nvs:
+	    typeName = "NVS";
+	    break;
+	 default:
+	    typeName = "Unknown";
+      }
+
+      printf("Address: 0x%x, Size %u, Type: %s\n",
+	     (uint32_t)mmap->address, (uint32_t)mmap->length, typeName);
+      
    }
 
    void print()
@@ -116,9 +155,14 @@ struct Multiboot
 
       if (flags & MemoryMapValid)
       {
-	 printf("offset %u\n", (char*)&memoryMapLength - (char*)this);
 	 printField("Memory Map Length:", memoryMapLength);
 	 printField("Memory Map Address:", memoryMapAddress);
+	 for (MemoryMap *map = (MemoryMap *)memoryMapAddress;
+	      map < (MemoryMap *)(memoryMapAddress + memoryMapLength);
+	      map++)
+	 {
+	    printField(map);
+	 }
       }
 
       if (flags & DrivesValid)

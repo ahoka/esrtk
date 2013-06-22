@@ -39,11 +39,7 @@ Supervisor::run()
    printf("      kernal pls        \n");
    printf("========================\n");
    
-   printf("Magic: 0x%x, MultiBoot: 0x%x\n", magic, mbd);
-   
    mbd->print();
-
-   printf("%x %x %x\n", magic1, flags, 0);
 
    return;
 
@@ -57,7 +53,7 @@ Supervisor::run()
    // printf("%llu\n", ulonglong);
    
    Pci::init();
-   Pci::listDevices();
+//   Pci::listDevices();
 
    // if (!apic.probe())
    // {
@@ -66,21 +62,21 @@ Supervisor::run()
    
    apic.printInformation();
 
-   printf("LAPIC ID: %u\n", apic.getLocalApicId());
+   // printf("LAPIC ID: %u\n", apic.getLocalApicId());
 
-   printf("looking for RSDP:\n");
+   // printf("looking for RSDP:\n");
 
-   Rsdt* rsdt = Acpi::findRsdt();
-   printf("Found it at: 0x%x\n", (void*)rsdt);
+   // Rsdt* rsdt = Acpi::findRsdt();
+   // printf("Found it at: 0x%x\n", (void*)rsdt);
 
-   printf("rev: %hhu, len: %u, rsdt: %p\n", rsdt->revision,
-	  rsdt->length, rsdt->rsdtAddress);
+   // printf("rev: %hhu, len: %u, rsdt: %p\n", rsdt->revision,
+   // 	  rsdt->length, rsdt->rsdtAddress);
    
-   printf("OEM ID: %c%c%c%c%c%c\n", rsdt->oemId[0], rsdt->oemId[1],
-	  rsdt->oemId[2], rsdt->oemId[3], rsdt->oemId[4],
-	  rsdt->oemId[5]);
+   // printf("OEM ID: %c%c%c%c%c%c\n", rsdt->oemId[0], rsdt->oemId[1],
+   // 	  rsdt->oemId[2], rsdt->oemId[3], rsdt->oemId[4],
+   // 	  rsdt->oemId[5]);
 
-   printf("done\n");
+   // printf("done\n");
 
    Power::halt();
 }
