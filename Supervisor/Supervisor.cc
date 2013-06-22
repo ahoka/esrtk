@@ -29,6 +29,9 @@ Supervisor::~Supervisor()
 extern Multiboot* mbd;
 extern uint32_t magic;
 
+extern uint32_t flags;
+extern uint32_t magic1;
+
 void
 Supervisor::run()
 {
@@ -38,10 +41,11 @@ Supervisor::run()
    
    printf("Magic: 0x%x, MultiBoot: 0x%x\n", magic, mbd);
    
-   printf("flags: 0x%x, low mem: %u, high mem: %u\n", mbd->flags,
-	  mbd->memLower, mbd->memUpper);
+   mbd->print();
 
-   printf("Command line: %s\n", mbd->cmdline);
+   printf("%x %x %x\n", magic1, flags, 0);
+
+   return;
 
    char id[13];
    cpuid0(id);

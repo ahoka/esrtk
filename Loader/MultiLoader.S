@@ -3,13 +3,18 @@
 # setting up the Multiboot header - see GRUB docs for details
 .set ALIGN,    1<<0                     # align loaded modules on page boundaries
 .set MEMINFO,  1<<1                     # provide memory map
-.set FLAGS,    ALIGN | MEMINFO          # this is the Multiboot 'flag' field
+.set VBEINFO,  1<<2
+.set FLAGS,    ALIGN | MEMINFO		# this is the Multiboot 'flag' field
 .set MAGIC,    0x1BADB002               # 'magic number' lets bootloader find the header
 .set CHECKSUM, -(MAGIC + FLAGS)         # checksum required
 
+.global magic1
+.global flags
 #.section .magic
-#.balign 4
+.balign 4
+magic1:
 .long MAGIC
+flags:	
 .long FLAGS
 .long CHECKSUM
 
@@ -21,8 +26,8 @@
 .comm  mbd, 4                           # we will use this in kmain
 .comm  magic, 4                         # we will use this in kmain
 
-#.section .text
-#.balign 16
+.section .text
+.balign 16
 
 loader:
 	mov   $(stack + STACKSIZE), %esp    # set up the stack
