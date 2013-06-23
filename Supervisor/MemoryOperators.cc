@@ -1,9 +1,11 @@
-void *operator new(unsigned int /*size*/)
+#include <stddef.h>
+
+void *operator new(size_t /*size*/)
 {
     return 0;
 }
  
-void *operator new[](unsigned int /*size*/)
+void *operator new[](size_t /*size*/)
 {
     return 0;
 }
