@@ -112,9 +112,9 @@ struct Multiboot
 	    typeName = "Unknown";
       }
 
-      printf("Address: 0x%x, Size %u, Type: %s\n",
-	     (uint32_t)mmap->address, (uint32_t)mmap->length, typeName);
-      
+      printf("Address: 0x%x-0x%x (%u bytes), %s\n",
+	     (uint32_t)mmap->address, (uint32_t)(mmap->address + mmap->length),
+             (uint32_t)mmap->length, typeName);
    }
 
    void print()

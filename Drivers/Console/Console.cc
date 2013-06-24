@@ -16,6 +16,8 @@ Console::init()
 {
    currentRow = 0;
    currentColumn = 0;
+
+   return 0;
 }
 
 int

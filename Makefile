@@ -12,11 +12,11 @@ AS=		$(CROSS)as
 LD=		$(CROSS)ld
 QEMU=		qemu-system-i386
 
-ASFLAGS=	-march=i686 --32
+ASFLAGS=	-O3 -march=i686 -m32
 
 LDFLAGS=	-melf_i386
 
-COPTS=		-O3 -march=i386 -m32 -g3 \
+COPTS=		-O3 -march=i686 -m32 -g3 \
 		-Wall -Wextra \
 		-nostdlib -fno-builtin \
 		-fno-stack-protector
@@ -43,37 +43,32 @@ CXXFLAGS=	-std=c++11 $(COPTS) \
 
 # x86
 # TODO: make an Include directory with public API only
-IFLAGS+=	-I$(PWD)/Library
-IFLAGS+=	-I$(PWD)/Include
-IFLAGS+=	-I$(PWD)/Include/X86
+CPPFLAGS=	-I$(PWD)/Library
+CPPFLAGS+=	-I$(PWD)/Include
+CPPFLAGS+=	-I$(PWD)/Include/X86
 
-CXXFLAGS+=	$(IFLAGS)
-CFLAGS+=	$(IFLAGS)
+CFLAGS+=	$(CPPFLAGS)
+CXXFLAGS+=	$(CPPFLAGS)
+ASFLAGS+=	$(CPPFLAGS)
 
-SOURCES_MI:=	Supervisor Library Drivers
-SOURCES_X86:=	Drivers Platform
+SRCDIR=		Supervisor Library Drivers Platform
 
-# The blessed extensions are c, hh and S
-# CPPFILES:=	$(shell find Supervisor -name '*.cc')
-# CPPFILES+=	$(shell find Library -name '*.cc')
-# CPPFILES+=	$(shell find Drivers/Mi -name '*.cc')
-# CPPFILES+=	$(shell find Drivers/X86 -name '*.cc')
+CCFILES:=	$(shell find $(SRCDIR) -name '*.cc')
+CFILES:=	$(shell find $(SRCDIR) -name '*.c')
+SFILES:=	$(shell find $(SRCDIR) -name '*.S')
 
-CPPFILES:=	$(shell find $(SOURCES_MI) -name '*.cc')
-CPPFILES+=	$(shell find $(SOURCES_X86) -name '*.cc')
+SRC=		$(CCFILES) $(CFILES) $(SFILES)
 
-CFILES:=	$(shell find $(SOURCES_MI) -name '*.c')
-
-ASMFILES:=	$(shell find $(SOURCES_MI) -name '*.S')
-ASMFILES+=	$(shell find $(SOURCES_X86) -name '*.S')
+DFILES=		$(CCFILES:.cc=.cc.d) $(SFILES:.S=.S.d) $(CFILES:.c=.c.d)
+OFILES=		$(CCFILES:.cc=.o) $(SFILES:.S=.o) $(CFILES:.c=.o)
 
 HIDE=	@
 
-all:	debug kernel.img
+all:	kernel.img
 	@echo Done
 
-.PHONY: debug
-debug:
+.PHONY: buildinfo
+buildinfo:
 	@echo Build host: $(BUILD_HOST)
 	@echo C Compiler: $(CC)
 	@echo C++ Compiler: $(CXX)
@@ -91,9 +86,23 @@ debug:
 
 %.o: %.S Makefile
 	@echo Compiling $<
-	$(HIDE) $(CPP) $*.S | $(AS) $(ASFLAGS) -o $*.o
+	$(HIDE) $(CC) $(ASFLAGS) -c -o $*.o $*.S
 
-kernel.elf: Loader/MultiLoader.o $(CPPFILES:.cc=.o) $(ASMFILES:.S=.o) $(CFILES:.c=.o)
+%.cc.d: %.cc
+	@echo Generating dependencies for $<
+	$(HIDE) $(CPP) $(CPPFLAGS) -MM -MT $*.o -MF $<.d $<
+
+%.c.d:  %.c
+	@echo Generating dependencies for $<
+	$(HIDE) $(CPP) $(CPPFLAGS) -MM -MT $*.o -MF $<.d $<
+
+%.S.d: %.S
+	@echo Generating dependencies for $<
+	$(HIDE) $(CPP) $(CPPFLAGS) -MM -MT $*.o -MF $<.d $<
+
+depend: $(DFILES)
+
+kernel.elf: Loader/MultiLoader.o $(OFILES)
 	@echo Linking kernel executable
 	$(HIDE) $(LD) $(LDFLAGS) -T Build/linker.ld -o $@ $^
 
@@ -103,8 +112,7 @@ kernel.img: kernel.elf
 	$(HIDE) cat Loader/stage1 Loader/stage2 pad $< > $@
 
 clean:
-	@echo Cleaning build files
-	$(HIDE) -rm kernel.elf pad kernel.img $(CPPFILES:.cc=.o) $(ASMFILES:.S=.o) $(CFILES:.c=.o) 2>/dev/null
+	$(HIDE) -rm $(DFILES) kernel.elf pad kernel.img $(OFILES) 2>/dev/null
 
 run:
 	$(QEMU) -net none -kernel kernel.elf -boot order=c
@@ -114,3 +122,5 @@ monitor:
 
 run-grub:
 	$(QEMU) -fda kernel.img
+
+-include $(CCFILES:.cc=.cc.d) $(SFILES:.S=.S.d) $(CFILES:.c=.c.d)

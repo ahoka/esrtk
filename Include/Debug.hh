@@ -12,9 +12,9 @@
 
 class Debug {
 private:
-   Debug() {};
-   Debug(const Debug& orig) {};
-   ~Debug() {};
+   Debug();
+   Debug(const Debug& orig);
+   ~Debug();
 public:
    static void panic(const char*, ...);
 };
