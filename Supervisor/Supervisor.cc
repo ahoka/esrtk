@@ -66,15 +66,29 @@ Supervisor::run()
 
    // printf("looking for RSDP:\n");
 
-   Rsdt* rsdt = Acpi::findRsdt();
-   printf("Found it at: 0x%x\n", (void*)rsdt);
+   Rsdp* rsdp = Acpi::findRsdp();
 
-   // printf("rev: %hhu, len: %u, rsdt: %p\n", rsdt->revision,
-   // 	  rsdt->length, rsdt->rsdtAddress);
+   if (rsdp->calculateExtendedChecksum() == 0)
+   {
+      //Xsdt* xsdt = (Xsdt *)rsdp->xsdtAddress;
+      Rsdt* rsdt = (Rsdt *)rsdp->rsdtAddress;
+
+      rsdt->printHeader();
+      for (uint32_t i = 0;
+	   i < (rsdt->length - sizeof(DescriptionHeader)) / 4;
+	   i++)
+      {
+      	 ((DescriptionHeader *)rsdt->entry[i])->printHeader();
+	 printf("\n");
+      }
+   }
+
+   // printf("rev: %hhu, len: %u, rsdp: %p\n", rsdp->revision,
+   // 	  rsdp->length, rsdp->rsdpAddress);
    
-   // printf("OEM ID: %c%c%c%c%c%c\n", rsdt->oemId[0], rsdt->oemId[1],
-   // 	  rsdt->oemId[2], rsdt->oemId[3], rsdt->oemId[4],
-   // 	  rsdt->oemId[5]);
+   // printf("OEM ID: %c%c%c%c%c%c\n", rsdp->oemId[0], rsdp->oemId[1],
+   // 	  rsdp->oemId[2], rsdp->oemId[3], rsdp->oemId[4],
+   // 	  rsdp->oemId[5]);
 
    // printf("done\n");
 

@@ -1,8 +1,8 @@
 #include <Acpi.hh>
 #include <stdio.h>
 
-Rsdt *
-Acpi::findRsdt()
+Rsdp *
+Acpi::findRsdp()
 {
    for (char* mem = (char*)0x0e0000; mem < (char*)0x0fffff; mem += 16)
    {
@@ -10,24 +10,24 @@ Acpi::findRsdt()
           mem[3] == ' ' && mem[4] == 'P' && mem[5] == 'T' &&
           mem[6] == 'R' && mem[7] == ' ')
       {  
-         Rsdt* rsdt = (Rsdt* )mem;
+         Rsdp* rsdp = (Rsdp* )mem;
 
-	 if (rsdt->calculateChecksum() != 0)
+	 if (rsdp->calculateChecksum() != 0)
 	 {
-	    printf("Found RSDT with invalid checksum!\n");
+	    printf("Found RSDP with invalid checksum!\n");
 	 }
 	 else
 	 {
-	    if (rsdt->calculateExtendedChecksum() == 0)
+	    if (rsdp->calculateExtendedChecksum() == 0)
 	    {
-	       printf("Found extended RSDT at %p\n", rsdt);
+	       printf("Found ACPI 2.0+ RSDP at %p\n", rsdp);
 	    }
 	    else
 	    {
-	       printf("Found legacy RSDT at %p\n", rsdt);
+	       printf("Found ACPI 1.0 RSDP at %p\n", rsdp);
 	    }
 
-	    return rsdt;
+	    return rsdp;
 	 }
       }
    }
