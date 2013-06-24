@@ -113,7 +113,7 @@ kernel.img: kernel.elf
 clean:
 	$(HIDE) -rm $(DFILES) kernel.elf pad kernel.img $(OFILES) 2>/dev/null
 
-run:
+run: kernel.elf
 	$(QEMU) -net none -kernel kernel.elf -boot order=c
 
 monitor:

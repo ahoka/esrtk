@@ -1,4 +1,5 @@
 #include <Acpi.hh>
+#include <stdio.h>
 
 Rsdt *
 Acpi::findRsdt()
@@ -11,7 +12,23 @@ Acpi::findRsdt()
       {  
          Rsdt* rsdt = (Rsdt* )mem;
 
-	 return rsdt;
+	 if (rsdt->calculateChecksum() != 0)
+	 {
+	    printf("Found RSDT with invalid checksum!\n");
+	 }
+	 else
+	 {
+	    if (rsdt->calculateExtendedChecksum() == 0)
+	    {
+	       printf("Found extended RSDT at %p\n", rsdt);
+	    }
+	    else
+	    {
+	       printf("Found legacy RSDT at %p\n", rsdt);
+	    }
+
+	    return rsdt;
+	 }
       }
    }
 

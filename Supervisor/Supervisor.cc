@@ -41,7 +41,7 @@ Supervisor::run()
    
    mbd->print();
 
-   return;
+//   return;
 
    char id[13];
    cpuid0(id);
@@ -66,8 +66,8 @@ Supervisor::run()
 
    // printf("looking for RSDP:\n");
 
-   // Rsdt* rsdt = Acpi::findRsdt();
-   // printf("Found it at: 0x%x\n", (void*)rsdt);
+   Rsdt* rsdt = Acpi::findRsdt();
+   printf("Found it at: 0x%x\n", (void*)rsdt);
 
    // printf("rev: %hhu, len: %u, rsdt: %p\n", rsdt->revision,
    // 	  rsdt->length, rsdt->rsdtAddress);
