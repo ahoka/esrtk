@@ -26,6 +26,9 @@ private:
 
    VgaCharacter* const vram = reinterpret_cast<VgaCharacter*>(0xb8000);
 
+   uint8_t backgroundColor;
+   uint8_t foregroundColor;
+
    enum {
       VgaIndexPort = 0x3d4,
       VgaDataPort = 0x3d5,

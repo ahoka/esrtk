@@ -2,6 +2,8 @@
 #include "IoPort.hh"
 
 VgaConsole::VgaConsole()
+   : backgroundColor(0x1f),
+     foregroundColor(0xff)
 {
    clearScreen();
 }
@@ -41,7 +43,7 @@ VgaConsole::putChar(int ch, int row, int column)
       return 0;
    }
 
-   short repr = (ch & 0xff) | (0x1f << 8);
+   short repr = (ch & foregroundColor) | (backgroundColor << 8);
 
    vram[row * getColumns() + column] = repr;
 
@@ -68,9 +70,11 @@ VgaConsole::scrollScreen()
       vram[i] = vram[i + getColumns()];
    }
    
-   for (int i = getRows() * (getColumns() - 1); i < getRows() * getColumns(); i++)
+   for (int i = (getRows() - 1) * getColumns();
+	i < getRows() * getColumns();
+	i++)
    {
-      vram[i] = 0x0720;
+      vram[i] = (' ' & foregroundColor) | (backgroundColor << 8);
    }
 }
 
