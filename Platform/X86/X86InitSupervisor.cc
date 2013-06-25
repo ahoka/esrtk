@@ -1,6 +1,7 @@
 #ifdef __i386__
 
 #include <VgaConsole.hh>
+#include <SerialConsole.hh>
 #include <Apic.hh>
 
 namespace System {
