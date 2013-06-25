@@ -80,3 +80,25 @@ Apic::getLocalApicId()
    // XXX
    return (apicId >> 24) & 0xf;
 }
+
+uint32_t
+Apic::createLocalVectorTable(LvtMask mask,
+                             LvtTriggerMode triggerMode,
+                             LvtPinPolarity polarity,
+                             LvtDeliveryMode deliveryMode,
+                             uint8_t vector)
+{
+   uint32_t lvt = 0;
+
+   return lvt;
+}
+
+uint32_t
+Apic::createLocalVectorTable(LvtMask mask,
+                             LvtDeliveryMode deliveryMode,
+                             uint8_t vector)
+{
+   uint32_t lvt = 0;
+
+   return lvt;
+}

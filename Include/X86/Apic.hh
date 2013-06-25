@@ -56,6 +56,7 @@ public:
       ActiveLow = 1
    };
 
+   // For LINT0 and LINT1
    uint32_t createLocalVectorTable(LvtMask mask,
                                    LvtTriggerMode triggerMode,
                                    LvtPinPolarity polarity,
