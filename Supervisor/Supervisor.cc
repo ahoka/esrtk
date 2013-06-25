@@ -37,34 +37,27 @@ Supervisor::run()
 {
    printf("========================\n");
    printf("      kernal pls        \n");
-   printf("========================\n");
+   printf("========================\n\n");
    
    mbd->print();
-
-//   return;
 
    char id[13];
    cpuid0(id);
 
    printf("CPU Vendor ID: %s\n", id);
-   
-   // unsigned long long ulonglong = 123456789123456789ull;
-   // printf("%llu\n", ulonglong / 2);
-   // printf("%llu\n", ulonglong);
-   
    Pci::init();
-//   Pci::listDevices();
+   Pci::listDevices();
 
-   // if (!apic.probe())
-   // {
-   //    printf("x2APIC not present\n");
-   // }
+   if (!apic.probe())
+   {
+      printf("x2APIC not present\n");
+   }
    
    apic.printInformation();
 
-   // printf("LAPIC ID: %u\n", apic.getLocalApicId());
+   printf("LAPIC ID: %u\n", apic.getLocalApicId());
 
-   // printf("looking for RSDP:\n");
+   printf("looking for RSDP:\n");
 
    Rsdp* rsdp = Acpi::findRsdp();
 
@@ -82,15 +75,6 @@ Supervisor::run()
 	 printf("\n");
       }
    }
-
-   // printf("rev: %hhu, len: %u, rsdp: %p\n", rsdp->revision,
-   // 	  rsdp->length, rsdp->rsdpAddress);
-   
-   // printf("OEM ID: %c%c%c%c%c%c\n", rsdp->oemId[0], rsdp->oemId[1],
-   // 	  rsdp->oemId[2], rsdp->oemId[3], rsdp->oemId[4],
-   // 	  rsdp->oemId[5]);
-
-   // printf("done\n");
 
    Power::halt();
 }

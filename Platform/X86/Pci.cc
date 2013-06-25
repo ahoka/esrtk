@@ -60,6 +60,7 @@ Pci::init()
    outw(PCI_MODE1_ADDRESS_REG + 2, 0);
    uint32_t val = inl(PCI_MODE1_ADDRESS_REG);
    if ((val & 0x80fffffc) != PCI_MODE1_ENABLE) {
+      // sometimes happen on qemu but still works?
 //      Debug::panic("PCI: Not Mode1");
       printf("PCI init FAILED! Not MODE1 PCI?\n");
    } else {
@@ -70,7 +71,7 @@ Pci::init()
 void
 Pci::listDevices()
 {
-   printf("\nListing PCI devices on system:\n");
+   printf("Listing PCI devices:\n");
 
    for (int bus = 0; bus < 256; bus++)
    {
@@ -83,7 +84,8 @@ Pci::listDevices()
 	    if (vid != 0xffff)
 	    {
 	       int did = Pci::getDeviceId(bus, dev, fun);
-	       printf("PCI%d: D%d:F%d: 0x%x:0x%x\n", bus, dev, fun, vid, did);
+               int deviceClass = readConfigurationRegister8(bus, dev, fun, 8);
+	       printf("%x:%x:%x %s: 0x%x:0x%x\n", bus, dev, fun, getClassName(deviceClass), vid, did);
 	    }
 	 }
       }
