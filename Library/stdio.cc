@@ -5,6 +5,9 @@
 
 #include <Console.hh>
 
+// XXX platform dependent header!
+#include <X86/SerialConsole.hh>
+
 #define HAS_LONGLONG
 
 #ifdef HAS_LONGLONG
@@ -43,32 +46,31 @@ enum {
    PRINTF_TYPE_POINTER
 };
 
-bool earlyConsole = false;
+bool serialConsole = true;
 
 extern "C" int
 putchar(int c)
 {
-   if (!earlyConsole)
+   if (serialConsole)
    {
-      return System::console.putChar(c);
+      SerialConsole::putChar(c);
    }
-   else
-   {
-      return 0;
-   }
+
+   return System::console.putChar(c);
 }
 
 extern "C" int
 puts(const char* string)
 {
-   if (!earlyConsole)
+   if (serialConsole)
    {
-      return System::console.putString(string);
+      while (*string)
+      {
+         SerialConsole::putChar(*string++);
+      }
    }
-   else
-   {
-      return 0;
-   }
+
+   return System::console.putString(string);
 }
 
 #define PRINTF_PUTCHAR(x) (putchar(x), retval++)

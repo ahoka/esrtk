@@ -1,31 +1,19 @@
 #ifndef SERIALCONSOLE_H
 #define	SERIALCONSOLE_H
 
-#include <Console.hh>
-#include <stdint.h>
-
-typedef uint16_t SerialCharacter;
-
-class SerialConsole : public Console {
+class SerialConsole {
 public:
-   SerialConsole();
-   virtual ~SerialConsole();
-
-   int getChar();
-   int getColumns();
-   int getRows();
-   int putChar(char ch);
-   int putChar(int ch, int row, int column);
-   void setCursor(int row, int column);
-   void scrollScreen();
-   void clearScreen();
-   using Console::putChar;
+   static int getChar();
+   static int putChar(int ch);
 
 private:
+   SerialConsole();
+   virtual ~SerialConsole();
    SerialConsole(const SerialConsole& orig);
    SerialConsole& operator=(const SerialConsole& orig);
 
-   enum {
+   enum
+   {
       SerialDataPort = 0x3f8
    };
 };
