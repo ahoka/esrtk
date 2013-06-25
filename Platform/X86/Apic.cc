@@ -90,6 +90,12 @@ Apic::createLocalVectorTable(LvtMask mask,
 {
    uint32_t lvt = 0;
 
+   lvt |= (mask & 0x1) << 15;
+   lvt |= (triggerMode & 0x1) << 14;
+   lvt |= (polarity & 0x1) << 12;
+   lvt |= (deliveryMode & 0x7) << 7;
+   lvt |= vector;
+
    return lvt;
 }
 
@@ -98,7 +104,9 @@ Apic::createLocalVectorTable(LvtMask mask,
                              LvtDeliveryMode deliveryMode,
                              uint8_t vector)
 {
-   uint32_t lvt = 0;
-
-   return lvt;
+   return createLocalVectorTable(mask,
+                                 (LvtTriggerMode )0,
+                                 (LvtPinPolarity )0,
+                                 deliveryMode,
+                                 vector);
 }
