@@ -24,6 +24,8 @@ Debug::panic(const char* message, ...)
 
    StackTrace::printStackTrace();
 
+   printf("\nYour adventure ends here.\n");
+
    Power::halt();
 }
 

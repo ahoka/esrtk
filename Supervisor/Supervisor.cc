@@ -76,5 +76,6 @@ Supervisor::run()
       }
    }
 
+   Debug::panic("not implemented");
    Power::halt();
 }

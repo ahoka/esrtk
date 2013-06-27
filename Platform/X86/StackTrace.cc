@@ -17,7 +17,7 @@ StackTrace::printStackTrace()
    {
       reg_t ip = *(ebp + 1);
 
-      printf("  0x%x\n", ip);
+      printf("  0x%lx\n", ip);
 
       ebp = reinterpret_cast<reg_t*>(*ebp);
    }
