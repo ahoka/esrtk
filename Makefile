@@ -3,16 +3,16 @@ BUILD_HOST=	$(shell uname -s)
 ifeq ($(BUILD_HOST), Darwin)
 CROSS=		i686-elf-
 COMPILER=	clang
+ASFLAGS=	
 else
 CROSS=
 COMPILER=	clang
+ASFLAGS=	-O3 -march=i686 -m32
 endif
 
 AS=		$(CROSS)as
 LD=		$(CROSS)ld
 QEMU=		qemu-system-i386
-
-ASFLAGS=	-O3 -march=i686 -m32
 
 LDFLAGS=	-melf_i386
 
@@ -62,7 +62,7 @@ SRC=		$(CCFILES) $(CFILES) $(SFILES)
 DFILES=		$(CCFILES:.cc=.cc.d) $(SFILES:.S=.S.d) $(CFILES:.c=.c.d)
 OFILES=		$(CCFILES:.cc=.o) $(SFILES:.S=.o) $(CFILES:.c=.o)
 
-HIDE=	@
+#HIDE=	@
 
 all:	kernel.img
 
@@ -83,9 +83,15 @@ buildinfo:
 	@echo Compiling $<
 	$(HIDE) $(CC) $(CFLAGS) -c -o $*.o $*.c
 
+ifeq ($(BUILD_HOST), Darwin)
 %.o: %.S Makefile
 	@echo Compiling $<
-	$(HIDE) $(CC) $(ASFLAGS) -c -o $*.o $*.S
+	$(HIDE) $(CPP) $(CPPFLAGS) $*.S | $(AS) $(ASFLAGS) -c -o $*.o
+else
+%.o: %.S Makefile
+	@echo Compiling $<
+	$(HIDE) $(AS) $(ASFLAGS) -c -o $*.o $*.S
+endif
 
 %.cc.d: %.cc
 	@echo Generating dependencies for $<
