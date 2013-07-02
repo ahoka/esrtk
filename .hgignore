@@ -3,3 +3,4 @@
 pad
 kernel.elf
 kernel.img
+.DS_Store
