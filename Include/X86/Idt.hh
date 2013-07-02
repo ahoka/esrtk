@@ -49,7 +49,7 @@ struct InterruptFrame
    {
       printf("edi: 0x%x esi: 0x%x ebp: 0x%x esp: 0x%x\n", edi, esi, ebp, esp);
       printf("ebx: 0x%x edx: 0x%x ecx: 0x%x eax: 0x%x\n", ebx, edx, ecx, eax);
-      printf("flags: 0x%x gs: 0x%hx fs: 0x%hx es: 0x%hx ds: 0x%hx\n",
+      printf("flags: 0x%x gs: 0x%x fs: 0x%x es: 0x%x ds: 0x%x\n",
              eflags, gs & 0xffff, fs & 0xffff, es & 0xffff, ds & 0xffff);
       printf("interrupt id: %u error code: 0x%x\n", interrupt, error);
    }

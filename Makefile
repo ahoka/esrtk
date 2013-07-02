@@ -62,7 +62,7 @@ SRC=		$(CCFILES) $(CFILES) $(SFILES)
 DFILES=		$(CCFILES:.cc=.cc.d) $(SFILES:.S=.S.d) $(CFILES:.c=.c.d)
 OFILES=		$(CCFILES:.cc=.o) $(SFILES:.S=.o) $(CFILES:.c=.o)
 
-#HIDE=	@
+HIDE=	@
 
 all:	kernel.img
 

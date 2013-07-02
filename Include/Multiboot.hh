@@ -88,7 +88,7 @@ struct Multiboot
 
    inline void printField(const char* name, const char* value)
    {
-      printf("%s: %s\n", name, value, value);
+      printf("%s: %s\n", name, value);
    }
 
    inline void printField(MemoryMap* mmap)
