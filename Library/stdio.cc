@@ -70,7 +70,7 @@ puts(const char* string)
       }
    }
 
-   return System::console.putString(string);
+   return 1;
 }
 
 #define PRINTF_PUTCHAR(x) (putchar(x), retval++)

@@ -107,7 +107,7 @@ endif
 
 depend: $(DFILES)
 
-kernel.elf: Loader/MultiLoader.o $(OFILES)
+kernel.elf: Loader/MultiLoader.o $(OFILES) Build/linker.ld
 	@echo Linking kernel executable
 	$(HIDE) $(LD) $(LDFLAGS) -T Build/linker.ld -o $@ $^
 

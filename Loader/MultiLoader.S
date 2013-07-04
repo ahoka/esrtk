@@ -1,3 +1,5 @@
+#include <X86/Parameters.hh>
+
 .global loader                          # making entry point visible to linker
 
 # setting up the Multiboot header - see GRUB docs for details
@@ -26,21 +28,52 @@ flags:
 .comm  mbd, 4                           # we will use this in kmain
 .comm  magic, 4                         # we will use this in kmain
 
+.section .data
+.balign 0x1000
+
+init_page_dir_start:
+initial_page_directory:
+.long 0x00000083
+.rept (KernelPageNumber - 1)
+.long 0x00000000
+.endr
+.long 0x00000083
+.rept (1024 - KernelPageNumber - 1)
+.long 0x00000000
+.endr	
+init_page_dir_end:
+	
 .section .text
 .balign 16
 
-loader:
+.set loader, (_loader - KernelVirtualBase)
+_loader:
+	movl $(initial_page_directory - KernelVirtualBase), %ecx
+	movl %ecx, %cr3
+
+	# Enable 4MB pages
+	movl %cr4, %ecx
+	orl $0x00000010, %ecx
+	movl %ecx, %cr4
+
+	# Enable paging
+	movl %cr0, %ecx
+	orl $0x80000000, %ecx
+	movl %ecx, %cr0
+
+	leal (higher_half_loader), %ecx
+
+	jmp *%ecx
+
+higher_half_loader:
+	// TODO: unmap identity mapped first page
+
 	mov   $(stack + STACKSIZE), %esp    # set up the stack
 	movl  %eax, magic                   # Multiboot magic number
 	movl  %ebx, mbd                     # Multiboot data structure
 
-//	cli
-
-//	call initConsole
 	call initGdt
 	call initSupervisor
-
-//	sti
 
 	mov  $__start_ctors, %ebx             # call the constructors
 	jmp  2f
