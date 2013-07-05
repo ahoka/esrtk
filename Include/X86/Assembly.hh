@@ -1,5 +1,5 @@
-#ifndef __MSR_H__
-#define __MSR_H__
+#ifndef ASSEMBLY_HH
+#define ASSEMBLY_HH
 
 #include <stdint.h>
 
@@ -18,5 +18,7 @@ extern "C" uint32_t cpuid0(char* result);
 
 extern "C" uint32_t getEflags();
 extern "C" void setEflags(uint32_t eflags);
+
+extern "C" uint32_t getCr2();
 
 #endif

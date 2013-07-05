@@ -71,6 +71,10 @@ getEflags:
 	popl %eax
 	ret
 
+.global getCr2
+getCr2:
+        movl %cr2, %eax
+        ret
 
 .global setEflags
 setEflags:

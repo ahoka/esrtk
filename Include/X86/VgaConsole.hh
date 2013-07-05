@@ -24,7 +24,13 @@ private:
    VgaConsole(const VgaConsole& orig);
    VgaConsole& operator=(const VgaConsole& orig);
 
-   VgaCharacter* const vram = reinterpret_cast<VgaCharacter*>(0xb8000);
+   VgaCharacter*
+   vram()
+   {
+      VgaCharacter* vram = reinterpret_cast<VgaCharacter*>(0xb8000);
+
+      return vram;
+   }
 
    uint8_t backgroundColor;
    uint8_t foregroundColor;

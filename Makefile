@@ -1,13 +1,15 @@
 BUILD_HOST=	$(shell uname -s)
 
+COMPILER=gnu
+
 ifeq ($(BUILD_HOST), Darwin)
 CROSS=		i686-elf-
 COMPILER=	clang
 ASFLAGS=	
 else
 CROSS=
-COMPILER=	clang
-ASFLAGS=	-O3 -march=i686 -m32
+COMPILER?=	clang
+#ASFLAGS=	-O3 -march=i686 -m32
 endif
 
 AS=		$(CROSS)as
@@ -16,7 +18,9 @@ QEMU=		qemu-system-i386
 
 LDFLAGS=	-melf_i386
 
-COPTS=		-O3 -march=i686 -m32 -g3 \
+ASFLAGS+=	--32
+
+COPTS=		-O2 -march=i686 -m32 -g3 \
 		-Wall -Wextra \
 		-nostdlib -fno-builtin \
 		-fno-stack-protector
@@ -27,17 +31,18 @@ CC=		$(CROSS)clang
 CXX=		$(CROSS)clang++
 CPP=		$(CROSS)clang -E
 COPTS+=		-integrated-as
+CXXFLAGS+=	-std=c++11
 endif
 ifeq ($(COMPILER), gnu)
 CXX=		g++
 CC=		gcc
 CPP=		gcc -E
-CXXFLAGS+= 	-fcheck-new -nostartfiles -nodefaultlibs
+CXXFLAGS+= 	-fcheck-new -nostartfiles -nodefaultlibs -std=c++0x
 endif
 
 CFLAGS=		-std=c99 $(COPTS)
 
-CXXFLAGS=	-std=c++11 $(COPTS) \
+CXXFLAGS=	$(COPTS) \
 		-fno-exceptions -fno-rtti \
 		-Weffc++
 
@@ -62,7 +67,7 @@ SRC=		$(CCFILES) $(CFILES) $(SFILES)
 DFILES=		$(CCFILES:.cc=.cc.d) $(SFILES:.S=.S.d) $(CFILES:.c=.c.d)
 OFILES=		$(CCFILES:.cc=.o) $(SFILES:.S=.o) $(CFILES:.c=.o)
 
-HIDE=	@
+#HIDE=	@
 
 all:	kernel.img
 
@@ -83,15 +88,15 @@ buildinfo:
 	@echo Compiling $<
 	$(HIDE) $(CC) $(CFLAGS) -c -o $*.o $*.c
 
-ifeq ($(BUILD_HOST), Darwin)
+#ifeq ($(BUILD_HOST), Darwin)
 %.o: %.S Makefile
 	@echo Compiling $<
 	$(HIDE) $(CPP) $(CPPFLAGS) $*.S | $(AS) $(ASFLAGS) -c -o $*.o
-else
-%.o: %.S Makefile
-	@echo Compiling $<
-	$(HIDE) $(AS) $(ASFLAGS) -c -o $*.o $*.S
-endif
+#else
+#%.o: %.S Makefile
+#	@echo Compiling $<
+#	$(HIDE) $(CC) $(ASFLAGS) -c -o $*.o $*.S
+#endif
 
 %.cc.d: %.cc
 	@echo Generating dependencies for $<
@@ -107,7 +112,7 @@ endif
 
 depend: $(DFILES)
 
-kernel.elf: Loader/MultiLoader.o $(OFILES) Build/linker.ld
+kernel.elf: Loader/MultiLoader.o $(OFILES)
 	@echo Linking kernel executable
 	$(HIDE) $(LD) $(LDFLAGS) -T Build/linker.ld -o $@ $^
 

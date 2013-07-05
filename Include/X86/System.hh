@@ -4,7 +4,7 @@
 #include <VgaConsole.hh>
 
 namespace System {
-extern VgaConsole console;
+   extern VgaConsole console;
 }
 
 #endif

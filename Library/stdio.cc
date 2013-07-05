@@ -47,6 +47,7 @@ enum {
 };
 
 bool serialConsole = true;
+bool noVga = false;
 
 extern "C" int
 putchar(int c)
@@ -56,12 +57,24 @@ putchar(int c)
       SerialConsole::putChar(c);
    }
 
-   return System::console.putChar(c);
+   if (!noVga)
+   {
+      return System::console.putChar(c);
+   }
+
+   return 1;
 }
 
 extern "C" int
 puts(const char* string)
 {
+   int ret = 0;
+
+   if (!noVga)
+   {
+      ret = System::console.putString(string);
+   }
+
    if (serialConsole)
    {
       while (*string)
@@ -70,7 +83,7 @@ puts(const char* string)
       }
    }
 
-   return 1;
+   return ret;
 }
 
 #define PRINTF_PUTCHAR(x) (putchar(x), retval++)

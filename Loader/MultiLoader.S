@@ -78,7 +78,16 @@ higher_half_loader:
 	mov  $__start_ctors, %ebx             # call the constructors
 	jmp  2f
 1:
+        pushl %eax
+        pushl %edx
+        movl $0x63, %eax
+        movl $0x3f8, %edx
+        outb %al, %dx
+        popl %edx
+        popl %eax
+
 	call *(%ebx)
+        
 	add  $4, %ebx
 2:
 	cmp  $__end_ctors, %ebx

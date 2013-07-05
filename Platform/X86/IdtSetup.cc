@@ -1,6 +1,8 @@
 #include <Idt.hh>
 #include <stdio.h>
 #include <Debug.hh>
+#include <Assembly.hh>
+#include <Power.hh>
 
 // Idt descriptors
 IdtEntry idtEntries[NUMIDT];
@@ -13,7 +15,20 @@ void initIsr(int n, void (*handler)());
 extern "C" void
 defaultIsr(InterruptFrame* frame)
 {
-   if (frame->error)
+   if (frame->interrupt == 14)
+   {
+      uint32_t cr2 = getCr2();
+      printf("\n\nPage fault: %s\n", (frame->error & (1 << 0)) ? "protection violation" : "page not present");
+      printf("%s 0x%x from 0x%x in %s mode\nError Code: 0x%x\n",
+             (frame->error & (1 << 1)) ? "Writing" : "Reading",
+             cr2, frame->rip,
+             (frame->error & (1 << 2)) ? "user" : "supervisor",
+             frame->error);
+
+      Power::halt();
+   }
+
+   if (frame->error == 0)
    {
       Debug::panic("\n\nUnhandled Interrupt: %u\n", frame->interrupt);
    }

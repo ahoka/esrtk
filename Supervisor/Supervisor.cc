@@ -35,7 +35,7 @@ extern uint32_t magic1;
 void
 Supervisor::run()
 {
-   printf("========================\n");
+   printf("\n========================\n");
    printf("      kernal pls        \n");
    printf("========================\n\n");
    
@@ -52,29 +52,31 @@ Supervisor::run()
    {
       printf("x2APIC not present\n");
    }
-   
+
    apic.printInformation();
+
+   printf("con: %p\n", &System::console);
 
    printf("LAPIC ID: %u\n", apic.getLocalApicId());
 
-   printf("looking for RSDP:\n");
+   // printf("looking for RSDP:\n");
 
-   Rsdp* rsdp = Acpi::findRsdp();
+   // Rsdp* rsdp = Acpi::findRsdp();
 
-   if (rsdp->calculateExtendedChecksum() == 0)
-   {
-      //Xsdt* xsdt = (Xsdt *)rsdp->xsdtAddress;
-      Rsdt* rsdt = (Rsdt *)rsdp->rsdtAddress;
+   // if (rsdp->calculateExtendedChecksum() == 0)
+   // {
+   //    //Xsdt* xsdt = (Xsdt *)rsdp->xsdtAddress;
+   //    Rsdt* rsdt = (Rsdt *)rsdp->rsdtAddress;
 
-      rsdt->printHeader();
-      for (uint32_t i = 0;
-	   i < (rsdt->length - sizeof(DescriptionHeader)) / 4;
-	   i++)
-      {
-      	 ((DescriptionHeader *)rsdt->entry[i])->printHeader();
-	 printf("\n");
-      }
-   }
+   //    rsdt->printHeader();
+   //    for (uint32_t i = 0;
+   //         i < (rsdt->length - sizeof(DescriptionHeader)) / 4;
+   //         i++)
+   //    {
+   //    	 ((DescriptionHeader *)rsdt->entry[i])->printHeader();
+   //       printf("\n");
+   //    }
+   // }
 
    Debug::panic("not implemented");
    Power::halt();

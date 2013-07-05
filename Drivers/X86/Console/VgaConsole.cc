@@ -45,7 +45,7 @@ VgaConsole::putChar(int ch, int row, int column)
 
    short repr = (ch & foregroundColor) | (backgroundColor << 8);
 
-   vram[row * getColumns() + column] = repr;
+   vram()[row * getColumns() + column] = repr;
 
    return 1;
 }
@@ -67,14 +67,14 @@ VgaConsole::scrollScreen()
 {
    for (int i = 0; i < getRows() * (getColumns() - 1); i++)
    {
-      vram[i] = vram[i + getColumns()];
+      vram()[i] = vram()[i + getColumns()];
    }
    
    for (int i = (getRows() - 1) * getColumns();
 	i < getRows() * getColumns();
 	i++)
    {
-      vram[i] = (' ' & foregroundColor) | (backgroundColor << 8);
+      vram()[i] = (' ' & foregroundColor) | (backgroundColor << 8);
    }
 }
 
