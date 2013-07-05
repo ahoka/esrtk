@@ -1,6 +1,6 @@
 BUILD_HOST=	$(shell uname -s)
 
-COMPILER=gnu
+COMPILER=clang
 
 ifeq ($(BUILD_HOST), Darwin)
 CROSS=		i686-elf-
