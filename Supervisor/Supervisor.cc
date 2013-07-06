@@ -32,6 +32,9 @@ extern uint32_t magic;
 extern uint32_t flags;
 extern uint32_t magic1;
 
+extern void* page_directory;
+extern unsigned int page_directory_size;
+
 void
 Supervisor::run()
 {

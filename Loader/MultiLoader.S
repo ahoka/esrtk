@@ -31,8 +31,7 @@ flags:
 .section .data
 .balign 0x1000
 
-init_page_dir_start:
-initial_page_directory:
+page_directory:
 .long 0x00000083
 .rept (KernelPageNumber - 1)
 .long 0x00000000
@@ -40,15 +39,14 @@ initial_page_directory:
 .long 0x00000083
 .rept (1024 - KernelPageNumber - 1)
 .long 0x00000000
-.endr	
-init_page_dir_end:
+.endr
 	
 .section .text
 .balign 16
 
 .set loader, (_loader - KernelVirtualBase)
 _loader:
-	movl $(initial_page_directory - KernelVirtualBase), %ecx
+	movl $(page_directory - KernelVirtualBase), %ecx
 	movl %ecx, %cr3
 
 	# Enable 4MB pages

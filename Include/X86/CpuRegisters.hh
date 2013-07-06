@@ -41,4 +41,43 @@ namespace CR4
    };
 }
 
+namespace CR3PAE
+{
+   enum CR3
+   {
+      PWT = BIT(3),
+      PCD = BIT(4),
+   };
+}
+
+// ??
+enum
+{
+   Cr3PaeAddressShift = 12,
+   Cr3AddressShift = 5
+};
+
+namespace PAE
+{
+   namespace PDPE
+   {
+      enum
+      {
+	 P = BIT(0),
+	 PWT = BIT(3),
+	 PCD = BIT(4)
+      };
+   }
+   namespace PDE
+   {
+      enum
+      {
+	 P = BIT(0),
+	 PWT = BIT(3),
+	 PCD = BIT(4)
+      };
+   }
+
+}
+
 #endif
