@@ -5,19 +5,39 @@
 
 namespace CR0
 {
-   enum
+   enum CR0
    {
-      PE = BIT(0),
-      MP = BIT(1),
-      EM = BIT(2),
-      TS = BIT(3),
-      ET = BIT(4),
-      NE = BIT(5),
-      WP = BIT(16),
-      AM = BIT(18),
-      NW = BIT(29),
-      CD = BIT(30),
-      PG = BIT(31)
+      PE = BIT(0),  // Protection enabled
+      MP = BIT(1),  // Monitor Coprocessor
+      EM = BIT(2),  // Emulation
+      TS = BIT(3),  // Task Switched
+      ET = BIT(4),  // Extension Type (Read Only)
+      NE = BIT(5),  // Numeric Error
+      WP = BIT(16), // Write Protect
+      AM = BIT(18), // Alignment Mask
+      NW = BIT(29), // Not Writethrough
+      CD = BIT(30), // Cache Disable
+      PG = BIT(31)  // Paging
+   };
+}
+
+namespace CR4
+{
+   enum CR4
+   {
+      VME = BIT(0),         // Virtual-8086 Mode Extensions
+      PVI = BIT(1),	    // Protected-Mode Virtual Interrupts
+      TSD = BIT(2),	    // Time Stamp Disable
+      DE = BIT(3),	    // Debugging Extensions
+      PSE = BIT(4),	    // Page Size Extensions
+      PAE = BIT(5),	    // Physical-Address Extension
+      MCE = BIT(6),	    // Machine Check Enable
+      PGE = BIT(7),	    // Page Global Enable
+      PCE = BIT(8),	    // Performance-Monitoring Counter Enable
+      OSFXSR = BIT(9),	    // Operating System FXSAVE/FXRSTOR Support
+      OSXMMEXCPT = BIT(10), // Operating System Unmasked Exception Support
+      FSGBASE = BIT(16),    // Enable RDFSBASE, RDGSBASE, WRFSBASE, and WRGSBASE instructions
+      OSXSAVE = BIT(18)	    // XSAVE and Processor Extended States Enable Bit
    };
 }
 
