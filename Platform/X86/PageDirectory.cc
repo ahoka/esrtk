@@ -1,5 +1,7 @@
 #include <X86/CpuRegisters.hh>
 
+#if 0
+
 struct Entry
 {
    unsigned int low;
@@ -34,3 +36,5 @@ initPageDirectory()
 
    return 0;
 }
+
+#endif
