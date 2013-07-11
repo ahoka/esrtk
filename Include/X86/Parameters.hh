@@ -4,4 +4,6 @@
 #define KernelVirtualBase 0xc0000000
 #define KernelPageNumber (KernelVirtualBase >> 22)
 
+#define VTOPHYS(x) ((x) - KernelVirtualBase)
+
 #endif

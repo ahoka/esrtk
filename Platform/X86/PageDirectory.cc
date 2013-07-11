@@ -1,10 +1,14 @@
 #include <X86/CpuRegisters.hh>
 
+#ifdef PAE
 struct Entry
 {
    unsigned int low;
    unsigned int high;
-} __attribute__((aligned(0x1000)));
+};
+#else
+typedef unsigned long Entry;
+#endif
 
 char bitmap[4096];
 Entry entries[4096];
