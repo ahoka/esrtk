@@ -37,9 +37,10 @@ page_directory:
 .long 0x00000000
 .endr
 .long 0x00000083
-.rept (1024 - KernelPageNumber - 1)
+.rept (1024 - KernelPageNumber - 2)
 .long 0x00000000
 .endr
+.long ((page_directory - KernelVirtualBase) + 0x3)
 	
 .section .text
 .balign 16

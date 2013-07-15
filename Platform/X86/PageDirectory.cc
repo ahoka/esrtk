@@ -38,3 +38,5 @@ initPageDirectory()
 
    return 0;
 }
+
+#endif

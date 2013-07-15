@@ -47,6 +47,13 @@ Supervisor::run()
    char id[13];
    cpuid0(id);
 
+   // printf("Page directory:\n");
+   // unsigned int* pd = (unsigned int* )0xffc00000;
+   // for (int i = 0; i < 1024; i++)
+   // {
+   //    printf("0x%x\n", pd[i]);
+   // }
+
    printf("CPU Vendor ID: %s\n", id);
    Pci::init();
    Pci::listDevices();
