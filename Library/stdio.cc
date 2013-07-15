@@ -11,21 +11,23 @@
 #define HAS_LONGLONG
 
 #ifdef HAS_LONGLONG
-typedef unsigned long long  printf_uint_t;
+typedef unsigned long long printf_uint_t;
 typedef long long printf_int_t;
 #else
 typedef unsigned long printf_uint_t;
 typedef long printf_int_t;
 #endif
 
-enum {
+enum
+{
    PRINTF_MODIFIER_LONG = (1 << 0),
    PRINTF_MODIFIER_LONGLONG = (1 << 1),
    PRINTF_MODIFIER_SHORT = (1 << 2),
    PRINTF_MODIFIER_SHORTSHORT = (1 << 3),
 };
 
-enum {
+enum
+{
    PRINTF_FLAGS_THOUSAND = (1 << 0),
    PRINTF_FLAGS_LEFTJUSTIFIED = (1 << 1),
    PRINTF_FLAGS_SIGN = (1 << 2),
@@ -34,7 +36,8 @@ enum {
    PRINTF_FLAGS_ZEROPADDING = (1 << 5)
 };
 
-enum {
+enum
+{
    PRINTF_TYPE_INVALID,
    PRINTF_TYPE_DECIMAL,
    PRINTF_TYPE_UNSIGNED,
@@ -240,12 +243,44 @@ doVaPrint(va_list* ap, int type, int modifiers, int flags)
 	 hex = hexu;
       }
 
+      int count = 0;
       do
       {
 	 *bufp++ = hex[n & 0x0f];
 	 n >>= 4;
+	 count++;
       }
       while (n != 0);
+
+      if (flags & PRINTF_FLAGS_ZEROPADDING)
+      {
+	 int pad;
+	 if (modifiers & PRINTF_MODIFIER_SHORTSHORT)
+	 {
+	    pad = 2;
+	 }
+	 else if (modifiers & PRINTF_MODIFIER_SHORT)
+	 {
+	    pad = 4;
+	 }
+	 else if ((modifiers & PRINTF_MODIFIER_LONG && (sizeof (long) == 16)) &&
+		  modifiers & PRINTF_MODIFIER_LONGLONG)
+	 {
+	    pad = 16;
+	 }
+	 else
+	 {
+	    pad = 8;
+	 }
+
+	 if (pad - count > 0)
+	 {
+	    for (int i = 0; i < pad - count; i++)
+	    {
+	       PRINTF_PUTCHAR('0');
+	    }
+	 }
+      }
    }
    else if (type == PRINTF_TYPE_OCTAL)
    {
@@ -343,6 +378,18 @@ vprintf(const char* format, va_list ap)
 		  break;
 	       case '0':
 		  flags |= PRINTF_FLAGS_ZEROPADDING;
+		  break;
+	       case '1':
+	       case '2':
+	       case '3':
+	       case '4':
+	       case '5':
+	       case '6':
+	       case '7':
+	       case '8':
+	       case '9':
+		  // ignored for now...
+		  // did i mention i love fallthrough?
 		  break;
 	       case 'l':
 		  if (modifiers & PRINTF_MODIFIER_LONGLONG ||

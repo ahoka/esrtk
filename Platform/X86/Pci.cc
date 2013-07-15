@@ -85,7 +85,7 @@ Pci::listDevices()
 	    {
 	       int did = Pci::getDeviceId(bus, dev, fun);
                int deviceClass = readConfigurationRegister8(bus, dev, fun, 8);
-	       printf("%x:%x:%x %s: 0x%x:0x%x\n", bus, dev, fun, getClassName(deviceClass), vid, did);
+	       printf("%x:%x:%x %s: 0x%0hx:0x%0hx\n", bus, dev, fun, getClassName(deviceClass), vid, did);
 	    }
 	 }
       }
