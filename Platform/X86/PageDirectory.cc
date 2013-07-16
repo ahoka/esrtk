@@ -1,11 +1,14 @@
 #include <X86/CpuRegisters.hh>
+#include <PageFrameAllocator.hh>
+#include <Parameters.hh>
 
-#ifdef PAE
-struct Entry
+class PageDirectory
 {
-   unsigned int low;
-   unsigned int high;
+   void init()
+   {
+      uint32_t* pageDirectory = (uint32_t* )PageFrameAllocator::getFreePage();
+      KASSERT(pageDirectory != 0);
+
+      memset(pageDirectory, 0, PageSize);
+   }
 };
-#else
-typedef unsigned long Entry;
-#endif
