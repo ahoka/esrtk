@@ -1,6 +1,10 @@
 #include <X86/CpuRegisters.hh>
 #include <PageFrameAllocator.hh>
 #include <Parameters.hh>
+#include <Debug.hh>
+
+#include <stdint.h>
+#include <string.h>
 
 class PageDirectory
 {
