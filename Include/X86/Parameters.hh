@@ -8,5 +8,6 @@
 #define PageMask (PageSize - 1)
 
 #define VTOPHYS(x) ((x) - KernelVirtualBase)
+#define PHYSTOV(x) ((x) + KernelVirtualBase)
 
 #endif
