@@ -29,4 +29,6 @@ extern "C" uint32_t getCr0();
 extern "C" void setCr4(uint32_t cr4);
 extern "C" uint32_t getCr4();
 
+extern "C" void initPaging(uint32_t cr3);
+
 #endif

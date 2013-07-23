@@ -121,3 +121,34 @@ invlpg:
         movl 4(%esp), %eax
         invlpg (%eax)
         ret
+
+.global initPaging
+initPaging:
+        movl 4(%esp), %edx
+
+        movl %cr0, %eax
+        andl $(~(1 << 31)), %eax
+
+        hlt
+        movl %eax, %cr0
+
+        hlt
+
+        movl %edx, %cr3
+
+        hlt
+
+        movl %cr0, %eax
+        orl $(1 << 31), %eax
+        movl %eax, %cr0
+
+        hlt
+        
+        movl %cr4, %eax
+        andl $(~(1 << 4)), %eax
+        movl %eax, %cr4
+
+        hlt
+        
+        pop %edx
+	ret

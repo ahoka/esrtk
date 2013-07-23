@@ -58,7 +58,7 @@ Supervisor::run()
 
    printf("CPU Vendor ID: %s\n", id);
 
-   
+   PageDirectory::init();
 
    Pci::init();
    Pci::listDevices();

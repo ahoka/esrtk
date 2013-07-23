@@ -6,8 +6,8 @@
 class PageDirectory
 {
 public:
-   void init();
-   bool mapPage(void* vAddress, void* pAddress);
+   static void init();
+   static bool mapPage(void* vAddress, void* pAddress, uint32_t** pageDirectory = (uint32_t** )PageDirAddress);
 
 private:
    enum
@@ -15,8 +15,8 @@ private:
       PageDirAddress = (~0ul - 4 * 1024 * 1024)
    };
 
-   unsigned int addressToPageDirectory(void* address);
-   unsigned int addressToPageEntry(void* address);
+   static unsigned long addressToPageDirectory(void* address);
+   static unsigned long addressToPageEntry(void* address);
 };
 
 #endif
