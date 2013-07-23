@@ -14,6 +14,8 @@
 #include <Multiboot.hh>
 #include <stdio.h>
 
+#include <X86/PageDirectory.hh>
+
 Supervisor::Supervisor()
 {
 }
@@ -55,6 +57,9 @@ Supervisor::run()
    // }
 
    printf("CPU Vendor ID: %s\n", id);
+
+   
+
    Pci::init();
    Pci::listDevices();
 

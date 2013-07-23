@@ -83,3 +83,41 @@ setEflags:
 	popfl
 	ret
 
+.global setCr3
+setCr3:
+	movl 4(%esp), %eax
+        movl %eax, %cr3
+	ret
+
+.global getCr3
+getCr3:
+        movl %cr3, %eax
+	ret
+
+.global getCr0
+getCr0:
+        movl %cr0, %eax
+        ret
+
+.global setCr0
+setCr0:
+        movl 4(%esp), %eax
+        movl %eax, %cr0
+        ret
+
+.global getCr4
+getCr4:
+        movl %cr4, %eax
+        ret
+
+.global setCr4
+setCr4:
+        movl 4(%esp), %eax
+        movl %eax, %cr4
+        ret
+
+.global invlpg
+invlpg:
+        movl 4(%esp), %eax
+        invlpg (%eax)
+        ret
