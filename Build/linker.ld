@@ -45,14 +45,15 @@ SECTIONS
         *(.gnu.linkonce.d*)
     }
 
+     __sbss = .;
     .bss : AT(ADDR(.bss) - 0xc0000000)
     {
-        __sbss = .;
+
         *(COMMON)
         *(.bss)
         *(.gnu.linkonce.b*)
-        __ebss = .;
     }
+    __ebss = .;
 
     /DISCARD/ :
     {

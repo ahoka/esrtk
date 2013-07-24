@@ -50,7 +50,7 @@ enum
 };
 
 bool serialConsole = true;
-bool noVga = false;
+bool noVga = true;
 
 extern "C" int
 putchar(int c)
@@ -62,7 +62,7 @@ putchar(int c)
 
    if (!noVga)
    {
-      return System::console.putChar(c);
+//      return System::console.putChar(c);
    }
 
    return 1;
@@ -75,7 +75,7 @@ puts(const char* string)
 
    if (!noVga)
    {
-      ret = System::console.putString(string);
+//      ret = System::console.putString(string);
    }
 
    if (serialConsole)

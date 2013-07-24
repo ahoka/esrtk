@@ -1,11 +1,12 @@
-#include "VgaConsole.hh"
-#include "IoPort.hh"
+#include <VgaConsole.hh>
+#include <IoPort.hh>
+#include <X86/PageDirectory.hh>
+#include <Debug.hh>
 
 VgaConsole::VgaConsole()
    : backgroundColor(0x1f),
      foregroundColor(0xff)
 {
-   clearScreen();
 }
 
 VgaConsole::VgaConsole(const VgaConsole& /*orig*/)
@@ -14,6 +15,15 @@ VgaConsole::VgaConsole(const VgaConsole& /*orig*/)
 
 VgaConsole::~VgaConsole()
 {
+}
+
+int
+VgaConsole::init()
+{
+   bool rc = PageDirectory::mapPage((void *)0xb8000, (void* )0xb8000);
+   KASSERT(rc);
+   
+   clearScreen();
 }
 
 int

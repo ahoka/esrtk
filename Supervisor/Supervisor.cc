@@ -59,8 +59,10 @@ Supervisor::run()
    printf("CPU Vendor ID: %s\n", id);
 
    PageDirectory::init();
+//   VgaConsole::init();
 
    Pci::init();
+
    Pci::listDevices();
 
    if (!apic.probe())
@@ -70,7 +72,7 @@ Supervisor::run()
 
    apic.printInformation();
 
-   printf("con: %p\n", &System::console);
+//   printf("con: %p\n", &System::console);
 
    printf("LAPIC ID: %u\n", apic.getLocalApicId());
 

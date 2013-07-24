@@ -4,9 +4,9 @@
 #include <SerialConsole.hh>
 #include <Apic.hh>
 
-namespace System {
-   VgaConsole console;
-}
+// namespace System {
+//    VgaConsole console;
+// }
 
 extern "C" void initGdt();
 extern "C" void initInterrupts();

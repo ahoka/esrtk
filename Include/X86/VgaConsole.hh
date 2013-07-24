@@ -11,6 +11,8 @@ public:
    VgaConsole();
    virtual ~VgaConsole();
 
+   int init();
+
    int getChar();
    int getColumns();
    int getRows();
@@ -27,11 +29,10 @@ private:
    VgaCharacter*
    vram()
    {
-      VgaCharacter* vram = reinterpret_cast<VgaCharacter*>(0xb8000);
-
-      return vram;
+      return (VgaCharacter* )vram_;
    }
 
+   uint32_t vram_;
    uint8_t backgroundColor;
    uint8_t foregroundColor;
 

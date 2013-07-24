@@ -12,7 +12,8 @@ public:
 private:
    enum
    {
-      PageDirAddress = (~0ul - 4 * 1024 * 1024)
+//      PageDirAddress = (~0ul - 4 * 1024 * 1024)
+      PageDirAddress = 0xffc00000
    };
 
    static unsigned long addressToPageDirectory(void* address);
