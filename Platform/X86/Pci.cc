@@ -1,8 +1,7 @@
+#include <X86/IoPort.hh>
 #include <Pci.hh>
-#include <IoPort.hh>
 #include <Debug.hh>
-
-#include <stdio.h>
+#include <cstdio>
 
 class X86Pci
 {

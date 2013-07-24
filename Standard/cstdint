@@ -1,0 +1,9 @@
+#ifndef CSTDINT_HH
+#define CSTDINT_HH
+
+extern "C"
+{
+#include <stdint.h>
+}
+
+#endif

@@ -2,19 +2,20 @@
  * Main class for the supervisor
  */
 
-#include "Supervisor.hh"
+#include <X86/Apic.hh>
+#include <X86/Acpi.hh>
+#include <X86/Assembly.hh>
+#include <X86/IoPort.hh>
+#include <X86/PageDirectory.hh>
+
+#include <Supervisor.hh>
 #include <Debug.hh>
-#include <Assembly.hh>
+#include <Power.hh>
+#include <Multiboot.hh>
 #include <Pci.hh>
 #include <System.hh>
-#include <IoPort.hh>
-#include <Power.hh>
-#include <Apic.hh>
-#include <Acpi.hh>
-#include <Multiboot.hh>
-#include <stdio.h>
 
-#include <X86/PageDirectory.hh>
+#include <cstdio>
 
 Supervisor::Supervisor()
 {

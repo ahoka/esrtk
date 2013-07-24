@@ -1,8 +1,10 @@
-#include <Idt.hh>
-#include <stdio.h>
+#include <X86/Idt.hh>
+#include <X86/Assembly.hh>
+
 #include <Debug.hh>
-#include <Assembly.hh>
 #include <Power.hh>
+
+#include <cstdio>
 
 // Idt descriptors
 IdtEntry idtEntries[NUMIDT];

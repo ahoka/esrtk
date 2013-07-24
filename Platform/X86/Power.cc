@@ -1,6 +1,7 @@
+#include <X86/IoPort.hh>
 #include <Power.hh>
-#include <IoPort.hh>
-#include <stdio.h>
+
+#include <cstdio>
 
 void
 Power::halt()

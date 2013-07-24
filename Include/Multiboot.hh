@@ -1,8 +1,8 @@
 #ifndef MULTIBOOT_HH
 #define MULTIBOOT_HH
 
-#include <stdint.h>
-#include <stdio.h>
+#include <cstdint>
+#include <cstdio>
 
 struct Multiboot
 {

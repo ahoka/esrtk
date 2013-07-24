@@ -1,8 +1,8 @@
 #ifndef ACPI_HH
 #define ACPI_HH
 
-#include <stdint.h>
-#include <stdio.h>
+#include <cstdint>
+#include <cstdio>
 
 struct DescriptionHeader
 {

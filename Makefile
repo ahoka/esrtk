@@ -22,7 +22,7 @@ ASFLAGS+=	--32
 
 COPTS=		-O2 -march=i686 -m32 -g3 \
 		-Wall -Wextra \
-		-nostdlib -fno-builtin \
+		-nostdlib -nostdinc -fno-builtin \
 		-fno-stack-protector
 
 ifeq ($(COMPILER), clang)
@@ -48,9 +48,8 @@ CXXFLAGS=	$(COPTS) \
 
 # x86
 # TODO: make an Include directory with public API only
-CPPFLAGS=	-I$(PWD)/Library
 CPPFLAGS+=	-I$(PWD)/Include
-CPPFLAGS+=	-I$(PWD)/Include/X86
+CPPFLAGS+=	-I$(PWD)/Standard
 
 CFLAGS+=	$(CPPFLAGS)
 CXXFLAGS+=	$(CPPFLAGS)

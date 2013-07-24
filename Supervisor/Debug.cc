@@ -8,17 +8,13 @@
 #include <Debug.hh>
 #include <StackTrace.hh>
 #include <Power.hh>
-#include <stdio.h>
-
-extern bool noVga;
+#include <cstdio>
 
 void
 Debug::panic(const char* message, ...)
 {
    va_list va;
    va_start(va, message);
-
-   noVga = true;
 
    printf("Supervisor Error: ");
    vprintf(message, va);

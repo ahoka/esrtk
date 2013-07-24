@@ -1,0 +1,9 @@
+#ifndef CSTDIO_HH
+#define CSTDIO_HH
+
+extern "C"
+{
+#include <stdio.h>
+}
+
+#endif

@@ -1,5 +1,5 @@
 #include "Supervisor.hh"
-#include <Gdt.hh>
+#include <X86/Gdt.hh>
 
 extern "C" void
 kmain(void)

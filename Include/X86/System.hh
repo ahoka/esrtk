@@ -1,7 +1,7 @@
-#ifndef _SYSTEM_H_
-#define _SYSTEM_H_
+#ifndef X86_SYSTEM_H
+#define X86_SYSTEM_H
 
-#include <VgaConsole.hh>
+#include <X86/VgaConsole.hh>
 
 namespace System {
    extern VgaConsole console;

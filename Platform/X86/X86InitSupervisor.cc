@@ -1,9 +1,9 @@
 #ifdef __i386__
 
-#include <VgaConsole.hh>
-#include <SerialConsole.hh>
 #include <X86/Apic.hh>
 #include <X86/PageDirectory.hh>
+#include <X86/SerialConsole.hh>
+#include <X86/VgaConsole.hh>
 
 // namespace System {
 //    VgaConsole console;

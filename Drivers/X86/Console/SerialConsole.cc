@@ -1,5 +1,5 @@
-#include "SerialConsole.hh"
-#include "IoPort.hh"
+#include <X86/SerialConsole.hh>
+#include <X86/IoPort.hh>
 
 int
 SerialConsole::getChar()

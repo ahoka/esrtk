@@ -1,6 +1,6 @@
 #include <StackTrace.hh>
 
-#include <stdio.h>
+#include <cstdio>
 
 typedef unsigned long reg_t;
 

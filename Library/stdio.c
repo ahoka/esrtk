@@ -1,12 +1,10 @@
-#include <System.hh>
-
 #include <stdarg.h>
 #include <stdio.h>
+#include <stddef.h>
+#include <stdbool.h>
 
-#include <Console.hh>
-
-// XXX platform dependent header!
-#include <X86/SerialConsole.hh>
+int system_putchar(int);
+int system_puts(const char *);
 
 #define HAS_LONGLONG
 
@@ -49,44 +47,42 @@ enum
    PRINTF_TYPE_POINTER
 };
 
-bool serialConsole = true;
-bool noVga = true;
-
-extern "C" int
+int
 putchar(int c)
 {
-   if (serialConsole)
-   {
-      SerialConsole::putChar(c);
-   }
 
-   if (!noVga)
-   {
-//      return System::console.putChar(c);
-   }
+/*    if (serialConsole) */
+/*    { */
+/*       SerialConsole::putChar(c); */
+/*    } */
 
-   return 1;
+/*    if (!noVga) */
+/*    { */
+/* //      return System::console.putChar(c); */
+/*    } */
+
+   return system_putchar(c);
 }
 
-extern "C" int
+int
 puts(const char* string)
 {
-   int ret = 0;
+/*    int ret = 0; */
 
-   if (!noVga)
-   {
-//      ret = System::console.putString(string);
-   }
+/*    if (!noVga) */
+/*    { */
+/* //      ret = System::console.putString(string); */
+/*    } */
 
-   if (serialConsole)
-   {
-      while (*string)
-      {
-         SerialConsole::putChar(*string++);
-      }
-   }
+/*    if (serialConsole) */
+/*    { */
+/*       while (*string) */
+/*       { */
+/*          SerialConsole::putChar(*string++); */
+/*       } */
+/*    } */
 
-   return ret;
+   return system_puts(string);
 }
 
 #define PRINTF_PUTCHAR(x) (putchar(x), retval++)
@@ -324,7 +320,7 @@ doVaPrint(va_list* ap, int type, int modifiers, int flags)
    return retval;
 }
 
-extern "C" int
+int
 printf(const char* format, ...)
 {
    int retval;
@@ -339,7 +335,7 @@ printf(const char* format, ...)
    return retval;
 }
 
-extern "C" int
+int
 vprintf(const char* format, va_list ap)
 {
    int retval = 0;

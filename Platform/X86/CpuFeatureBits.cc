@@ -1,5 +1,5 @@
-#include <stdio.h>
-#include <Assembly.hh>
+#include <X86/Assembly.hh>
+#include <cstdio>
 
 // struct Features
 // {

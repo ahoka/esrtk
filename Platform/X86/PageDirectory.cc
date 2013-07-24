@@ -6,8 +6,8 @@
 
 #include <X86/PageDirectory.hh>
 
-#include <string.h>
-#include <stdio.h>
+#include <cstring>
+#include <cstdio>
 
 //#define DEBUG
 

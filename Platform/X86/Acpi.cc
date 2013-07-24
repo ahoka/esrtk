@@ -1,5 +1,5 @@
-#include <Acpi.hh>
-#include <stdio.h>
+#include <X86/Acpi.hh>
+#include <cstdio>
 
 Rsdp *
 Acpi::findRsdp()

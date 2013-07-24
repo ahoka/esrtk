@@ -1,7 +1,7 @@
 #include <PageFrameAllocator.hh>
 #include <Debug.hh>
 #include <Parameters.hh>
-#include <stdio.h>
+#include <cstdio>
 
 extern char* __ebss;
 

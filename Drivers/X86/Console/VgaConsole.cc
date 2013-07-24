@@ -1,5 +1,5 @@
-#include <VgaConsole.hh>
-#include <IoPort.hh>
+#include <X86/VgaConsole.hh>
+#include <X86/IoPort.hh>
 #include <X86/PageDirectory.hh>
 #include <Debug.hh>
 

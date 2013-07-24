@@ -1,8 +1,8 @@
 #ifndef _IDT_H_
 #define _IDT_H_
 
-#include <stdint.h>
-#include <stdio.h>
+#include <cstdint>
+#include <cstdio>
 
 #define NUMIDT 256
 

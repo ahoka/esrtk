@@ -1,9 +1,9 @@
 #include <Debug.hh>
-#include <stdio.h>
-#include <Assembly.hh>
+#include <X86/Assembly.hh>
 #include <X86/PageDirectory.hh>
+#include <X86/Apic.hh>
 
-#include <Apic.hh>
+#include <cstdio>
 
 Apic apic;
 
