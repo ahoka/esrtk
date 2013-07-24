@@ -1,6 +1,7 @@
 #include <Debug.hh>
 #include <stdio.h>
 #include <Assembly.hh>
+#include <X86/PageDirectory.hh>
 
 #include <Apic.hh>
 
@@ -60,6 +61,10 @@ Apic::init()
    apicAddress = eax & 0xfffff000;
    isBsp = eax & 0x100;
    isEnabled = eax & 0x800;
+
+   printf("Mapping APIC to %p\n", apicAddress);
+
+   PageDirectory::mapPage(apicAddress, apicAddress);
 }
 
 void

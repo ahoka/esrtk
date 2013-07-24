@@ -20,10 +20,14 @@ VgaConsole::~VgaConsole()
 int
 VgaConsole::init()
 {
-   bool rc = PageDirectory::mapPage((void *)0xb8000, (void* )0xb8000);
+   bool rc = PageDirectory::mapPage(0xb8000, 0xb8000);
    KASSERT(rc);
+
+   vram_ = 0xb8000;
    
    clearScreen();
+
+   return 0;
 }
 
 int

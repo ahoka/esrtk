@@ -54,17 +54,15 @@ PageDirectory::init()
 
    // The last 4MB will be mapped to the page directory itself
    //
-   void* last = (void* )PageDirAddress;
-   printf("Mapping pageDirectory from %p to %p\n", VTOPHYS(pageDirectory), last);
-   pageDirectory[addressToPageDirectory(last)] = (uint32_t )VTOPHYS(pageDirectory);
+   pageDirectory[1023] = (uint32_t )vtophys(pageDirectory) | 0x1;
 
    // map kernel memory
    //
    printf("Creating kernel memory mapping\n");
    for (int i = 0; i < KernelMemorySize / PageSize; i++)
    {
-      bool rc = mapPage((void *)(KernelVirtualBase + i * PageSize),
-                        (void *)(i * PageSize),
+      bool rc = mapPage((KernelVirtualBase + i * PageSize),
+                        (i * PageSize),
                         (uint32_t **)pageDirectory);
       KASSERT(rc);
    }
@@ -73,72 +71,18 @@ PageDirectory::init()
    // TODO unmap after initPaging
    for (int i = 0; i < KernelMemorySize / PageSize; i++)
    {
-      bool rc = mapPage((void *)(KernelLoadAddress + i * PageSize),
-                        (void *)(KernelLoadAddress + i * PageSize),
+      bool rc = mapPage((KernelLoadAddress + i * PageSize),
+                        (KernelLoadAddress + i * PageSize),
                         (uint32_t **)pageDirectory);
       KASSERT(rc);
    }
 
-   printf("enable paging: %p\n", pageDirectory);
+   printf("Setting kernel page directory to %p\n", vtophys(pageDirectory));
 
    // call it via identity mapped address
    //
    void (*initp)(uint32_t) = (void (*)(uint32_t))vtophys((void*)&initPaging);
    initp(vtophys((uint32_t )pageDirectory));
-//   initPaging((uint32_t )pageDirectory);
-
-//   asm volatile("hlt");
-}
-
-unsigned long
-PageDirectory::addressToPageDirectory(void* address)
-{
-   unsigned long index = (unsigned long )address;
-
-   index >>= 22;
-
-   return index;
-}
-
-unsigned long
-PageDirectory::addressToPageEntry(void* address)
-{
-   unsigned long index = (unsigned long )address;
-
-   index >>= 12;
-   index &= 0x7ff;
-
-   return index;
-}
-
-bool
-PageDirectory::mapPage(void* vAddress, void* pAddress, uint32_t** pageDirectory)
-{
-   uint32_t* pt = pageDirectory[addressToPageDirectory(vAddress)];
-
-#ifdef DEBUG
-   printf("Mapping %p to %p\n", vAddress, pAddress);
-   printf("Page directory: %p\n", pageDirectory);
-#endif
-
-   if (((unsigned long)pt & 0x1) == 0)
-   {
-      // allocate new
-      uint32_t* newPt = (uint32_t* )PageFrameAllocator::getFreePage();
-      printf("allocating new page table: %p\n", newPt);
-
-      memset(newPt, 0, PageSize);
-
-      // mark present
-      newPt = (uint32_t* )((uint32_t )newPt | 0x1);
-      pt = vtophys(newPt);
-
-      pageDirectory[addressToPageDirectory(vAddress)] = pt;
-
-#ifdef DEBUG
-      printf("pt is now at: v:%p p:%p\n", phystov(pageDirectory[addressToPageDirectory(vAddress)]),
-             pageDirectory[addressToPageDirectory(vAddress)]);
-#endif
 
 #ifdef VERBOSE_DEBUG
       bool wasEmpty = false;
@@ -169,9 +113,60 @@ PageDirectory::mapPage(void* vAddress, void* pAddress, uint32_t** pageDirectory)
          }
       }
 #endif
+}
+
+unsigned long
+PageDirectory::addressToPageDirectory(uint32_t address)
+{
+   unsigned long index = (unsigned long )address;
+
+   index >>= 22;
+
+   return index;
+}
+
+unsigned long
+PageDirectory::addressToPageEntry(uint32_t address)
+{
+   unsigned long index = (unsigned long )address;
+
+   index >>= 12;
+   index &= 0x7ff;
+
+   return index;
+}
+
+bool
+PageDirectory::mapPage(uint32_t vAddress, uint32_t pAddress, uint32_t** pageDirectory)
+{
+   uint32_t* pt = pageDirectory[addressToPageDirectory(vAddress)];
+
+#ifdef DEBUG
+   printf("Mapping %p to %p\n", (void* )vAddress, (void* )pAddress);
+   printf("Page directory: %p, PDE at %p\n", pageDirectory, addressToPageDirectory(vAddress));
+#endif
+
+   if (((unsigned long)pt & 0x1) == 0)
+   {
+      // allocate new
+      uint32_t* newPt = (uint32_t* )PageFrameAllocator::getFreePage();
+      printf("allocating new page table: %p\n", newPt);
+
+      memset(newPt, 0, PageSize);
+
+      // mark present
+      newPt = (uint32_t* )((uint32_t )newPt | 0x1);
+      pt = vtophys(newPt);
+
+      pageDirectory[addressToPageDirectory(vAddress)] = pt;
+
+#ifdef DEBUG
+      printf("pt is now at: v:%p p:%p\n", phystov(pageDirectory[addressToPageDirectory(vAddress)]),
+             pageDirectory[addressToPageDirectory(vAddress)]);
+#endif
    }
 
-   pt = (uint32_t *)((uint32_t )pt & ~1);
+   pt = (uint32_t *)((uint32_t )pt & 0xfffff000);
 
    uint32_t* vpt = phystov(pt);
 #ifdef DEBUG
@@ -193,12 +188,12 @@ PageDirectory::mapPage(void* vAddress, void* pAddress, uint32_t** pageDirectory)
 }
 
 bool
-PageDirectory::unmapPage(void* vAddress, uint32_t** pageDirectory)
+PageDirectory::unmapPage(uint32_t vAddress, uint32_t** pageDirectory)
 {
    uint32_t* pt = pageDirectory[addressToPageDirectory(vAddress)];
 
 #ifdef DEBUG
-   printf("Unmapping %p\n", vAddress);
+   printf("Unmapping %p\n", (void* )vAddress);
    printf("Page directory: %p\n", pageDirectory);
 #endif
 

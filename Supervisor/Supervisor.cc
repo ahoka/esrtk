@@ -58,11 +58,7 @@ Supervisor::run()
 
    printf("CPU Vendor ID: %s\n", id);
 
-   PageDirectory::init();
-//   VgaConsole::init();
-
    Pci::init();
-
    Pci::listDevices();
 
    if (!apic.probe())

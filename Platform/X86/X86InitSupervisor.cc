@@ -2,7 +2,8 @@
 
 #include <VgaConsole.hh>
 #include <SerialConsole.hh>
-#include <Apic.hh>
+#include <X86/Apic.hh>
+#include <X86/PageDirectory.hh>
 
 // namespace System {
 //    VgaConsole console;
@@ -23,7 +24,7 @@ initSupervisor()
 {
    //  initGdt();
    initInterrupts();
-
+   PageDirectory::init();
    apic.init();
 }
 
