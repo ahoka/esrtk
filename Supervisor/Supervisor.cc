@@ -45,7 +45,7 @@ Supervisor::run()
    printf("      kernal pls        \n");
    printf("========================\n\n");
    
-   mbd->print();
+//   mbd->print();
 
    char id[13];
    cpuid0(id);
