@@ -191,3 +191,37 @@ PageDirectory::mapPage(void* vAddress, void* pAddress, uint32_t** pageDirectory)
 
    return true;
 }
+
+bool
+PageDirectory::unmapPage(void* vAddress, uint32_t** pageDirectory)
+{
+   uint32_t* pt = pageDirectory[addressToPageDirectory(vAddress)];
+
+#ifdef DEBUG
+   printf("Unmapping %p\n", vAddress);
+   printf("Page directory: %p\n", pageDirectory);
+#endif
+
+   if (((unsigned long)pt & 0x1) == 0)
+   {
+      // wasnt mapped
+      //
+      return false;
+   }
+
+   uint32_t* vpt = phystov(pt);
+
+#ifdef DEBUG
+   printf("Page table entry: (v:%p p:%p) %p\n", vpt, pt, (void*)vpt[addressToPageEntry(vAddress)]);
+#endif
+
+   if (vpt[addressToPageEntry(vAddress)] == 0)
+   {
+      // wasnt mapped
+      return false;
+   }
+
+   vpt[addressToPageEntry(vAddress)] = 0;
+
+   return true;
+}
