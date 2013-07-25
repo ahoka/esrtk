@@ -278,3 +278,27 @@ PageDirectory::mapPage(uint32_t vAddress, uint32_t pAddress)
 
    return true;
 }
+
+bool
+PageDirectory::unmapPage(uint32_t vAddress)
+{
+   uint32_t* pde = addressToPde(vAddress);
+
+   if ((*pde & PageValid) == 0)
+   {
+      return false;
+   }
+
+   uint32_t* pte = addressToPte(vAddress);
+
+   if ((*pte & PageValid) == 0)
+   {
+      return false;
+   }
+
+   // TODO free page directory if empty
+
+   *pte = PageWritable;
+
+   return true;
+}
