@@ -84,6 +84,8 @@ PageDirectory::init()
    void (*initp)(uint32_t) = (void (*)(uint32_t))vtophys((void*)&initPaging);
    initp(vtophys((uint32_t )pageDirectory));
 
+//   mapPage(0x82002000u, 0x82000000u);
+
 #ifdef VERBOSE_DEBUG
       bool wasEmpty = false;
       bool wasDot = false;
@@ -131,7 +133,7 @@ PageDirectory::addressToPteIndex(uint32_t address)
    unsigned long index = (unsigned long )address;
 
    index >>= 12;
-   index &= 0x7ff;
+   index &= 0x3ff;
 
    return index;
 }
@@ -139,17 +141,24 @@ PageDirectory::addressToPteIndex(uint32_t address)
 uint32_t*
 PageDirectory::addressToPde(uint32_t address)
 {
-   uint32_t index = address / 0x400000;
+//   uint32_t index = address / 0x400000;
+   uint32_t index = addressToPdeIndex(address);
 
-   return (uint32_t* )(PageDirectoryBase + index);
+   printf("pde idx: %u, 0x%x + 0x%x\n", index, PageDirectoryBase, index * 4);
+
+   return (uint32_t* )(PageDirectoryBase + index * 4);
 }
 
 uint32_t*
 PageDirectory::addressToPte(uint32_t address)
 {
-   uint32_t index = (address % 0x400000) / 0x1000;
+//   uint32_t index = (address % 0x400000) / 0x1000;
+   uint32_t pdeIndex = addressToPdeIndex(address);
+   uint32_t pteIndex = addressToPteIndex(address);
 
-   return (uint32_t* )(PageTableBase + index * 0x1000);
+   printf("pte idx: %u, 0x%x + 0x%x + 0x%x\n", pteIndex, PageTableBase, pdeIndex * 0x1000, pteIndex * 4);
+
+   return (uint32_t* )(PageTableBase + pdeIndex * 0x1000 + pteIndex * 4);
 }
 
 bool
@@ -171,7 +180,7 @@ PageDirectory::mapPage(uint32_t vAddress, uint32_t pAddress, uint32_t** pageDire
       memset(newPt, 0, PageSize);
 
       // mark present
-      newPt = (uint32_t* )((uint32_t )newPt | 0x1);
+      newPt = (uint32_t* )((uint32_t )newPt | 0x3);
       pt = vtophys(newPt);
 
       pageDirectory[addressToPdeIndex(vAddress)] = pt;
@@ -254,13 +263,13 @@ PageDirectory::mapPage(uint32_t vAddress, uint32_t pAddress)
       uint32_t newPde = (uint32_t )PageFrameAllocator::getFreePage();
       newPde = vtophys(newPde) | (PageValid | PageWritable);
       printf("allocating new pde at %p\n", (void* )newPde);
-      *pde = vtophys(newPde) | PageValid;
+      *pde = newPde;
 
       // XXX flush tlb?
    }
 
    uint32_t* pte = addressToPte(vAddress);
-   printf("writing to pte at %p\n", (void* )pte);
+   printf("writing to pte at %p (0x%x)\n", (void* )pte, *pte);
 
    if (*pte & PageValid)
    {
