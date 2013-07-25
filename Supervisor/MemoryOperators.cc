@@ -1,4 +1,5 @@
-#include <stddef.h>
+#include <cstddef>
+#include <new>
 
 void *operator new(size_t /*size*/)
 {

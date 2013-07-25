@@ -35,7 +35,7 @@
 #include "quad.h"
 
 #define	ONE_FOURTH	((int)1 << (INT_BITS - 2))
-#define	ONE_HALF	(ONE_FOURTH * 2.0)
+//#define	ONE_HALF	(ONE_FOURTH * 2.0)
 #define	ONE		(ONE_FOURTH * 4.0)
 
 /*
@@ -65,7 +65,7 @@ __fixunsdfdi(double x)
 	 * rounding modes (except if the result is an IEEE denorm).
 	 * Furthermore, the quotient will fit into a 32-bit integer.
 	 */
-	tmp = x / ONE;
+	tmp = (unsigned int )(x / ONE);
 	t.ul[L] = (unsigned int) (x - tmp * ONE);
 	t.ul[H] = tmp;
 	return (t.uq);

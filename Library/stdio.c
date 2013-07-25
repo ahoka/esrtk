@@ -1,10 +1,9 @@
+#include <StdioSupport.hh>
+
 #include <stdarg.h>
 #include <stdio.h>
 #include <stddef.h>
 #include <stdbool.h>
-
-int system_putchar(int);
-int system_puts(const char *);
 
 #define HAS_LONGLONG
 
@@ -188,7 +187,7 @@ doVaPrint(va_list* ap, int type, int modifiers, int flags)
 	 if (sn < 0)
 	 {
 	    PRINTF_PUTCHAR('-');
-	    n = sn * -1;
+	    n = (printf_uint_t )(sn * -1);
 	 } else {
 	    if (flags & PRINTF_FLAGS_SIGN)
 	    {
@@ -198,7 +197,7 @@ doVaPrint(va_list* ap, int type, int modifiers, int flags)
 	    {
 	       PRINTF_PUTCHAR(' ');
 	    }
-	    n = sn;
+	    n = (printf_uint_t )sn;
 	 }
       }
       else
@@ -259,9 +258,9 @@ doVaPrint(va_list* ap, int type, int modifiers, int flags)
 	 {
 	    pad = 4;
 	 }
-	 else if ((modifiers & PRINTF_MODIFIER_LONG && (sizeof (long) == 16)) &&
-		  modifiers & PRINTF_MODIFIER_LONGLONG)
-	 {
+	 else if ((modifiers & PRINTF_MODIFIER_LONG && (sizeof (long) == 16)) ||
+                  modifiers & PRINTF_MODIFIER_LONGLONG)
+         {
 	    pad = 16;
 	 }
 	 else
@@ -302,7 +301,7 @@ doVaPrint(va_list* ap, int type, int modifiers, int flags)
    }
    else if (type == PRINTF_TYPE_CHARACTER)
    {
-      unsigned char ch = va_arg(*ap, int);
+      unsigned char ch = (unsigned char )va_arg(*ap, int);
       putchar(ch);
       retval += 1;
    }

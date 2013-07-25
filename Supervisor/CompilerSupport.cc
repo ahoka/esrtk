@@ -2,8 +2,15 @@
 
 #include <stdbool.h>
 
+extern "C" void __cxa_pure_virtual();
+extern "C" int __cxa_atexit(void (*)(void*), void*, void*);
+extern "C" void __cxa_finalize(void*);
+
+extern int __cxaimpl_atexit_nextfree;
+extern void* __dso_handle;
+
 // a pure virtual function is called
-extern "C" void
+void
 __cxa_pure_virtual()
 {
    // do nothing
@@ -22,12 +29,12 @@ struct __cxaimpl_atexit_container
 };
 
 const int __cxaimpl_atexit_size = 128;
-__cxaimpl_atexit_container __cxaimpl_atexit_list[__cxaimpl_atexit_size];
+static __cxaimpl_atexit_container __cxaimpl_atexit_list[__cxaimpl_atexit_size];
 int __cxaimpl_atexit_nextfree = 0;
-bool __cxaimpl_atexit_firstrun = true;
+static bool __cxaimpl_atexit_firstrun = true;
 
 // atexit() == __cxa_atexit(f, 0, 0);
-extern "C" int
+int
 __cxa_atexit(void (*destructor)(void*), void* argument, void* dso)
 {
    if (destructor == 0)
@@ -68,7 +75,7 @@ __cxa_atexit(void (*destructor)(void*), void* argument, void* dso)
    return 0;
 }
 
-extern "C" void
+void
 __cxa_finalize(void* dso)
 {
    if (__cxaimpl_atexit_firstrun)

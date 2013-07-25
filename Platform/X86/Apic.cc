@@ -59,20 +59,29 @@ Apic::init()
    // KASSERT(false);
    
    apicAddress = eax & 0xfffff000;
-   isBsp = eax & 0x100;
-   isEnabled = eax & 0x800;
 
-   printf("Mapping APIC to %p\n", apicAddress);
+   if (eax & 0x100)
+   {
+      flags |= ApicIsBsp;
+   }
+   if (eax & 0x800)
+   {
+      flags |= ApicIsEnabled;
+   }
 
-   PageDirectory::mapPage(apicAddress, apicAddress);
+   printf("Mapping APIC to %p\n", (void* )apicAddress);
+
+   PageDirectory::mapPage(0x80000000u, apicAddress);
+
+   apicAddress = 0x80000000u;
 }
 
 void
 Apic::printInformation()
 {
    printf("APIC base address: 0x%x\n", apicAddress);
-   printf("APIC CPU type: %s\n", isBsp ? "BSP" : "APU");
-   printf("APIC state: %s\n", isEnabled ? "enabled" : "disabled");
+   printf("APIC CPU type: %s\n", (flags & ApicIsBsp) ? "BSP" : "APU");
+   printf("APIC state: %s\n", (flags & ApicIsEnabled) ? "enabled" : "disabled");
 }
 
 uint32_t
@@ -95,10 +104,10 @@ Apic::createLocalVectorTable(LvtMask mask,
 {
    uint32_t lvt = 0;
 
-   lvt |= (mask & 0x1) << 15;
-   lvt |= (triggerMode & 0x1) << 14;
-   lvt |= (polarity & 0x1) << 12;
-   lvt |= (deliveryMode & 0x7) << 7;
+   lvt |= (mask & 0x1u) << 15;
+   lvt |= (triggerMode & 0x1u) << 14;
+   lvt |= (polarity & 0x1u) << 12;
+   lvt |= (deliveryMode & 0x7u) << 7;
    lvt |= vector;
 
    return lvt;

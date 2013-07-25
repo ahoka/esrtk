@@ -1,0 +1,9 @@
+#ifndef CSTDDEF_HH
+#define CSTDDEF_HH
+
+extern "C"
+{
+#include <stddef.h>
+}
+
+#endif

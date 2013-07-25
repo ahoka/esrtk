@@ -6,15 +6,20 @@
 
 #include <cstdio>
 
+extern "C" void defaultIsr(InterruptFrame* frame) __attribute__((noreturn));
+extern "C" void isrDispatcher(InterruptFrame* frame) __attribute__((noreturn));
+
+extern IdtPointer idtPointer;
+
 // Idt descriptors
-IdtEntry idtEntries[NUMIDT];
+static IdtEntry idtEntries[NUMIDT];
 IdtPointer idtPointer;
 
 void initIsr(int n, void (*handler)());
 
 #include "InterruptVectorsInit.icc"
 
-extern "C" void
+void
 defaultIsr(InterruptFrame* frame)
 {
    if (frame->interrupt == 14)
@@ -44,7 +49,7 @@ defaultIsr(InterruptFrame* frame)
    // printf("\n");
 }
 
-extern "C" void
+void
 isrDispatcher(InterruptFrame* frame)
 {
    defaultIsr(frame);
@@ -63,7 +68,7 @@ initIsr(int n, void (*handler)())
    idtEntries[n].reserved = 0;
 }
 
-extern "C" void
+void
 initInterrupts()
 {
    idtPointer.base = (uint32_t )&idtEntries;

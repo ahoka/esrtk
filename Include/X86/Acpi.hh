@@ -3,6 +3,7 @@
 
 #include <cstdint>
 #include <cstdio>
+#include <cstddef>
 
 struct DescriptionHeader
 {
@@ -38,13 +39,13 @@ struct DescriptionHeader
 
 struct Rsdt : DescriptionHeader
 {
-   uint32_t entry[];
-} __attribute__((packed));
+   uint32_t entry[1];
+};// __attribute__((packed));
 
 struct Xsdt : DescriptionHeader
 {
-   uint64_t entry[];
-} __attribute__((packed));
+   uint64_t entry[1];
+};// __attribute__((packed));
 
 struct Rsdp
 {
@@ -63,7 +64,7 @@ struct Rsdp
    {
       uint8_t sum = 0;
 
-      unsigned int size = (int )((uint8_t *)&length - (uint8_t *)this);
+      size_t size = (size_t )((uint8_t *)&length - (uint8_t *)this);
 
       uint8_t* rsdp = (uint8_t *)this;
       for (unsigned int i = 0; i < size; i++)

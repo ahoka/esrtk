@@ -81,7 +81,7 @@ __qdivrem(u_quad_t uq, u_quad_t vq, u_quad_t *arq)
 		tmp.ul[H] = tmp.ul[L] = 1 / zero;
 		if (arq)
 			*arq = uq;
-		return (tmp.q);
+		return (u_quad_t )(tmp.q);
 	}
 	if (uq < vq) {
 		if (arq)
@@ -141,7 +141,7 @@ __qdivrem(u_quad_t uq, u_quad_t vq, u_quad_t *arq)
 				*arq = rbj % t;
 			tmp.ul[H] = COMBINE(q1, q2);
 			tmp.ul[L] = COMBINE(q3, q4);
-			return (tmp.q);
+			return (u_quad_t )(tmp.q);
 		}
 	}
 
@@ -244,17 +244,17 @@ __qdivrem(u_quad_t uq, u_quad_t vq, u_quad_t *arq)
 		if (d) {
 			for (i = m + n; i > m; --i)
 				u[i] = (digit)(((u_int)u[i] >> d) |
-				    LHALF((u_int)u[i - 1] << (HALF_BITS - d)));
+                                               LHALF((u_int)u[i - 1] << (HALF_BITS - (unsigned int )d)));
 			u[i] = 0;
 		}
 		tmp.ul[H] = COMBINE(uspace[1], uspace[2]);
 		tmp.ul[L] = COMBINE(uspace[3], uspace[4]);
-		*arq = tmp.q;
+		*arq = (u_quad_t )tmp.q;
 	}
 
 	tmp.ul[H] = COMBINE(qspace[1], qspace[2]);
 	tmp.ul[L] = COMBINE(qspace[3], qspace[4]);
-	return (tmp.q);
+	return (u_quad_t )(tmp.q);
 }
 
 /*
@@ -269,6 +269,6 @@ shl(digit *p, int len, int sh)
 
 	for (i = 0; i < len; i++)
 		p[i] = (digit)(LHALF((u_int)p[i] << sh) |
-		    ((u_int)p[i + 1] >> (HALF_BITS - sh)));
+                       ((u_int)p[i + 1] >> (HALF_BITS - (u_int)sh)));
 	p[i] = (digit)(LHALF((u_int)p[i] << sh));
 }

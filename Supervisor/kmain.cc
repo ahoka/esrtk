@@ -1,7 +1,9 @@
 #include "Supervisor.hh"
 #include <X86/Gdt.hh>
 
-extern "C" void
+extern "C" void kmain(void);
+
+void
 kmain(void)
 {
 	extern unsigned int magic;

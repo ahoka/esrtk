@@ -1,6 +1,8 @@
 #include <X86/Assembly.hh>
 #include <cstdio>
 
+#include <X86/CpuRegisters.hh>
+
 // struct Features
 // {
 //    const char* name;
@@ -28,7 +30,7 @@ enum
    apic = 1 << 9
 };
 
-extern "C" void
+void
 printCpuFeatures()
 {
    cpuid_t id;

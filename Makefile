@@ -21,30 +21,30 @@ LDFLAGS=	-melf_i386
 ASFLAGS+=	--32
 
 COPTS=		-O2 -march=i686 -m32 -g3 \
-		-Wall -Wextra \
+		-Wall -Wextra -Werror \
 		-nostdlib -nostdinc -fno-builtin \
 		-fno-stack-protector
-
-ifeq ($(COMPILER), clang)
-#CXXFLAGS+= 
-CC=		$(CROSS)clang
-CXX=		$(CROSS)clang++
-CPP=		$(CROSS)clang -E
-COPTS+=		-integrated-as
-CXXFLAGS+=	-std=c++11
-endif
-ifeq ($(COMPILER), gnu)
-CXX=		g++
-CC=		gcc
-CPP=		gcc -E
-CXXFLAGS+= 	-fcheck-new -nostartfiles -nodefaultlibs -std=c++0x
-endif
 
 CFLAGS=		-std=c99 $(COPTS)
 
 CXXFLAGS=	$(COPTS) \
 		-fno-exceptions -fno-rtti \
 		-Weffc++
+
+ifeq ($(COMPILER), clang)
+CC=		$(CROSS)clang
+CXX=		$(CROSS)clang++
+CPP=		$(CROSS)clang -m32 -E
+COPTS+=		-integrated-as -Weverything
+COPTS+=		-Wno-c++98-compat-pedantic -Wno-packed
+CXXFLAGS+=	-std=c++11
+endif
+ifeq ($(COMPILER), gnu)
+CXX=		g++
+CC=		gcc
+CPP=		gcc -m32 -E
+CXXFLAGS+= 	-fcheck-new -nostartfiles -nodefaultlibs -std=c++0x
+endif
 
 # x86
 # TODO: make an Include directory with public API only
@@ -53,7 +53,7 @@ CPPFLAGS+=	-I$(PWD)/Standard
 
 CFLAGS+=	$(CPPFLAGS)
 CXXFLAGS+=	$(CPPFLAGS)
-ASFLAGS+=	$(CPPFLAGS)
+#ASFLAGS+=	$(CPPFLAGS)
 
 SRCDIR=		Supervisor Library Drivers Platform
 
@@ -90,7 +90,7 @@ buildinfo:
 #ifeq ($(BUILD_HOST), Darwin)
 %.o: %.S Makefile
 	@echo Compiling $<
-	$(HIDE) $(CPP) $(CPPFLAGS) $*.S | $(AS) $(ASFLAGS) -c -o $*.o
+	$(HIDE) $(CPP) $(CPPFLAGS) -DASSEMBLER $*.S | $(AS) $(ASFLAGS) -o $*.o
 #else
 #%.o: %.S Makefile
 #	@echo Compiling $<

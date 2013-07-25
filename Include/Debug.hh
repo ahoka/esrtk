@@ -16,7 +16,7 @@ private:
    Debug(const Debug& orig);
    ~Debug();
 public:
-   static void panic(const char*, ...);
+   static void panic(const char*, ...) __attribute__((noreturn));
 };
 
 #endif	/* DEBUG_H */

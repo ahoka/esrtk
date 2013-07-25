@@ -61,7 +61,7 @@ __floatdisf(quad_t x)
 	 *
 	 * Using double here may be excessive paranoia.
 	 */
-	f = (double)u.ul[H] * (((int)1 << (INT_BITS - 2)) * 4.0);
+	f = (float )((double)u.ul[H] * (((int)1 << (INT_BITS - 2)) * 4.0));
 	f += u.ul[L];
 
 	return (neg ? -f : f);

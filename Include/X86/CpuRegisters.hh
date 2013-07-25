@@ -3,6 +3,8 @@
 
 #include <Register.hh>
 
+extern "C" void printCpuFeatures();
+
 namespace CR0
 {
    enum CR0

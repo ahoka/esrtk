@@ -58,8 +58,8 @@ __ashrdi3(quad_t a, qshift_t shift)
 		/* LINTED inherits machine dependency */
 		s = (aa.sl[H] >> (INT_BITS - 1)) >> 1;
 		/* LINTED inherits machine dependency*/
-		aa.ul[L] = aa.sl[H] >> (shift - INT_BITS);
-		aa.ul[H] = s;
+		aa.ul[L] = (u_int )(aa.sl[H] >> (shift - INT_BITS));
+		aa.ul[H] = (u_int )s;
 	} else {
 		aa.ul[L] = (aa.ul[L] >> shift) |
 		    (aa.ul[H] << (INT_BITS - shift));

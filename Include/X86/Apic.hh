@@ -56,6 +56,12 @@ public:
       ActiveLow = 1
    };
 
+   enum ApicFlags
+   {
+      ApicIsEnabled = (1 << 0),
+      ApicIsBsp = (1 << 1)
+   };
+
    // For LINT0 and LINT1
    uint32_t createLocalVectorTable(LvtMask mask,
                                    LvtTriggerMode triggerMode,
@@ -70,8 +76,7 @@ public:
    uint32_t getLocalApicId();
 private:
    uint32_t apicAddress;
-   bool isBsp;
-   bool isEnabled;
+   uint32_t flags;
 };
 
 extern Apic apic;

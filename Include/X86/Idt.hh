@@ -73,4 +73,7 @@ extern "C" void isr13();
 extern "C" void isr14();
 extern "C" void isr16();
 
+void initInterruptVectors();
+extern "C" void initInterrupts();
+
 #endif

@@ -24,7 +24,7 @@ Pci::readConfigurationRegister8(uint8_t bus, uint8_t device, uint8_t function, u
 
    outl(X86Pci::PCI_CONFIG_ADDRESS, tag);
 
-   return inl(X86Pci::PCI_CONFIG_DATA) >> suboff;
+   return (uint8_t )(inl(X86Pci::PCI_CONFIG_DATA) >> suboff);
 }
 
 uint16_t
@@ -35,7 +35,7 @@ Pci::readConfigurationRegister16(uint8_t bus, uint8_t device, uint8_t function, 
 
    outl(X86Pci::PCI_CONFIG_ADDRESS, tag);
 
-   return inl(X86Pci::PCI_CONFIG_DATA) >> suboff;
+   return (uint16_t )inl(X86Pci::PCI_CONFIG_DATA) >> suboff;
 }
 
 // 31         |  30 - 24 | 23 - 16    | 15 - 11       | 10 - 8          | 7 - 2           | 1 - 0
@@ -78,12 +78,11 @@ Pci::listDevices()
       {
 	 for (int fun = 0; fun < 8; fun++)
 	 {
-	 
-	    int vid = Pci::getVendorId(bus, dev, fun);
+	    uint16_t vid = Pci::getVendorId((uint8_t )bus, (uint8_t )dev, (uint8_t )fun);
 	    if (vid != 0xffff)
 	    {
-	       int did = Pci::getDeviceId(bus, dev, fun);
-               int deviceClass = readConfigurationRegister8(bus, dev, fun, 8);
+	       uint16_t did = Pci::getDeviceId((uint8_t )bus, (uint8_t )dev, (uint8_t )fun);
+               uint8_t deviceClass = readConfigurationRegister8((uint8_t )bus, (uint8_t )dev, (uint8_t )fun, 8);
 	       printf("%x:%x:%x %s: 0x%0hx:0x%0hx\n", bus, dev, fun, getClassName(deviceClass), vid, did);
 	    }
 	 }

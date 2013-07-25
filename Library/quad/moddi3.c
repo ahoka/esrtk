@@ -45,8 +45,8 @@ __moddi3(quad_t a, quad_t b)
 	u_quad_t ua, ub, ur;
 	int neg = 0;
 
-	ua = a;
-	ub = b;
+	ua = (u_quad_t )a;
+	ub = (u_quad_t )b;
 
 	if (a < 0)
 		ua = -ua, neg ^= 1;
@@ -55,5 +55,5 @@ __moddi3(quad_t a, quad_t b)
 	(void)__qdivrem(ua, ub, &ur);
 	if (neg)
 		ur = -ur;
-	return (ur);
+	return (quad_t )ur;
 }

@@ -4,22 +4,25 @@
 #include <X86/PageDirectory.hh>
 #include <X86/SerialConsole.hh>
 #include <X86/VgaConsole.hh>
+#include <X86/Idt.hh>
 
 // namespace System {
 //    VgaConsole console;
 // }
 
 extern "C" void initGdt();
-extern "C" void initInterrupts();
+//extern "C" void initInterrupts();
+extern "C" void initConsole();
+extern "C" void initSupervisor();
 
-extern "C" void
+void
 initConsole()
 {
   //   System::console.init();
   // System::console.clearScreen();
 }
 
-extern "C" void
+void
 initSupervisor()
 {
    //  initGdt();

@@ -4,7 +4,7 @@
 int
 SerialConsole::getChar()
 {
-   char ch;
+   uint8_t ch;
 
    ch = inb(0x3f8);
 
