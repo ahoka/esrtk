@@ -68,7 +68,6 @@ PageDirectory::init()
    }
 
    // id map it too
-   // TODO unmap after initPaging
    for (uint32_t i = 0; i < KernelMemorySize / PageSize; i++)
    {
       bool rc = mapPage((KernelLoadAddress + i * PageSize),
@@ -84,7 +83,15 @@ PageDirectory::init()
    void (*initp)(uint32_t) = (void (*)(uint32_t))vtophys((void*)&initPaging);
    initp(vtophys((uint32_t )pageDirectory));
 
-//   mapPage(0x82002000u, 0x82000000u);
+   // unmap identity mapped region
+   //
+   for (uint32_t i = 0; i < KernelMemorySize / PageSize; i++)
+   {
+      bool rc = unmapPage(KernelLoadAddress + i * PageSize);
+
+      KASSERT(rc);
+   }
+
 
 #ifdef VERBOSE_DEBUG
       bool wasEmpty = false;
@@ -141,10 +148,7 @@ PageDirectory::addressToPteIndex(uint32_t address)
 uint32_t*
 PageDirectory::addressToPde(uint32_t address)
 {
-//   uint32_t index = address / 0x400000;
    uint32_t index = addressToPdeIndex(address);
-
-   printf("pde idx: %u, 0x%x + 0x%x\n", index, PageDirectoryBase, index * 4);
 
    return (uint32_t* )(PageDirectoryBase + index * 4);
 }
@@ -152,11 +156,8 @@ PageDirectory::addressToPde(uint32_t address)
 uint32_t*
 PageDirectory::addressToPte(uint32_t address)
 {
-//   uint32_t index = (address % 0x400000) / 0x1000;
    uint32_t pdeIndex = addressToPdeIndex(address);
    uint32_t pteIndex = addressToPteIndex(address);
-
-   printf("pte idx: %u, 0x%x + 0x%x + 0x%x\n", pteIndex, PageTableBase, pdeIndex * 0x1000, pteIndex * 4);
 
    return (uint32_t* )(PageTableBase + pdeIndex * 0x1000 + pteIndex * 4);
 }
@@ -282,6 +283,10 @@ PageDirectory::mapPage(uint32_t vAddress, uint32_t pAddress)
 bool
 PageDirectory::unmapPage(uint32_t vAddress)
 {
+#ifdef DEBUG
+   printf("Unmapping page: %p\n", (void* )vAddress);
+#endif
+
    uint32_t* pde = addressToPde(vAddress);
 
    if ((*pde & PageValid) == 0)
