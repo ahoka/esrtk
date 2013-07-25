@@ -17,6 +17,9 @@ public:
    virtual void setCursor(int row, int column) = 0;
    virtual void scrollScreen() = 0;
 
+   Console* next;
+   static Console* consoleList;
+
 protected:
    virtual int getRows() = 0;
    virtual int getColumns() = 0;

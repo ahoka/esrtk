@@ -2,9 +2,14 @@
 
 #include <stdarg.h>
 
+Console* Console::consoleList = 0;
+
 Console::Console()
 {
    init();
+
+   next = consoleList;
+   consoleList = this;
 }
 
 Console::~Console()

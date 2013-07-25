@@ -3,10 +3,19 @@
 #include <X86/PageDirectory.hh>
 #include <Debug.hh>
 
+extern VgaConsole vgaConsole;
+VgaConsole vgaConsole;
+
 VgaConsole::VgaConsole()
    : backgroundColor(0x1f),
      foregroundColor(0xff)
 {
+   bool rc = PageDirectory::mapPage(0x800b8000, 0xb8000);
+   KASSERT(rc);
+
+   vram_ = 0x800b8000;
+
+   clearScreen();
 }
 
 VgaConsole::VgaConsole(const VgaConsole& /*orig*/)
@@ -20,12 +29,12 @@ VgaConsole::~VgaConsole()
 int
 VgaConsole::init()
 {
-   bool rc = PageDirectory::mapPage(0xb8000, 0xb8000);
-   KASSERT(rc);
+   // bool rc = PageDirectory::mapPage(0xb8000, 0xb8000);
+   // KASSERT(rc);
 
-   vram_ = 0xb8000;
+   // vram_ = 0xb8000;
    
-   clearScreen();
+   // clearScreen();
 
    return 0;
 }
