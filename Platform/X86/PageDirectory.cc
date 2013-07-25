@@ -254,26 +254,23 @@ PageDirectory::mapPage(uint32_t vAddress, uint32_t pAddress)
 {
    uint32_t* pde = addressToPde(vAddress);
 
-   printf("mapping address %p to %p, PDE at %p\n", (void *)pAddress, (void *)vAddress, (void *)pde);
-   
    if ((*pde & PageValid) == 0)
    {
       // need to allocate the pde
       //
       uint32_t newPde = (uint32_t )PageFrameAllocator::getFreePage();
+      KASSERT(newPde != 0);
       newPde = vtophys(newPde) | (PageValid | PageWritable);
-      printf("allocating new pde at %p\n", (void* )newPde);
       *pde = newPde;
 
       // XXX flush tlb?
    }
 
    uint32_t* pte = addressToPte(vAddress);
-   printf("writing to pte at %p (0x%x)\n", (void* )pte, *pte);
 
    if (*pte & PageValid)
    {
-      printf("already mapped!\n");
+//      printf("already mapped!\n");
       return false;
    }
 
