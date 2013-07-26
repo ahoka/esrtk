@@ -35,7 +35,6 @@ private:
    uint32_t vram_;
    uint8_t backgroundColor;
    uint8_t foregroundColor;
-   uint16_t _padding;
 
    enum {
       VgaIndexPort = 0x3d4,

@@ -36,8 +36,9 @@ CC=		$(CROSS)clang
 CXX=		$(CROSS)clang++
 CPP=		$(CROSS)clang -m32 -E
 COPTS+=		-integrated-as -Weverything
-COPTS+=		-Wno-c++98-compat-pedantic -Wno-packed \
-		-Wno-global-constructors -Wno-exit-time-destructors
+COPTS+=		-Wno-c++98-compat-pedantic \
+		-Wno-global-constructors -Wno-exit-time-destructors \
+		-Wno-padded -Wno-packed
 CXXFLAGS+=	-std=c++11
 endif
 ifeq ($(COMPILER), gnu)
