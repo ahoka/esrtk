@@ -65,13 +65,10 @@ _loader:
 	jmp *%ecx
 
 higher_half_loader:
-	// TODO: unmap identity mapped first page
-
 	mov   $(stack + STACKSIZE), %esp    # set up the stack
 	movl  %eax, magic                   # Multiboot magic number
 	movl  %ebx, mbd                     # Multiboot data structure
 
-	call initGdt
 	call initSupervisor
 
 	mov  $__start_ctors, %ebx             # call the constructors
@@ -92,9 +89,9 @@ higher_half_loader:
 	cmp  $__end_ctors, %ebx
 	jb   1b
 
-	call kmain                          # call kernel proper
+	call kmain
 
-	mov  $__end_dtors, %ebx               # call the destructors
+	mov  $__end_dtors, %ebx
 	jmp  4f
 3:
 	sub  $4, %ebx
@@ -105,5 +102,5 @@ higher_half_loader:
 
 	cli
 hang:
-	hlt                                 # halt machine should kernel return
+	hlt
 	jmp   hang
