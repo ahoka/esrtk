@@ -105,10 +105,10 @@ clean:
 run: kernel.elf
 	$(QEMU) -net none -kernel kernel.elf -boot order=c -serial stdio
 
-monitor:
+monitor: kernel.elf
 	$(QEMU) -net none -kernel kernel.elf -boot order=c -monitor stdio
 
-run-grub:
+run-grub: kernel.img
 	$(QEMU) -fda kernel.img
 
 -include $(CCFILES:.cc=.cc.d) $(SFILES:.S=.S.d) $(CFILES:.c=.c.d)
