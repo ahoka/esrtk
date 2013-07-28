@@ -13,5 +13,6 @@ initSupervisor()
    initGdt();
    initInterrupts();
    PageDirectory::init();
+
    apic.init();
 }

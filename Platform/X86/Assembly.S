@@ -148,3 +148,64 @@ initPaging:
         movl %ebp, %esp
 
 	ret
+
+// not yet finised
+	
+rgdt:
+.long 0x00000000
+.long 0x00000000
+
+.long 0x0000ffff
+.long 0x008f9a00
+
+.long 0x0000ffff
+.long 0x008f9200
+ergdt:
+
+rgdtr:
+.word ergdt - rgdt - 1
+.long rgdt
+
+biosidt:
+.word 0x3ff
+.long 0x0000000
+
+.global bios16
+bios16:
+	cli
+	
+        movl %cr0, %eax
+        andl $(~(1 << 31)), %eax
+        movl %eax, %cr0
+
+	movl $rgdtr, %eax
+	lgdt (%eax)
+
+	movl $0x10, %eax
+	movl %eax, %ds
+	movl %eax, %ss
+	movl %eax, %es
+
+	ljmp $0x08, $p16
+.code16
+p16:
+	// we are in 16 bit pmode
+	movl %cr0, %eax
+	orl $1, %eax
+	movl %eax, %cr0
+
+	// and in real mode now
+	xorl %eax, %eax
+	movl %eax, %ds
+	movl %eax, %ss
+	movl %eax, %es
+
+	movl $biosidt, %eax
+	lidt (%eax)
+	
+        movl %cr0, %eax
+        orl $(1 << 31), %eax
+        movl %eax, %cr0
+
+	sti
+	ret
