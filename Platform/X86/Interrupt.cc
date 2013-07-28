@@ -1,13 +1,14 @@
 #include <X86/Idt.hh>
 #include <X86/Assembly.hh>
+#include <X86/Memory.hh>
 
 #include <Debug.hh>
 #include <Power.hh>
 
 #include <cstdio>
 
-extern "C" void defaultIsr(InterruptFrame* frame) __attribute__((noreturn));
-extern "C" void isrDispatcher(InterruptFrame* frame) __attribute__((noreturn));
+extern "C" void defaultIsr(InterruptFrame* frame);// __attribute__((noreturn));
+extern "C" void isrDispatcher(InterruptFrame* frame);// __attribute__((noreturn));
 
 extern IdtPointer idtPointer;
 
@@ -22,9 +23,18 @@ void initIsr(int n, void (*handler)());
 void
 defaultIsr(InterruptFrame* frame)
 {
+   // TODO: make a list of handlers and register them there to be run from dispatcher
    if (frame->interrupt == 14)
    {
       uint32_t cr2 = getCr2();
+
+      if (Memory::handlePageFault(cr2))
+      {
+	 // XXX: do i need to do anything here to resume normally?
+	 printf("Page fault handled: %p\n", (void* )cr2);
+	 return;
+      }
+
       printf("\n\nPage fault: %s\n", (frame->error & (1 << 0)) ? "protection violation" : "page not present");
       printf("%s 0x%x from 0x%x in %s mode\nError Code: 0x%x\n",
              (frame->error & (1 << 1)) ? "Writing" : "Reading",
