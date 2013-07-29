@@ -1,7 +1,5 @@
 #include <X86/Parameters.hh>
 
-.global loader                          # making entry point visible to linker
-
 # setting up the Multiboot header - see GRUB docs for details
 .set ALIGN,    1<<0                     # align loaded modules on page boundaries
 .set MEMINFO,  1<<1                     # provide memory map
@@ -12,7 +10,6 @@
 
 .global magic1
 .global flags
-#.section .magic
 .balign 4
 magic1:
 .long MAGIC
@@ -28,9 +25,13 @@ flags:
 .comm  mbd, 4                           # we will use this in kmain
 .comm  magic, 4                         # we will use this in kmain
 
-.section .data
+.section .rodata
 .balign 0x1000
 
+// we use a page directory with 0x100000 mappped to 0xc0100000
+// and identity mapped at the same time with 4mb pages
+// we will discard this page table later
+//
 page_directory:
 .long 0x00000083
 .rept (KernelPageNumber - 1)
@@ -45,6 +46,7 @@ page_directory:
 .section .text
 .balign 16
 
+.global loader
 .set loader, (_loader - KernelVirtualBase)
 _loader:
 	movl $(page_directory - KernelVirtualBase), %ecx
@@ -61,7 +63,6 @@ _loader:
 	movl %ecx, %cr0
 
 	leal (higher_half_loader), %ecx
-
 	jmp *%ecx
 
 higher_half_loader:
@@ -69,6 +70,12 @@ higher_half_loader:
 	movl  %eax, magic                   # Multiboot magic number
 	movl  %ebx, mbd                     # Multiboot data structure
 
+        // reset eflags
+        pushl %eax
+        movl $0x2, %eax
+        pushl %eax
+        popfl
+     
 	call initSupervisor
 
 	mov  $__start_ctors, %ebx             # call the constructors
@@ -91,6 +98,8 @@ higher_half_loader:
 
 	call kmain
 
+// call the constructors (wont happen, but do it anyway)
+//        
 	mov  $__end_dtors, %ebx
 	jmp  4f
 3:

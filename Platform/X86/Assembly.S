@@ -2,7 +2,7 @@
 //
 
 .text
-.align 16
+.balign 16
 
 // rdmsr(in u32 address, out u32 eax, out u32 edx)
 .global rdmsr

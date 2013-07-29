@@ -5,11 +5,6 @@ SECTIONS
 {
     . = 0xc0100000;
 
-    .magic :
-    {
-	*(.magic)
-    }
-
     .text ALIGN (0x1000) : AT(ADDR(.text) - 0xc0000000)
     {
         *(.text)

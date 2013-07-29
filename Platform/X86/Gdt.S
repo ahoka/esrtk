@@ -1,6 +1,6 @@
 // the descriptors
 .section .rodata
-.align 16
+.balign 16
 
 gdt:
 .long 0x00000000
@@ -18,7 +18,7 @@ gdtr:
 .long gdt
 
 .text
-.align 16
+.balign 16
 
 .global initGdt
 initGdt:

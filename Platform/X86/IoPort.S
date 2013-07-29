@@ -2,7 +2,7 @@
 //
 
 .text
-.align 16
+.balign 16
 
 .global inb
 inb:

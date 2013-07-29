@@ -1,6 +1,6 @@
 // the descriptors
 .text
-.align 16
+.balign 16
 
 .macro push_context
         pushl %eax
