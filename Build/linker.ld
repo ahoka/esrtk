@@ -5,12 +5,14 @@ SECTIONS
 {
     . = 0xc0100000;
 
+    __start_text = .;
     .text ALIGN (0x1000) : AT(ADDR(.text) - 0xc0000000)
     {
         *(.text)
 	*(.text.*)
         *(.gnu.linkonce.t*)
     }
+    __end_text = .;
 
     .ctors ALIGN (0x1000) : AT(ADDR(.ctors) - 0xc0000000)
     {
@@ -40,10 +42,9 @@ SECTIONS
         *(.gnu.linkonce.d*)
     }
 
-     __sbss = .;
+    __sbss = .;
     .bss : AT(ADDR(.bss) - 0xc0000000)
     {
-
         *(COMMON)
         *(.bss)
         *(.gnu.linkonce.b*)

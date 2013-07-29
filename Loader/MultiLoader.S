@@ -62,10 +62,10 @@ _loader:
 	orl $0x80000000, %ecx
 	movl %ecx, %cr0
 
-	leal (higher_half_loader), %ecx
+	leal (hiloader), %ecx
 	jmp *%ecx
 
-higher_half_loader:
+hiloader:
 	mov   $(stack + STACKSIZE), %esp    # set up the stack
 	movl  %eax, magic                   # Multiboot magic number
 	movl  %ebx, mbd                     # Multiboot data structure
@@ -76,38 +76,7 @@ higher_half_loader:
         pushl %eax
         popfl
      
-	call initSupervisor
-
-	mov  $__start_ctors, %ebx             # call the constructors
-	jmp  2f
-1:
-        pushl %eax
-        pushl %edx
-        movl $0x63, %eax
-        movl $0x3f8, %edx
-        outb %al, %dx
-        popl %edx
-        popl %eax
-
-	call *(%ebx)
-        
-	add  $4, %ebx
-2:
-	cmp  $__end_ctors, %ebx
-	jb   1b
-
 	call kmain
-
-// call the constructors (wont happen, but do it anyway)
-//        
-	mov  $__end_dtors, %ebx
-	jmp  4f
-3:
-	sub  $4, %ebx
-	call *(%ebx)
-4:
-	cmp  $__start_dtors, %ebx
-	ja   3b
 
 	cli
 hang:

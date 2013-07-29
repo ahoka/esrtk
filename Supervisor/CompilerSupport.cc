@@ -1,13 +1,8 @@
 #ifdef __GNUC__
 
+#include <CompilerSupport.hh>
 #include <stdbool.h>
-
-extern "C" void __cxa_pure_virtual();
-extern "C" int __cxa_atexit(void (*)(void*), void*, void*);
-extern "C" void __cxa_finalize(void*);
-
-extern int __cxaimpl_atexit_nextfree;
-extern void* __dso_handle;
+#include <cstdio>
 
 // a pure virtual function is called
 void
@@ -18,15 +13,6 @@ __cxa_pure_virtual()
 }
 
 void* __dso_handle = 0;
-
-typedef void (*__cxaimpl_atexit_function)(void*);
-
-struct __cxaimpl_atexit_container
-{
-   __cxaimpl_atexit_function destructor;
-   void* argument;
-   void* dso;
-};
 
 const int __cxaimpl_atexit_size = 128;
 static __cxaimpl_atexit_container __cxaimpl_atexit_list[__cxaimpl_atexit_size];
@@ -122,3 +108,16 @@ __cxa_finalize(void* dso)
 #else
 #  error Compiler not supported.
 #endif
+
+void
+__cxaimpl_call_constructors()
+{
+#ifdef DEBUG
+   printf("%p -> %p\n", &__start_ctors, &__end_ctors);
+#endif
+   for (__cxaimpl_constructor* c = &__start_ctors; c != &__end_ctors; c++)
+   {
+      printf("Calling constructor at %p\n", c);
+      (*c)();
+   }
+}
