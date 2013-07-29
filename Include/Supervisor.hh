@@ -12,5 +12,7 @@ private:
    Supervisor(const Supervisor& orig);
 };
 
+extern "C" void initSupervisor();
+
 #endif	/* SUPERVISOR_H */
 

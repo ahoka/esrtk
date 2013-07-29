@@ -1,15 +1,9 @@
 BUILD_HOST=	$(shell uname -s)
 
-COMPILER=clang
-
 ifeq ($(BUILD_HOST), Darwin)
 CROSS=		i686-elf-
-COMPILER=	clang
-ASFLAGS=	
 else
 CROSS=
-COMPILER?=	clang
-#ASFLAGS=	-O3 -march=i686 -m32
 endif
 
 AS=		$(CROSS)as
@@ -31,7 +25,6 @@ CXXFLAGS=	$(COPTS) \
 		-fno-exceptions -fno-rtti \
 		-Weffc++
 
-ifeq ($(COMPILER), clang)
 CC=		$(CROSS)clang
 CXX=		$(CROSS)clang++
 CPP=		$(CROSS)clang -m32 -E
@@ -40,22 +33,12 @@ COPTS+=		-Wno-c++98-compat-pedantic \
 		-Wno-global-constructors -Wno-exit-time-destructors \
 		-Wno-padded -Wno-packed
 CXXFLAGS+=	-std=c++11
-endif
-ifeq ($(COMPILER), gnu)
-CXX=		g++
-CC=		gcc
-CPP=		gcc -m32 -E
-CXXFLAGS+= 	-fcheck-new -nostartfiles -nodefaultlibs -std=c++0x
-endif
 
-# x86
-# TODO: make an Include directory with public API only
 CPPFLAGS+=	-I$(PWD)/Include
 CPPFLAGS+=	-I$(PWD)/Standard
 
 CFLAGS+=	$(CPPFLAGS)
 CXXFLAGS+=	$(CPPFLAGS)
-#ASFLAGS+=	$(CPPFLAGS)
 
 SRCDIR=		Supervisor Library Drivers Platform
 
@@ -89,15 +72,9 @@ buildinfo:
 	@echo Compiling $<
 	$(HIDE) $(CC) $(CFLAGS) -c -o $*.o $*.c
 
-#ifeq ($(BUILD_HOST), Darwin)
 %.o: %.S Makefile
 	@echo Compiling $<
 	$(HIDE) $(CPP) $(CPPFLAGS) -DASSEMBLER $*.S | $(AS) $(ASFLAGS) -o $*.o
-#else
-#%.o: %.S Makefile
-#	@echo Compiling $<
-#	$(HIDE) $(CC) $(ASFLAGS) -c -o $*.o $*.S
-#endif
 
 %.cc.d: %.cc
 	@echo Generating dependencies for $<
@@ -121,6 +98,7 @@ kernel.img: kernel.elf
 	@echo Building kernel image
 	$(HIDE) dd if=/dev/zero of=pad bs=1 count=750
 	$(HIDE) cat Loader/stage1 Loader/stage2 pad $< > $@
+	$(HIDE) rm pad
 
 clean:
 	$(HIDE) -rm $(DFILES) kernel.elf pad kernel.img $(OFILES) 2>/dev/null
@@ -128,10 +106,10 @@ clean:
 run: kernel.elf
 	$(QEMU) -net none -kernel kernel.elf -boot order=c -serial stdio
 
-monitor:
+monitor: kernel.elf
 	$(QEMU) -net none -kernel kernel.elf -boot order=c -monitor stdio
 
-run-grub:
+run-grub: kernel.img
 	$(QEMU) -fda kernel.img
 
 -include $(CCFILES:.cc=.cc.d) $(SFILES:.S=.S.d) $(CFILES:.c=.c.d)

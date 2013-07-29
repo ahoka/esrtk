@@ -15,4 +15,7 @@
 #define PageSize UNSIGNED(4096)
 #define PageMask (PageSize - 1)
 
+#define StackStart UNSIGNED(0xffc00000)
+#define HeapStart UNSIGNED(0xc0501000)
+
 #endif
