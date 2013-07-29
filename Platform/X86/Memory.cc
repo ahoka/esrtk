@@ -2,11 +2,15 @@
 #include <X86/Parameters.hh>
 #include <X86/Memory.hh>
 #include <Multiboot.hh>
+#include <Debug.hh>
+#include <Templates.hh>
 
 extern Multiboot* mbd;
 
 uint32_t Memory::heapEnd = HeapStart;
 uint32_t Memory::stackEnd = StackStart;
+
+uint32_t Memory::nextFreePage = roundTo<uint32_t>((uint32_t )&__end_kernel, PageSize);
 
 // must be called when in 1:1 mapping
 //
@@ -25,20 +29,41 @@ Memory::init()
 bool
 Memory::handlePageFault(uint32_t address)
 {
-   (void )address;
+   if (address >= HeapStart && address < heapEnd)
+   {
+      uint32_t pageAddress = address & PageMask;
+
+      uintptr_t page = getFreePage();
+      KASSERT(page != 0);
+
+      bool rv = map(pageAddress, page);
+      KASSERT(rv);
+
+      return true;
+   }
 
    return false;
 }
 
 // increment heapEnd, the page fault handler will allocate it when accessed
 //
-void*
+uintptr_t
 Memory::sbrk(size_t size)
 {
-   // TODO align size with PageSize!!
-   heapEnd += size;
+   // align size with PageSize
+   //
+   heapEnd += roundTo<size_t>(size, PageSize);
 
-   KASSERT(heapEnd & PageSize);
+   KASSERT((heapEnd & PageSize) == 0);
+   return heapEnd;
+}
+
+// map a physical page
+//
+uintptr_t
+Memory::getFreePage()
+{
+   return 0;
 }
 
 void
