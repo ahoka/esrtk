@@ -5,6 +5,15 @@
 
 #include <cstdint>
 
+extern void* __start_text;
+extern void* __end_text;
+extern void* __start_rodata;
+extern void* __end_rodata;
+extern void* __start_data;
+extern void* __end_data;
+extern void* __start_bss;
+extern void* __end_bss;
+
 struct MemorySegment
 {
    uint32_t address;

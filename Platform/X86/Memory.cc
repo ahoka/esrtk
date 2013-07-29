@@ -13,6 +13,11 @@ uint32_t Memory::stackEnd = StackStart;
 void
 Memory::init()
 {
+   printf("Listing Kernel sections:\n");
+   printf(".text: %p-%p\n", &__start_text, &__end_text);
+   printf(".data: %p-%p\n", &__start_data, &__end_data);
+   printf(".rodata: %p-%p\n", &__start_rodata, &__end_rodata);
+   printf(".bss: %p-%p\n", &__start_bss, &__end_bss);
    copyMultibootMap(mbd);
 }
 

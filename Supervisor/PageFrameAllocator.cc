@@ -1,9 +1,8 @@
 #include <PageFrameAllocator.hh>
 #include <Debug.hh>
 #include <Parameters.hh>
+#include <X86/Memory.hh>
 #include <cstdio>
-
-extern char* __ebss;
 
 char* PageFrameAllocator::start;
 char PageFrameAllocator::bitmap[1024];
@@ -21,11 +20,9 @@ void *PageFrameAllocator::getFreePage()
          bitmap[i] = 1;
 
          void* page = (void* )(start + PageSize * i);
-
 #ifdef DEBUG
          printf("Found free page at %u: %p\n", i, page);
 #endif
-
          KASSERT(((unsigned long )page & PageMask) == 0);
 
          return page;
@@ -51,7 +48,7 @@ void PageFrameAllocator::init()
       bitmap[i] = 0;
    }
 
-   start = (char* )(((unsigned long)(&__ebss) + PageMask) & ~PageMask);
+   start = (char* )((((unsigned long)(&__end_bss)) + PageMask) & ~PageMask);
 
-   printf("Page frame allocator pool from %p to %p (end of .bss is at %p)\n", start, start + 1024, (void* )&__ebss);
+   printf("Page frame allocator pool from %p to %p (end of .bss is at %p)\n", start, start + 1024 * PageSize, (void* )&__end_bss);
 }
