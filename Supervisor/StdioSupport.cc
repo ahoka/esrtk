@@ -22,17 +22,17 @@ system_puts(const char* string)
 {
    int count = 0;
 
-   while (*string)
-   {
-      SerialConsole::putChar(*string++);
-      count++;
-   }
-
    Console* con = Console::consoleList;
    while (con != 0)
    {
       con->putString(string);
       con = con->next;
+   }
+
+   while (*string)
+   {
+      SerialConsole::putChar(*string++);
+      count++;
    }
 
    return 0;
