@@ -14,10 +14,11 @@ void
 Memory::init()
 {
    printf("Listing Kernel sections:\n");
-   printf(".text: %p-%p\n", &__start_text, &__end_text);
-   printf(".data: %p-%p\n", &__start_data, &__end_data);
-   printf(".rodata: %p-%p\n", &__start_rodata, &__end_rodata);
-   printf(".bss: %p-%p\n", &__start_bss, &__end_bss);
+   printf("  .text: %p-%p\n", &__start_text, &__end_text);
+   printf("  .data: %p-%p\n", &__start_data, &__end_data);
+   printf("  .rodata: %p-%p\n", &__start_rodata, &__end_rodata);
+   printf("  .bss: %p-%p\n", &__start_bss, &__end_bss);
+
    copyMultibootMap(mbd);
 }
 
@@ -27,6 +28,17 @@ Memory::handlePageFault(uint32_t address)
    (void )address;
 
    return false;
+}
+
+// increment heapEnd, the page fault handler will allocate it when accessed
+//
+void*
+Memory::sbrk(size_t size)
+{
+   // TODO align size with PageSize!!
+   heapEnd += size;
+
+   KASSERT(heapEnd & PageSize);
 }
 
 void
