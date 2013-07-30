@@ -117,7 +117,7 @@ __cxaimpl_call_constructors()
 #endif
    for (__cxaimpl_constructor* c = &__start_ctors; c != &__end_ctors; c++)
    {
-      printf("Calling constructor at %p\n", c);
+      printf("Calling constructor at %p\n", *c);
       (*c)();
    }
 }
