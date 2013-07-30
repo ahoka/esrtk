@@ -1,12 +1,12 @@
 #include <cstddef>
 #include <new>
 
-void *operator new(size_t /*size*/)
+void *operator new(std::size_t /*size*/)
 {
     return 0;
 }
  
-void *operator new[](size_t /*size*/)
+void *operator new[](std::size_t /*size*/)
 {
     return 0;
 }

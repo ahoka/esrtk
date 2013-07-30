@@ -1,9 +1,14 @@
-#ifndef __CSTRING__
-#define __CSTRING__
+#ifndef CSTRING_HH
+#define CSTRING_HH
 
-extern "C"
+#include <_size_t.hh>
+
+namespace std
 {
-#include <string.h>
+
+extern "C" void *memcpy(void *, const void *, std::size_t);
+extern "C" void *memset(void *, int, std::size_t);
+
 }
 
 #endif

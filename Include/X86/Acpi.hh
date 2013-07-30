@@ -64,7 +64,7 @@ struct Rsdp
    {
       uint8_t sum = 0;
 
-      size_t size = (size_t )((uint8_t *)&length - (uint8_t *)this);
+      std::size_t size = (std::size_t )((uint8_t *)&length - (uint8_t *)this);
 
       uint8_t* rsdp = (uint8_t *)this;
       for (unsigned int i = 0; i < size; i++)

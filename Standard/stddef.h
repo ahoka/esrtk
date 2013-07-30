@@ -1,16 +1,15 @@
 #ifndef STDDEF_H
 #define STDDEF_H
 
+#include <_null.h>
+#include <_size_t.h>
+
 #ifdef __i386__
 
 typedef int ptrdiff_t;
-typedef unsigned int size_t;
 
 #ifndef __cplusplus
 typedef unsigned short wchar_t;
-#  define NULL ((void *)0)
-#else
-#  define NULL 0
 #endif
 
 #define offsetof(s, m) ((size_t )&(((s *)NULL)->m))

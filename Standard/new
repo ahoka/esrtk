@@ -1,8 +1,10 @@
 #ifndef NEW_HH
 #define NEW_HH
 
-void *operator new(size_t /*size*/);
-void *operator new[](size_t /*size*/);
+#include <_size_t.hh>
+
+void *operator new(std::size_t /*size*/);
+void *operator new[](std::size_t /*size*/);
 void operator delete(void */*p*/);
 void operator delete[](void */*p*/);
 

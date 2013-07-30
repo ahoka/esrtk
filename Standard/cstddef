@@ -1,9 +1,21 @@
-#ifndef CSTDDEF_HH
-#define CSTDDEF_HH
+#ifndef STDDEF_H
+#define STDDEF_H
 
-extern "C"
-{
-#include <stddef.h>
-}
+#include <_null.h>
+#include <_size_t.hh>
+
+#ifdef __i386__
+
+typedef int ptrdiff_t;
+
+#ifndef __cplusplus
+typedef unsigned short wchar_t;
+#endif
+
+#define offsetof(s, m) ((size_t )&(((s *)NULL)->m))
+
+#else
+#  error Unsupported architecture!
+#endif
 
 #endif

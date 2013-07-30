@@ -50,7 +50,7 @@ PageDirectory::init()
    printf("Initing pageDirectory at %p\n", pageDirectory);
    KASSERT(pageDirectory != 0);
 
-   memset(pageDirectory, 0, PageSize);
+   std::memset(pageDirectory, 0, PageSize);
 
    // The last 4MB will be mapped to the page directory itself
    //
@@ -178,7 +178,7 @@ PageDirectory::mapPage(uint32_t vAddress, uint32_t pAddress, uint32_t** pageDire
       uint32_t* newPt = (uint32_t* )PageFrameAllocator::getFreePage();
       printf("allocating new page table: %p\n", newPt);
 
-      memset(newPt, 0, PageSize);
+      std::memset(newPt, 0, PageSize);
 
       // mark present
       newPt = (uint32_t* )((uint32_t )newPt | 0x3);

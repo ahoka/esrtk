@@ -53,11 +53,11 @@ Memory::handlePageFault(uint32_t address)
 // increment heapEnd, the page fault handler will allocate it when accessed
 //
 uintptr_t
-Memory::sbrk(size_t size)
+Memory::sbrk(std::size_t size)
 {
    // align size with PageSize
    //
-   heapEnd += roundTo<size_t>(size, PageSize);
+   heapEnd += roundTo<std::size_t>(size, PageSize);
 
    KASSERT((heapEnd & PageSize) == 0);
    return heapEnd;
@@ -84,7 +84,7 @@ Memory::copyMultibootMap(Multiboot* mb)
          KASSERT(memoryMapCount < MemoryMapMax);
 
          memoryMap[memoryMapCount].address = (uintptr_t )map->address;
-         memoryMap[memoryMapCount].size = (size_t )map->length;
+         memoryMap[memoryMapCount].size = (std::size_t )map->length;
          memoryMapCount++;
       }
    }

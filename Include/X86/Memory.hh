@@ -19,7 +19,7 @@ extern void* __end_kernel;
 struct MemorySegment
 {
    uintptr_t address;
-   size_t size;
+   std::size_t size;
 };
 
 enum
@@ -33,7 +33,7 @@ public:
    static bool handlePageFault(uint32_t address);
    static void copyMultibootMap(Multiboot* mb);
    static void init();
-   static uintptr_t sbrk(size_t size);
+   static uintptr_t sbrk(std::size_t size);
    static uintptr_t getFreePage();
    static bool map(uintptr_t virt, uintptr_t phys);
 
