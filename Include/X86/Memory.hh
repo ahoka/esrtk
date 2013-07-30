@@ -22,6 +22,11 @@ struct MemorySegment
    size_t size;
 };
 
+enum
+{
+   MemoryMapMax = 16
+};
+
 class Memory
 {
 public:

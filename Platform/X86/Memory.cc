@@ -12,7 +12,7 @@ uint32_t Memory::stackEnd = StackStart;
 
 uint32_t Memory::nextFreePage = roundTo<uint32_t>((uint32_t )&__end_kernel, PageSize);
 
-MemorySegment Memory::memoryMap[16];
+MemorySegment Memory::memoryMap[MemoryMapMax];
 int Memory::memoryMapCount = 0;
 
 // must be called when in 1:1 mapping
@@ -81,6 +81,8 @@ Memory::copyMultibootMap(Multiboot* mb)
       if (map->type == Multiboot::MemoryMap::Available)
       {
          printf("Usable memory at %p-%p\n", (void *)map->address, (void *)(map->address + map->length));
+         KASSERT(memoryMapCount < MemoryMapMax);
+
          memoryMap[memoryMapCount].address = (uintptr_t )map->address;
          memoryMap[memoryMapCount].size = (size_t )map->length;
          memoryMapCount++;
