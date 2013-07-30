@@ -81,7 +81,9 @@ Memory::copyMultibootMap(Multiboot* mb)
       if (map->type == Multiboot::MemoryMap::Available)
       {
          printf("Usable memory at %p-%p\n", (void *)map->address, (void *)(map->address + map->length));
-         // TODO actually store it
+         memoryMap[memoryMapCount].address = (uintptr_t )map->address;
+         memoryMap[memoryMapCount].size = (size_t )map->length;
+         memoryMapCount++;
       }
    }
 }

@@ -18,8 +18,8 @@ extern void* __end_kernel;
 
 struct MemorySegment
 {
-   uint32_t address;
-   uint32_t size;
+   uintptr_t address;
+   size_t size;
 };
 
 class Memory
