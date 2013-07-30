@@ -12,16 +12,21 @@ uint32_t Memory::stackEnd = StackStart;
 
 uint32_t Memory::nextFreePage = roundTo<uint32_t>((uint32_t )&__end_kernel, PageSize);
 
+MemorySegment Memory::memoryMap[16];
+int Memory::memoryMapCount = 0;
+
 // must be called when in 1:1 mapping
 //
 void
 Memory::init()
 {
    printf("Listing Kernel sections:\n");
-   printf("  .text: %p-%p\n", &__start_text, &__end_text);
-   printf("  .data: %p-%p\n", &__start_data, &__end_data);
-   printf("  .rodata: %p-%p\n", &__start_rodata, &__end_rodata);
-   printf("  .bss: %p-%p\n", &__start_bss, &__end_bss);
+   printf(".text: %p-%p\n", &__start_text, &__end_text);
+   printf(".data: %p-%p\n", &__start_data, &__end_data);
+   printf(".rodata: %p-%p\n", &__start_rodata, &__end_rodata);
+   printf(".bss: %p-%p\n", &__start_bss, &__end_bss);
+
+   mbd->print();
 
    copyMultibootMap(mbd);
 }

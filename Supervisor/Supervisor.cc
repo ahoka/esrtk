@@ -41,12 +41,6 @@ extern unsigned int page_directory_size;
 void
 Supervisor::run()
 {
-   printf("\n========================\n");
-   printf("      kernal pls        \n");
-   printf("========================\n\n");
-   
-//   mbd->print();
-
    char id[13];
    cpuid0(id);
 

@@ -20,7 +20,6 @@ struct MemorySegment
 {
    uint32_t address;
    uint32_t size;
-   MemorySegment* next;
 };
 
 class Memory
@@ -39,6 +38,9 @@ private:
    static uint32_t heapEnd;
    static uint32_t stackEnd;
    static uint32_t nextFreePage;
+
+   static MemorySegment memoryMap[16];
+   static int memoryMapCount;
 };
 
 #endif

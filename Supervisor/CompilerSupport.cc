@@ -1,8 +1,8 @@
 #ifdef __GNUC__
 
 #include <CompilerSupport.hh>
-#include <stdbool.h>
 #include <cstdio>
+#include <cstdint>
 
 // a pure virtual function is called
 void
@@ -119,5 +119,17 @@ __cxaimpl_call_constructors()
    {
       printf("Calling constructor at %p\n", *c);
       (*c)();
+   }
+}
+
+extern uintptr_t __start_bss;
+extern uintptr_t __end_bss;
+
+void
+__cxaimpl_zero_bss()
+{
+   for (uint8_t* p = (uint8_t* )__start_bss; p != (uint8_t* )__end_bss; p++)
+   {
+      *p = 0;
    }
 }

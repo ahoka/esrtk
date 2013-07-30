@@ -8,7 +8,9 @@ void
 kmain(void)
 {
    extern unsigned int magic;
- 
+
+   __cxaimpl_zero_bss();
+
    if (magic != 0x2BADB002) {
       // not loaded by a multiboot loader, this is not yet supported
       //

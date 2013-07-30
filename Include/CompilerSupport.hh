@@ -6,6 +6,7 @@ extern "C" int __cxa_atexit(void (*)(void*), void*, void*);
 extern "C" void __cxa_finalize(void*);
 
 extern "C" void __cxaimpl_call_constructors();
+extern "C" void __cxaimpl_zero_bss();
 
 extern int __cxaimpl_atexit_nextfree;
 extern void* __dso_handle;
