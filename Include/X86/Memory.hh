@@ -2,6 +2,7 @@
 #define MEMORY_HH
 
 #include <Multiboot.hh>
+#include <X86/Idt.hh>
 
 #include <cstdint>
 #include <cstddef>
@@ -20,6 +21,14 @@ struct MemorySegment
 {
    uintptr_t address;
    std::size_t size;
+   uint8_t* bitmap;
+
+   MemorySegment() :
+      address(0),
+      size(0),
+      bitmap(0)
+   {
+   }
 };
 
 enum
@@ -30,7 +39,7 @@ enum
 class Memory
 {
 public:
-   static bool handlePageFault(uint32_t address);
+   static bool handlePageFault(uint32_t address, InterruptFrame* frame);
    static void copyMultibootMap(Multiboot* mb);
    static void init();
    static uintptr_t sbrk(std::size_t size);

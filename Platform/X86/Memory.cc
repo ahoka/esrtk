@@ -4,6 +4,7 @@
 #include <Multiboot.hh>
 #include <Debug.hh>
 #include <Templates.hh>
+#include <X86/Idt.hh>
 
 extern Multiboot* mbd;
 
@@ -32,11 +33,30 @@ Memory::init()
 }
 
 bool
-Memory::handlePageFault(uint32_t address)
+Memory::handlePageFault(uint32_t address, InterruptFrame* frame)
 {
    if (address >= HeapStart && address < heapEnd)
    {
       uint32_t pageAddress = address & PageMask;
+
+      printf("Expanding kernel heap: %p\n", (void* )pageAddress);
+
+      uintptr_t page = getFreePage();
+      KASSERT(page != 0);
+
+      bool rv = map(pageAddress, page);
+      KASSERT(rv);
+
+      return true;
+   }
+   
+   if (address < StackStart &&
+       address >= (StackStart - StackSize) &&
+       (frame->esp + 32) > address)
+   {
+      uint32_t pageAddress = address & PageMask;
+
+      printf("Expanding kernel stack: %p\n", (void* )pageAddress);
 
       uintptr_t page = getFreePage();
       KASSERT(page != 0);

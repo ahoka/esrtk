@@ -18,4 +18,6 @@
 #define StackStart UNSIGNED(0xffc00000)
 #define HeapStart UNSIGNED(0xc0501000)
 
+#define StackSize UNSIGNED(0x100000)
+
 #endif
