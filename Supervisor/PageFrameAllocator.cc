@@ -7,7 +7,8 @@
 char* PageFrameAllocator::start;
 char PageFrameAllocator::bitmap[1024];
 
-void *PageFrameAllocator::getFreePage()
+void*
+PageFrameAllocator::getFreePage()
 {
    for (unsigned int i = 0; i < sizeof bitmap; i++)
    {
@@ -32,7 +33,8 @@ void *PageFrameAllocator::getFreePage()
    return 0;
 }
 
-void PageFrameAllocator::putFreePage(void* page)
+void
+PageFrameAllocator::putFreePage(void* page)
 {
    KASSERT(((unsigned long )page & PageMask) == 0);
 
@@ -41,7 +43,8 @@ void PageFrameAllocator::putFreePage(void* page)
    bitmap[index] = 0;
 }
 
-void PageFrameAllocator::init()
+void
+PageFrameAllocator::init()
 {
    for (unsigned int i = 0; i < sizeof bitmap; i++)
    {

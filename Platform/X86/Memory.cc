@@ -16,11 +16,18 @@ uint32_t Memory::nextFreePage = roundTo<uint32_t>((uint32_t )&__end_kernel, Page
 MemorySegment Memory::memoryMap[MemoryMapMax];
 int Memory::memoryMapCount = 0;
 
+uint8_t Memory::physMap[PhysMapSize];
+
 // must be called when in 1:1 mapping
 //
 void
 Memory::init()
 {
+   for (std::size_t i = 0; i < sizeof physMap; i++)
+   {
+      physMap[i] = 0xff;
+   }
+
    printf("Listing Kernel sections:\n");
    printf(".text: %p-%p\n", &__start_text, &__end_text);
    printf(".data: %p-%p\n", &__start_data, &__end_data);

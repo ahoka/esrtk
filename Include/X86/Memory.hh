@@ -33,7 +33,8 @@ struct MemorySegment
 
 enum
 {
-   MemoryMapMax = 16
+   MemoryMapMax = 16,
+   PhysMapSize = 128 * 1024
 };
 
 class Memory
@@ -55,6 +56,8 @@ private:
 
    static MemorySegment memoryMap[16];
    static int memoryMapCount;
+   
+   static uint8_t physMap[PhysMapSize];
 };
 
 #endif
