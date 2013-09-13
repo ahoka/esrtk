@@ -73,9 +73,10 @@ Memory::init()
 	 if (freeStructures == 0)
 	 {
 	    printf("Allocating new page structure\n");
-	    p = freePages.get();
+//	    p = freePages.get();
+	    p = (PhysicalPage* )sbrk(PageSize);
 	    KASSERT(p != 0);
-	    usedPages.insert(p);
+//	    usedPages.insert(p);
 
 	    freeStructures = PageSize / sizeof (PhysicalPage);
 	 }
@@ -84,6 +85,7 @@ Memory::init()
 	 p->address = addr;
 	 freePages.insert(p);
 	 p++;
+	 freeStructures--;
       }
    }
 }
