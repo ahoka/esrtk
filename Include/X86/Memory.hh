@@ -37,10 +37,99 @@ enum
    PhysMapSize = 128 * 1024
 };
 
+struct PhysicalPage
+{
+   uintptr_t address;
+//   uint32_t flags;
+
+   PhysicalPage* prev;
+   PhysicalPage* next;
+
+   enum
+   {
+      // extreme value
+      Invalid = ~0UL
+   };
+
+   PhysicalPage() :
+      address(0),
+//      flags(0),
+      prev(0),
+      next(0)
+   {
+      // empty
+   }
+};
+
+class PageCluster
+{
+public:
+//   uint32_t color;
+
+   void insert(PhysicalPage* page)
+   {
+//      printf("head: %p, p %p, n %p\n", &head, head.prev, head.next);
+
+      PhysicalPage* oldNext = head.next;
+
+      page->next = head.next;
+      head.next = page;
+
+      oldNext->prev = page;
+      page->prev = &head;
+   }
+
+   void remove(PhysicalPage* page)
+   {
+      page->prev = page->next;
+   }
+
+   PhysicalPage* get()
+   {
+      PhysicalPage* page = 0;
+
+      if (head.next->address != PhysicalPage::Invalid)
+      {
+	 page = head.next;
+	 remove(head.next);
+      }
+
+      return page;
+   }
+
+   PhysicalPage* find(uintptr_t address)
+   {
+      for (PhysicalPage* page = head.next;
+	   page->address != PhysicalPage::Invalid;
+	   page = page->next)
+      {
+	 if (page->address == address)
+	 {
+	    return page;
+	 }
+      }
+
+      return 0;
+   }
+
+   void init()
+   {
+      // this is our elephant in cairo :-)
+      head.address = PhysicalPage::Invalid;
+      head.next = &head;
+      head.prev = &head;
+
+//      printf("head: %p, p %p, n %p\n", &head, head.prev, head.next);
+   }
+
+private:
+   PhysicalPage head;
+};
+
 class Memory
 {
 public:
-   static bool handlePageFault(uint32_t address, InterruptFrame* frame);
+   static bool handlePageFault(uintptr_t address, InterruptFrame* frame);
    static void copyMultibootMap(Multiboot* mb);
    static void init();
    static uintptr_t sbrk(std::size_t size);
@@ -50,14 +139,14 @@ public:
 private:
    Memory();
 
-   static uint32_t heapEnd;
-   static uint32_t stackEnd;
-   static uint32_t nextFreePage;
+   static uintptr_t heapEnd;
+   static uintptr_t stackEnd;
+
+   static PageCluster usedPages;
+   static PageCluster freePages;
 
    static MemorySegment memoryMap[16];
-   static int memoryMapCount;
-   
-   static uint8_t physMap[PhysMapSize];
+   static unsigned int memoryMapCount;
 };
 
 #endif
