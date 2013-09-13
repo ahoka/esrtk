@@ -100,7 +100,7 @@ Memory::handlePageFault(uintptr_t address, InterruptFrame* frame)
 {
    if (address >= HeapStart && address < heapEnd)
    {
-      uintptr_t pageAddress = address & PageMask;
+      uintptr_t pageAddress = address & ~PageMask;
 
       printf("Expanding kernel heap: %p\n", (void* )pageAddress);
 
@@ -117,7 +117,7 @@ Memory::handlePageFault(uintptr_t address, InterruptFrame* frame)
        address >= (StackStart - StackSize) &&
        (frame->esp + 32) > address)
    {
-      uintptr_t pageAddress = address & PageMask;
+      uintptr_t pageAddress = address & ~PageMask;
 
       printf("Expanding kernel stack: %p\n", (void* )pageAddress);
 
@@ -144,7 +144,7 @@ Memory::sbrk(std::size_t size)
    //
    heapEnd += roundTo<std::size_t>(size, PageSize);
 
-   KASSERT((heapEnd & PageSize) == 0);
+   KASSERT((heapEnd & PageMask) == 0);
 
    return oldEnd;
 }
