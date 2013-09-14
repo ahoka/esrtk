@@ -31,7 +31,9 @@ defaultIsr(InterruptFrame* frame)
       if (Memory::handlePageFault(cr2, frame))
       {
 	 // XXX: do i need to do anything here to resume normally?
+#ifdef DEBUG
 	 printf("Page fault handled: %p\n", (void* )cr2);
+#endif
 	 return;
       }
 

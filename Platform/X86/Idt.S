@@ -52,9 +52,11 @@ call_isr:
         movl %esp, %eax
         pushl %eax
         call isrDispatcher
+	popl %esp
 
 	pop_context
 
-	add %esp, 8
-        
+	addl $8, %esp
+
+        sti
 	iret

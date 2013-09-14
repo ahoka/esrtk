@@ -15,8 +15,9 @@ initSupervisor()
 {
    initGdt();
    initInterrupts();
-   Memory::init();
+   Memory::copyMemoryMap();
    PageDirectory::init();
+   Memory::init();
 
    apic.init();
 }

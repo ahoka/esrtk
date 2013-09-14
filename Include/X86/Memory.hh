@@ -129,9 +129,10 @@ private:
 class Memory
 {
 public:
-   static bool handlePageFault(uintptr_t address, InterruptFrame* frame);
-   static void copyMultibootMap(Multiboot* mb);
    static void init();
+   static bool handlePageFault(uintptr_t address, InterruptFrame* frame);
+   static void copyMemoryMap();
+
    static uintptr_t sbrk(std::size_t size);
    static uintptr_t getFreePage();
    static bool map(uintptr_t virt, uintptr_t phys);

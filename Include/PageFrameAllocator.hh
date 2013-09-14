@@ -1,6 +1,8 @@
 #ifndef PAGEFRAMEALLOCATOR_HH
 #define PAGEFRAMEALLOCATOR_HH
 
+#include <Parameters.hh>
+
 class PageFrameAllocator
 {
 public:
@@ -12,7 +14,7 @@ private:
    PageFrameAllocator();
 
    static char* start;
-   static char bitmap[1024];
+   static char bitmap[PageFrameCount];
 };
 
 #endif

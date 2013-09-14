@@ -15,27 +15,24 @@ uintptr_t Memory::stackEnd = StackStart;
 MemorySegment Memory::memoryMap[MemoryMapMax];
 unsigned int Memory::memoryMapCount = 0;
 
-//uint8_t Memory::physMap[PhysMapSize];
-
 PageCluster Memory::usedPages;
 PageCluster Memory::freePages;
 
-// must be called when in 1:1 mapping
-//
 void
 Memory::init()
 {
-   // for (std::size_t i = 0; i < sizeof physMap; i++)
-   // {
-   //    physMap[i] = 0xff;
-   // }
+   printf("Listing Kernel sections:\n");
+   printf(".text: %p-%p\n", &__start_text, &__end_text);
+   printf(".data: %p-%p\n", &__start_data, &__end_data);
+   printf(".rodata: %p-%p\n", &__start_rodata, &__end_rodata);
+   printf(".bss: %p-%p\n", &__start_bss, &__end_bss);
 
-   printf("\n\nPage size: %u, PhysicalPage structure size: %u\n", PageSize, sizeof(PhysicalPage));
+   printf("Page size: %u, PhysicalPage structure size: %u\n", PageSize, sizeof(PhysicalPage));
 
    usedPages.init();
    freePages.init();
 
-   uintptr_t nextFreePage = roundTo<uintptr_t>((uintptr_t )&__end_kernel, PageSize) + 4096;
+   uintptr_t nextFreePage = roundTo<uintptr_t>((uintptr_t )&__end_kernel, PageSize) + PageSize * PageFrameCount;
 
    // init page clusters
    PhysicalPage* bootstrapPage = (PhysicalPage* )nextFreePage;
@@ -48,16 +45,6 @@ Memory::init()
 
    KASSERT(freeStructures > 0);
    printf("Free structures: %u\n", freeStructures);
-
-   printf("Listing Kernel sections:\n");
-   printf(".text: %p-%p\n", &__start_text, &__end_text);
-   printf(".data: %p-%p\n", &__start_data, &__end_data);
-   printf(".rodata: %p-%p\n", &__start_rodata, &__end_rodata);
-   printf(".bss: %p-%p\n", &__start_bss, &__end_bss);
-
-   mbd->print();
-
-   copyMultibootMap(mbd);
 
    PhysicalPage* p = bootstrapPage + 1;
    for (unsigned int i = 0; i < memoryMapCount; i++)
@@ -72,16 +59,15 @@ Memory::init()
       {
 	 if (freeStructures == 0)
 	 {
+#ifdef DEBUG
 	    printf("Allocating new page structure\n");
-//	    p = freePages.get();
+#endif
 	    p = (PhysicalPage* )sbrk(PageSize);
 	    KASSERT(p != 0);
-//	    usedPages.insert(p);
 
 	    freeStructures = PageSize / sizeof (PhysicalPage);
 	 }
 
-//	 printf("p: 0x%lx\n", (unsigned long )p);
 	 p->address = addr;
 	 freePages.insert(p);
 	 p++;
@@ -92,6 +78,10 @@ Memory::init()
 
 bool Memory::map(uintptr_t address, uintptr_t phys)
 {
+#ifdef DEBUG
+   printf("Mapping physical page %p to %p\n", (void *)phys, (void *)address);
+#endif
+   
    return PageDirectory::mapPage(address, phys);
 }
 
@@ -101,9 +91,9 @@ Memory::handlePageFault(uintptr_t address, InterruptFrame* frame)
    if (address >= HeapStart && address < heapEnd)
    {
       uintptr_t pageAddress = address & ~PageMask;
-
+#ifdef DEBUG
       printf("Expanding kernel heap: %p\n", (void* )pageAddress);
-
+#endif
       uintptr_t page = getFreePage();
       KASSERT(page != 0);
 
@@ -164,9 +154,13 @@ Memory::getFreePage()
    return page->address;
 }
 
+// must be called when in 1:1 mapping
+//
 void
-Memory::copyMultibootMap(Multiboot* mb)
+Memory::copyMemoryMap()
 {
+   Multiboot* mb = mbd;
+
    for (Multiboot::MemoryMap *map = (Multiboot::MemoryMap *)mb->memoryMapAddress;
         map < (Multiboot::MemoryMap *)(mb->memoryMapAddress + mb->memoryMapLength);
         map++)

@@ -4,6 +4,7 @@
 #include <X86/Assembly.hh>
 #include <Debug.hh>
 
+#include <X86/Memory.hh>
 #include <X86/PageDirectory.hh>
 
 #include <cstring>
@@ -244,6 +245,8 @@ PageDirectory::unmapPage(uint32_t vAddress, uint32_t** pageDirectory)
 
    vpt[addressToPteIndex(vAddress)] = 0;
 
+   // TODO flush tlb!
+
    return true;
 }
 
@@ -259,7 +262,8 @@ PageDirectory::mapPage(uint32_t vAddress, uint32_t pAddress)
    {
       // need to allocate the pde
       //
-      uint32_t newPde = (uint32_t )PageFrameAllocator::getFreePage();
+//      uint32_t newPde = (uint32_t )PageFrameAllocator::getFreePage();
+      uint32_t newPde = Memory::getFreePage();
       KASSERT(newPde != 0);
       newPde = vtophys(newPde) | (PageValid | PageWritable);
       *pde = newPde;
@@ -271,8 +275,8 @@ PageDirectory::mapPage(uint32_t vAddress, uint32_t pAddress)
 
    if (*pte & PageValid)
    {
-//      printf("already mapped!\n");
-      return false;
+      Debug::panic("Trying to map already mapped page %p to %p\n", (void* )pAddress, (void* )vAddress);
+//      return false;
    }
 
    *pte = (pAddress & ~0xfffu) | (PageValid | PageWritable);

@@ -104,7 +104,7 @@ clean:
 	$(HIDE) -rm $(DFILES) kernel.elf pad kernel.img $(OFILES) 2>/dev/null
 
 run: kernel.elf
-	$(QEMU) -net none -kernel kernel.elf -boot order=c -nographic -serial stdio #-d cpu_reset,pcall
+	$(QEMU) -net none -kernel kernel.elf -boot order=c -serial stdio #-d cpu_reset,pcall
 
 monitor: kernel.elf
 	$(QEMU) -net none -kernel kernel.elf -boot order=c -monitor stdio

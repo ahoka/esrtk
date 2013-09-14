@@ -20,4 +20,6 @@
 
 #define StackSize UNSIGNED(0x100000)
 
+#define PageFrameCount 10
+
 #endif
