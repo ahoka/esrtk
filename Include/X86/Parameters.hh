@@ -9,7 +9,6 @@
 
 #define KernelVirtualBase UNSIGNED(0xc0000000)
 #define KernelLoadAddress UNSIGNED(0x100000)
-#define KernelMemorySize UNSIGNED(4194304)
 #define KernelPageNumber (KernelVirtualBase >> 22)
 
 #define PageSize UNSIGNED(4096)
@@ -18,7 +17,7 @@
 #define StackStart UNSIGNED(0xffc00000)
 #define HeapStart UNSIGNED(0xc0501000)
 
-#define StackSize UNSIGNED(0x100000)
+#define StackSize UNSIGNED(0x10000)
 
 #define PageFrameCount 10
 

@@ -79,13 +79,27 @@ Memory::init()
 	 }
 	 else
 	 {
-
 	    freePages.insert(p);
 	 }
 
 	 p++;
 	 freeStructures--;
       }
+   }
+
+   // map memory for the kernel stack
+   //
+   for (uintptr_t stackAddress = StackStart - StackSize;
+	stackAddress < StackStart;
+	stackAddress += PageSize)
+   {
+      uintptr_t stackPage = getPage();
+      KASSERT(stackPage != 0);
+
+      printf("Mapping a page for the stack: %p at %p\n", (void* )stackPage, (void* )stackAddress);
+
+      bool success = map(stackAddress, stackPage);
+      KASSERT(success);
    }
 }
 
@@ -167,9 +181,10 @@ Memory::getPage()
    if (page != 0)
    {
       usedPages.insert(page);
+      return page->address;
    }
 
-   return page->address;
+   return 0;
 }
 
 // free a physical page

@@ -270,19 +270,19 @@ PageDirectory::mapPage(uint32_t vAddress, uint32_t pAddress)
       //
 //      uint32_t newPde = (uint32_t )PageFrameAllocator::getFreePage();
       uint32_t newPde = Memory::getPage();
+      printf("got new page for pde: %p\n", (void *)newPde);
       KASSERT(newPde != 0);
       newPde |= (PageValid | PageWritable);
+      printf("writing to pde: %p\n", (void *)newPde);
       *pde = newPde;
 
-      printf("memset %p %p\n", (void*)pde, (void *)((uintptr_t )pde & ~PageMask));
-      invlpg(((uintptr_t )pde & ~PageMask));
-//      std::memset(pde, 0, PageSize);
-
-      // XXX flush tlb?
+      uintptr_t newpte = (uintptr_t )addressToPte(vAddress) & ~PageMask;
+      printf("newpte: 0x%x\n", newpte);
+      invlpg(newpte);
+      std::memset((void *)newpte, 0, PageSize);
    }
 
    uint32_t* pte = addressToPte(vAddress);
-
    printf("pte is at %p, content 0x%x\n", pte, *pte);
 
    if (*pte & PageValid)
@@ -314,14 +314,16 @@ PageDirectory::unmapPage(uint32_t vAddress)
 
    if ((*pde & PageValid) == 0)
    {
-      return false;
+      Debug::panic("Trying to unmap a not mapped page: %p (invalid PDE)\n", (void* )vAddress);
+//      return false;
    }
 
    uint32_t* pte = addressToPte(vAddress);
 
    if ((*pte & PageValid) == 0)
    {
-      return false;
+      Debug::panic("Trying to unmap a not mapped page: %p (invalid PTE)\n", (void* )vAddress);
+//      return false;
    }
 
    // TODO free page directory if empty

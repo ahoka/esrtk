@@ -1,12 +1,12 @@
 #include <X86/Parameters.hh>
 
-# setting up the Multiboot header - see GRUB docs for details
-.set ALIGN,    1<<0                     # align loaded modules on page boundaries
-.set MEMINFO,  1<<1                     # provide memory map
+// setting up the Multiboot header - see GRUB docs for details
+.set ALIGN,    1<<0                     // align loaded modules on page boundaries
+.set MEMINFO,  1<<1                     // provide memory map
 .set VBEINFO,  1<<2
-.set FLAGS,    ALIGN | MEMINFO		# this is the Multiboot 'flag' field
-.set MAGIC,    0x1BADB002               # 'magic number' lets bootloader find the header
-.set CHECKSUM, -(MAGIC + FLAGS)         # checksum required
+.set FLAGS,    ALIGN | MEMINFO		// this is the Multiboot 'flag' field
+.set MAGIC,    0x1BADB002               // 'magic number' lets bootloader find the header
+.set CHECKSUM, -(MAGIC + FLAGS)         // checksum required
 
 .global magic1
 .global flags
@@ -17,13 +17,13 @@ flags:
 .long FLAGS
 .long CHECKSUM
 
-# reserve initial kernel stack space
+// reserve initial kernel stack space
 .set STACKSIZE, 0x8000
 
-.comm stack, STACKSIZE, 32             # reserve stack on a doubleword boundary
-#.lcomm stack, STACKSIZE
-.comm  mbd, 4                           # we will use this in kmain
-.comm  magic, 4                         # we will use this in kmain
+.comm stack, STACKSIZE, 32             // reserve stack on a doubleword boundary
+//.lcomm stack, STACKSIZE
+.comm  mbd, 4                           // we will use this in kmain
+.comm  magic, 4                         // we will use this in kmain
 
 .section .rodata
 .balign 0x1000
@@ -52,12 +52,12 @@ _loader:
 	movl $(page_directory - KernelVirtualBase), %ecx
 	movl %ecx, %cr3
 
-	# Enable 4MB pages
+	// Enable 4MB pages
 	movl %cr4, %ecx
 	orl $0x00000010, %ecx
 	movl %ecx, %cr4
 
-	# Enable paging
+	// Enable paging
 	movl %cr0, %ecx
 	orl $0x80000000, %ecx
 	movl %ecx, %cr0
@@ -66,16 +66,25 @@ _loader:
 	jmp *%ecx
 
 hiloader:
-	mov   $(stack + STACKSIZE), %esp    # set up the stack
-	movl  %eax, magic                   # Multiboot magic number
-	movl  %ebx, mbd                     # Multiboot data structure
+	movl %eax, magic                   // Multiboot magic number
+	movl %ebx, mbd                     // Multiboot data structure
+
+	movl $(stack + STACKSIZE), %eax    // set up the stack
+	movl %eax, %esp	
 
         // reset eflags
         pushl %eax
         movl $0x2, %eax
         pushl %eax
         popfl
-     
+
+	call __cxaimpl_zero_bss
+	call supervisor_init
+
+	// set up the real kernel stack now that we have paging
+	movl $StackStart, %eax
+	movl %eax, %esp
+
 	call kmain
 
 	cli

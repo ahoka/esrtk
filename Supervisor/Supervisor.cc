@@ -17,18 +17,6 @@
 
 #include <cstdio>
 
-Supervisor::Supervisor()
-{
-}
-
-Supervisor::Supervisor(const Supervisor& /*orig*/)
-{
-}
-
-Supervisor::~Supervisor()
-{
-}
-
 extern Multiboot* mbd;
 extern uint32_t magic;
 
@@ -37,6 +25,12 @@ extern uint32_t magic1;
 
 extern void* page_directory;
 extern unsigned int page_directory_size;
+
+extern "C" void
+supervisor_init()
+{
+   Supervisor::init();
+}
 
 void
 Supervisor::run()

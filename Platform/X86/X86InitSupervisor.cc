@@ -11,13 +11,11 @@
 // constructors will be called after this
 //
 void
-initSupervisor()
+Supervisor::init()
 {
    initGdt();
    initInterrupts();
    Memory::copyMemoryMap();
    PageDirectory::init();
    Memory::init();
-
-   apic.init();
 }

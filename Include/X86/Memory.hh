@@ -81,7 +81,11 @@ public:
 
    void remove(PhysicalPage* page)
    {
-      page->prev = page->next;
+      PhysicalPage* oldPrev = page->prev;
+      PhysicalPage* oldNext = page->next;
+
+      oldPrev->next = oldNext;
+      oldNext->prev = oldPrev;
    }
 
    PhysicalPage* get()

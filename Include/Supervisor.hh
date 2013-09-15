@@ -4,15 +4,15 @@
 class Supervisor
 {
 public:
+   static void init();
+   static void run() __attribute__((noreturn));
+private:
    Supervisor();
    virtual ~Supervisor();
-
-   void run() __attribute__((noreturn));
-private:
    Supervisor(const Supervisor& orig);
 };
 
-extern "C" void initSupervisor();
+extern "C" void supervisor_init();
 
 #endif	/* SUPERVISOR_H */
 

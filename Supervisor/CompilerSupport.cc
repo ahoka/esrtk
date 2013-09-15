@@ -4,6 +4,8 @@
 #include <cstdio>
 #include <cstdint>
 
+#define DEBUG
+
 // a pure virtual function is called
 void
 __cxa_pure_virtual()

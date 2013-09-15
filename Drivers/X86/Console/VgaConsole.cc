@@ -1,19 +1,25 @@
 #include <X86/VgaConsole.hh>
 #include <X86/IoPort.hh>
-#include <X86/PageDirectory.hh>
+#include <X86/Memory.hh>
 #include <Debug.hh>
 
-extern VgaConsole vgaConsole;
-VgaConsole vgaConsole;
+// TODO fix this
+//extern VgaConsole vgaConsole;
+//VgaConsole vgaConsole;
 
 VgaConsole::VgaConsole()
    : backgroundColor(0x1f),
      foregroundColor(0xff)
 {
-   bool rc = PageDirectory::mapPage(0x800b8000, 0xb8000);
+//   printf("wattafak\n");
+//   putchar('V');
+
+   // asm volatile("hlt");
+
+   bool rc = Memory::map(0xb8000, 0xb8000);
    KASSERT(rc);
 
-   vram_ = 0x800b8000;
+   vram_ = 0xb8000;
 
    clearScreen();
 }
