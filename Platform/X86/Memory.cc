@@ -6,6 +6,7 @@
 #include <Templates.hh>
 #include <X86/Idt.hh>
 #include <X86/PageDirectory.hh>
+#include <cstring>
 
 extern Multiboot* mbd;
 
@@ -17,6 +18,8 @@ unsigned int Memory::memoryMapCount = 0;
 
 PageCluster Memory::usedPages;
 PageCluster Memory::freePages;
+
+#define DEBUG
 
 void
 Memory::init()
@@ -69,7 +72,17 @@ Memory::init()
 	 }
 
 	 p->address = addr;
-	 freePages.insert(p);
+	 if ((addr >= 0x00100000) && (addr < nextFreePage - 0xc0000000))
+	 {
+	    printf("Found used page: %p\n", (void* )addr);
+	    usedPages.insert(p);
+	 }
+	 else
+	 {
+
+	    freePages.insert(p);
+	 }
+
 	 p++;
 	 freeStructures--;
       }
@@ -79,7 +92,7 @@ Memory::init()
 bool Memory::map(uintptr_t address, uintptr_t phys)
 {
 #ifdef DEBUG
-   printf("Mapping physical page %p to %p\n", (void *)phys, (void *)address);
+//   printf("Mapping physical page %p to %p\n", (void *)phys, (void *)address);
 #endif
    
    return PageDirectory::mapPage(address, phys);
@@ -92,13 +105,16 @@ Memory::handlePageFault(uintptr_t address, InterruptFrame* frame)
    {
       uintptr_t pageAddress = address & ~PageMask;
 #ifdef DEBUG
-      printf("Expanding kernel heap: %p\n", (void* )pageAddress);
+      printf("Expanding kernel heap: %p initiated by access to %p\n",
+	     (void* )pageAddress, (void *)address);
 #endif
-      uintptr_t page = getFreePage();
+      uintptr_t page = getPage();
       KASSERT(page != 0);
 
       bool rv = map(pageAddress, page);
       KASSERT(rv);
+
+      std::memset((void* )pageAddress, 0, PageSize);
 
       return true;
    }
@@ -111,7 +127,7 @@ Memory::handlePageFault(uintptr_t address, InterruptFrame* frame)
 
       printf("Expanding kernel stack: %p\n", (void* )pageAddress);
 
-      uintptr_t page = getFreePage();
+      uintptr_t page = getPage();
       KASSERT(page != 0);
 
       bool rv = map(pageAddress, page);
@@ -136,13 +152,15 @@ Memory::sbrk(std::size_t size)
 
    KASSERT((heapEnd & PageMask) == 0);
 
+   printf("Heap sbrk: %p -> %p (%u)\n", (void *)oldEnd, (void *)heapEnd, heapEnd - oldEnd);
+
    return oldEnd;
 }
 
-// map a physical page
+// get a free physical page
 //
 uintptr_t
-Memory::getFreePage()
+Memory::getPage()
 {
    PhysicalPage* page = freePages.get();
 
@@ -152,6 +170,22 @@ Memory::getFreePage()
    }
 
    return page->address;
+}
+
+// free a physical page
+//
+void
+Memory::putPage(uintptr_t address)
+{
+   PhysicalPage* page = usedPages.find(address);
+
+   if (page == 0)
+   {
+      Debug::panic("Trying to free an unallocated physical page: %p\n", (void* )address);
+   }
+
+   usedPages.remove(page);
+   freePages.insert(page);
 }
 
 // must be called when in 1:1 mapping

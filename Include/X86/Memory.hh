@@ -134,7 +134,8 @@ public:
    static void copyMemoryMap();
 
    static uintptr_t sbrk(std::size_t size);
-   static uintptr_t getFreePage();
+   static uintptr_t getPage();
+   static void putPage(uintptr_t address);
    static bool map(uintptr_t virt, uintptr_t phys);
 
 private:

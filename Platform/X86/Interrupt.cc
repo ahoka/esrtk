@@ -28,9 +28,8 @@ defaultIsr(InterruptFrame* frame)
    {
       uint32_t cr2 = getCr2();
 
-      if (Memory::handlePageFault(cr2, frame))
+      if ((frame->error & 0x1) == 0 && Memory::handlePageFault(cr2, frame))
       {
-	 // XXX: do i need to do anything here to resume normally?
 #ifdef DEBUG
 	 printf("Page fault handled: %p\n", (void* )cr2);
 #endif
