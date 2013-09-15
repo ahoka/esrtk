@@ -8,6 +8,7 @@ endif
 
 AS=		$(CROSS)as
 LD=		$(CROSS)ld
+SIZE=		$(CROSS)size
 QEMU=		qemu-system-i386
 
 LDFLAGS=	-melf_i386
@@ -93,6 +94,7 @@ depend: $(DFILES)
 kernel.elf: Loader/MultiLoader.o $(OFILES)
 	@echo Linking kernel executable
 	$(HIDE) $(LD) $(LDFLAGS) -T Build/linker.ld -o $@ $^
+	@$(SIZE) $@
 
 kernel.img: kernel.elf
 	@echo Building kernel image
@@ -104,7 +106,7 @@ clean:
 	$(HIDE) -rm $(DFILES) kernel.elf pad kernel.img $(OFILES) 2>/dev/null
 
 run: kernel.elf
-	$(QEMU) -net none -kernel kernel.elf -boot order=c -serial stdio -d cpu_reset
+	$(QEMU) -net none -kernel kernel.elf -boot order=c -serial stdio -d cpu_reset -nographic
 
 monitor: kernel.elf
 	$(QEMU) -net none -kernel kernel.elf -boot order=c -monitor stdio
