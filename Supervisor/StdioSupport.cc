@@ -7,33 +7,52 @@
 int
 system_putchar(int ch)
 {
-   Console* con = Console::consoleList;
-   while (con != 0)
+   static bool nested;
+
+   int rv = SerialConsole::putChar(ch);  
+
+   // disallow nested calls
+   //
+   if (!nested)
    {
-      con->putChar((char)ch);
-      con = con->next;
+      nested = true;
+      Console* con = Console::consoleList;
+      while (con != 0)
+      {
+	 con->putChar((char)ch);
+	 con = con->next;
+      }
+      nested = false;
    }
 
-   return SerialConsole::putChar(ch);
+   return rv;
 }
 
 int
 system_puts(const char* string)
 {
-   int count = 0;
+   static bool nested;
+   int rv = 0;
 
-   Console* con = Console::consoleList;
-   while (con != 0)
+   // disallow nested calls
+   //
+   if (!nested)
    {
-      con->putString(string);
-      con = con->next;
+      nested = true;
+      Console* con = Console::consoleList;
+      while (con != 0)
+      {
+	 con->putString(string);
+	 con = con->next;
+      }
+      nested = false;
    }
 
    while (*string)
    {
       SerialConsole::putChar(*string++);
-      count++;
+      rv++;
    }
 
-   return 0;
+   return rv;
 }

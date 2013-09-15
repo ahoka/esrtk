@@ -33,15 +33,26 @@ private:
    }
 
    uint32_t vram_;
-   uint8_t backgroundColor;
-   uint8_t foregroundColor;
 
-   enum {
+//   backgroundColor(0x1f);
+//   foregroundColor(0xff);
+
+   enum
+   {
+      backgroundColor = 0x1f,
+      foregroundColor = 0xff
+   };
+   // uint8_t backgroundColor;
+   // uint8_t foregroundColor;
+
+   enum
+   {
       VgaIndexPort = 0x3d4,
       VgaDataPort = 0x3d5,
    };
 
-   enum {
+   enum
+   {
       VgaCursorHigh = 14,
       VgaCursorLow = 15
    };

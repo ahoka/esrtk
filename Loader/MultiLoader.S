@@ -18,12 +18,13 @@ flags:
 .long CHECKSUM
 
 // reserve initial kernel stack space
-.set STACKSIZE, 0x8000
+.set STACKSIZE, InitialStackSize
 
-.comm stack, STACKSIZE, 32             // reserve stack on a doubleword boundary
-//.lcomm stack, STACKSIZE
-.comm  mbd, 4                           // we will use this in kmain
-.comm  magic, 4                         // we will use this in kmain
+.global initial_stack
+initial_stack:
+.comm stack, STACKSIZE, 32
+.comm mbd, 4
+.comm magic, 4
 
 .section .rodata
 .balign 0x1000

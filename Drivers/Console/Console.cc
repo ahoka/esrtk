@@ -1,6 +1,7 @@
 #include "Console.hh"
 
 #include <stdarg.h>
+#include <cstdio>
 
 Console* Console::consoleList = 0;
 

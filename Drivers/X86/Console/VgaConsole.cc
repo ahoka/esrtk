@@ -3,23 +3,13 @@
 #include <X86/Memory.hh>
 #include <Debug.hh>
 
-// TODO fix this
-//extern VgaConsole vgaConsole;
-//VgaConsole vgaConsole;
+extern VgaConsole vgaConsole;
+VgaConsole vgaConsole;
 
 VgaConsole::VgaConsole()
-   : backgroundColor(0x1f),
-     foregroundColor(0xff)
 {
-//   printf("wattafak\n");
-//   putchar('V');
-
-   // asm volatile("hlt");
-
-   bool rc = Memory::map(0xb8000, 0xb8000);
-   KASSERT(rc);
-
-   vram_ = 0xb8000;
+   vram_ = Memory::map(0xb8000);
+   KASSERT(vram_ != 0);
 
    clearScreen();
 }
@@ -30,19 +20,6 @@ VgaConsole::VgaConsole(const VgaConsole& /*orig*/)
 
 VgaConsole::~VgaConsole()
 {
-}
-
-int
-VgaConsole::init()
-{
-   // bool rc = PageDirectory::mapPage(0xb8000, 0xb8000);
-   // KASSERT(rc);
-
-   // vram_ = 0xb8000;
-   
-   // clearScreen();
-
-   return 0;
 }
 
 int

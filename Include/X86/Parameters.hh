@@ -21,5 +21,6 @@
 #define MapStart (StackStart - StackSize)
 
 #define PageFrameCount 10
+#define InitialStackSize UNSIGNED(0x2000)
 
 #endif

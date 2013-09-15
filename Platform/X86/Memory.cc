@@ -9,6 +9,7 @@
 #include <cstring>
 
 extern Multiboot* mbd;
+extern uintptr_t initial_stack;
 
 uintptr_t Memory::heapEnd = HeapStart;
 uintptr_t Memory::stackEnd = StackStart;
@@ -103,6 +104,14 @@ Memory::init()
       bool success = map(stackAddress, stackPage);
       KASSERT(success);
    }
+
+//    printf("Freeing initial kernel stack: %p-%p\n", (void* )(initial_stack - InitialStackSize), (void* )initial_stack);
+//    for (uintptr_t oldStack = initial_stack - InitialStackSize;
+// 	oldStack < initial_stack;
+// 	oldStack += PageSize)
+//    {
+//      unmap(oldStack);
+//    }
 }
 
 bool Memory::map(uintptr_t address, uintptr_t phys)
@@ -128,6 +137,17 @@ uintptr_t Memory::map(uintptr_t phys)
    }
 
    return mapEnd;
+}
+
+// anonymous mapping of a physical page
+//
+bool
+Memory::unmap(uintptr_t page)
+{
+   bool success = PageDirectory::unmapPage(page);
+   // TODO we need to know where to mark the vaddr free!
+
+   return success;
 }
 
 bool
