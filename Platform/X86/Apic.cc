@@ -9,7 +9,7 @@ Apic apic;
 
 Apic::Apic()
 {
-   printf("Initializing APIC...\n");
+   printf("Initializing APIC.\n");
    init();
 }
 
@@ -77,7 +77,7 @@ Apic::init()
 
    printf("Mapping APIC to %p\n", (void* )apicAddress);
 
-   apicAddress = Memory::map(apicAddress);
+   apicAddress = Memory::mapPage(apicAddress);
    KASSERT(apicAddress != 0);
 }
 

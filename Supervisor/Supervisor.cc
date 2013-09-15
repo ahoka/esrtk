@@ -52,24 +52,7 @@ Supervisor::run()
 
    printf("LAPIC ID: %u\n", apic.getLocalApicId());
 
-   // printf("looking for RSDP:\n");
-
-   // Rsdp* rsdp = Acpi::findRsdp();
-
-   // if (rsdp->calculateExtendedChecksum() == 0)
-   // {
-   //    //Xsdt* xsdt = (Xsdt *)rsdp->xsdtAddress;
-   //    Rsdt* rsdt = (Rsdt *)rsdp->rsdtAddress;
-
-   //    rsdt->printHeader();
-   //    for (uint32_t i = 0;
-   //         i < (rsdt->length - sizeof(DescriptionHeader)) / 4;
-   //         i++)
-   //    {
-   //    	 ((DescriptionHeader *)rsdt->entry[i])->printHeader();
-   //       printf("\n");
-   //    }
-   // }
+   Acpi::printAllDescriptors();
 
    Power::halt();
 }

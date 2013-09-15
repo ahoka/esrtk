@@ -92,7 +92,8 @@ struct Rsdp
 class Acpi
 {
 public:
-   static Rsdp* findRsdp();
+   static Rsdp* findRsdp(char*, char*);
+   static void printAllDescriptors();
 };
 
 #endif

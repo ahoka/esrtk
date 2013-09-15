@@ -101,7 +101,7 @@ Memory::init()
       uintptr_t stackPage = getPage();
       KASSERT(stackPage != 0);
 
-      bool success = map(stackAddress, stackPage);
+      bool success = mapPage(stackAddress, stackPage);
       KASSERT(success);
    }
 
@@ -114,14 +114,14 @@ Memory::init()
 //    }
 }
 
-bool Memory::map(uintptr_t address, uintptr_t phys)
+bool Memory::mapPage(uintptr_t address, uintptr_t phys)
 {
    return PageDirectory::mapPage(address, phys);
 }
 
 // anonymous mapping of a physical page
 //
-uintptr_t Memory::map(uintptr_t phys)
+uintptr_t Memory::mapPage(uintptr_t phys)
 {
    mapEnd -= PageSize;
 
@@ -139,10 +139,59 @@ uintptr_t Memory::map(uintptr_t phys)
    return mapEnd;
 }
 
+// anonymous mapping of a memory region
+//
+uintptr_t Memory::mapRegion(uintptr_t paddr, std::size_t size)
+{
+   std::size_t rsize = roundTo<uintptr_t>(size, PageSize);
+   mapEnd -= rsize;
+
+   if (mapEnd <= heapEnd)
+   {
+      Debug::panic("Kernel map namespace exhausted.");
+   }
+
+   uintptr_t vaddr = mapEnd;
+   for (uintptr_t page = paddr;
+	page < paddr + rsize;
+	page += PageSize, vaddr += PageSize)
+   {
+      bool success = PageDirectory::mapPage(vaddr, page);
+      if (!success)
+      {
+	 Debug::panic("mapRegion unsuccesful.");
+	 // XXX unmap and return error
+	 //return 0;
+      }
+   }
+
+   return mapEnd;
+}
+
+bool
+Memory::unmapRegion(uintptr_t paddr, std::size_t size)
+{
+   std::size_t rsize = roundTo<uintptr_t>(size, PageSize);
+
+   uintptr_t vaddr = mapEnd;
+   for (uintptr_t page = paddr;
+	page < paddr + rsize;
+	page += PageSize, vaddr += PageSize)
+   {
+      bool success = PageDirectory::unmapPage(vaddr);
+      if (!success)
+      {
+	 Debug::panic("unmapRegion unsuccesful.");
+      }
+   }
+
+   return true;
+}
+
 // anonymous mapping of a physical page
 //
 bool
-Memory::unmap(uintptr_t page)
+Memory::unmapPage(uintptr_t page)
 {
    bool success = PageDirectory::unmapPage(page);
    // TODO we need to know where to mark the vaddr free!
@@ -163,7 +212,7 @@ Memory::handlePageFault(uintptr_t address, InterruptFrame* /*frame*/)
       uintptr_t page = getPage();
       KASSERT(page != 0);
 
-      bool rv = map(pageAddress, page);
+      bool rv = mapPage(pageAddress, page);
       KASSERT(rv);
 
       std::memset((void* )pageAddress, 0, PageSize);

@@ -140,9 +140,11 @@ public:
    static uintptr_t sbrk(std::size_t size);
    static uintptr_t getPage();
    static void putPage(uintptr_t paddr);
-   static bool map(uintptr_t vaddr, uintptr_t paddr);
-   static uintptr_t map(uintptr_t paddr);
-   static bool unmap(uintptr_t vaddr);
+   static bool mapPage(uintptr_t vaddr, uintptr_t paddr);
+   static uintptr_t mapPage(uintptr_t paddr);
+   static bool unmapPage(uintptr_t vaddr);
+   static uintptr_t mapRegion(uintptr_t paddr, std::size_t size);
+   static bool unmapRegion(uintptr_t paddr, std::size_t size);
 
 private:
    Memory();

@@ -8,7 +8,7 @@ VgaConsole vgaConsole;
 
 VgaConsole::VgaConsole()
 {
-   vram_ = Memory::map(0xb8000);
+   vram_ = Memory::mapPage(0xb8000);
    KASSERT(vram_ != 0);
 
    clearScreen();
