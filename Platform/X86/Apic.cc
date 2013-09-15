@@ -1,11 +1,17 @@
 #include <Debug.hh>
 #include <X86/Assembly.hh>
-#include <X86/PageDirectory.hh>
+#include <X86/Memory.hh>
 #include <X86/Apic.hh>
 
 #include <cstdio>
 
 Apic apic;
+
+Apic::Apic()
+{
+   printf("Initializing APIC...\n");
+   init();
+}
 
 void
 Apic::read32(uint32_t offset, uint32_t *a)
@@ -71,9 +77,8 @@ Apic::init()
 
    printf("Mapping APIC to %p\n", (void* )apicAddress);
 
-   PageDirectory::mapPage(0x80000000u, apicAddress);
-
-   apicAddress = 0x80000000u;
+   apicAddress = Memory::map(apicAddress);
+   KASSERT(apicAddress != 0);
 }
 
 void

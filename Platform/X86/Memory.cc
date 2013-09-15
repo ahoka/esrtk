@@ -12,6 +12,7 @@ extern Multiboot* mbd;
 
 uintptr_t Memory::heapEnd = HeapStart;
 uintptr_t Memory::stackEnd = StackStart;
+uintptr_t Memory::mapEnd = MapStart;
 
 MemorySegment Memory::memoryMap[MemoryMapMax];
 unsigned int Memory::memoryMapCount = 0;
@@ -19,7 +20,7 @@ unsigned int Memory::memoryMapCount = 0;
 PageCluster Memory::usedPages;
 PageCluster Memory::freePages;
 
-#define DEBUG
+//#define DEBUG
 
 void
 Memory::init()
@@ -52,9 +53,9 @@ Memory::init()
    PhysicalPage* p = bootstrapPage + 1;
    for (unsigned int i = 0; i < memoryMapCount; i++)
    {
-      printf("Adding memory range from %lu - %lu\n",
-	     (unsigned long )memoryMap[i].address,
-	     (unsigned long )memoryMap[i].address + memoryMap[i].size);
+      printf("Adding memory range from %p-%p\n",
+	     (void* )memoryMap[i].address,
+	     (void* )(memoryMap[i].address + memoryMap[i].size));
 
       for (uintptr_t addr = memoryMap[i].address;
 	   addr < memoryMap[i].address + memoryMap[i].size;
@@ -74,7 +75,9 @@ Memory::init()
 	 p->address = addr;
 	 if ((addr >= 0x00100000) && (addr < nextFreePage - 0xc0000000))
 	 {
+#ifdef DEBUG
 	    printf("Found used page: %p\n", (void* )addr);
+#endif
 	    usedPages.insert(p);
 	 }
 	 else
@@ -89,14 +92,13 @@ Memory::init()
 
    // map memory for the kernel stack
    //
+   printf("Mapping memory for the kernel stack: %p-%p (%u)\n", (void* )(StackStart - StackSize), (void* )StackStart, StackSize);
    for (uintptr_t stackAddress = StackStart - StackSize;
 	stackAddress < StackStart;
 	stackAddress += PageSize)
    {
       uintptr_t stackPage = getPage();
       KASSERT(stackPage != 0);
-
-      printf("Mapping a page for the stack: %p at %p\n", (void* )stackPage, (void* )stackAddress);
 
       bool success = map(stackAddress, stackPage);
       KASSERT(success);
@@ -105,15 +107,31 @@ Memory::init()
 
 bool Memory::map(uintptr_t address, uintptr_t phys)
 {
-#ifdef DEBUG
-//   printf("Mapping physical page %p to %p\n", (void *)phys, (void *)address);
-#endif
-   
    return PageDirectory::mapPage(address, phys);
 }
 
+// anonymous mapping of a physical page
+//
+uintptr_t Memory::map(uintptr_t phys)
+{
+   mapEnd -= PageSize;
+
+   if (mapEnd <= heapEnd)
+   {
+      Debug::panic("Kernel map namespace exhausted.");
+   }
+
+   bool success = PageDirectory::mapPage(mapEnd, phys);
+   if (!success)
+   {
+      return 0;
+   }
+
+   return mapEnd;
+}
+
 bool
-Memory::handlePageFault(uintptr_t address, InterruptFrame* frame)
+Memory::handlePageFault(uintptr_t address, InterruptFrame* /*frame*/)
 {
    if (address >= HeapStart && address < heapEnd)
    {
@@ -132,7 +150,9 @@ Memory::handlePageFault(uintptr_t address, InterruptFrame* frame)
 
       return true;
    }
-   
+
+#if 0
+   // this is an instant triple fault
    if (address < StackStart &&
        address >= (StackStart - StackSize) &&
        (frame->esp + 32) > address)
@@ -149,6 +169,7 @@ Memory::handlePageFault(uintptr_t address, InterruptFrame* frame)
 
       return true;
    }
+#endif
 
    return false;
 }
@@ -163,10 +184,16 @@ Memory::sbrk(std::size_t size)
    // align size with PageSize
    //
    heapEnd += roundTo<std::size_t>(size, PageSize);
-
    KASSERT((heapEnd & PageMask) == 0);
 
+   if (heapEnd >= mapEnd)
+   {
+      Debug::panic("Kernel heap exhausted.");
+   }
+
+#ifdef DEBUG
    printf("Heap sbrk: %p -> %p (%u)\n", (void *)oldEnd, (void *)heapEnd, heapEnd - oldEnd);
+#endif
 
    return oldEnd;
 }

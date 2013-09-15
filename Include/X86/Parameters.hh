@@ -18,6 +18,7 @@
 #define HeapStart UNSIGNED(0xc0501000)
 
 #define StackSize UNSIGNED(0x10000)
+#define MapStart (StackStart - StackSize)
 
 #define PageFrameCount 10
 

@@ -12,13 +12,7 @@
 #include <cstring>
 #include <cstdio>
 
-#define DEBUG
-
-// static uint32_t
-// phystov(uint32_t p)
-// {
-//    return p + KernelVirtualBase;
-// }
+//#define DEBUG
 
 #define PageValid (1 << 0)
 #define PageWritable (1 << 1)
@@ -70,7 +64,7 @@ PageDirectory::init()
    uintptr_t last = (roundTo<uintptr_t>((uintptr_t )&__end_kernel, PageSize)
 		     + PageSize * PageFrameCount + PageSize) - KernelVirtualBase;
 
-   printf("Creating kernel memory mapping: %p - %p\n", (void* )first, (void* )last);
+   printf("Creating kernel memory mapping: %p-%p\n", (void* )first, (void* )last);
    for (uintptr_t p = first; p < last; p += PageSize)
    {
       bool rc = mapPage((KernelVirtualBase + p), p, (uint32_t **)pageDirectory);
@@ -78,7 +72,7 @@ PageDirectory::init()
    }
 
    // id map it too
-   printf("Creating kernel memory mapping: %p - %p\n", (void* )first, (void* )last);
+   printf("Creating kernel memory mapping (identity): %p-%p\n", (void* )first, (void* )last);
    for (uintptr_t p = first; p < last; p += PageSize)
    {
       bool rc = mapPage(p, p, (uint32_t **)pageDirectory);
@@ -94,6 +88,7 @@ PageDirectory::init()
 
    // unmap identity mapped region
    //
+   printf("Unmapping identity mapped kernel memory: %p-%p\n", (void* )first, (void* )last);
    for (uintptr_t p = first; p < last; p += PageSize)
    {
       bool rc = unmapPage(p);
@@ -184,7 +179,9 @@ PageDirectory::mapPage(uint32_t vAddress, uint32_t pAddress, uint32_t** pageDire
    {
       // allocate new
       uint32_t* newPt = (uint32_t* )PageFrameAllocator::getFreePage();
+#ifdef DEBUG
       printf("allocating new page table: %p\n", newPt);
+#endif
 
       std::memset(newPt, 0, PageSize);
 
@@ -262,7 +259,9 @@ PageDirectory::mapPage(uint32_t vAddress, uint32_t pAddress)
 
    uint32_t* pde = addressToPde(vAddress);
 
+#ifdef DEBUG
    printf("pde is at %p, content 0x%x\n", pde, *pde);
+#endif
 
    if ((*pde & PageValid) == 0)
    {
@@ -270,20 +269,26 @@ PageDirectory::mapPage(uint32_t vAddress, uint32_t pAddress)
       //
 //      uint32_t newPde = (uint32_t )PageFrameAllocator::getFreePage();
       uint32_t newPde = Memory::getPage();
+#ifdef DEBUG
       printf("got new page for pde: %p\n", (void *)newPde);
+#endif
       KASSERT(newPde != 0);
       newPde |= (PageValid | PageWritable);
+#ifdef DEBUG
       printf("writing to pde: %p\n", (void *)newPde);
+#endif
       *pde = newPde;
 
       uintptr_t newpte = (uintptr_t )addressToPte(vAddress) & ~PageMask;
-      printf("newpte: 0x%x\n", newpte);
       invlpg(newpte);
+
       std::memset((void *)newpte, 0, PageSize);
    }
 
    uint32_t* pte = addressToPte(vAddress);
+#ifdef DEBUG
    printf("pte is at %p, content 0x%x\n", pte, *pte);
+#endif
 
    if (*pte & PageValid)
    {
@@ -292,12 +297,11 @@ PageDirectory::mapPage(uint32_t vAddress, uint32_t pAddress)
    }
 
    *pte = (pAddress & ~0xfffu) | (PageValid | PageWritable);
-
-   printf("Map OK.\n");
-
    invlpg(vAddress);
 
+#ifdef DEBUG
    printf("Results: pde %p, pte %p\n", (void* )*pde, (void* )*pte);
+#endif
 
    return true;
 }

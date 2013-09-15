@@ -6,7 +6,8 @@
 class Apic
 {
 public:
-   void init();
+   Apic();
+
    void printInformation();
    int probe();
 
@@ -75,6 +76,8 @@ public:
 
    uint32_t getLocalApicId();
 private:
+   void init();
+
    uint32_t apicAddress;
    uint32_t flags;
 };

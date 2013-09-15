@@ -141,12 +141,14 @@ public:
    static uintptr_t getPage();
    static void putPage(uintptr_t address);
    static bool map(uintptr_t virt, uintptr_t phys);
+   static uintptr_t map(uintptr_t phys);
 
 private:
    Memory();
 
    static uintptr_t heapEnd;
    static uintptr_t stackEnd;
+   static uintptr_t mapEnd;
 
    static PageCluster usedPages;
    static PageCluster freePages;
