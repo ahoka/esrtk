@@ -3,6 +3,7 @@
 
 #include <Multiboot.hh>
 #include <X86/Idt.hh>
+#include <X86/Parameters.hh>
 
 #include <cstdint>
 #include <cstddef>
@@ -37,11 +38,9 @@ enum
    PhysMapSize = 128 * 1024
 };
 
-struct PhysicalPage
+class PhysicalPage
 {
-   uintptr_t address;
-//   uint32_t flags;
-
+public:
    PhysicalPage* prev;
    PhysicalPage* next;
 
@@ -52,13 +51,53 @@ struct PhysicalPage
    };
 
    PhysicalPage() :
-      address(0),
-//      flags(0),
       prev(0),
-      next(0)
+      next(0),
+      address(Invalid)
    {
       // empty
    }
+
+   uintptr_t getAddress()
+   {
+      return address & AddressMask;
+   }
+
+   // this wont preserve color
+   void setAddress(uintptr_t addr)
+   {
+      address = addr;
+   }
+
+   void setColor(uint8_t color)
+   {
+      address &= AddressMask;
+      address |= color;
+   }
+
+   uint8_t getColor()
+   {
+      return static_cast<uint8_t>(address & ColorMask);
+   }
+
+   bool isValid()
+   {
+      return address == Invalid;
+   }
+
+   bool isInvalid()
+   {
+      return !isValid();
+   }
+
+private:
+   uintptr_t address;
+
+   enum
+   {
+      AddressMask = ~PageMask,
+      ColorMask = PageMask
+   };
 };
 
 class PageCluster
@@ -92,7 +131,7 @@ public:
    {
       PhysicalPage* page = 0;
 
-      if (head.next->address != PhysicalPage::Invalid)
+      if (head.next->getAddress() != PhysicalPage::Invalid)
       {
 	 page = head.next;
 	 remove(head.next);
@@ -104,10 +143,10 @@ public:
    PhysicalPage* find(uintptr_t address)
    {
       for (PhysicalPage* page = head.next;
-	   page->address != PhysicalPage::Invalid;
+	   page->getAddress() != PhysicalPage::Invalid;
 	   page = page->next)
       {
-	 if (page->address == address)
+	 if (page->getAddress() == address)
 	 {
 	    return page;
 	 }
@@ -119,7 +158,7 @@ public:
    void init()
    {
       // this is our elephant in cairo :-)
-      head.address = PhysicalPage::Invalid;
+      head.setAddress(PhysicalPage::Invalid);
       head.next = &head;
       head.prev = &head;
 

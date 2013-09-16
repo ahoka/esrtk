@@ -42,8 +42,8 @@ Memory::init()
    // init page clusters
    PhysicalPage* bootstrapPage = (PhysicalPage* )nextFreePage;
 
-   bootstrapPage->address = (uintptr_t )bootstrapPage - KernelVirtualBase;
-   printf("Inserting bootstrap page to used pages cluster: %p\n", (void* )bootstrapPage->address);
+   bootstrapPage->setAddress((uintptr_t )bootstrapPage - KernelVirtualBase);
+   printf("Inserting bootstrap page to used pages cluster: %p\n", (void* )bootstrapPage->getAddress());
    usedPages.insert(bootstrapPage);
    
    unsigned int freeStructures = PageSize / sizeof (PhysicalPage) - 1;
@@ -73,7 +73,7 @@ Memory::init()
 	    freeStructures = PageSize / sizeof (PhysicalPage);
 	 }
 
-	 p->address = addr;
+	 p->setAddress(addr);
 	 if ((addr >= 0x00100000) && (addr < nextFreePage - 0xc0000000))
 	 {
 #ifdef DEBUG
@@ -277,7 +277,7 @@ Memory::getPage()
    if (page != 0)
    {
       usedPages.insert(page);
-      return page->address;
+      return page->getAddress();
    }
 
    return 0;
