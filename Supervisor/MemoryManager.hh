@@ -1,20 +1,43 @@
-/* 
- * File:   MemoryManager.h
- * Author: edmmhka
- *
- * Created on August 29, 2012, 4:22 PM
- */
+#ifndef MEMORYMANAGER_HH
+#define	MEMORYMANAGER_HH
 
-#ifndef MEMORYMANAGER_H
-#define	MEMORYMANAGER_H
+#include <DoublyLinkedItem.hh>
+#include <DoublyLinkedList.hh>
 
-class MemoryManager {
+#include <cstdint>
+
+class MemoryManager
+{
 public:
 	MemoryManager();
 	MemoryManager(const MemoryManager& orig);
 	virtual ~MemoryManager();
 private:
 
+   class Segment : DoublyLinkedItem<Segment>
+   {
+   public:
+      Segment() :
+	 address(0),
+	 size(0)
+      {
+	 // empty
+      }
+
+      void setSize(uintptr_t newSize)
+      {
+	 size = newSize;
+      }
+
+      void setAddress(uintptr_t newAddress)
+      {
+	 address = newAddress;
+      }
+
+   private:
+      uintptr_t address;
+      uintptr_t size;
+   };
 };
 
 #endif	/* MEMORYMANAGER_H */
