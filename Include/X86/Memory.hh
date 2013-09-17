@@ -103,7 +103,13 @@ private:
 class PageCluster
 {
 public:
-//   uint32_t color;
+   enum
+   {
+      Free,
+      Anonymous,
+      KernelHeap,
+      KernelStack
+   };
 
    void insert(PhysicalPage* page)
    {
@@ -161,8 +167,6 @@ public:
       head.setAddress(PhysicalPage::Invalid);
       head.next = &head;
       head.prev = &head;
-
-//      printf("head: %p, p %p, n %p\n", &head, head.prev, head.next);
    }
 
 private:
@@ -184,6 +188,7 @@ public:
    static bool unmapPage(uintptr_t vaddr);
    static uintptr_t mapRegion(uintptr_t paddr, std::size_t size);
    static bool unmapRegion(uintptr_t paddr, std::size_t size);
+   static void* readPhysicalMemory(void* destination, const void* source, std::size_t size);
 
 private:
    Memory();

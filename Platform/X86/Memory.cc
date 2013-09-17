@@ -146,14 +146,17 @@ uintptr_t Memory::mapRegion(uintptr_t paddr, std::size_t size)
    std::size_t rsize = roundTo<uintptr_t>(size, PageSize);
    mapEnd -= rsize;
 
+   uintptr_t firstPage = roundDown(paddr, PageSize);
+   uintptr_t offset = paddr - firstPage;
+
    if (mapEnd <= heapEnd)
    {
       Debug::panic("Kernel map namespace exhausted.");
    }
 
    uintptr_t vaddr = mapEnd;
-   for (uintptr_t page = paddr;
-	page < paddr + rsize;
+   for (uintptr_t page = firstPage;
+	page < firstPage + rsize;
 	page += PageSize, vaddr += PageSize)
    {
       bool success = PageDirectory::mapPage(vaddr, page);
@@ -165,20 +168,20 @@ uintptr_t Memory::mapRegion(uintptr_t paddr, std::size_t size)
       }
    }
 
-   return mapEnd;
+   return mapEnd + offset;
 }
 
 bool
 Memory::unmapRegion(uintptr_t paddr, std::size_t size)
 {
    std::size_t rsize = roundTo<uintptr_t>(size, PageSize);
+   uintptr_t firstPage = roundDown(paddr, PageSize);
 
-   uintptr_t vaddr = mapEnd;
-   for (uintptr_t page = paddr;
-	page < paddr + rsize;
-	page += PageSize, vaddr += PageSize)
+   for (uintptr_t page = firstPage;
+	page < firstPage + rsize;
+	page += PageSize)
    {
-      bool success = PageDirectory::unmapPage(vaddr);
+      bool success = PageDirectory::unmapPage(page);
       if (!success)
       {
 	 Debug::panic("unmapRegion unsuccesful.");
@@ -297,6 +300,21 @@ Memory::putPage(uintptr_t address)
 
    usedPages.remove(page);
    freePages.insert(page);
+}
+
+void*
+Memory::readPhysicalMemory(void* destination, const void* source, std::size_t size)
+{
+   uintptr_t mapFirst = roundDown(uintptr_t(source), PageSize);
+   uintptr_t mapLast = roundTo(uintptr_t(source), PageSize);
+
+   uintptr_t mapped = mapRegion(mapFirst, mapLast - mapFirst);
+
+   std::memcpy(destination, reinterpret_cast<void*>(mapped + (uintptr_t(source) - mapFirst)), size);
+
+   unmapRegion(mapped, mapLast - mapFirst);
+
+   return destination;
 }
 
 // must be called when in 1:1 mapping

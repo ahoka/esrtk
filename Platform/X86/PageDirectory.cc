@@ -314,6 +314,7 @@ PageDirectory::unmapPage(uint32_t vAddress)
    printf("Unmapping page: %p\n", (void* )vAddress);
 #endif
 
+
    uint32_t* pde = addressToPde(vAddress);
 
    if ((*pde & PageValid) == 0)
@@ -326,7 +327,7 @@ PageDirectory::unmapPage(uint32_t vAddress)
 
    if ((*pte & PageValid) == 0)
    {
-      Debug::panic("Trying to unmap a not mapped page: %p (invalid PTE)\n", (void* )vAddress);
+      Debug::panic("Trying to unmap a not mapped page: %p (invalid PTE: 0x%x)\n", (void* )vAddress, *pte);
 //      return false;
    }
 

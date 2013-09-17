@@ -25,4 +25,22 @@ T roundTo(T num, uint32_t size)
    return reinterpret_cast<T>(rounded);
 }
 
+template <uint64_t>
+uint64_t roundDown(uint64_t num, uint32_t size)
+{
+   uint64_t orig = reinterpret_cast<uint64_t>(num);
+   uint64_t rounded = orig & ~(size - 1);
+
+   return reinterpret_cast<uint64_t>(rounded);
+}
+
+template <class T>
+T roundDown(T num, uint32_t size)
+{
+   uint32_t orig = reinterpret_cast<uint32_t>(num);
+   uint32_t rounded = orig & ~(size - 1);
+   
+   return reinterpret_cast<T>(rounded);
+}
+
 #endif

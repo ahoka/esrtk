@@ -41,31 +41,40 @@ Acpi::findRsdp(char* from, char* to)
 void
 Acpi::printAllDescriptors()
 {
+   uint32_t entries[256];
    printf("looking for RSDP:\n");
 
    char* mem = (char* )Memory::mapRegion(0x0e0000, 0x20000);
    Rsdp* rsdp = Acpi::findRsdp(mem, mem + 0x20000);
 
-//   if (rsdp->calculateExtendedChecksum() == 0)
-//   {
-      //Xsdt* xsdt = (Xsdt *)rsdp->xsdtAddress;
-      Rsdt* rsdt = (Rsdt *)rsdp->rsdtAddress;
-      Memory::unmapRegion(0x0e0000, 0x20000);
+   Rsdt rsdt;
+   printf("%x\n", rsdp->rsdtAddress);
+   Memory::readPhysicalMemory(static_cast<void*>(&rsdt),
+                              reinterpret_cast<const void*>(rsdp->rsdtAddress),
+                              sizeof(rsdt));
 
-      uintptr_t rsdtPage = Memory::mapPage((uintptr_t)rsdt & ~PageMask);
-      rsdt = (Rsdt* )(rsdtPage | ((uintptr_t)rsdt & PageMask));
-      
-      printf("RSDT at %p\n", (void*)rsdt);
+   rsdt.printHeader();
 
-      rsdt->printHeader();
-      for (uint32_t i = 0;
-           i < (rsdt->length - sizeof(DescriptionHeader)) / 4;
-           i++)
-      {
-      	 ((DescriptionHeader *)rsdt->entry[i])->printHeader();
-         printf("\n");
-      }
-//   }
+   unsigned int rsdtSize = rsdt.length - sizeof(DescriptionHeader);
+   if (rsdtSize > sizeof (entries))
+   {
+      printf("Error: Entry size is too large to read ACPI table!\n");
+      return;
+   }
 
+   Memory::readPhysicalMemory(static_cast<void*>(entries),
+                              reinterpret_cast<const void*>(rsdp->rsdtAddress + sizeof (DescriptionHeader)),
+                              sizeof (entries));
 
+   Memory::unmapRegion((uintptr_t)mem, 0x20000);
+
+   DescriptionHeader ds;
+   for (uint32_t i = 0; i < rsdtSize / 4; i++)
+   {
+      Memory::readPhysicalMemory(reinterpret_cast<void*>(&ds),
+                                 reinterpret_cast<const void*>(entries[i]),
+                                 sizeof(ds));
+      ds.printHeader();
+      printf("\n");
+   }
 }
