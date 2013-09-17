@@ -2,6 +2,7 @@
 #include <X86/Assembly.hh>
 #include <X86/Memory.hh>
 #include <X86/Apic.hh>
+#include <X86/CpuRegisters.hh>
 
 #include <cstdio>
 
@@ -58,6 +59,20 @@ void
 Apic::init()
 {
    uint32_t eax, edx;
+   cpuid_t id;
+
+   cpuid(0x1, &id);
+
+   if (id.eax & CPUID::APIC)
+   {
+      printf("APIC: found controller\n");
+   }
+   else
+   {
+      printf("APIC: not found\n");
+      return;
+   }
+
    rdmsr(0x001b, &eax, &edx);
 
    // make sure the apic is at a 32bit address
@@ -75,18 +90,19 @@ Apic::init()
       flags |= ApicIsEnabled;
    }
 
-   printf("Mapping APIC to %p\n", (void* )apicAddress);
+   printf("APIC: base address: 0x%x\n", apicAddress);
 
    apicAddress = Memory::mapPage(apicAddress);
    KASSERT(apicAddress != 0);
+
+   printf("APIC: CPU type: %s\n", (flags & ApicIsBsp) ? "BSP" : "APU");
+   printf("APIC: state: %s\n", (flags & ApicIsEnabled) ? "enabled" : "disabled");
+   printf("APIC: LAPIC Id: %u\n", getLocalApicId());
 }
 
 void
 Apic::printInformation()
 {
-   printf("APIC base address: 0x%x\n", apicAddress);
-   printf("APIC CPU type: %s\n", (flags & ApicIsBsp) ? "BSP" : "APU");
-   printf("APIC state: %s\n", (flags & ApicIsEnabled) ? "enabled" : "disabled");
 }
 
 uint32_t

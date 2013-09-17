@@ -108,6 +108,15 @@ clean:
 run: kernel.elf
 	$(QEMU) -net none -kernel kernel.elf -boot order=c -serial stdio -d cpu_reset
 
+run-isa: kernel.elf
+	$(QEMU) -M isapc -net none -kernel kernel.elf -boot order=c -serial stdio -d cpu_reset
+
+run-pc: kernel.elf
+	$(QEMU) -M pc -net none -kernel kernel.elf -boot order=c -serial stdio -d cpu_reset
+
+run: kernel.elf
+	$(QEMU) -M q35 -net none -kernel kernel.elf -boot order=c -serial stdio -d cpu_reset
+
 serial: kernel.elf
 	$(QEMU) -net none -kernel kernel.elf -boot order=c -serial stdio -d cpu_reset -nographic
 

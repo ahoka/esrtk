@@ -82,4 +82,21 @@ namespace PAE
 
 }
 
+namespace CPUID
+{
+   enum CPUID_0x1
+   {
+      FPU = BIT(0),
+      VME = BIT(1),
+      DE = BIT(2),
+      PSE = BIT(3),
+      TSC = BIT(4),
+      MSR = BIT(5),
+      PAE = BIT(6),
+      MCE = BIT(7),
+      CX8 = BIT(8),
+      APIC = BIT(9)
+   };
+}
+
 #endif

@@ -16,19 +16,6 @@
 //    { "fpu", false },
 // };
 
-enum
-{
-   fpu = 1 << 0,
-   vme = 1 << 1,
-   de = 1 << 2,
-   pse = 1 << 3,
-   tsc = 1 << 4,
-   msr = 1 << 5,
-   pae = 1 << 6,
-   mce = 1 << 7,
-   cx8 = 1 << 8,
-   apic = 1 << 9
-};
 
 void
 printCpuFeatures()
@@ -37,16 +24,16 @@ printCpuFeatures()
 
    cpuid(1, &id);
 
-   if (id.edx & fpu)
+   if (id.edx & CPUID::FPU)
    {
       printf("fpu ");
    }
-   if (id.edx & msr)
+   if (id.edx & CPUID::MSR)
    {
       printf("msr ");
    }
 
-   if (id.edx & apic)
+   if (id.edx & CPUID::APIC)
    {
       printf("apic ");
    }

@@ -41,16 +41,6 @@ Supervisor::run()
    printf("CPU Vendor ID: %s\n", id);
 
    Pci::init();
-   Pci::listDevices();
-
-   if (!apic.probe())
-   {
-      printf("x2APIC not present\n");
-   }
-
-   apic.printInformation();
-
-   printf("LAPIC ID: %u\n", apic.getLocalApicId());
 
    Acpi::printAllDescriptors();
 

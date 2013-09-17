@@ -42,10 +42,14 @@ void
 Acpi::printAllDescriptors()
 {
    uint32_t entries[256];
-   printf("looking for RSDP:\n");
-
    char* mem = (char* )Memory::mapRegion(0x0e0000, 0x20000);
+
    Rsdp* rsdp = Acpi::findRsdp(mem, mem + 0x20000);
+   if (rsdp == 0)
+   {
+      printf("ACPI RSDP not found.\n");
+      return;
+   }
 
    Rsdt rsdt;
 
