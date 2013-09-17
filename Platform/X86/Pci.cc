@@ -35,7 +35,7 @@ Pci::readConfigurationRegister16(uint8_t bus, uint8_t device, uint8_t function, 
 
    outl(X86Pci::PCI_CONFIG_ADDRESS, tag);
 
-   return (uint16_t )inl(X86Pci::PCI_CONFIG_DATA) >> suboff;
+   return (uint16_t )(inl(X86Pci::PCI_CONFIG_DATA) >> suboff);
 }
 
 // 31         |  30 - 24 | 23 - 16    | 15 - 11       | 10 - 8          | 7 - 2           | 1 - 0
