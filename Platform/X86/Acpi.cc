@@ -23,11 +23,11 @@ Acpi::findRsdp(char* from, char* to)
 	 {
 	    if (rsdp->calculateExtendedChecksum() == 0)
 	    {
-	       printf("Found ACPI 2.0+ RSDP at %p\n", rsdp);
+	       printf("Found ACPI 2.0+ RSDP\n");
 	    }
 	    else
 	    {
-	       printf("Found ACPI 1.0 RSDP at %p\n", rsdp);
+	       printf("Found ACPI 1.0 RSDP\n");
 	    }
 
 	    return rsdp;
@@ -48,12 +48,14 @@ Acpi::printAllDescriptors()
    Rsdp* rsdp = Acpi::findRsdp(mem, mem + 0x20000);
 
    Rsdt rsdt;
-   printf("%x\n", rsdp->rsdtAddress);
+
    Memory::readPhysicalMemory(static_cast<void*>(&rsdt),
                               reinterpret_cast<const void*>(rsdp->rsdtAddress),
                               sizeof(rsdt));
 
+   printf("\n");
    rsdt.printHeader();
+   printf("\n");
 
    unsigned int rsdtSize = rsdt.length - sizeof(DescriptionHeader);
    if (rsdtSize > sizeof (entries))
@@ -69,7 +71,7 @@ Acpi::printAllDescriptors()
    Memory::unmapRegion((uintptr_t)mem, 0x20000);
 
    DescriptionHeader ds;
-   for (uint32_t i = 0; i < rsdtSize / 4; i++)
+   for (unsigned int i = 0; i < rsdtSize / 4; i++)
    {
       Memory::readPhysicalMemory(reinterpret_cast<void*>(&ds),
                                  reinterpret_cast<const void*>(entries[i]),
