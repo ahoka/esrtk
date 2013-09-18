@@ -1,5 +1,6 @@
 #ifdef __GNUC__
 
+#include <X86/Memory.hh>
 #include <CompilerSupport.hh>
 #include <cstdio>
 #include <cstdint>
@@ -124,8 +125,8 @@ __cxaimpl_call_constructors()
    }
 }
 
-extern uintptr_t __start_bss;
-extern uintptr_t __end_bss;
+//extern uintptr_t __start_bss;
+//extern uintptr_t __end_bss;
 
 void
 __cxaimpl_zero_bss()

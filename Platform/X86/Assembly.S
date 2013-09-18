@@ -150,6 +150,7 @@ initPaging:
 	ret
 
 // not yet finised
+#if 0
 	
 rgdt:
 .long 0x00000000
@@ -209,3 +210,4 @@ p16:
 
 	sti
 	ret
+#endif
