@@ -58,7 +58,7 @@ OFILES=		$(CCFILES:.cc=.o) $(SFILES:.S=.o) $(CFILES:.c=.o)
 
 #HIDE=	@
 
-all:	kernel.img
+all:	kernel.elf
 
 .PHONY: buildinfo
 buildinfo:

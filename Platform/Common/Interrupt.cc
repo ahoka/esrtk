@@ -51,4 +51,4 @@ DefaultInterruptHandler::executeAllHandlers(irq_t irq)
 //
 // TODO use a symbolic name
 //
-DefaultInterruptHandler interruptHandlers[255];
+DefaultInterruptHandler interruptHandlers[16];

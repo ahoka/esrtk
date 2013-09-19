@@ -1,6 +1,9 @@
 #ifndef INTERRUPT_HH
 #define INTERRUPT_HH
 
+// external interrupt handling
+//
+
 #include <cstdint>
 
 class InterruptHandler
@@ -32,5 +35,7 @@ public:
 private:
    uint64_t counter;
 };
+
+extern DefaultInterruptHandler interruptHandlers[16];
 
 #endif
