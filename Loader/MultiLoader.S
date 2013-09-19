@@ -71,7 +71,7 @@ hiloader:
 	movl %ebx, mbd                     // Multiboot data structure
 
 	movl $(stack + STACKSIZE), %eax    // set up the stack
-	movl %eax, %esp	
+	movl %eax, %esp
 
         // reset eflags
         pushl %eax

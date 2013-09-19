@@ -20,6 +20,75 @@ void initIsr(int n, void (*handler)());
 
 #include "InterruptVectorsInit.icc"
 
+class InterruptHandler
+{
+public:
+   InterruptHandler() {}
+   virtual ~InterruptHandler() {}
+
+   virtual void handler(const InterruptFrame* frame) = 0;
+   void setNext(InterruptHandler* value);
+   InterruptHandler* getNext();
+
+private:
+   InterruptHandler* next;
+};
+
+void
+InterruptHandler::setNext(InterruptHandler* value)
+{
+   next = value;
+}
+
+InterruptHandler*
+InterruptHandler::getNext()
+{
+   return next;
+}
+
+// interrupt handler collecting statistics
+class DefaultInterruptHandler : InterruptHandler
+{
+public:
+   DefaultInterruptHandler() :
+      counter(0)
+   {
+      setNext(this);
+   }
+
+   void handler(const InterruptFrame* /*frame*/)
+   {
+      counter++;
+   }
+
+   uint64_t getCounter()
+   {
+      return counter;
+   }
+
+   void executeAllHandlers(const InterruptFrame* frame)
+   {
+      InterruptHandler* handler = this;
+
+      do
+      {
+         handler->handler(frame);
+         handler = handler->getNext();
+      }
+      while (handler != this);
+   }
+
+private:
+   uint64_t counter;
+};
+
+// Every interrupt has a default item, so we dont have to use a null value
+// and have statistics easily
+//
+// TODO use a symbolic name
+//
+DefaultInterruptHandler interruptHandlers[255];
+
 void
 defaultIsr(InterruptFrame* frame)
 {
@@ -36,7 +105,10 @@ defaultIsr(InterruptFrame* frame)
 	 return;
       }
 
-      printf("\n\nPage fault: %s\n", (frame->error & (1 << 0)) ? "protection violation" : "page not present");
+      printf("\n");
+      frame->print();
+
+      printf("\nPage fault: %s\n", (frame->error & (1 << 0)) ? "protection violation" : "page not present");
       printf("%s 0x%x from 0x%x in %s mode\nError Code: 0x%x\n",
              (frame->error & (1 << 1)) ? "Writing" : "Reading",
              cr2, frame->rip,
@@ -48,6 +120,9 @@ defaultIsr(InterruptFrame* frame)
 
    if (frame->error == 0)
    {
+      printf("\n");
+      frame->print();
+
       Debug::panic("\n\nUnhandled Interrupt: %u\n", frame->interrupt);
    }
    else

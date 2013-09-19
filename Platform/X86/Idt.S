@@ -51,6 +51,11 @@ call_isr:
 
         movl %esp, %eax
         pushl %eax
+
+        // clear ebp to make call chains sane in
+        // interrupt handlers
+        xorl %ebp, %ebp
+        
         call isrDispatcher
 	popl %esp
 

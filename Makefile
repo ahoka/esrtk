@@ -13,7 +13,7 @@ LD=		$(CROSS)ld
 SIZE=		$(CROSS)size
 QEMU=		qemu-system-i386
 
-#LDFLAGS=	-melf_i386
+LDFLAGS=	-melf_i386
 
 ASFLAGS+=	--32
 
@@ -34,7 +34,8 @@ CPP=		$(CROSS)clang -m32 -E
 COPTS+=		-integrated-as -Weverything
 COPTS+=		-Wno-c++98-compat-pedantic \
 		-Wno-global-constructors -Wno-exit-time-destructors \
-		-Wno-padded -Wno-packed
+		-Wno-padded -Wno-packed -Wno-missing-variable-declarations \
+		-Wno-weak-vtables
 CXXFLAGS+=	-std=c++11
 
 CPPFLAGS+=	-I$(PWD)/Include

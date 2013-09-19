@@ -1,0 +1,104 @@
+#include <X86/IoPort.hh>
+
+#include <Register.hh>
+#include <Debug.hh>
+
+#include <cstdio>
+
+class Pic
+{
+   enum Ports
+   {
+      MasterCommand = 0x20,
+      MasterData = 0x21,
+      SlaveCommand = 0xa0,
+      SlaveData = 0xa1
+   };
+
+   enum Icw1
+   {
+      Icw4Needed = BIT(0),
+      InitConfiguration = BIT(4)
+   };
+
+   enum Icw4
+   {
+      X86Mode = BIT(0)
+   };
+
+   enum Commands
+   {
+      EndOfInterrupt = 0x20
+   };
+
+   enum VectorOffsets
+   {
+      MasterOffset = 32,
+      SlaveOffset = 40
+   };
+
+   static void init()
+   {
+      uint8_t masterMask = inb(MasterData);
+      uint8_t slaveMask = inb(SlaveData);
+
+      // setup the master controller
+      //
+
+      // start configuration mode
+      outb(MasterCommand, Icw4Needed | InitConfiguration);
+      // set interrupt offset
+      outb(MasterData, MasterOffset);
+      // irq2 is connected to the slave controller
+      outb(MasterData, BIT(2));
+      // set 8086 mode
+      outb(MasterData, X86Mode);
+      
+      // setup the slave controller
+      //
+      
+      // start configuration mode
+      outb(SlaveCommand, Icw4Needed | InitConfiguration);
+      // set interrupt offset
+      outb(SlaveData, SlaveOffset);
+      // we connect to irq2
+      outb(SlaveData, 2);
+      // set 8086 mode
+      outb(SlaveData, X86Mode);
+
+//      outb(MasterData, masterMask);
+//      outb(SlaveData, slaveMask);
+
+      outb(MasterData, 0xfd);
+      outb(SlaveData, 0xff);
+
+      printf("Interrupt masks: 0x%x 0x%x\n", masterMask, slaveMask);
+
+      asm volatile("sti");
+   }
+
+public:
+   Pic()
+   {
+      printf("Initializing PIC\n");
+      init();
+   }
+
+   void handleIrq(int irq)
+   {
+      KASSERT(irq >= 0 && irq < 16);
+
+      printf("Debug: IRQ %d handled\n", irq);
+
+      if (irq > 7)
+      {
+         outb(SlaveCommand, EndOfInterrupt);
+      }
+
+      outb(MasterCommand, EndOfInterrupt);
+   }
+};
+
+extern Pic pic;
+Pic pic;
+
