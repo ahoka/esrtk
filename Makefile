@@ -1,4 +1,5 @@
 BUILD_HOST=	$(shell uname -o)
+BUILD_ROOT=	$(PWD)
 
 ifeq ($(BUILD_HOST), Darwin)
 CROSS=		i686-elf-
@@ -96,13 +97,13 @@ buildinfo:
 depend: $(DFILES)
 
 unity_c.c: $(CFILES)
-	unity-build.sh c
+	$(SHELL) ./unity-build.sh c
 
 unity_cc.cc: $(CFILES)
-	unity-build.sh cc
+	$(SHELL) ./unity-build.sh cc
 
 unity_s.S: $(CFILES)
-	unity-build.sh s
+	$(SHELL) ./unity-build.sh s
 
 kernel.elf: Loader/MultiLoader.o $(OFILES) 
 	@echo Linking kernel executable
@@ -122,7 +123,7 @@ kernel.img: kernel.elf
 	$(HIDE) rm pad
 
 clean:
-	$(HIDE) -rm $(DFILES) kernel.elf pad kernel.img $(OFILES) 2>/dev/null
+	@-rm $(DFILES) kernel.elf pad kernel.img $(OFILES) $(UNIFILES) > /dev/null 2>&1 || true
 
 run-isa: kernel.elf
 	$(QEMU) -cpu pentium2 -M isapc -net none -kernel kernel.elf -boot order=c -serial stdio -d cpu_reset
@@ -132,6 +133,9 @@ run-pc: kernel.elf
 
 run: kernel.elf
 	$(QEMU) -M q35 -net none -kernel kernel.elf -boot order=c -serial stdio -d cpu_reset
+
+uni: kernel-uni.elf
+	$(QEMU) -M q35 -net none -kernel kernel-uni.elf -boot order=c -serial stdio -d cpu_reset
 
 serial: kernel.elf
 	$(QEMU) -net none -kernel kernel.elf -boot order=c -serial stdio -d cpu_reset -nographic
