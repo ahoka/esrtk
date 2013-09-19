@@ -10,13 +10,11 @@ StackTrace::printStackTrace()
    reg_t* ebp;
 
    asm volatile("movl %%ebp, %0" : "=g"(ebp));
-   printf("EBP: %p\n", ebp);
 
    printf("Stack trace:\n");
 
    while (ebp != 0)
    {
-      printf("EBP: %p\n", ebp);
       reg_t ip = *(ebp + 1);
 
       printf("  0x%lx\n", ip);
