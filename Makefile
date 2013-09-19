@@ -55,7 +55,6 @@ SRC=		$(CCFILES) $(CFILES) $(SFILES)
 
 DFILES=		$(CCFILES:.cc=.cc.d) $(SFILES:.S=.S.d) $(CFILES:.c=.c.d)
 OFILES=		$(CCFILES:.cc=.o) $(SFILES:.S=.o) $(CFILES:.c=.o)
-UNIFILES=	unity_s.o unity_c.o unity_cc.o
 
 #HIDE=	@
 
@@ -96,22 +95,7 @@ buildinfo:
 
 depend: $(DFILES)
 
-unity_c.c: $(CFILES)
-	$(SHELL) ./unity-build.sh c
-
-unity_cc.cc: $(CFILES)
-	$(SHELL) ./unity-build.sh cc
-
-unity_s.S: $(CFILES)
-	$(SHELL) ./unity-build.sh s
-
 kernel.elf: Loader/MultiLoader.o $(OFILES) 
-	@echo Linking kernel executable
-	$(HIDE) $(LD) $(LDFLAGS) -T Build/linker.ld -o $@ $^
-	@$(SIZE) $@
-
-
-kernel-uni.elf: Loader/MultiLoader.o $(UNIFILES)
 	@echo Linking kernel executable
 	$(HIDE) $(LD) $(LDFLAGS) -T Build/linker.ld -o $@ $^
 	@$(SIZE) $@
@@ -123,7 +107,7 @@ kernel.img: kernel.elf
 	$(HIDE) rm pad
 
 clean:
-	@-rm $(DFILES) kernel.elf pad kernel.img $(OFILES) $(UNIFILES) > /dev/null 2>&1 || true
+	@-rm $(DFILES) kernel.elf pad kernel.img $(OFILES) > /dev/null 2>&1 || true
 
 run-isa: kernel.elf
 	$(QEMU) -cpu pentium2 -M isapc -net none -kernel kernel.elf -boot order=c -serial stdio -d cpu_reset
@@ -133,9 +117,6 @@ run-pc: kernel.elf
 
 run: kernel.elf
 	$(QEMU) -M q35 -net none -kernel kernel.elf -boot order=c -serial stdio -d cpu_reset
-
-uni: kernel-uni.elf
-	$(QEMU) -M q35 -net none -kernel kernel-uni.elf -boot order=c -serial stdio -d cpu_reset
 
 serial: kernel.elf
 	$(QEMU) -net none -kernel kernel.elf -boot order=c -serial stdio -d cpu_reset -nographic
