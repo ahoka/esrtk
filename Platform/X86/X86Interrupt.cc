@@ -2,6 +2,7 @@
 #include <X86/Assembly.hh>
 #include <X86/Memory.hh>
 
+#include <Interrupt.hh>
 #include <Power.hh>
 #include <Debug.hh>
 
@@ -18,33 +19,43 @@ void initIsr(int n, void (*handler)());
 
 #include "InterruptVectorsInit.icc"
 
+extern void pageFault(InterruptFrame* frame);
+
+void
+pageFault(InterruptFrame* frame)
+{
+   uint32_t cr2 = getCr2();
+
+   if ((frame->error & 0x1) == 0 && Memory::handlePageFault(cr2, frame))
+   {
+#ifdef DEBUG
+      printf("Page fault handled: %p\n", (void* )cr2);
+#endif
+      return;
+   }
+
+   printf("\n");
+   frame->print();
+
+   printf("\nPage fault: %s\n", (frame->error & (1 << 0)) ? "protection violation" : "page not present");
+   printf("%s 0x%x from 0x%x in %s mode\nError Code: 0x%x\n",
+	  (frame->error & (1 << 1)) ? "Writing" : "Reading",
+	  cr2, frame->rip,
+	  (frame->error & (1 << 2)) ? "user" : "supervisor",
+	  frame->error);
+
+   Power::halt();
+}
+
+
 void
 defaultIsr(InterruptFrame* frame)
 {
    // TODO: make a list of handlers and register them there to be run from dispatcher
    if (frame->interrupt == 14)
    {
-      uint32_t cr2 = getCr2();
-
-      if ((frame->error & 0x1) == 0 && Memory::handlePageFault(cr2, frame))
-      {
-#ifdef DEBUG
-	 printf("Page fault handled: %p\n", (void* )cr2);
-#endif
-	 return;
-      }
-
-      printf("\n");
-      frame->print();
-
-      printf("\nPage fault: %s\n", (frame->error & (1 << 0)) ? "protection violation" : "page not present");
-      printf("%s 0x%x from 0x%x in %s mode\nError Code: 0x%x\n",
-             (frame->error & (1 << 1)) ? "Writing" : "Reading",
-             cr2, frame->rip,
-             (frame->error & (1 << 2)) ? "user" : "supervisor",
-             frame->error);
-
-      Power::halt();
+      pageFault(frame);
+      return;
    }
 
    if (frame->error == 0)
@@ -67,6 +78,13 @@ defaultIsr(InterruptFrame* frame)
 void
 isrDispatcher(InterruptFrame* frame)
 {
+   // XXX hardcoded hack
+   if (frame->interrupt >= 32 && frame->interrupt < 48)
+   {
+      Interrupt::handleInterrupt(frame->interrupt - 32);
+      return;
+   }
+
    defaultIsr(frame);
 }
 

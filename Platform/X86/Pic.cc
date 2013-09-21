@@ -1,11 +1,15 @@
 #include <X86/IoPort.hh>
 
+#include <SystemTypes.hh>
+
+//#include <Interrupt.hh>
+#include <InterruptController.hh>
 #include <Register.hh>
 #include <Debug.hh>
 
 #include <cstdio>
 
-class Pic
+class Pic : InterruptController
 {
    enum Ports
    {
@@ -37,7 +41,7 @@ class Pic
       SlaveOffset = 40
    };
 
-   static void init()
+   void init()
    {
       uint8_t masterMask = inb(MasterData);
       uint8_t slaveMask = inb(SlaveData);
@@ -84,20 +88,22 @@ public:
       init();
    }
 
-   void handleIrq(int irq)
-   {
-      KASSERT(irq >= 0 && irq < 16);
-
-      printf("Debug: IRQ %d handled\n", irq);
-
-      if (irq > 7)
-      {
-         outb(SlaveCommand, EndOfInterrupt);
-      }
-
-      outb(MasterCommand, EndOfInterrupt);
-   }
+   void endOfInterrupt(irq_t irq);
 };
+
+void Pic::endOfInterrupt(irq_t irq)
+{
+   KASSERT(irq >= 0 && irq < 16);
+
+   printf("Debug: IRQ%d EOI\n", irq);
+
+   if (irq > 7)
+   {
+      outb(SlaveCommand, EndOfInterrupt);
+   }
+   
+   outb(MasterCommand, EndOfInterrupt);
+}
 
 extern Pic pic;
 Pic pic;

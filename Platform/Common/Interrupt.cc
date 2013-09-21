@@ -1,7 +1,10 @@
 #include <Debug.hh>
 #include <Interrupt.hh>
+#include <InterruptController.hh>
 
 #include <cstdio>
+
+InterruptController* Interrupt::controller = 0;
 
 void
 InterruptHandler::setNext(InterruptHandler* value)
@@ -85,7 +88,7 @@ Interrupt::removeHandler(InterruptHandler* h, InterruptHandler* handler)
 }
 
 bool
-Interrupt::registerHandler(InterruptHandler::irq_t irq, InterruptHandler* handler)
+Interrupt::registerHandler(irq_t irq, InterruptHandler* handler)
 {
    if (irq >= MaxInterrupts)
    {
@@ -98,7 +101,7 @@ Interrupt::registerHandler(InterruptHandler::irq_t irq, InterruptHandler* handle
 }
 
 bool
-Interrupt::deregisterHandler(InterruptHandler::irq_t irq, InterruptHandler* handler)
+Interrupt::deregisterHandler(irq_t irq, InterruptHandler* handler)
 {
    if (irq >= MaxInterrupts)
    {
@@ -117,4 +120,23 @@ Interrupt::printStatistics()
    {
       printf("IRQ%d: %llu\n", i, (unsigned long long )interruptHandlers[i].getCounter());
    }
+}
+
+void
+Interrupt::handleInterrupt(irq_t irq)
+{
+   KASSERT(irq < MaxInterrupts);
+
+   interruptHandlers[irq].executeAllHandlers(irq);
+   
+   KASSERT(controller != 0);
+   controller->endOfInterrupt(irq);
+}
+
+void
+Interrupt::setController(InterruptController* interruptController)
+{
+   KASSERT((controller == 0 && interruptController != 0) || (interruptController == 0 && controller != 0));
+
+   controller = interruptController;
 }

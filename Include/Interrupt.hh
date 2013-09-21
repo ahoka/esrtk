@@ -1,6 +1,8 @@
 #ifndef INTERRUPT_HH
 #define INTERRUPT_HH
 
+#include <SystemTypes.hh>
+
 // external interrupt handling
 //
 
@@ -9,8 +11,6 @@
 class InterruptHandler
 {
 public:
-   typedef unsigned int irq_t;
-
    InterruptHandler() {}
    virtual ~InterruptHandler() {}
 
@@ -36,11 +36,16 @@ private:
    uint64_t counter;
 };
 
+class InterruptController;
+
 class Interrupt
 {
 public:
-   static bool registerHandler(InterruptHandler::irq_t irq, InterruptHandler* handler);
-   static bool deregisterHandler(InterruptHandler::irq_t irq, InterruptHandler* handler);
+   static bool registerHandler(irq_t irq, InterruptHandler* handler);
+   static bool deregisterHandler(irq_t irq, InterruptHandler* handler);
+
+   static void setController(InterruptController* interruptController);
+   static void handleInterrupt(irq_t irq);
 
    static void printStatistics();
 
@@ -53,6 +58,10 @@ private:
       MaxInterrupts = 16
    };
    static DefaultInterruptHandler interruptHandlers[MaxInterrupts];
+
+   static InterruptController* controller;
+
+   friend class InterruptController;
 };
 
 #endif
