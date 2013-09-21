@@ -23,7 +23,7 @@ private:
 };
 
 // interrupt handler collecting statistics
-class DefaultInterruptHandler : InterruptHandler
+class DefaultInterruptHandler : public InterruptHandler
 {
 public:
    DefaultInterruptHandler();
@@ -36,6 +36,23 @@ private:
    uint64_t counter;
 };
 
-extern DefaultInterruptHandler interruptHandlers[16];
+class Interrupt
+{
+public:
+   static bool registerHandler(InterruptHandler::irq_t irq, InterruptHandler* handler);
+   static bool deregisterHandler(InterruptHandler::irq_t irq, InterruptHandler* handler);
+
+   static void printStatistics();
+
+private:
+   static void appendHandler(InterruptHandler* h, InterruptHandler* handler);
+   static void removeHandler(InterruptHandler* h, InterruptHandler* handler);
+
+   enum
+   {
+      MaxInterrupts = 16
+   };
+   static DefaultInterruptHandler interruptHandlers[MaxInterrupts];
+};
 
 #endif

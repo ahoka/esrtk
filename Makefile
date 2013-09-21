@@ -1,4 +1,4 @@
-BUILD_HOST=	$(shell uname -o)
+BUILD_HOST=	$(shell uname)
 BUILD_ROOT=	$(PWD)
 
 ifeq ($(BUILD_HOST), Darwin)
