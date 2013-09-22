@@ -113,9 +113,9 @@ public:
 
    void insert(PhysicalPage* page)
    {
-//      printf("head: %p, p %p, n %p\n", &head, head.prev, head.next);
-
       PhysicalPage* oldNext = head.next;
+
+      //      printf("insert (%p): p:%p on:%p\n", this, page, oldNext);
 
       page->next = head.next;
       head.next = page;
@@ -128,6 +128,8 @@ public:
    {
       PhysicalPage* oldPrev = page->prev;
       PhysicalPage* oldNext = page->next;
+
+      //      printf("remove(%p): p:%p op:%p on:%p\n", this, page, oldPrev, oldNext);
 
       oldPrev->next = oldNext;
       oldNext->prev = oldPrev;

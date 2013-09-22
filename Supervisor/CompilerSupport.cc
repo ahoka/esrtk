@@ -131,8 +131,13 @@ __cxaimpl_call_constructors()
 void
 __cxaimpl_zero_bss()
 {
-   for (uint8_t* p = (uint8_t* )__start_bss; p != (uint8_t* )__end_bss; p++)
+#if 0
+  // XXX this should convert to phys address as we call this in non page mode
+  printf("%p -> %p\n", &__start_bss, &__end_bss);
+  asm volatile("hlt");
+   for (uint8_t* p = (uint8_t* )&__start_bss; p != (uint8_t* )&__end_bss; p++)
    {
       *p = 0;
    }
+#endif
 }

@@ -323,6 +323,11 @@ void
 Memory::copyMemoryMap()
 {
    Multiboot* mb = mbd;
+   bool foundUsableMemory = false;
+
+   printf("Parsing multiboot (%p) memory map: 0x%0x-0x%0x\n", mbd,
+	  mb->memoryMapAddress,
+	  mb->memoryMapAddress + mb->memoryMapLength);
 
    for (Multiboot::MemoryMap *map = (Multiboot::MemoryMap *)mb->memoryMapAddress;
         map < (Multiboot::MemoryMap *)(mb->memoryMapAddress + mb->memoryMapLength);
@@ -336,6 +341,10 @@ Memory::copyMemoryMap()
          memoryMap[memoryMapCount].address = (uintptr_t )map->address;
          memoryMap[memoryMapCount].size = (std::size_t )map->length;
          memoryMapCount++;
+
+	 foundUsableMemory = true;
       }
    }
+
+   KASSERT(foundUsableMemory);
 }
