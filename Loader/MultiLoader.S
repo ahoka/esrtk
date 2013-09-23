@@ -1,7 +1,8 @@
 #include <X86/Parameters.hh>
 
 // setting up the Multiboot header - see GRUB docs for details
-.set ALIGN,    1<<0                     // align loaded modules on page boundaries
+
+        .set ALIGN,    1<<0                     // align loaded modules on page boundaries
 .set MEMINFO,  1<<1                     // provide memory map
 .set VBEINFO,  1<<2
 .set FLAGS,    ALIGN | MEMINFO		// this is the Multiboot 'flag' field
@@ -67,10 +68,19 @@ _loader:
 	jmp *%ecx
 
 hiloader:
+        // save these while cleaning bss
+        pushl %eax
+        pushl %ebx
+        
+	call __cxaimpl_zero_bss
+
+        popl %ebx
+        popl %eax
+        
 	movl %eax, magic                   // Multiboot magic number
 	movl %ebx, mbd                     // Multiboot data structure
 
-	movl $(stack + STACKSIZE), %eax    // set up the stack
+	movl $(stack + STACKSIZE), %eax    // set up the initial stack
 	movl %eax, %esp
 
         // reset eflags
@@ -79,7 +89,6 @@ hiloader:
         pushl %eax
         popfl
 
-	call __cxaimpl_zero_bss
 	call supervisor_init
 
 	// set up the real kernel stack now that we have paging

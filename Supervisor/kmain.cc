@@ -10,13 +10,15 @@ kmain(void)
 {
    extern unsigned int magic;
 
-   if (magic != 0x2BADB002) {
+   if (magic != 0x2badb002)
+   {
+      printf("Incorrect multiboot magic: 0x%0x != 0x%0x\n", magic, 0x2badb002);
       // not loaded by a multiboot loader, this is not yet supported
       //
       Power::halt();
    }
 
-   printf("Hello Kernel!\n");
+   printf("Supervisor starting\n");
 
    // Call C++ constructors
    __cxaimpl_call_constructors();

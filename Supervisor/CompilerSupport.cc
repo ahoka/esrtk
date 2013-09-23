@@ -131,13 +131,14 @@ __cxaimpl_call_constructors()
 void
 __cxaimpl_zero_bss()
 {
-#if 0
-  // XXX this should convert to phys address as we call this in non page mode
-  printf("%p -> %p\n", &__start_bss, &__end_bss);
-  asm volatile("hlt");
-   for (uint8_t* p = (uint8_t* )&__start_bss; p != (uint8_t* )&__end_bss; p++)
+   // XXX this should convert to phys address as we call this in non page mode
+   uintptr_t start = (uintptr_t )(&__start_bss) - KernelVirtualBase;
+   uintptr_t end = (uintptr_t )(&__end_bss) - KernelVirtualBase;
+   
+   printf("Zeroing .bss section: 0x%0x-0x%0x\n", start, end);
+
+   for (uint8_t* p = (uint8_t* )start; p != (uint8_t* )end; p++)
    {
       *p = 0;
    }
-#endif
 }
