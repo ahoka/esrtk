@@ -5,6 +5,7 @@
 #include <cstdint>
 
 #include "Keyboard.hh"
+#include "Scancodes.hh"
 
 Keyboard::Keyboard()
 {
@@ -45,7 +46,29 @@ Keyboard::handler(irq_t /*irq*/)
 {
    uint8_t scanCode = inb(0x60);
 
-   printf("0x%hhx", scanCode);
+   // ignore break
+   if (scanCode >= 0x80)
+   {
+      return;
+   }
+
+   Scancodes::Codes code = Scancodes::codes[scanCode];
+
+   if (!code.isMeta)
+   {
+      putchar(code.ascii);
+   }
+   else
+   {
+      switch (code.ascii)
+      {
+         case Scancodes::Enter:
+            putchar('\n');
+            break;
+         default:
+            printf("0x%hhx", scanCode);
+      }
+   }
 }
 
 Keyboard keyboard;
