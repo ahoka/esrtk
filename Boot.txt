@@ -1,2 +1,2 @@
-kernel 200+18
+kernel 200+400
 boot
