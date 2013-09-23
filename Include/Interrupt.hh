@@ -44,6 +44,9 @@ public:
    static bool registerHandler(irq_t irq, InterruptHandler* handler);
    static bool deregisterHandler(irq_t irq, InterruptHandler* handler);
 
+   static bool enableInterrupt(irq_t irq);
+   static bool disableInterrupt(irq_t irq);
+
    static void setController(InterruptController* interruptController);
    static void handleInterrupt(irq_t irq);
 

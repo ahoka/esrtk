@@ -113,6 +113,28 @@ Interrupt::deregisterHandler(irq_t irq, InterruptHandler* handler)
    return false;
 }
 
+bool
+Interrupt::enableInterrupt(irq_t irq)
+{
+//   printf("Interrupt::enableInterrupt(%u)\n", irq);
+
+   KASSERT(controller != 0);
+   controller->enableInterrupt(irq);
+
+   return true;
+}
+
+bool
+Interrupt::disableInterrupt(irq_t irq)
+{
+//   printf("Interrupt::disableInterrupt(%u)\n", irq);
+
+   KASSERT(controller != 0);
+   controller->disableInterrupt(irq);   
+
+   return true;
+}
+
 void
 Interrupt::printStatistics()
 {

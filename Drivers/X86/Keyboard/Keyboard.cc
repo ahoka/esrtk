@@ -29,6 +29,7 @@ bool
 Keyboard::init()
 {
    bool success = Interrupt::registerHandler(1, this);
+   Interrupt::enableInterrupt(1);
 
    return success;
 }
@@ -36,6 +37,7 @@ Keyboard::init()
 bool
 Keyboard::finalize()
 {
+   Interrupt::disableInterrupt(1);
    bool success = Interrupt::deregisterHandler(1, this);
 
    return success;
@@ -64,6 +66,16 @@ Keyboard::handler(irq_t /*irq*/)
       {
          case Scancodes::Enter:
             putchar('\n');
+            break;
+         case Scancodes::Space:
+            putchar(' ');
+            break;
+         case Scancodes::Tab:
+            putchar('\t');
+            break;
+         case Scancodes::F1:
+            putchar('\n');
+            Interrupt::printStatistics();
             break;
          default:
             printf("0x%hhx", scanCode);

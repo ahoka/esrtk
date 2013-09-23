@@ -43,8 +43,8 @@ class Pic : InterruptController
 
    void init()
    {
-      uint8_t masterMask = inb(MasterData);
-      uint8_t slaveMask = inb(SlaveData);
+//      uint8_t masterMask = inb(MasterData);
+//      uint8_t slaveMask = inb(SlaveData);
 
       // setup the master controller
       //
@@ -73,10 +73,10 @@ class Pic : InterruptController
 //      outb(MasterData, masterMask);
 //      outb(SlaveData, slaveMask);
 
-      outb(MasterData, 0xfd);
+      outb(MasterData, 0xff);
       outb(SlaveData, 0xff);
 
-      printf("Interrupt masks: 0x%x 0x%x\n", masterMask, slaveMask);
+//      printf("Original interrupt masks: 0x%x 0x%x\n", masterMask, slaveMask);
 
       asm volatile("sti");
    }
@@ -89,6 +89,8 @@ public:
    }
 
    void endOfInterrupt(irq_t irq);
+   void enableInterrupt(irq_t irq);
+   void disableInterrupt(irq_t irq);
 };
 
 void Pic::endOfInterrupt(irq_t irq)
@@ -103,6 +105,48 @@ void Pic::endOfInterrupt(irq_t irq)
    }
    
    outb(MasterCommand, EndOfInterrupt);
+}
+
+void Pic::enableInterrupt(irq_t irq)
+{
+   KASSERT(irq >= 0 && irq < 16);
+
+   if (irq > 7)
+   {
+      irq -= 8;
+      int mask = ~(0x1 << irq);
+
+      uint8_t original = inb(SlaveData);
+      outb(SlaveData, original & (uint8_t )mask);
+   }
+   else
+   {
+      int mask = ~(0x1 << irq);
+
+      uint8_t original = inb(MasterData);
+      outb(MasterData, original & (uint8_t )mask);
+   }
+}
+
+void Pic::disableInterrupt(irq_t irq)
+{
+   KASSERT(irq >= 0 && irq < 16);
+
+   if (irq > 7)
+   {
+      irq -= 8;
+      int mask = 0x1 << irq;
+
+      uint8_t original = inb(SlaveData);
+      outb(SlaveData, original | (uint8_t )mask);
+   }
+   else
+   {
+      int mask = 0x1 << irq;
+
+      uint8_t original = inb(MasterData);
+      outb(MasterData, original | (uint8_t )mask);
+   }
 }
 
 extern Pic pic;
