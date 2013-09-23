@@ -39,7 +39,10 @@ DriverManager::probeAndInit()
    Driver* driver = driverList;
    while (driver != 0)
    {
-      driver->init();
+      if (driver->probe() > 0)
+      {
+         driver->init();
+      }
       driver = driver->next;
    }
 }

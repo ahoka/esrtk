@@ -14,6 +14,7 @@
 #include <Multiboot.hh>
 #include <Pci.hh>
 #include <System.hh>
+#include <Driver.hh>
 
 #include <cstdio>
 
@@ -43,6 +44,8 @@ Supervisor::run()
    Pci::init();
 
    Acpi::printAllDescriptors();
+
+   DriverManager::probeAndInit();
 
    Power::halt();
 }

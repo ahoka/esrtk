@@ -48,4 +48,4 @@ Keyboard::handler(irq_t /*irq*/)
    printf("0x%hhx", scanCode);
 }
 
-//Keyboard keyboard;
+Keyboard keyboard;
