@@ -15,6 +15,7 @@
 #include <Pci.hh>
 #include <System.hh>
 #include <Driver.hh>
+#include <DriverManager.hh>
 
 #include <cstdio>
 

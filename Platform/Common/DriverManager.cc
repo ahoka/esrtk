@@ -1,18 +1,7 @@
+#include <DriverManager.hh>
 #include <Driver.hh>
+
 #include <cstdio>
-
-Driver::Driver() : 
-   state(State::Uninitalized),
-   next(0)
-{
-   DriverManager::registerDriver(this);
-}
-
-Driver::~Driver()
-{
-   // dummy
-   state = State::Uninitalized;
-}
 
 Driver* DriverManager::driverList = 0;
 
