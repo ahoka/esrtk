@@ -1,22 +1,23 @@
 #include <Interrupt.hh>
-#include <Driver.hh>
+#include <SystemTimer.hh>
 #include <Debug.hh>
 
 #include <X86/IoPort.hh>
 
 #include <cstdio>
 
-class Pit : InterruptHandler, Driver
+class Pit : InterruptHandler, SystemTimer
 {
 public:
    Pit();
    ~Pit();
 
    int probe();
-   bool init();
-   bool finalize();
+   bool startTimer();
+   bool stopTimer();
+   unsigned int getFrequency();
 
-   void handler(irq_t irq);
+   void handleInterrupt();
 
 private:
    enum Ports
@@ -60,7 +61,7 @@ Pit::~Pit()
 }
 
 void
-Pit::handler(irq_t /*irq*/)
+Pit::handleInterrupt()
 {
 //   printf("PIT IRQ received\n");
 }
@@ -72,17 +73,16 @@ Pit::probe()
 }
 
 bool
-Pit::init()
+Pit::startTimer()
 {
-   int hz = 100; // XXX
-   int freq = OscillatorFrequency / hz;
+   int divider = OscillatorFrequency / getFrequency();
 
-   KASSERT((freq & ~0xffff) == 0);
+   KASSERT((divider & ~0xffff) == 0);
 
    outb(Command, SelectChannel0 | LatchBothBytes | RateGeneratorMode);
 
-   outb(Channel0, (uint8_t )freq);
-   outb(Channel0, (uint8_t )(freq >> 8));
+   outb(Channel0, (uint8_t )divider);
+   outb(Channel0, (uint8_t )(divider >> 8));
 
    Interrupt::registerHandler(0, this);
    Interrupt::enableInterrupt(0);
@@ -91,12 +91,18 @@ Pit::init()
 }
 
 bool
-Pit::finalize()
+Pit::stopTimer()
 {
    Interrupt::disableInterrupt(0);
    Interrupt::deregisterHandler(0, this);
 
    return true;
+}
+
+unsigned int
+Pit::getFrequency()
+{
+   return 100;
 }
 
 Pit pit;

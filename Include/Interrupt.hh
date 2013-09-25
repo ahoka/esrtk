@@ -14,7 +14,7 @@ public:
    InterruptHandler() {}
    virtual ~InterruptHandler() {}
 
-   virtual void handler(irq_t irq) = 0;
+   virtual void handleInterrupt() = 0;
    void setNext(InterruptHandler* value);
    InterruptHandler* getNext();
 
@@ -27,10 +27,10 @@ class DefaultInterruptHandler : public InterruptHandler
 {
 public:
    DefaultInterruptHandler();
-   void handler(irq_t irq);
+   void handleInterrupt();
 
    uint64_t getCounter();
-   void executeAllHandlers(irq_t irq);
+   void executeAllHandlers();
 
 private:
    uint64_t counter;

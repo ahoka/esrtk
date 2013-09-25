@@ -25,7 +25,7 @@ DefaultInterruptHandler::DefaultInterruptHandler() :
 }
 
 void
-DefaultInterruptHandler::handler(irq_t /*irq*/)
+DefaultInterruptHandler::handleInterrupt()
 {
    counter++;
 }
@@ -37,13 +37,13 @@ DefaultInterruptHandler::getCounter()
 }
 
 void
-DefaultInterruptHandler::executeAllHandlers(irq_t irq)
+DefaultInterruptHandler::executeAllHandlers()
 {
    InterruptHandler* handler = this;
 
    do
    {
-      handler->handler(irq);
+      handler->handleInterrupt();
       handler = handler->getNext();
    }
    while (handler != this);
@@ -51,8 +51,6 @@ DefaultInterruptHandler::executeAllHandlers(irq_t irq)
 
 // Every interrupt has a default item, so we dont have to use a null value
 // and have statistics easily
-//
-// TODO use a symbolic name
 //
 DefaultInterruptHandler Interrupt::interruptHandlers[MaxInterrupts];
 
@@ -140,7 +138,7 @@ Interrupt::printStatistics()
 {
    for (int i = 0; i < MaxInterrupts; i++)
    {
-      printf("IRQ%d: %llu\n", i, (unsigned long long )interruptHandlers[i].getCounter());
+      printf("IRQ%d:\t%llu\n", i, (unsigned long long )interruptHandlers[i].getCounter());
    }
 }
 
@@ -149,7 +147,7 @@ Interrupt::handleInterrupt(irq_t irq)
 {
    KASSERT(irq < MaxInterrupts);
 
-   interruptHandlers[irq].executeAllHandlers(irq);
+   interruptHandlers[irq].executeAllHandlers();
    
    KASSERT(controller != 0);
    controller->endOfInterrupt(irq);

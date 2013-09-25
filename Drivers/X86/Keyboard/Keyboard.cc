@@ -44,7 +44,7 @@ Keyboard::finalize()
 }
 
 void
-Keyboard::handler(irq_t /*irq*/)
+Keyboard::handleInterrupt()
 {
    uint8_t scanCode = inb(0x60);
 

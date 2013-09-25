@@ -12,5 +12,5 @@ public:
    bool finalize();
 
    // this should be interruptHandler()
-   void handler(irq_t irq);
+   void handleInterrupt();
 };
