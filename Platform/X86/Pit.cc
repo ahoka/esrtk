@@ -63,7 +63,7 @@ Pit::~Pit()
 void
 Pit::handleInterrupt()
 {
-//   printf("PIT IRQ received\n");
+   tick();
 }
 
 int
@@ -75,6 +75,8 @@ Pit::probe()
 bool
 Pit::startTimer()
 {
+   printf("Programmable interval timer starting\n");
+
    int divider = OscillatorFrequency / getFrequency();
 
    KASSERT((divider & ~0xffff) == 0);

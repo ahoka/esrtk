@@ -7,6 +7,9 @@
 #include "Keyboard.hh"
 #include "Scancodes.hh"
 
+// XXX debug hack
+#include <Time.hh>
+
 Keyboard::Keyboard()
 {
    printf("Keyboard::Keyboard()\n");
@@ -76,6 +79,15 @@ Keyboard::handleInterrupt()
          case Scancodes::F1:
             putchar('\n');
             Interrupt::printStatistics();
+            break;
+         case Scancodes::F2:
+         {
+            uint64_t uptime = Time::getUptime();
+//            printf("\nUptime is: %lu\n", (unsigned long )uptime);
+            printf("Uptime is: %lu.%lu\n",
+                   (unsigned long )uptime / 1000,
+                   (unsigned long )(uptime % 1000));
+         }
             break;
          default:
             printf("0x%hhx", scanCode);

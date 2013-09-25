@@ -6,10 +6,11 @@
 class Time
 {
 public:
-
+   static uint64_t getUptime();
 
 private:
    Time();
+   Time(const Time& orig);
    ~Time();
 
    friend class SystemTimer;
