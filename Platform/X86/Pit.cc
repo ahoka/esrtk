@@ -2,6 +2,8 @@
 #include <SystemTimer.hh>
 #include <Debug.hh>
 
+#include <X86/TimeStampCounter.hh>
+
 #include <X86/IoPort.hh>
 
 #include <cstdio>
@@ -88,6 +90,12 @@ Pit::startTimer()
 
    Interrupt::registerHandler(0, this);
    Interrupt::enableInterrupt(0);
+
+   //
+   printf("Calibrating TSC\n");
+   TimeStampCounter::calibrate();
+   printf("Frequency: %lu\n", TimeStampCounter::getFrequency());
+   //
 
    return true;
 }

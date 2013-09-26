@@ -26,6 +26,10 @@ wrmsr:
 	wrmsr
 	ret
 
+.global rdtsc
+rdtsc:
+	rdtsc
+	ret
 
 // cpuid(u32 eax, u32* result)
 .global cpuid
