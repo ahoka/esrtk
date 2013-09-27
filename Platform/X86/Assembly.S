@@ -143,6 +143,11 @@ invlpg:
         invlpg (%eax)
         ret
 
+.global get_eip
+get_eip:
+	popl %eax
+	jmpl %eax
+	
 .global initPaging
 initPaging:
         movl %esp, %ebp

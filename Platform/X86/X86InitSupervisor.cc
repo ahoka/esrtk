@@ -13,7 +13,7 @@
 void
 Supervisor::init()
 {
-   initGdt();
+   gdt_init();
    initInterrupts();
    Memory::copyMemoryMap();
    PageDirectory::init();
