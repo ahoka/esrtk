@@ -11,6 +11,8 @@ unsigned long TimeStampCounter::frequency = 0;
 void
 TimeStampCounter::calibrate()
 {
+   printf("Calibrating TSC\n");
+
    cli();
 
    const int measurements = 5;
@@ -26,8 +28,6 @@ TimeStampCounter::calibrate()
       uint64_t tsc1 = rdtsc();
 
       results[i] = (unsigned long)(tsc1 - tsc0) / delay;
-      
-      printf("Delta: %lu\n", (unsigned long )((tsc1 - tsc0) / delay));
    }
 
    unsigned long min = ~0u;
@@ -52,8 +52,6 @@ TimeStampCounter::calibrate()
    sum -= max;
 
    unsigned long average = sum / (measurements - 2);
-
-   printf("Average TSC frequency is: %lu\n", average);
 
    frequency = average;
 
@@ -96,6 +94,8 @@ TimeStampCounter::calibrate()
 #endif
 
    sti();
+
+   printf("TSC frequency is: %lu Hz\n", frequency);
 }
 
 unsigned long
