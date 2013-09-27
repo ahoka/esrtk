@@ -1,6 +1,7 @@
 #include <SystemTimer.hh>
 #include <DriverManager.hh>
 #include <Pci.hh>
+#include <Clock.hh>
 
 #include <Platform.hh>
 
@@ -16,6 +17,7 @@ Platform::init()
 //   Acpi::printAllDescriptors();
 
    SystemTimer::probeAndInit();
+   Clock::probeAndInit();
    Pci::init();
    DriverManager::probeAndInit();
 }

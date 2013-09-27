@@ -2,14 +2,22 @@
 #include <X86/IoPort.hh>
 #include <X86/Pit.hh>
 
-#include <X86/TimeStampCounter.hh>
+#include <X86/Tsc.hh>
 
 #include <cstdio>
 
-unsigned long TimeStampCounter::frequency = 0;
+Tsc::Tsc() : frequency(0), offset(0)
+{
+   // empty
+}
+
+Tsc::~Tsc()
+{
+   // empty
+}
 
 void
-TimeStampCounter::calibrate()
+Tsc::calibrate()
 {
    printf("Calibrating TSC\n");
 
@@ -99,13 +107,42 @@ TimeStampCounter::calibrate()
 }
 
 unsigned long
-TimeStampCounter::getFrequency()
+Tsc::getFrequency()
 {
    return frequency;
 }
 
 uint64_t
-TimeStampCounter::readTsc()
+Tsc::readTsc()
 {
    return rdtsc();
 }
+
+int Tsc::probe()
+{
+   return 100;
+}
+
+bool
+Tsc::startClock()
+{
+   calibrate();
+   // XXX should be the real system start time
+   offset = readTsc();
+
+   return true;
+}
+
+bool
+Tsc::stopClock()
+{
+   return true;
+}
+
+uint64_t
+Tsc::getTime()
+{
+   return (readTsc() - offset) / frequency;
+}
+
+Tsc tsc;

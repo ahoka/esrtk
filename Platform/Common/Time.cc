@@ -1,6 +1,7 @@
 #include <cstdio>
 
 #include <Time.hh>
+#include <Clock.hh>
 
 uint64_t Time::uptime = 0;
 
@@ -13,5 +14,16 @@ Time::increment(unsigned long ms)
 uint64_t
 Time::getUptime()
 {
-   return uptime;
+   uint64_t time = Clock::getTimeValue();
+
+//   printf("clock: %lu, jiffies: %lu\n", (unsigned long)uptime, (unsigned long)time);
+
+   if (time == 0)
+   {
+      return uptime;
+   }
+   else
+   {
+      return time;
+   }
 }

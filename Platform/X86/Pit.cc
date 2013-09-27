@@ -1,8 +1,5 @@
 #include <Debug.hh>
-
-#include <X86/TimeStampCounter.hh>
 #include <X86/IoPort.hh>
-
 #include <X86/Pit.hh>
 
 unsigned long Pit::divider = 0;
@@ -46,8 +43,6 @@ Pit::startTimer()
    Interrupt::registerHandler(0, this);
    Interrupt::enableInterrupt(0);
 
-   TimeStampCounter::calibrate();
-
    return true;
 }
 
@@ -69,7 +64,7 @@ Pit::getFrequency()
 unsigned long
 Pit::readValue()
 {
-   outb(Command, SelectChannel0 | LatchBothBytes);
+   outb(Command, SelectChannel0 | LatchBothBytes | RateGeneratorMode);
    
    unsigned long low = inb(Channel0);
    unsigned long high = inb(Channel0);

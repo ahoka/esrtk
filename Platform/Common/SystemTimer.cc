@@ -4,6 +4,8 @@
 #include <Scheduler.hh>
 #include <Time.hh>
 
+#include <cstdio>
+
 SystemTimer* SystemTimer::timers = 0;
 
 SystemTimer::SystemTimer()
