@@ -4,6 +4,16 @@
 .text
 .balign 16
 
+.global cli
+cli:
+        cli
+        ret
+
+.global sti
+sti:
+        sti
+        ret
+
 // rdmsr(in u32 address, out u32 eax, out u32 edx)
 .global rdmsr
 rdmsr:
@@ -26,9 +36,16 @@ wrmsr:
 	wrmsr
 	ret
 
+// rdtsc, serialized with cpuid instruction
 .global rdtsc
 rdtsc:
+	pushl %ebx
+	pushl %edi
+        xorl %eax, %eax
+        cpuid
 	rdtsc
+        popl %edi
+	popl %ebx
 	ret
 
 // cpuid(u32 eax, u32* result)

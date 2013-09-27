@@ -1,56 +1,11 @@
-#include <Interrupt.hh>
-#include <SystemTimer.hh>
 #include <Debug.hh>
 
 #include <X86/TimeStampCounter.hh>
-
 #include <X86/IoPort.hh>
 
-#include <cstdio>
+#include <X86/Pit.hh>
 
-class Pit : InterruptHandler, SystemTimer
-{
-public:
-   Pit();
-   ~Pit();
-
-   int probe();
-   bool startTimer();
-   bool stopTimer();
-   unsigned int getFrequency();
-
-   void handleInterrupt();
-
-private:
-   enum Ports
-   {
-      Channel0 = 0x40,
-      Channel1 = 0x41,
-      Channel2 = 0x42,
-      Command = 0x43
-   };
-
-   enum
-   {
-      OscillatorFrequency = 1193182
-   };
-
-   enum Command
-   {
-      SelectChannel0 = 0x0 << 6,
-      SelectChannel1 = 0x1 << 6,
-      SelectChannel2 = 0x2 << 6,
-      ReadBack = 0x3 << 6,
-      LatchCountValue = 0x0 << 4,
-      LatchLowByteOnly = 0x1 << 4,
-      LatchHighByteOnly = 0x2 << 4,
-      LatchBothBytes = 0x3 << 4,
-      InterruptOnTerminalCountMode = 0x0 << 1,
-      SquareWaveMode = 0x1 << 1,
-      RateGeneratorMode = 0x2 << 1,
-      BcdMode = 0x1 << 0
-   };
-};
+unsigned long Pit::divider = 0;
 
 Pit::Pit()
 {
@@ -79,9 +34,9 @@ Pit::startTimer()
 {
    printf("Programmable interval timer starting\n");
 
-   int divider = OscillatorFrequency / getFrequency();
+   divider = OscillatorFrequency / getFrequency();
 
-   KASSERT((divider & ~0xffff) == 0);
+   KASSERT((divider & ~0xfffflu) == 0);
 
    outb(Command, SelectChannel0 | LatchBothBytes | RateGeneratorMode);
 
@@ -113,6 +68,41 @@ unsigned int
 Pit::getFrequency()
 {
    return 100;
+}
+
+unsigned long
+Pit::readValue()
+{
+   outb(Command, SelectChannel0 | LatchBothBytes);
+   
+   unsigned long low = inb(Channel0);
+   unsigned long high = inb(Channel0);
+   
+   unsigned long value = low | high << 8;
+
+   return value;
+}
+
+void
+Pit::delay(unsigned long ms)
+{
+   long ticks = (long)ms * (OscillatorFrequency / 1000);
+
+//   printf("Sleeping %lu ticks\n", ticks);
+
+   unsigned long lastTick = readValue();
+   while (ticks > 1)
+   {
+      unsigned long currentTick = readValue();
+      if (lastTick > currentTick)
+      {
+         ticks -= lastTick - currentTick;
+      }
+
+//      printf("Delay: %lu - %lu = %lu t: %lu\n", lastTick, currentTick, (lastTick - currentTick), ticks);
+
+      lastTick = readValue();
+   }
 }
 
 Pit pit;

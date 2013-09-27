@@ -10,6 +10,9 @@ struct cpuid_t {
    uint32_t edx;
 } __attribute__((packed));
 
+extern "C" void cli();
+extern "C" void sti();
+
 extern "C" void wrmsr(uint32_t address, uint32_t eax, uint32_t edx);
 extern "C" void rdmsr(uint32_t address, uint32_t* eax, uint32_t* edx);
 
