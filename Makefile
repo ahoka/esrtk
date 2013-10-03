@@ -1,3 +1,6 @@
+# Makefile for kernel
+#
+
 BUILD_HOST=	$(shell uname)
 BUILD_ROOT=	$(PWD)
 
