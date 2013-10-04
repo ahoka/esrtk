@@ -34,7 +34,7 @@ struct MemorySegment
 
 enum
 {
-   MemoryMapMax = 16,
+   MemoryMapMax = 32,
    PhysMapSize = 128 * 1024
 };
 
@@ -202,7 +202,7 @@ private:
    static PageCluster usedPages;
    static PageCluster freePages;
 
-   static MemorySegment memoryMap[16];
+   static MemorySegment memoryMap[MemoryMapMax];
    static unsigned int memoryMapCount;
 };
 

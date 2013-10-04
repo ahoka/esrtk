@@ -3,6 +3,7 @@
 #include <X86/Idt.hh>
 #include <X86/Gdt.hh>
 #include <X86/Memory.hh>
+#include <X86/SerialConsole.hh>
 #include <Supervisor.hh>
 
 // the kernel drivers should be able to function
@@ -14,6 +15,7 @@ void
 Supervisor::init()
 {
    gdt_init();
+   SerialConsole::init();
    initInterrupts();
    Memory::copyMemoryMap();
    PageDirectory::init();

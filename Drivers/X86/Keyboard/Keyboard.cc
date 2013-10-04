@@ -9,6 +9,7 @@
 
 // XXX debug hack
 #include <Time.hh>
+#include <Power.hh>
 
 Keyboard::Keyboard()
 {
@@ -87,8 +88,11 @@ Keyboard::handleInterrupt()
             printf("Uptime is: %lu.%lu\n",
                    (unsigned long )uptime / 1000,
                    (unsigned long )(uptime % 1000));
-         }
             break;
+         }
+         case Scancodes::F9:
+            Power::reboot();
+            //break;
          default:
             printf("0x%hhx", scanCode);
       }
