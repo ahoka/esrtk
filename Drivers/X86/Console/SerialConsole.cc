@@ -3,6 +3,7 @@
 
 bool SerialConsole::portInitialized = false;
 
+// init in polling mode
 void
 SerialConsole::init()
 {
