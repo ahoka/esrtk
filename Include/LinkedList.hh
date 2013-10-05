@@ -9,21 +9,30 @@ class LinkedListItem
 
    void insertAfter(T* item)
    {
-      item.next = next;
-      next.prev = item;
+      item->next = next;
+      item->prev = this;
+
+      next->prev = item;
       next = item;
-      item.prev = this;
-   };
+   }
 };
 
 template <class T>
 class LinkedList
 {
-   T head;
-
+public:
    void insertLast(T* item)
    {
+      head.prev->insertAfter(item);
    }
+
+   void insertFirst(T* item)
+   {
+      head.insertAfter(item);
+   }
+
+private:
+   T head;
 };
 
 class Test : LinkedListItem<Test>
