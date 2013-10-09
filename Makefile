@@ -44,15 +44,19 @@ CXXFLAGS+=	-std=c++11
 
 CPPFLAGS+=	-I$(PWD)/Include
 CPPFLAGS+=	-I$(PWD)/Standard
+CPPFLAGS+=	-I$(PWD)/Templates
 
 CFLAGS+=	$(CPPFLAGS)
 CXXFLAGS+=	$(CPPFLAGS)
 
 SRCDIR=		Supervisor Library Drivers Platform
+TESTDIR=	Test
 
 CCFILES:=	$(shell find $(SRCDIR) -name '*.cc')
 CFILES:=	$(shell find $(SRCDIR) -name '*.c')
 SFILES:=	$(shell find $(SRCDIR) -name '*.S')
+
+TCCFILES:=	$(shell find $(TESTDIR) -name '*.cc')
 
 SRC=		$(CCFILES) $(CFILES) $(SFILES)
 
@@ -72,7 +76,7 @@ buildinfo:
 	@echo Assembler: $(AS)
 	@echo Linker: $(LD)
 
-%.o: %.cc Makefile
+%.o: %.cc
 	@echo Compiling $<
 	$(HIDE) $(CXX) $(CXXFLAGS) -c -o $*.o $*.cc
 
