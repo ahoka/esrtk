@@ -39,21 +39,19 @@ public:
       list.insertLast(&n2);
       list.insertLast(&n3);
 
+      std::cout << "Iterating forward:" << std::endl;
       for (auto r = list.range(); !r.empty(); r.popFront())
       {
-//         std::cout << r.front() << std::endl;
          TestItem& item = r.front();
          std::cout << item << std::endl;
-
-//         printf("%d\n", item.number);
       }
-      
-      // for (auto iterator = list.getIterator();
-      //      *iterator != list.end();
-      //      ++iterator)
-      // {
-      //    printf("%d\n", (*iterator).number);
-      // }
+
+      std::cout << "Iterating backward:" << std::endl;
+      for (auto r = list.range(); !r.empty(); r.popBack())
+      {
+         TestItem& item = r.back();
+         std::cout << item << std::endl;         
+      }
    }
 };
 
@@ -63,10 +61,6 @@ main()
    DoublyLinkedListTest test;
 
    test.test();
-
-   // int i = 1;
-   // RefReference iref(i);
-   // RefReference tref(test);
 
    return 0;
 }

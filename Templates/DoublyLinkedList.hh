@@ -1,30 +1,33 @@
 #ifndef DOUBLYLINKEDLIST_HH
 #define DOUBLYLINKEDLIST_HH
 
-#include <ForwardRange.hh>
+#include <DoubleEndedRange.hh>
 
 template <class T>
 class DoublyLinkedList
 {
 public:
    DoublyLinkedList()
+      // head.prev(head),
+      // head.next(head)
    {
-      head.setPrev(&head);
-      head.setNext(&head);
+      // head.setPrev(&head);
+      // head.setNext(&head);
    }
 
-   class DoublyLinkedListRange : ForwardRange<T>
+   class DoublyLinkedListRange : public DoubleEndedRange<T>
    {
    public:
-      DoublyLinkedListRange(DoublyLinkedList *owningList)
-	 : list(owningList)
+      DoublyLinkedListRange(DoublyLinkedList* owningList)
+	 : list(owningList),
+           firstItem(list->begin()),
+           lastItem(list->end())
       {
-	 currentItem = list->begin();
       }
 
       bool empty()
       {
-         if (currentItem == list->end())
+         if (firstItem == lastItem)
          {
             return true;
          }
@@ -36,12 +39,22 @@ public:
 
       void popFront()
       {
-         currentItem = currentItem->next;
+         firstItem = firstItem->next;
       }
 
       Ref<T> front()
       {
-         return *currentItem;
+         return *firstItem;
+      }
+
+      void popBack()
+      {
+         lastItem = lastItem->prev;
+      }
+
+      Ref<T> back()
+      {
+         return *lastItem->prev;
       }
 
       ForwardRange<T> save()
@@ -51,7 +64,8 @@ public:
 
    private:
       DoublyLinkedList* list;
-      T* currentItem;
+      T* firstItem;
+      T* lastItem;
    };
 
    void insertLast(T* item)

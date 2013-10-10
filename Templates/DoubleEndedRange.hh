@@ -4,7 +4,7 @@
 #include <ForwardRange.hh>
 
 template <class T>
-class DoubleEndedRange : ForwardRange<T>
+class DoubleEndedRange : public ForwardRange<T>
 {
 public:
    virtual Ref<T> back() = 0;
