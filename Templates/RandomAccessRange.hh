@@ -8,7 +8,7 @@ template <class T>
 class RandomAccessRange : ForwardRange<T>
 {
 public:
-   virtual T at(std::size_t position);
+   virtual Ref<T> at(std::size_t position);
    virtual RandomAccessRange<T> slice(std::size_t begin, std::size_t end);
 };
 

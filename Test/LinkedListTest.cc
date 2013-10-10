@@ -1,5 +1,6 @@
 #include <LinkedList.hh>
-#include <cstdio>
+//#include <cstdio>
+#include <iostream>
 
 class TestItem : public LinkedListItem<TestItem>
 {
@@ -11,6 +12,11 @@ public:
 
    TestItem(int num) : number(num)
    {
+   }
+
+   operator int()
+   {
+      return number;
    }
 
 //private:
@@ -31,13 +37,22 @@ public:
       list.insertLast(&n1);
       list.insertLast(&n2);
       list.insertLast(&n3);
-      
-      for (auto iterator = list.getIterator();
-	   *iterator != list.end();
-	   ++iterator)
+
+      for (auto r = list.range(); !r.empty(); r.popFront())
       {
-	 printf("%d\n", (*iterator).number);
+//         std::cout << r.front() << std::endl;
+         TestItem& item = r.front();
+         std::cout << item << std::endl;
+
+//         printf("%d\n", item.number);
       }
+      
+      // for (auto iterator = list.getIterator();
+      //      *iterator != list.end();
+      //      ++iterator)
+      // {
+      //    printf("%d\n", (*iterator).number);
+      // }
    }
 };
 
@@ -47,6 +62,10 @@ main()
    LinkedListTest test;
 
    test.test();
+
+   // int i = 1;
+   // RefReference iref(i);
+   // RefReference tref(test);
 
    return 0;
 }

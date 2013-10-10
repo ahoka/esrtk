@@ -7,7 +7,7 @@ template <class T>
 class DoubleEndedRange : ForwardRange<T>
 {
 public:
-   virtual T back() = 0;
+   virtual Ref<T> back() = 0;
    virtual void popBack() = 0;
 };
 

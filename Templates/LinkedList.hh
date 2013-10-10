@@ -1,6 +1,8 @@
 #ifndef LINKEDLIST_HH
 #define LINKEDLIST_HH
 
+#include <ForwardRange.hh>
+
 template <class T>
 class LinkedList;
 
@@ -8,11 +10,10 @@ template <class T>
 class LinkedListItem
 {
 public:
-   LinkedListItem() :
-      prev(0),
-      next(0)
+   LinkedListItem()
    {
-      // empty
+      setPrev(static_cast<T*>(this));
+      setNext(static_cast<T*>(this));
    }
 
    void insertAfter(T* item)
@@ -61,32 +62,43 @@ public:
       head.setNext(&head);
    }
 
-   class Iterator
+   class LinkedListRange : ForwardRange<T>
    {
    public:
-      Iterator(LinkedList *owningList)
+      LinkedListRange(LinkedList *owningList)
 	 : list(owningList)
-      {
-	 reset();
-      }
-
-      void reset()
       {
 	 currentItem = list->begin();
       }
 
-      Iterator& operator++()
+      bool empty()
       {
-	 currentItem = currentItem->next;
-
-	 return *this;
+         if (currentItem == list->end())
+         {
+            return true;
+         }
+         else
+         {
+            return false;
+         }
       }
 
-      T& operator*()
+      void popFront()
       {
-	 return *currentItem;
+         currentItem = currentItem->next;
       }
 
+      Ref<T> front()
+      {
+         return *currentItem;
+      }
+
+      ForwardRange<T> save()
+      {
+         return *this;
+      }
+
+   private:
       LinkedList* list;
       T* currentItem;
    };
@@ -106,14 +118,19 @@ public:
       return head.next;
    }
 
-   Iterator getIterator()
-   {
-      return Iterator(this);
-   }
-
    T* end()
    {
       return &head;
+   }
+
+   LinkedListRange range()
+   {
+      return LinkedListRange(this);
+   }
+
+   operator LinkedListRange()
+   {
+      return range();
    }
 
 private:
