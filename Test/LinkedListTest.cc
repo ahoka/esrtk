@@ -1,8 +1,9 @@
-#include <LinkedList.hh>
+#include <DoublyLinkedList.hh>
+#include <DoublyLinkedItem.hh>
 //#include <cstdio>
 #include <iostream>
 
-class TestItem : public LinkedListItem<TestItem>
+class TestItem : public DoublyLinkedItem<TestItem>
 {
 public:
 
@@ -23,7 +24,7 @@ public:
    int number;
 };
 
-class LinkedListTest
+class DoublyLinkedListTest
 {
 public:
    void test()
@@ -32,7 +33,7 @@ public:
       TestItem n2 = 23;
       TestItem n3 = 34;
       
-      LinkedList<TestItem> list;
+      DoublyLinkedList<TestItem> list;
       
       list.insertLast(&n1);
       list.insertLast(&n2);
@@ -59,7 +60,7 @@ public:
 int
 main()
 {
-   LinkedListTest test;
+   DoublyLinkedListTest test;
 
    test.test();
 

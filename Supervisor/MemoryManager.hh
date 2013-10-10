@@ -14,7 +14,7 @@ public:
 	virtual ~MemoryManager();
 private:
 
-   class Segment : DoublyLinkedItem<Segment>
+   class Segment : public DoublyLinkedItem<Segment>
    {
    public:
       Segment() :
