@@ -13,13 +13,13 @@ public:
       setNext(static_cast<T*>(this));
    }
 
+private:
    void insertAfter(T* item)
    {
       item->next = next;
       next = item;
    }
 
-private:
    T* getNext()
    {
       return next;

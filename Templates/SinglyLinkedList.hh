@@ -8,11 +8,8 @@ class SinglyLinkedList
 {
 public:
    SinglyLinkedList()
-      // head.prev(head),
-      // head.next(head)
    {
-      // head.setPrev(&head);
-      // head.setNext(&head);
+      // empty
    }
 
    class SinglyLinkedListRange : public ForwardRange<T>
@@ -26,7 +23,7 @@ public:
 
       bool empty()
       {
-         if (firstItem == lastItem)
+         if (firstItem == list->lastItem())
          {
             return true;
          }
@@ -56,11 +53,21 @@ public:
       T* firstItem;
    };
 
-   // void insertLast(T* item)
-   // {
-   //    head.getPrev()->insertAfter(item);
-   // }
-   
+   void insertLast(T* item)
+   {
+      T* last = firstItem();
+
+      if (lastItem() != firstItem())
+      {
+	 while (last->next == lastItem())
+	 {
+	    last = last->next;
+	 }
+      }
+
+      last->insertAfter(item);
+   }
+      
    void insertFirst(T* item)
    {
       head.insertAfter(item);
@@ -71,10 +78,10 @@ public:
       return head.next;
    }
 
-   // T* lastItem()
-   // {
-   //    return &head;
-   // }
+   T* lastItem()
+   {
+      return &head;
+   }
 
    SinglyLinkedListRange range()
    {
