@@ -1,17 +1,18 @@
 #include <DoublyLinkedList.hh>
 #include <DoublyLinkedItem.hh>
-//#include <cstdio>
 #include <iostream>
 
 class TestItem : public DoublyLinkedItem<TestItem>
 {
 public:
 
-   TestItem() : number(0)
+   TestItem() :
+      number(0)
    {
    }
 
-   TestItem(int num) : number(num)
+   TestItem(int num) :
+      number(num)
    {
    }
 
