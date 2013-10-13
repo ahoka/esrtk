@@ -1,5 +1,6 @@
 #include <string.h>
 
+#if 0
 void *
 memset(void *s, int c, size_t n)
 {
@@ -12,6 +13,7 @@ memset(void *s, int c, size_t n)
 
    return s;
 }
+#endif
 
 void *
 memcpy(void *dest, const void *src, size_t size)
@@ -26,3 +28,37 @@ memcpy(void *dest, const void *src, size_t size)
 
    return dest;
 }
+
+#if 0
+char *
+strcpy(char *dest, const void *src)
+{
+   char* original = dest;
+
+   while (*src != '\0')
+   {
+      *dest = *src++;
+   }
+
+   return original;
+}
+
+char *
+strncpy(char *dest, const void *src, size_t size)
+{
+   char* original = dest;
+
+   while (*src != '\0' && size--)
+   {
+      *dest = *src++;
+   }
+
+   while (size--)
+   {
+      *dest = '\0';
+   }
+
+   return original;
+}
+#endif
+

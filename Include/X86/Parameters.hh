@@ -1,5 +1,5 @@
-#ifndef PARAMETERS_HH
-#define PARAMETERS_HH
+#ifndef X86_PARAMETERS_HH
+#define X86_PARAMETERS_HH
 
 #ifdef ASSEMBLER
 #  define UNSIGNED(x) x
@@ -20,7 +20,6 @@
 #define StackSize UNSIGNED(0x10000)
 #define MapStart (StackStart - StackSize)
 
-#define PageFrameCount 10
 #define InitialStackSize UNSIGNED(0x2000)
 
 #endif

@@ -2,7 +2,7 @@
 #define SCHEDULER_HH
 
 #include <KernelThread.hh>
-#include <LinkedList.hh>
+#include <DoublyLinkedList.hh>
 
 class Scheduler
 {

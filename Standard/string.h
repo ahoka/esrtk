@@ -11,6 +11,18 @@ extern "C"
 void *memcpy(void *, const void *, size_t);
 void *memset(void *, int, size_t);
 
+char* strcpy(char *dest, const char* src);
+char* strncpy(char *dest, const char* src, size_t size);
+
+size_t strlcpy(char *dst, const char *src, size_t size);
+
+size_t strlen(const char *str);
+int strcmp(const char *s1, const char *s2);
+
+size_t strlcat(char *dst, const char *src, size_t siz);
+char *strcat(char *s, const char *append);
+
+
 #ifdef __cplusplus
 }
 #endif

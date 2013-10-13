@@ -325,6 +325,29 @@ Memory::copyMemoryMap()
    Multiboot* mb = mbd;
    bool foundUsableMemory = false;
 
+   if (mbd->flags & Multiboot::ModulesValid)
+   {
+      for (unsigned int i = 0; i < mbd->modulesCount; i++)
+      {
+	 uintptr_t moduleStart;
+	 uintptr_t moduleEnd;
+	 const char* moduleName;
+
+	 moduleStart = *(uintptr_t* )mbd->modulesAddress;
+	 moduleEnd = *(uintptr_t* )(mbd->modulesAddress + 4);
+	 moduleName = *(const char** )(mbd->modulesAddress + 8);
+	 
+	 printf("Kernel module found at: %p\n", (void* )moduleStart);
+	 printf("Kernel module ends at: %p\n", (void *)moduleName);
+	 printf("Module string: %s\n", moduleName);
+
+	 unsigned long moduleSize = moduleEnd - moduleStart;
+
+	 printf("Module size: %lu\n", moduleSize);
+      }
+
+   }
+
    printf("Parsing multiboot (%p) memory map: 0x%0x-0x%0x\n", mbd,
 	  mb->memoryMapAddress,
 	  mb->memoryMapAddress + mb->memoryMapLength);
