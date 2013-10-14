@@ -1,13 +1,13 @@
-#include <X86/CpuRegisters.hh>
-#include <PageFrameAllocator.hh>
-#include <X86/Parameters.hh>
-#include <X86/Assembly.hh>
-
 #include <Debug.hh>
 #include <Templates.hh>
+#include <Memory.hh>
+#include <PageFrameAllocator.hh>
 
 #include <X86/Memory.hh>
 #include <X86/PageDirectory.hh>
+#include <X86/Parameters.hh>
+#include <X86/Assembly.hh>
+#include <X86/CpuRegisters.hh>
 
 #include <cstring>
 #include <cstdio>

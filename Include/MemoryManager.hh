@@ -4,15 +4,24 @@
 #include <DoublyLinkedItem.hh>
 #include <DoublyLinkedList.hh>
 
+#include <Templates.hh>
+#include <Parameters.hh>
+
 #include <cstdint>
+#include <cstddef>
 
 class MemoryManager
 {
 public:
-	MemoryManager();
-	MemoryManager(const MemoryManager& orig);
-	virtual ~MemoryManager();
+   MemoryManager();
+   MemoryManager(const MemoryManager& orig);
+   virtual ~MemoryManager();
+
+   void* allocate(std::size_t size);
+   void deallocate(void *data);
+
 private:
+   void* allocateBackend(std::size_t size);
 
    class Segment : public DoublyLinkedItem<Segment>
    {
@@ -38,6 +47,8 @@ private:
       uintptr_t address;
       uintptr_t size;
    };
+
+   DoublyLinkedList<Segment> freeList;
 };
 
 #endif	/* MEMORYMANAGER_H */

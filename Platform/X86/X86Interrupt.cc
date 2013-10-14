@@ -1,6 +1,6 @@
 #include <X86/Idt.hh>
 #include <X86/Assembly.hh>
-#include <X86/Memory.hh>
+#include <Memory.hh>
 
 #include <Interrupt.hh>
 #include <Power.hh>

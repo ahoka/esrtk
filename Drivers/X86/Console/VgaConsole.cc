@@ -1,6 +1,6 @@
 #include <X86/VgaConsole.hh>
 #include <X86/IoPort.hh>
-#include <X86/Memory.hh>
+#include <Memory.hh>
 #include <Debug.hh>
 
 extern VgaConsole vgaConsole;

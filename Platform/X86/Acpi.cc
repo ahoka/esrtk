@@ -1,6 +1,8 @@
-#include <X86/Memory.hh>
+#include <Memory.hh>
+
 #include <X86/Parameters.hh>
 #include <X86/Acpi.hh>
+
 #include <cstdio>
 
 Rsdp *

@@ -1,5 +1,6 @@
 #include <PageFrameAllocator.hh>
 #include <X86/Parameters.hh>
+#include <Memory.hh>
 #include <X86/Memory.hh>
 #include <Multiboot.hh>
 #include <Debug.hh>

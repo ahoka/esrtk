@@ -2,6 +2,7 @@
 #define TEMPLATES_HH
 
 #include <cstddef>
+#include <cstdint>
 
 //
 // Various helper templates

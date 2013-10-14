@@ -1,6 +1,7 @@
 #include <Debug.hh>
+#include <Memory.hh>
+
 #include <X86/Assembly.hh>
-#include <X86/Memory.hh>
 #include <X86/Apic.hh>
 #include <X86/CpuRegisters.hh>
 
