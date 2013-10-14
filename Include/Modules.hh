@@ -5,6 +5,8 @@
 #include <cstdint>
 #include <Parameters.hh>
 
+extern uintptr_t __end_modules;
+
 class Modules
 {
 public:
@@ -23,7 +25,8 @@ public:
       char name[PathMax];
    };
 
-   void add(uintptr_t start, std::size_t size, const char* name);
+   static void init();
+   static void add(uintptr_t start, std::size_t size, const char* name);
 
 private:
    Modules();
