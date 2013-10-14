@@ -11,24 +11,4 @@ _CXX_NS_BEGIN
 
 _CXX_NS_END
 
-
-// namespace std
-// {
-//    extern "C"
-//    {      
-//       void *memcpy(void *, const void *, std::size_t);
-//       void *memset(void *, int, std::size_t);
-      
-//       char* strcpy(char *dest, const char* src);
-//       char* strncpy(char *dest, const char* src, std::size_t size);
-      
-//       std::size_t strlcpy(char *dst, const char *src, std::size_t size);  
-//       std::size_t strlen(const char *str);
-//       int strcmp(const char *s1, const char *s2);
-
-//       std::size_t strlcat(char *dst, const char *src, std::size_t siz);
-//       char *strcat(char *s, const char *append);
-//    }
-// }
-
 #endif

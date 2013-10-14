@@ -10,6 +10,8 @@ Modules::Module Modules::list[ModulesMax];
 void
 Modules::init()
 {
+   // foreach all modules
+   //  add module
 }
 
 void
@@ -22,4 +24,9 @@ Modules::add(uintptr_t address, std::size_t size, const char* name)
    std::strlcpy((char *)&list[nextFree].name, name, sizeof(list[nextFree].name));
 
    nextFree++;
+
+   if (address + size > __end_modules)
+   {
+      __end_modules = address + size;
+   }
 }
