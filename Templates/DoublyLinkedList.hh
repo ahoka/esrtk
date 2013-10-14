@@ -2,17 +2,14 @@
 #define DOUBLYLINKEDLIST_HH
 
 #include <DoubleEndedRange.hh>
+#include <Iterator.hh>
 
 template <class T>
 class DoublyLinkedList
 {
 public:
    DoublyLinkedList()
-      // head.prev(head),
-      // head.next(head)
    {
-      // head.setPrev(&head);
-      // head.setNext(&head);
    }
 
    class DoublyLinkedListRange : public DoubleEndedRange<T>
@@ -68,6 +65,35 @@ public:
       T* lastItem;
    };
 
+   class DoublyLinkedListIterator : public Iterator<T>
+   {
+   public:
+      DoublyLinkedListIterator(DoublyLinkedList* owningList)
+	 : list(owningList),
+           currentItem(list->begin())
+      {
+      }
+
+      T& operator ++()
+      {
+         currentItem = currentItem->next;
+      }
+
+      T& operator *()
+      {
+         return *currentItem;
+      }
+
+      bool operator !=(Iterator<T>& other)
+      {
+	 return currentItem != other.currentItem;
+      }
+
+   private:
+      DoublyLinkedList* list;
+      T* currentItem;
+   };
+
    void insertLast(T* item)
    {
       head.getPrev()->insertAfter(item);
@@ -76,16 +102,6 @@ public:
    void insertFirst(T* item)
    {
       head.insertAfter(item);
-   }
-
-   T* begin()
-   {
-      return head.next;
-   }
-
-   T* end()
-   {
-      return &head;
    }
 
    DoublyLinkedListRange range()
@@ -99,6 +115,16 @@ public:
    }
 
 private:
+   T* firstItem()
+   {
+      return head.next;
+   }
+
+   T* lastItem()
+   {
+      return &head;
+   }
+
    T head;
 };
 
