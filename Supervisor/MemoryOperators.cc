@@ -1,20 +1,25 @@
+#include <MemoryManager.hh>
+
 #include <cstddef>
 #include <new>
 
-void *operator new(std::size_t /*size*/)
+void *operator new(std::size_t size)
 {
-    return 0;
+   return MemoryManager::get().allocate(size);
 }
  
-void *operator new[](std::size_t /*size*/)
+void *operator new[](std::size_t size)
 {
-    return 0;
+   return MemoryManager::get().allocate(size);
 }
  
-void operator delete(void */*p*/)
+void operator delete(void* p)
 {
+   MemoryManager::get().deallocate(p);
 }
  
-void operator delete[](void */*p*/)
+void operator delete[](void* p)
 {
+   MemoryManager::get().deallocate(p);
 }
+

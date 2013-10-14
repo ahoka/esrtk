@@ -1,3 +1,4 @@
+#include <MemoryManager.hh>
 #include <Supervisor.hh>
 #include <CompilerSupport.hh>
 #include <Power.hh>
@@ -17,6 +18,8 @@ kmain(void)
       //
       Power::halt();
    }
+
+   MemoryManager::init();
 
    printf("Supervisor starting\n");
 

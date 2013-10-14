@@ -14,14 +14,21 @@ class MemoryManager
 {
 public:
    MemoryManager();
-   MemoryManager(const MemoryManager& orig);
-   virtual ~MemoryManager();
+   ~MemoryManager();
+
+   static void init();
 
    void* allocate(std::size_t size);
    void deallocate(void *data);
 
+   static MemoryManager& get();
+
 private:
-   void* allocateBackend(std::size_t size);
+   MemoryManager(const MemoryManager& orig);
+
+   void* operator new(std::size_t, void *);
+
+   static void* allocateBackend(std::size_t size);
 
    class Segment : public DoublyLinkedItem<Segment>
    {
@@ -49,6 +56,8 @@ private:
    };
 
    DoublyLinkedList<Segment> freeList;
+
+   static MemoryManager* self;
 };
 
 #endif	/* MEMORYMANAGER_H */
