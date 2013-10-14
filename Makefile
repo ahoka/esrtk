@@ -4,6 +4,8 @@
 BUILD_HOST=	$(shell uname)
 BUILD_ROOT=	$(PWD)
 
+PLATFORM=	X86
+
 ifeq ($(BUILD_HOST), Darwin)
 CROSS=		i686-elf-
 else ifeq ($(BUILD_HOST), Msys)
@@ -112,7 +114,7 @@ depend: $(DFILES)
 
 kernel.elf: Loader/MultiLoader.o $(OFILES) 
 	@echo Linking kernel executable
-	$(HIDE) $(LD) $(LDFLAGS) -T Build/linker.ld -o $@ $^
+	$(HIDE) $(LD) $(LDFLAGS) -T Platform/${PLATFORM}/linker.ld -o $@ $^
 	@$(SIZE) $@
 
 kernel.img: kernel.elf
