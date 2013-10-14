@@ -1,11 +1,8 @@
-/*	$OpenBSD: strncpy.c,v 1.6 2005/08/08 08:05:37 espie Exp $	*/
+/*	$NetBSD: strncmp.c,v 1.2 2007/06/04 18:19:27 christos Exp $	*/
 
-/*-
- * Copyright (c) 1990 The Regents of the University of California.
- * All rights reserved.
- *
- * This code is derived from software contributed to Berkeley by
- * Chris Torek.
+/*
+ * Copyright (c) 1989, 1993
+ *	The Regents of the University of California.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -32,31 +29,37 @@
  * SUCH DAMAGE.
  */
 
+#include <sys/cdefs.h>
+#if defined(LIBC_SCCS) && !defined(lint)
+#if 0
+static char sccsid[] = "@(#)strncmp.c	8.1 (Berkeley) 6/4/93";
+#else
+__RCSID("$NetBSD: strncmp.c,v 1.2 2007/06/04 18:19:27 christos Exp $");
+#endif
+#endif /* LIBC_SCCS and not lint */
+
 #if !defined(_KERNEL) && !defined(_STANDALONE)
+#include <assert.h>
 #include <string.h>
 #else
 #include <lib/libkern/libkern.h>
 #endif
 
-/*
- * Copy src to dst, truncating or null-padding to always copy n bytes.
- * Return dst.
- */
-char *
-strncpy(char *dst, const char *src, size_t n)
+int
+strncmp(const char *s1, const char *s2, size_t n)
 {
-	if (n != 0) {
-		char *d = dst;
-		const char *s = src;
 
-		do {
-			if ((*d++ = *s++) == 0) {
-				/* NUL pad the remaining n-1 bytes */
-				while (--n != 0)
-					*d++ = 0;
-				break;
-			}
-		} while (--n != 0);
-	}
-	return (dst);
+	_DIAGASSERT(s1 != NULL);
+	_DIAGASSERT(s2 != NULL);
+
+	if (n == 0)
+		return (0);
+	do {
+		if (*s1 != *s2++)
+			return (*(const unsigned char *)s1 -
+			    *(const unsigned char *)--s2);
+		if (*s1++ == 0)
+			break;
+	} while (--n != 0);
+	return (0);
 }

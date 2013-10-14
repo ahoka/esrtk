@@ -1,8 +1,11 @@
-/*	$OpenBSD: strcat.c,v 1.8 2005/08/08 08:05:37 espie Exp $	*/
+/*	$NetBSD: memcmp.c,v 1.3 2011/11/08 16:52:11 joerg Exp $	*/
 
-/*
- * Copyright (c) 1988 Regents of the University of California.
- * All rights reserved.
+/*-
+ * Copyright (c) 1990, 1993
+ *	The Regents of the University of California.  All rights reserved.
+ *
+ * This code is derived from software contributed to Berkeley by
+ * Chris Torek.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,14 +32,39 @@
  * SUCH DAMAGE.
  */
 
+#include <sys/cdefs.h>
+#if defined(LIBC_SCCS) && !defined(lint)
+#if 0
+static char sccsid[] = "@(#)memcmp.c	8.1 (Berkeley) 6/4/93";
+#else
+__RCSID("$NetBSD: memcmp.c,v 1.3 2011/11/08 16:52:11 joerg Exp $");
+#endif
+#endif /* LIBC_SCCS and not lint */
+
+#if !defined(_KERNEL) && !defined(_STANDALONE)
+#include <assert.h>
 #include <string.h>
+#else
+#include <lib/libkern/libkern.h>
+#endif 
 
-char *
-strcat(char *s, const char *append)
+#undef memcmp
+/*
+ * Compare memory regions.
+ */
+int
+memcmp(const void *s1, const void *s2, size_t n)
 {
-	char *save = s;
+	_DIAGASSERT(s1 != 0);
+	_DIAGASSERT(s2 != 0);
 
-	for (; *s; ++s);
-	while ((*s++ = *append++) != '\0');
-	return(save);
+	if (n != 0) {
+		const unsigned char *p1 = s1, *p2 = s2;
+
+		do {
+			if (*p1++ != *p2++)
+				return (*--p1 - *--p2);
+		} while (--n != 0);
+	}
+	return (0);
 }

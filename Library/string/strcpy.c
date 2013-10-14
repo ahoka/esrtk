@@ -1,10 +1,8 @@
-/*	$OpenBSD: memset.c,v 1.6 2008/03/15 21:40:39 ray Exp $ */
-/*-
- * Copyright (c) 1990 The Regents of the University of California.
- * All rights reserved.
- *
- * This code is derived from software contributed to Berkeley by
- * Chris Torek.
+/*	$NetBSD: strcpy.c,v 1.3 2011/11/08 16:52:11 joerg Exp $	*/
+
+/*
+ * Copyright (c) 1988, 1993
+ *	The Regents of the University of California.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -31,17 +29,32 @@
  * SUCH DAMAGE.
  */
 
+#include <sys/cdefs.h>
+#if defined(LIBC_SCCS) && !defined(lint)
+#if 0
+static char sccsid[] = "@(#)strcpy.c	8.1 (Berkeley) 6/4/93";
+#else
+__RCSID("$NetBSD: strcpy.c,v 1.3 2011/11/08 16:52:11 joerg Exp $");
+#endif
+#endif /* LIBC_SCCS and not lint */
+
+#if !defined(_KERNEL) && !defined(_STANDALONE)
+#include <assert.h>
 #include <string.h>
+#else
+#include <lib/libkern/libkern.h>
+#endif
 
-void *
-memset(void *dst, int c, size_t n)
+#undef strcpy
+
+char *
+strcpy(char *to, const char *from)
 {
-	if (n != 0) {
-		unsigned char *d = dst;
+	char *save = to;
 
-		do
-			*d++ = (unsigned char)c;
-		while (--n != 0);
-	}
-	return (dst);
+	_DIAGASSERT(to != NULL);
+	_DIAGASSERT(from != NULL);
+
+	for (; (*to = *from) != '\0'; ++from, ++to);
+	return(save);
 }

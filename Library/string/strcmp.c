@@ -1,8 +1,8 @@
-/*	$OpenBSD: strcmp.c,v 1.7 2005/08/08 08:05:37 espie Exp $	*/
+/*	$NetBSD: strcmp.c,v 1.3 2013/07/01 20:51:59 joerg Exp $	*/
 
 /*-
- * Copyright (c) 1990 The Regents of the University of California.
- * All rights reserved.
+ * Copyright (c) 1990, 1993
+ *	The Regents of the University of California.  All rights reserved.
  *
  * This code is derived from software contributed to Berkeley by
  * Chris Torek.
@@ -32,11 +32,23 @@
  * SUCH DAMAGE.
  */
 
+#include <sys/cdefs.h>
+#if defined(LIBC_SCCS) && !defined(lint)
+#if 0
+static char sccsid[] = "@(#)strcmp.c	8.1 (Berkeley) 6/4/93";
+#else
+__RCSID("$NetBSD: strcmp.c,v 1.3 2013/07/01 20:51:59 joerg Exp $");
+#endif
+#endif /* LIBC_SCCS and not lint */
+
 #if !defined(_KERNEL) && !defined(_STANDALONE)
+#include <assert.h>
 #include <string.h>
 #else
 #include <lib/libkern/libkern.h>
 #endif
+
+#undef strcmp
 
 /*
  * Compare strings.
@@ -44,8 +56,12 @@
 int
 strcmp(const char *s1, const char *s2)
 {
+
+	_DIAGASSERT(s1 != NULL);
+	_DIAGASSERT(s2 != NULL);
+
 	while (*s1 == *s2++)
 		if (*s1++ == 0)
 			return (0);
-	return (*(unsigned char *)s1 - *(unsigned char *)--s2);
+	return (*(const unsigned char *)s1 - *(const unsigned char *)--s2);
 }

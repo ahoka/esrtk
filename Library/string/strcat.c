@@ -1,7 +1,7 @@
-/*	$OpenBSD: strlen.c,v 1.7 2005/08/08 08:05:37 espie Exp $	*/
+/*	$NetBSD: strcat.c,v 1.2 2007/06/04 18:19:27 christos Exp $	*/
 
-/*-
- * Copyright (c) 1990, 1993
+/*
+ * Copyright (c) 1988, 1993
  *	The Regents of the University of California.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -29,15 +29,37 @@
  * SUCH DAMAGE.
  */
 
+#include <sys/cdefs.h>
+#if defined(LIBC_SCCS) && !defined(lint)
+#if 0
+static char sccsid[] = "@(#)strcat.c	8.1 (Berkeley) 6/4/93";
+#else
+__RCSID("$NetBSD: strcat.c,v 1.2 2007/06/04 18:19:27 christos Exp $");
+#endif
+#endif /* LIBC_SCCS and not lint */
+
+#if !defined(_KERNEL) && !defined(_STANDALONE)
+#include <assert.h>
 #include <string.h>
+#else
+#include <lib/libkern/libkern.h>
+#endif
 
-size_t
-strlen(const char *str)
+#ifdef _FORTIFY_SOURCE
+#undef strcat
+#endif
+
+char *
+strcat(char *s, const char *append)
 {
-	const char *s;
+	char	*t = s;
 
-	for (s = str; *s; ++s)
+	_DIAGASSERT(t != NULL);
+	_DIAGASSERT(append != NULL);
+
+	for (; *t; ++t)
 		;
-	return (size_t )(s - str);
+	while ((*t++ = *append++) != '\0')
+		;
+	return (s);
 }
-

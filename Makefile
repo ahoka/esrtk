@@ -46,6 +46,13 @@ CPPFLAGS+=	-I$(PWD)/Include
 CPPFLAGS+=	-I$(PWD)/Standard
 CPPFLAGS+=	-I$(PWD)/Templates
 
+# XXX these should be only provided for Standard
+#
+CPPFLAGS+=	-I$(PWD)/BsdCompat
+CPPFLAGS+=	-DHAVE_NBTOOL_CONFIG_H=0
+
+CPPFLAGS+=	-DHAVE_STRLCAT=0 -DHAVE_STRSEP=0 -DHAVE_STRLCPY=0
+
 CFLAGS+=	$(CPPFLAGS)
 CXXFLAGS+=	$(CPPFLAGS)
 

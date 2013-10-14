@@ -3,6 +3,8 @@
 
 #include <stdarg.h>
 
+#define EOF (-1)
+
 int putchar(int);
 int puts(const char *);
 
