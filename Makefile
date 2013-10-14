@@ -43,7 +43,8 @@ COPTS+=		-Wno-c++98-compat-pedantic \
 CXXFLAGS+=	-std=c++11
 
 CPPFLAGS+=	-I$(PWD)/Include
-CPPFLAGS+=	-I$(PWD)/Standard
+CPPFLAGS+=	-I$(PWD)/CInclude
+CPPFLAGS+=	-I$(PWD)/CxxInclude
 CPPFLAGS+=	-I$(PWD)/Templates
 
 # XXX these should be only provided for Standard
@@ -56,7 +57,7 @@ CPPFLAGS+=	-DHAVE_STRLCAT=0 -DHAVE_STRSEP=0 -DHAVE_STRLCPY=0
 CFLAGS+=	$(CPPFLAGS)
 CXXFLAGS+=	$(CPPFLAGS)
 
-SRCDIR=		Supervisor Library Drivers Platform
+SRCDIR=		Supervisor CLibrary CxxLibrary Drivers Platform
 TESTDIR=	Test
 
 CCFILES:=	$(shell find $(SRCDIR) -name '*.cc')
