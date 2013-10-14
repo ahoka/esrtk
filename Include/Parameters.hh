@@ -2,7 +2,9 @@
 #define PARAMATERS_HH
 
 #ifdef __i386__
-#include <X86/Parameters.hh>
+# include <X86/Parameters.hh>
+#else
+# error Unsupported architecture!
 #endif
 
 #ifndef ASSEMBLER

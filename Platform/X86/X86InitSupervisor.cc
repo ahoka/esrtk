@@ -1,5 +1,6 @@
 #include <Memory.hh>
 #include <Supervisor.hh>
+#include <Modules.hh>
 
 #include <X86/Apic.hh>
 #include <X86/PageDirectory.hh>
@@ -19,6 +20,7 @@ Supervisor::init()
    SerialConsole::init();
    initInterrupts();
    Memory::copyMemoryMap();
+   Modules::init(); // mi called from md, not good!
    PageDirectory::init();
    Memory::init();
 }

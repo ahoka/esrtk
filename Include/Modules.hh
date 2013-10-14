@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <Parameters.hh>
 
+extern uintptr_t __start_modules;
 extern uintptr_t __end_modules;
 
 class Modules

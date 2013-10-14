@@ -1,12 +1,15 @@
 #include <PageFrameAllocator.hh>
-#include <X86/Parameters.hh>
+#include <Parameters.hh>
 #include <Memory.hh>
-#include <X86/Memory.hh>
 #include <Multiboot.hh>
 #include <Debug.hh>
 #include <Templates.hh>
+#include <Modules.hh>
+
+#include <X86/Memory.hh>
 #include <X86/Idt.hh>
 #include <X86/PageDirectory.hh>
+
 #include <cstring>
 
 extern Multiboot* mbd;
@@ -38,10 +41,12 @@ Memory::init()
    usedPages.init();
    freePages.init();
 
-   uintptr_t nextFreePage = roundTo<uintptr_t>((uintptr_t )&__end_kernel, PageSize) + PageSize * PageFrameCount;
+   uintptr_t firstUsableMemory = max((uintptr_t )&__end_kernel, __end_modules);
+
+   uintptr_t firstFreePage = roundTo<uintptr_t>(firstUsableMemory, PageSize) + PageSize * PageFrameCount;
 
    // init page clusters
-   PhysicalPage* bootstrapPage = (PhysicalPage* )nextFreePage;
+   PhysicalPage* bootstrapPage = (PhysicalPage* )firstFreePage;
 
    bootstrapPage->setAddress((uintptr_t )bootstrapPage - KernelVirtualBase);
    printf("Inserting bootstrap page to used pages cluster: %p\n", (void* )bootstrapPage->getAddress());
@@ -75,7 +80,7 @@ Memory::init()
 	 }
 
 	 p->setAddress(addr);
-	 if ((addr >= 0x00100000) && (addr < nextFreePage - 0xc0000000))
+	 if ((addr >= KernelLoadAddress) && (addr < firstFreePage - KernelVirtualBase))
 	 {
 #ifdef DEBUG
 	    printf("Found used page: %p\n", (void* )addr);
@@ -325,29 +330,6 @@ Memory::copyMemoryMap()
 {
    Multiboot* mb = mbd;
    bool foundUsableMemory = false;
-
-   if (mbd->flags & Multiboot::ModulesValid)
-   {
-      for (unsigned int i = 0; i < mbd->modulesCount; i++)
-      {
-	 uintptr_t moduleStart;
-	 uintptr_t moduleEnd;
-	 const char* moduleName;
-
-	 moduleStart = *(uintptr_t* )mbd->modulesAddress;
-	 moduleEnd = *(uintptr_t* )(mbd->modulesAddress + 4);
-	 moduleName = *(const char** )(mbd->modulesAddress + 8);
-	 
-	 printf("Kernel module found at: %p\n", (void* )moduleStart);
-	 printf("Kernel module ends at: %p\n", (void *)moduleName);
-	 printf("Module string: %s\n", moduleName);
-
-	 unsigned long moduleSize = moduleEnd - moduleStart;
-
-	 printf("Module size: %lu\n", moduleSize);
-      }
-
-   }
 
    printf("Parsing multiboot (%p) memory map: 0x%0x-0x%0x\n", mbd,
 	  mb->memoryMapAddress,

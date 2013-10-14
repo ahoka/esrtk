@@ -44,4 +44,17 @@ T roundDown(T num, uint32_t size)
    return reinterpret_cast<T>(rounded);
 }
 
+template <class T>
+T max(T first, T second)
+{
+   if (first > second)
+   {
+      return first;
+   }
+   else
+   {
+      return second;
+   }
+}
+
 #endif
