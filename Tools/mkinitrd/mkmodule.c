@@ -7,7 +7,7 @@ typedef struct
 {
    uint32_t magic;
    uint32_t type;
-   uint32_t length;
+   uint32_t size;
    uint32_t checksum;
 } __attribute__((packed)) ModuleHeader;
 
@@ -71,7 +71,7 @@ main(int argc, char** argv)
 
    header.magic = 0x30646f4d;
    header.type = 0;
-   header.length = module_size;
+   header.size = module_size;
    header.checksum = 0;
 
    fwrite(&header, sizeof(header), 1, ofile);

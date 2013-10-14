@@ -110,6 +110,8 @@ Modules::handleModules()
       {
 	 printf("Module type: 0x%x\n", h->type);
       }
+
+      printf("Module size: %lu\n", (unsigned long )h->size);
    }
 }
 

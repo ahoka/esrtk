@@ -22,7 +22,7 @@ public:
    {
       uint32_t magic;
       uint32_t type;
-      uint32_t length;
+      uint32_t size;
       uint32_t checksum;
    } __attribute__((packed));
 
