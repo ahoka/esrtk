@@ -28,7 +28,7 @@ public:
 
    enum
    {
-      Magic = 0x4d6f6430
+      Magic = 0x30646f4d
    };
 
    enum Type
