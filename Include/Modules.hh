@@ -11,23 +11,37 @@ extern uintptr_t __end_modules;
 class Modules
 {
 public:
-   class Module
+   struct Module
    {
-   public:
-      Module() :
-	 address(0),
-	 size(0)
-      {
-	 // empty
-      }
-
       uintptr_t address;
       std::size_t size;
       char name[PathMax];
    };
 
+   struct ModuleHeader
+   {
+      uint32_t magic;
+      uint32_t type;
+      uint32_t length;
+      uint32_t checksum;
+   } __attribute__((packed));
+
+   enum
+   {
+      Magic = 0x4d6f6430
+   };
+
+   enum Type
+   {
+      Ramdisk = 0,
+      NumberOfTypes
+   };
+
+   static const char* typeToTypename[NumberOfTypes];
+
    static void init();
    static void add(uintptr_t start, std::size_t size, const char* name);
+   static void handleModules();
 
 private:
    Modules();

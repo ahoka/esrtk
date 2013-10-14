@@ -42,7 +42,6 @@ Memory::init()
    freePages.init();
 
    uintptr_t firstUsableMemory = max((uintptr_t )&__end_kernel, __end_modules);
-
    uintptr_t firstFreePage = roundTo<uintptr_t>(firstUsableMemory, PageSize) + PageSize * PageFrameCount;
 
    // init page clusters

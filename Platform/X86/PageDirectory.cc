@@ -2,6 +2,7 @@
 #include <Templates.hh>
 #include <Memory.hh>
 #include <PageFrameAllocator.hh>
+#include <Modules.hh>
 
 #include <X86/Memory.hh>
 #include <X86/PageDirectory.hh>
@@ -61,7 +62,9 @@ PageDirectory::init()
    uintptr_t first = KernelLoadAddress;
 
    // kernel + initial page directory entries + physmap bootstrap page
-   uintptr_t last = (roundTo<uintptr_t>((uintptr_t )&__end_kernel, PageSize)
+
+   uintptr_t highestKernelAddress = max((uintptr_t )&__end_kernel, __end_modules);
+   uintptr_t last = (roundTo<uintptr_t>(highestKernelAddress, PageSize)
 		     + PageSize * PageFrameCount + PageSize) - KernelVirtualBase;
 
    printf("Creating kernel memory mapping: %p-%p\n", (void* )first, (void* )last);

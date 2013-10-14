@@ -1,8 +1,10 @@
 #include <PageFrameAllocator.hh>
 #include <Debug.hh>
 #include <Parameters.hh>
-#include <X86/Memory.hh>
+#include <Modules.hh>
 #include <Templates.hh>
+
+#include <X86/Memory.hh>
 
 #include <cstdio>
 
@@ -55,7 +57,9 @@ PageFrameAllocator::init()
       bitmap[i] = 0;
    }
 
-   start = roundTo<char*>((char* )&__end_kernel, PageSize);
+   // ugly
+   uintptr_t end = max((uintptr_t )&__end_kernel, __end_modules + KernelVirtualBase);
+   start = (char* )roundTo(end, PageSize);
 
-   printf("Page frame allocator pool from %p to %p (end of .bss is at %p)\n", start, start + PageFrameCount * PageSize, (void* )&__end_bss);
+   printf("Page frame allocator pool: %p-%p\n", start, start + PageFrameCount * PageSize);
 }

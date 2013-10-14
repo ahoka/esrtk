@@ -14,6 +14,11 @@ uintptr_t __end_modules = 0u;
 unsigned int Modules::nextFree = 0;
 Modules::Module Modules::list[ModulesMax];
 
+const char* Modules::typeToTypename[NumberOfTypes] =
+{
+   "Ramdisk"
+};
+
 void
 Modules::init()
 {
@@ -32,8 +37,8 @@ Modules::init()
 		(void* )(moduleStart + KernelVirtualBase));
 	 
 	 printf("Kernel module ends at: %p (%p)\n",
-		(void *)moduleName,
-		(void *)(moduleName + KernelVirtualBase));
+		(void *)moduleEnd,
+		(void *)(moduleEnd + KernelVirtualBase));
 
 	 printf("Module string: %s\n", moduleName);
 
@@ -80,3 +85,31 @@ Modules::add(uintptr_t address, std::size_t size, const char* name)
 
    nextFree++;
 }
+
+void
+Modules::handleModules()
+{
+   for (unsigned int i = 0; i < nextFree; i++)
+   {
+      printf("Module name: %s\n", list[i].name);
+
+      ModuleHeader* h = reinterpret_cast<ModuleHeader*>(list[i].address);
+
+      printf("%p %p\n", h, (void*)list[i].address);
+
+      if (h->magic != Modules:: Magic)
+      {
+	 printf("Module is invalid! Magic: 0x%x\n", h->magic);
+      }
+
+      if (h->type < NumberOfTypes)
+      {
+	 printf("Module type: %s\n", typeToTypename[h->type]);
+      }
+      else
+      {
+	 printf("Module type: 0x%x\n", h->type);
+      }
+   }
+}
+

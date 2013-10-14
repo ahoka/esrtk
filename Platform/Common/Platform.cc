@@ -2,6 +2,7 @@
 #include <DriverManager.hh>
 #include <Pci.hh>
 #include <Clock.hh>
+#include <Modules.hh>
 
 #include <Platform.hh>
 
@@ -20,4 +21,5 @@ Platform::init()
    Clock::probeAndInit();
    Pci::init();
    DriverManager::probeAndInit();
+   Modules::handleModules();
 }
