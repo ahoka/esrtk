@@ -65,18 +65,27 @@ public:
       T* lastItem;
    };
 
-   class DoublyLinkedListIterator : public Iterator<T>
+   class DoublyLinkedListIterator
    {
-   public:
+   private:
       DoublyLinkedListIterator(DoublyLinkedList* owningList)
 	 : list(owningList),
-           currentItem(list->begin())
+           currentItem(list->firstItem())
       {
       }
 
-      T& operator ++()
+      DoublyLinkedListIterator(DoublyLinkedList* owningList, T* pointAt)
+	 : list(owningList),
+           currentItem(pointAt)
+      {
+      }
+
+   public:
+      DoublyLinkedListIterator& operator ++()
       {
          currentItem = currentItem->next;
+
+         return *this;
       }
 
       T& operator *()
@@ -84,7 +93,7 @@ public:
          return *currentItem;
       }
 
-      bool operator !=(Iterator<T>& other)
+      bool operator !=(DoublyLinkedListIterator& other)
       {
 	 return currentItem != other.currentItem;
       }
@@ -92,6 +101,8 @@ public:
    private:
       DoublyLinkedList* list;
       T* currentItem;
+
+      friend class DoublyLinkedList<T>;
    };
 
    void insertLast(T* item)
@@ -112,6 +123,16 @@ public:
    operator DoublyLinkedListRange()
    {
       return range();
+   }
+
+   DoublyLinkedListIterator begin()
+   {
+      return DoublyLinkedListIterator(this);
+   }
+
+   DoublyLinkedListIterator end()
+   {
+      return DoublyLinkedListIterator(this, lastItem());
    }
 
 private:

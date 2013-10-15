@@ -5,9 +5,11 @@ template <class T>
 class Iterator
 {
 public:
-   virtual T& operator ++() = 0;
+   virtual ~Iterator() = 0;
+
+   virtual Iterator& operator ++() = 0;
    virtual T& operator *() = 0;
-   bool operator !=(Iterator<T>&) = 0;
+   virtual bool operator !=(Iterator<T>&) = 0;
 };
 
 #endif

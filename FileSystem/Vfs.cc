@@ -1,6 +1,24 @@
 #include <FileSystem/Vfs.hh>
 #include <FileSystem/VfsStats.hh>
 
+DoublyLinkedList<Vfs> Vfs::list;
+
+Vfs::Vfs()
+{
+   list.insertLast(this);
+}
+
+Vfs::~Vfs()
+{
+   for (auto vfs : list)
+   {
+      if (&vfs == this)
+      {
+//         vfs.remove();
+      }
+   }
+}
+
 Vfs::ErrorCode Vfs::mount(const char* /*path*/)
 {
    return ErrorCode::Ok;
