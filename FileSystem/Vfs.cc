@@ -1,3 +1,5 @@
+#include <Debug.hh>
+
 #include <FileSystem/Vfs.hh>
 #include <FileSystem/VfsStats.hh>
 
@@ -10,13 +12,15 @@ Vfs::Vfs()
 
 Vfs::~Vfs()
 {
-   for (auto vfs : list)
-   {
-      if (&vfs == this)
-      {
-//         vfs.remove();
-      }
-   }
+   KASSERT(false);
+
+//    for (auto vfs : list)
+//    {
+//       if (&vfs == this)
+//       {
+// //         vfs.remove();
+//       }
+//    }
 }
 
 Vfs::ErrorCode Vfs::mount(const char* /*path*/)
