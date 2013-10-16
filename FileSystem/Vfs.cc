@@ -23,9 +23,19 @@ Vfs::~Vfs()
 //    }
 }
 
-Vfs::ErrorCode Vfs::mount(const char* /*path*/)
+Vfs::ErrorCode Vfs::mount(const char* path)
 {
-   return ErrorCode::Ok;
+   ErrorCode error;
+
+   for (auto& fs : list)
+   {
+      if ((error = fs.mount(path)) != ErrorCode::UnknownFsType)
+      {
+         return error;
+      }
+   }
+
+   return ErrorCode::UnknownFsType;
 }
 
 Vfs::ErrorCode Vfs::umount()

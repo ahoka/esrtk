@@ -15,7 +15,7 @@ public:
    enum class ErrorCode
    {
       Ok,
-      Error
+      UnknownFsType
    };
 
    ErrorCode mount(const char* path);
@@ -23,7 +23,7 @@ public:
    ErrorCode stat(VfsStats&);
 
 private:
-   Vfs(const Vfs&) {}
+   Vfs(const Vfs&) = delete;
 
    static DoublyLinkedList<Vfs> list;
 };
