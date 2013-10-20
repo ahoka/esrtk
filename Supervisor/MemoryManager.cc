@@ -61,9 +61,16 @@ MemoryManager::allocate(std::size_t size)
       {
 	 freeList.remove(&s);
 	 s.markAllocated();
+#ifdef DEBUG
+	 printf("Debug: allocating from freelist\n");
+#endif
 	 return reinterpret_cast<void*>(s.getAddress());
       }
    }
+
+#ifdef DEBUG
+   printf("Debug: allocating from heap\n");
+#endif
 
    std::size_t rsize = roundTo(size + sizeof(Segment), PageSize);
    Segment* segment = reinterpret_cast<Segment*>(allocateBackend(rsize));
@@ -82,6 +89,10 @@ MemoryManager::deallocate(void *data)
 
    KASSERT(segment->isAllocated());
    segment->markAllocated();
+
+#ifdef DEBUG
+   printf("Putting to freelist\n");
+#endif
 
    freeList.insertLast(segment);
 }

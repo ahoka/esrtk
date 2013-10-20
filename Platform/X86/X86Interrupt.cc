@@ -6,6 +6,8 @@
 #include <Power.hh>
 #include <Debug.hh>
 
+#include <StackTrace.hh>
+
 extern "C" void defaultIsr(InterruptFrame* frame);// __attribute__((noreturn));
 extern "C" void isrDispatcher(InterruptFrame* frame);// __attribute__((noreturn));
 

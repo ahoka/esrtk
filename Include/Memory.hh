@@ -1,6 +1,7 @@
 #ifndef MEMORY_HH
 #define MEMORY_HH
 
+#include <Debug.hh>
 #include <Parameters.hh>
 
 #include <cstdint>
@@ -38,10 +39,7 @@ public:
       Invalid = ~0UL
    };
 
-   PhysicalPage() :
-      prev(0),
-      next(0),
-      address(Invalid)
+   PhysicalPage()
    {
       // empty
    }
@@ -101,9 +99,9 @@ public:
 
    void insert(PhysicalPage* page)
    {
-      PhysicalPage* oldNext = head.next;
+      KASSERT(page != 0);      
 
-      //      printf("insert (%p): p:%p on:%p\n", this, page, oldNext);
+      PhysicalPage* oldNext = head.next;
 
       page->next = head.next;
       head.next = page;
@@ -114,10 +112,10 @@ public:
 
    void remove(PhysicalPage* page)
    {
+      KASSERT(page != 0);
+
       PhysicalPage* oldPrev = page->prev;
       PhysicalPage* oldNext = page->next;
-
-      //      printf("remove(%p): p:%p op:%p on:%p\n", this, page, oldPrev, oldNext);
 
       oldPrev->next = oldNext;
       oldNext->prev = oldPrev;
