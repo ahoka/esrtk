@@ -18,6 +18,12 @@ MemoryManager::operator new(std::size_t /*size*/, void *placement)
    return placement;
 }
 
+MemoryManager::Segment*
+MemoryManager::headerOf(void* data)
+{
+   return reinterpret_cast<Segment*>(uintptr_t(data) - sizeof(Segment));
+}
+
 void
 MemoryManager::init()
 {
@@ -38,7 +44,7 @@ MemoryManager::get()
 void*
 MemoryManager::allocateBackend(std::size_t size)
 {
-   std::size_t rsize = roundTo<uintptr_t>(size, PageSize);
+   std::size_t rsize = roundTo(size, PageSize);
    void* data = reinterpret_cast<void*>(Memory::sbrk(rsize));
 
    KASSERT(data != 0);
@@ -49,13 +55,33 @@ MemoryManager::allocateBackend(std::size_t size)
 void*
 MemoryManager::allocate(std::size_t size)
 {
-   std::size_t rsize = roundTo<uintptr_t>(size, PageSize);
+   for (auto& s : freeList)
+   {
+      if (s.getSize() >= size)
+      {
+	 freeList.remove(&s);
+	 s.markAllocated();
+	 return reinterpret_cast<void*>(s.getAddress());
+      }
+   }
 
-   return allocateBackend(rsize);
+   std::size_t rsize = roundTo(size + sizeof(Segment), PageSize);
+   Segment* segment = reinterpret_cast<Segment*>(allocateBackend(rsize));
+
+   segment->setSize(rsize - sizeof(Segment));
+   segment->setAddress(reinterpret_cast<uintptr_t>(segment + 1));
+   segment->markAllocated();
+
+   return reinterpret_cast<void*>(segment->getAddress());
 }
 
 void
-MemoryManager::deallocate(void */*data*/)
+MemoryManager::deallocate(void *data)
 {
-   return;
+   Segment* segment = headerOf(data);
+
+   KASSERT(segment->isAllocated());
+   segment->markAllocated();
+
+   freeList.insertLast(segment);
 }

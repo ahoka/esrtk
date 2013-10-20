@@ -115,6 +115,11 @@ public:
       head.insertAfter(item);
    }
 
+   void remove(T* item)
+   {
+      item->unlink();
+   }
+
    DoublyLinkedListRange range()
    {
       return DoublyLinkedListRange(this);

@@ -46,6 +46,14 @@ private:
       next = n;
    }
 
+   void unlink()
+   {
+      prev->next = next;
+      next->prev = prev;
+
+      prev = next = 0; // XXX
+   }
+
    friend class DoublyLinkedList<T>;
 
    T* prev;

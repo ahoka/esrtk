@@ -35,7 +35,8 @@ private:
    public:
       Segment() :
 	 address(0),
-	 size(0)
+	 size(0),
+	 allocated(false)
       {
 	 // empty
       }
@@ -50,10 +51,41 @@ private:
 	 address = newAddress;
       }
 
+      uintptr_t getSize()
+      {
+	 return size;
+      }
+
+      uintptr_t getAddress()
+      {
+	 return address;
+      }
+
+      bool isAllocated()
+      {
+	 return allocated;
+      }
+      
+      void markAllocated()
+      {
+	 allocated = true;
+      }
+
+      void markUnallocated()
+      {
+	 allocated = false;
+      }
+
    private:
       uintptr_t address;
       uintptr_t size;
+      bool allocated;
+
+      // Segment* prevSegment;
+      // Segment* nextSegment;
    };
+
+   static Segment* headerOf(void* segment);
 
    DoublyLinkedList<Segment> freeList;
 
