@@ -387,6 +387,7 @@ vprintf(const char* format, va_list ap)
 		  // did i mention i love fallthrough?
 		  break;
 	       case 'l':
+               case 'z':
 		  if (modifiers & PRINTF_MODIFIER_LONGLONG ||
 		      modifiers & PRINTF_MODIFIER_SHORT)
 		  {

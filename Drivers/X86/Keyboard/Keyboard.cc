@@ -10,6 +10,7 @@
 // XXX debug hack
 #include <Time.hh>
 #include <Power.hh>
+#include <MemoryManager.hh>
 
 Keyboard::Keyboard()
 {
@@ -78,7 +79,7 @@ Keyboard::handleInterrupt()
             putchar('\t');
             break;
          case Scancodes::F1:
-            putchar('\n');
+            printf("Interrupt statistics:\n");
             Interrupt::printStatistics();
             break;
          case Scancodes::F2:
@@ -90,6 +91,10 @@ Keyboard::handleInterrupt()
                    (unsigned long )(uptime % 1000));
             break;
          }
+         case Scancodes::F3:
+            putchar('\n');
+            MemoryManager::get().printStatistics();
+            break;
          case Scancodes::F9:
             Power::reboot();
             //break;

@@ -4,6 +4,8 @@
 #include <DoubleEndedRange.hh>
 #include <Iterator.hh>
 
+#include <cstddef>
+
 template <class T>
 class DoublyLinkedList
 {
@@ -108,16 +110,19 @@ public:
    void insertLast(T* item)
    {
       head.getPrev()->insertAfter(item);
+      count++;
    }
 
    void insertFirst(T* item)
    {
       head.insertAfter(item);
+      count++;
    }
 
    void remove(T* item)
    {
       item->unlink();
+      count--;
    }
 
    DoublyLinkedListRange range()
@@ -140,6 +145,11 @@ public:
       return DoublyLinkedListIterator(this, lastItem());
    }
 
+   std::size_t getCount()
+   {
+      return count;
+   }
+
 private:
    T* firstItem()
    {
@@ -151,6 +161,7 @@ private:
       return &head;
    }
 
+   std::size_t count;
    T head;
 };
 

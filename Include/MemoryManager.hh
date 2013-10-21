@@ -20,6 +20,7 @@ public:
 
    void* allocate(std::size_t size);
    void deallocate(void *data);
+   void printStatistics();
 
    static MemoryManager& get();
 
@@ -83,7 +84,7 @@ private:
 
       // Segment* prevSegment;
       // Segment* nextSegment;
-   };
+   } __attribute__((aligned(16)));
 
    static Segment* headerOf(void* segment);
 

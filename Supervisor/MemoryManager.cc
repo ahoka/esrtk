@@ -96,3 +96,16 @@ MemoryManager::deallocate(void *data)
 
    freeList.insertLast(segment);
 }
+
+void
+MemoryManager::printStatistics()
+{
+   printf("Allocator statistics:\n");
+   printf("Free segments: %zu\n", freeList.getCount());
+
+   for (auto& s : freeList)
+   {
+      printf("Segment %p: size: %zu, address: %p\n", &s, s.getSize(), (void* )s.getAddress());
+   }
+}
+
