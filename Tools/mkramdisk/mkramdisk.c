@@ -73,8 +73,6 @@ copy_file(FILE *ofile, const char *filename, uint32_t *size)
 int
 main(int argc, char** argv)
 {
-   int error = 0;
-
    if (argc < 3)
    {
       usage();
@@ -87,18 +85,17 @@ main(int argc, char** argv)
    if (ofile == NULL)
    {
       perror("Can't open output file");
-      error = errno;
 
-      goto out;
+      return EXIT_FAILURE;
    }
 
    DIR* dir = opendir(argv[2]);
    if (dir == NULL)
    {
       perror("Can't open input directory");
-      error = errno;
+      fclose(ofile);
 
-      goto out2;
+      return EXIT_FAILURE;
    }
 
    char tmpfilename[PATH_MAX];
@@ -107,9 +104,7 @@ main(int argc, char** argv)
    if (tmpfd_header == -1)
    {
       perror("Can't create tmp file");
-      error = errno;
-      
-      goto out3;
+      return EXIT_FAILURE;
    }
 
    snprintf(tmpfilename, sizeof(tmpfilename), "%s/mkramdisk-content-XXXXXX", "/tmp");
@@ -117,9 +112,7 @@ main(int argc, char** argv)
    if (tmpfd_content == -1)
    {
       perror("Can't create tmp file");
-      error = errno;
-      
-      goto out3;
+      return EXIT_FAILURE;
    }
 
    FILE *tmpfile_header = fdopen(tmpfd_header, "r+");
@@ -191,10 +184,8 @@ main(int argc, char** argv)
 
    fclose(tmpfile_header);
    fclose(tmpfile_content);
-  out3:
    closedir(dir);
-  out2:
    fclose(ofile);
-  out:
+
    return error;
 }
