@@ -1,7 +1,7 @@
 CXX=		clang++
 CXXFLAGS=	-std=c++11 -O2 -Wall -Wextra -Werror
 
-SRC=		File.cc Directory.cc
+SRC=		File.cc Directory.cc DirectoryEntry.cc
 
 all: libutility.so
 
