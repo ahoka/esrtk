@@ -4,20 +4,77 @@
 
 using namespace Utility;
 
-Directory::Directory(const char* path_)
-   : path(path_),
-     dir(0),
-     lastError(0)
+Directory::Directory(std::string path_)
+{
+   char buf[PATH_MAX];
+
+   path = realpath(path_.c_str(), buf);
+}
+
+Directory::Directory(const Directory& other)
+   : path(other.path)
 {
 }
 
+Directory::DirectoryIterator
+Directory::begin()
+{
+   return DirectoryIterator(path);
+}
+
+Directory::DirectoryIterator
+Directory::end()
+{
+   return DirectoryIterator();
+}
+
+Directory::DirectoryIterator::DirectoryIterator()
+   : last(0)
+{
+}
+
+Directory::DirectoryIterator::DirectoryIterator(std::string path_)
+   : path(path_),
+     last(0)
+{
+   if (open())
+   {
+      last = readdir(dir);
+   }
+}
+
+Directory::DirectoryIterator::~DirectoryIterator()
+{
+   close();
+}
+
 bool
-Directory::open()
+Directory::DirectoryIterator::operator!=(const Directory::DirectoryIterator& other)
+{
+   return last != other.last;
+}
+
+DirectoryEntry
+Directory::DirectoryIterator::operator*()
+{
+   return DirectoryEntry(*last, path);
+}
+
+void
+Directory::DirectoryIterator::operator++()
+{
+   if (last != 0)
+   {
+      last = readdir(dir);
+   }
+}
+
+bool
+Directory::DirectoryIterator::open()
 {
    dir = opendir(path.c_str());
    if (dir == 0)
    {
-      lastError = errno;
       return false;
    }
 
@@ -25,20 +82,12 @@ Directory::open()
 }
 
 bool
-Directory::close()
+Directory::DirectoryIterator::close()
 {
    if (closedir(dir) == -1)
    {
-      lastError = errno;
       return false;
    }
 
    return true;
 }
-
-int
-Directory::getLastError()
-{
-   return lastError;
-}
-

@@ -10,14 +10,16 @@ namespace Utility
 class DirectoryEntry
 {
 public:
-   DirectoryEntry(struct dirent* dentry);
+   DirectoryEntry(dirent de, std::string parent);
 
+   std::string getPath();
    std::string getName();
    bool isFile();
    bool isDirectory();
 
 public:
-   struct dirent* dent;
+   struct dirent dent;
+   std::string directory;
 };
 
 }

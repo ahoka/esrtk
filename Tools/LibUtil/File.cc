@@ -4,7 +4,7 @@
 
 using namespace Utility;
 
-File::File(const char *path_)
+File::File(std::string path_)
    : path(path_),
      lastError(0)
 {

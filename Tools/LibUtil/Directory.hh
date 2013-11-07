@@ -5,7 +5,9 @@
 #include <string>
 #include <cstdio>
 
-#include <dirent.h>
+//#include <dirent.h>
+struct dirent;
+#include "DirectoryEntry.hh"
 
 namespace Utility
 {
@@ -13,15 +15,34 @@ namespace Utility
 class Directory
 {
 public:
-   Directory(const char* path);
-   bool open();
-   bool close();
+   Directory(std::string path_);
+   Directory(const Directory& other);
 
-   int getLastError();
+   class DirectoryIterator
+   {
+   public:
+      DirectoryIterator();
+      DirectoryIterator(std::string path);
+      ~DirectoryIterator();
+
+      bool operator!=(const Directory::DirectoryIterator& other);
+      DirectoryEntry operator*();
+      void operator++();
+
+   private:
+      bool open();
+      bool close();
+
+      DIR* dir;
+      std::string path;
+      dirent* last;
+   };
+
+   DirectoryIterator begin();
+   DirectoryIterator end();
+   
 private:
    std::string path;
-   DIR* dir;
-   int lastError;
 };
 
 }

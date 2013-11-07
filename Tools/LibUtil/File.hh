@@ -10,7 +10,7 @@ namespace Utility
 class File
 {
 public:
-   File(const char *path);
+   File(std::string path);
    File(File& other); // loses ownership on copy!
    ~File();
 

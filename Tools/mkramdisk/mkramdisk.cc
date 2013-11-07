@@ -1,7 +1,3 @@
-#ifdef __linux__
-# define _GNU_SOURCE
-#endif
-
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
@@ -10,6 +6,10 @@
 #include <dirent.h>
 #include <string.h>
 #include <unistd.h>
+
+#include <File.hh>
+#include <Directory.hh>
+#include <DirectoryEntry.hh>
 
 /*
   0: Magic number
@@ -23,12 +23,12 @@ enum
    RamdiskMagic = 0xbadbabe
 };
 
-typedef struct
+struct  FileDescriptor
 {
    uint8_t name[32];
    uint32_t offset;
    uint32_t size;
-} __attribute__((packed)) FileDescriptor;
+} __attribute__((packed));
 
 void
 usage()
@@ -80,76 +80,64 @@ main(int argc, char** argv)
       return EXIT_FAILURE;
    }
 
-   FILE* ofile = fopen(argv[1], "w");
+//   FILE* ofile = fopen(argv[1], "w");
+   Utility::File outFile(argv[1]);
+   Utility::Directory dir(argv[2]);
 
-   if (ofile == NULL)
-   {
-      perror("Can't open output file");
+   // char tmpfilename[PATH_MAX];
+   // snprintf(tmpfilename, sizeof(tmpfilename), "%s/mkramdisk-superblock-XXXXXX", "/tmp");
+   // int tmpfd_header = mkstemp(tmpfilename);
+   // if (tmpfd_header == -1)
+   // {
+   //    perror("Can't create tmp file");
+   //    return EXIT_FAILURE;
+   // }
 
-      return EXIT_FAILURE;
-   }
+   // snprintf(tmpfilename, sizeof(tmpfilename), "%s/mkramdisk-content-XXXXXX", "/tmp");
+   // int tmpfd_content = mkstemp(tmpfilename);
+   // if (tmpfd_content == -1)
+   // {
+   //    perror("Can't create tmp file");
+   //    return EXIT_FAILURE;
+   // }
 
-   DIR* dir = opendir(argv[2]);
-   if (dir == NULL)
-   {
-      perror("Can't open input directory");
-      fclose(ofile);
+   // FILE *tmpfile_header = fdopen(tmpfd_header, "r+");
+   // if (tmpfile_header == NULL)
+   // {
+   //    perror("Can't open tmp file");
+   //    error = errno;
 
-      return EXIT_FAILURE;
-   }
+   //    goto out3;
+   // }
 
-   char tmpfilename[PATH_MAX];
-   snprintf(tmpfilename, sizeof(tmpfilename), "%s/mkramdisk-superblock-XXXXXX", "/tmp");
-   int tmpfd_header = mkstemp(tmpfilename);
-   if (tmpfd_header == -1)
-   {
-      perror("Can't create tmp file");
-      return EXIT_FAILURE;
-   }
+   // FILE *tmpfile_content = fdopen(tmpfd_content, "r+");
+   // if (tmpfile_content == NULL)
+   // {
+   //    perror("Can't open tmp file");
+   //    error = errno;
 
-   snprintf(tmpfilename, sizeof(tmpfilename), "%s/mkramdisk-content-XXXXXX", "/tmp");
-   int tmpfd_content = mkstemp(tmpfilename);
-   if (tmpfd_content == -1)
-   {
-      perror("Can't create tmp file");
-      return EXIT_FAILURE;
-   }
+   //    goto out3;
+   // }
 
-   FILE *tmpfile_header = fdopen(tmpfd_header, "r+");
-   if (tmpfile_header == NULL)
-   {
-      perror("Can't open tmp file");
-      error = errno;
+   // if (chdir(argv[2]) == -1)
+   // {
+   //    perror("Can't chdir to input directory");
+   //    error = errno;
 
-      goto out3;
-   }
-
-   FILE *tmpfile_content = fdopen(tmpfd_content, "r+");
-   if (tmpfile_content == NULL)
-   {
-      perror("Can't open tmp file");
-      error = errno;
-
-      goto out3;
-   }
-
-   if (chdir(argv[2]) == -1)
-   {
-      perror("Can't chdir to input directory");
-      error = errno;
-
-      goto out3;
-   }
+   //    goto out3;
+   // }
 
    uint32_t offset = 0;
-   char namebuf[32];
-   struct dirent* dent;
-   while ((dent = readdir(dir)) != NULL)
+//   char namebuf[32];
+//   struct dirent* dent;
+//   while ((dent = readdir(dir)) != NULL)
+   for (auto entry : dir)
    {
-      if (strcmp(dent->d_name, ".") && strcmp(dent->d_name, ".."))
+//      if (strcmp(dent->d_name, ".") && strcmp(dent->d_name, ".."))
+      if (entry.getName() != "." && entry.getName() != "..")
       {
          uint32_t size;
-         error = copy_file(tmpfile_content, dent->d_name, &size);
+         error = copy_file(tmpfile_content, entry.getPath(), &size);
          if (error != 0)
          {
             break;
