@@ -45,7 +45,7 @@ copyFile(Utility::File& outputFile, std::string filename, uint32_t& size)
    Utility::File inputFile(filename);
    if (!inputFile.open())
    {
-      fprintf(stderr, "Can't open input file: %s\n", filename.data());
+      fprintf(stderr, "Can't open input file %s: %s\n", filename.c_str(), strerror(inputFile.getLastError()));
 
       return inputFile.getLastError();
    }
@@ -65,7 +65,7 @@ copyFile(Utility::File& outputFile, std::string filename, uint32_t& size)
       
    if (inputFile.error())
    {
-      fprintf(stderr, "Reading from %s failed\n", filename.data());
+      fprintf(stderr, "Reading from %s failed\n", filename.c_str());
       return inputFile.getLastError();
    }
 
@@ -84,10 +84,10 @@ main(int argc, char** argv)
       return EXIT_FAILURE;
    }
 
-//   FILE* ofile = fopen(argv[1], "w");
    Utility::File outFile(argv[1]);
    if (!outFile.open())
    {
+      fprintf(stderr, "Can't open file: %s\n", outFile.getPath().c_str());
       return outFile.getLastError();
    }
 
@@ -96,12 +96,14 @@ main(int argc, char** argv)
    Utility::File tmpContentFile("content.tmp");
    if (!tmpContentFile.open())
    {
+      fprintf(stderr, "Can't open file: %s\n", tmpContentFile.getPath().c_str());
       return tmpContentFile.getLastError();
    }
 
    Utility::File tmpHeaderFile("header.tmp");
    if (!tmpHeaderFile.open())
    {
+      fprintf(stderr, "Can't open file: %s\n", tmpHeaderFile.getPath().c_str());
       return tmpHeaderFile.getLastError();
    }
 
@@ -120,6 +122,7 @@ main(int argc, char** argv)
    for (auto entry : dir)
    {
 //      if (strcmp(dent->d_name, ".") && strcmp(dent->d_name, ".."))
+      printf("File: %s\n", entry.getName().c_str());
       if (entry.getName() != "." && entry.getName() != "..")
       {
          uint32_t size;
@@ -130,10 +133,10 @@ main(int argc, char** argv)
          }
 
          offset += size;
-         printf("ramdisk:%s (%lu:%lu)\n", entry.getName().data(), (unsigned long )offset, (unsigned long )size);
+         printf("ramdisk:%s (%lu:%lu)\n", entry.getName().c_str(), (unsigned long )offset, (unsigned long )size);
 
          memset(namebuf, 0, sizeof(namebuf));
-         strcpy(namebuf, entry.getName().data());
+         strcpy(namebuf, entry.getName().c_str());
 
          tmpHeaderFile.write(namebuf, 32, 1);
          tmpHeaderFile.write(&offset, sizeof(offset), 1);

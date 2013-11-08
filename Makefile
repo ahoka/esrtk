@@ -17,7 +17,8 @@ endif
 AS=		$(CROSS)as
 LD=		$(CROSS)ld
 SIZE=		$(CROSS)size
-QEMU=		qemu-system-i386
+#QEMU=		qemu-system-i386
+QEMU=		qemu
 
 LDFLAGS=	-melf_i386
 

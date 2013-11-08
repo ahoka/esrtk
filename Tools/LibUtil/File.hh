@@ -28,6 +28,16 @@ public:
    int getLastError();
    bool isOpen();
 
+   std::string getPath();
+
+   enum Mode
+   {
+      Read,
+      Write,
+      Create,
+      Append
+   };
+
 private:
    std::string path;
    FILE* file;

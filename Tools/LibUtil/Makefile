@@ -1,4 +1,4 @@
-CXX=		clang++
+CXX?=		clang++
 CXXFLAGS=	-std=c++11 -O2 -Wall -Wextra -Werror -fPIC
 
 SRC=		File.cc Directory.cc DirectoryEntry.cc TempFile.cc
@@ -19,4 +19,4 @@ libutility_s.a: $(SRC)
 	ar rcs libutility_s.a $(OBJ)
 
 clean:
-	-rm libutility.so libutility_s.a
+	-rm libutility.so libutility_s.a $(OBJ)

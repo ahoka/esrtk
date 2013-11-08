@@ -9,6 +9,7 @@ File::File(std::string path_)
      file(0),
      lastError(0)
 {
+   fprintf(stderr, "File::File(%s)\n", path.c_str());
 }
 
 File::File(File& other)
@@ -34,12 +35,19 @@ File::~File()
    }
 }
 
+std::string
+File::getPath()
+{
+   return path;
+}
+
 bool
 File::open(const char* mode)
 {
    file = fopen(path.c_str(), mode);
+   fprintf(stderr, "File::open(%s) -> %p\n", path.c_str(), file);
 
-   if (file != 0)
+   if (file == 0)
    {
       lastError = errno;
       return false;
