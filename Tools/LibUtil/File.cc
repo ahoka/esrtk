@@ -6,6 +6,7 @@ using namespace Utility;
 
 File::File(std::string path_)
    : path(path_),
+     file(0),
      lastError(0)
 {
 }
@@ -90,6 +91,26 @@ File::write(const void *ptr, size_t size, size_t nmemb)
 }
 
 bool
+File::seek(long offset)
+{
+   int r = fseek(file, offset, SEEK_SET);
+   if (r == -1)
+   {
+      lastError = errno;
+
+      return false;
+   }
+
+   return true;
+}
+
+void
+File::rewind()
+{
+   ::rewind(file);
+}
+
+bool
 File::eof()
 {
    return feof(file);
@@ -105,4 +126,10 @@ bool
 File::isOpen()
 {
    return file != 0;
+}
+
+int
+File::getLastError()
+{
+   return lastError;
 }

@@ -1,12 +1,22 @@
 CXX=		clang++
-CXXFLAGS=	-std=c++11 -O2 -Wall -Wextra -Werror
+CXXFLAGS=	-std=c++11 -O2 -Wall -Wextra -Werror -fPIC
 
-SRC=		File.cc Directory.cc DirectoryEntry.cc
+SRC=		File.cc Directory.cc DirectoryEntry.cc TempFile.cc
+OBJ=		$(SRC:.cc=.o)
 
-all: libutility.so
+all: libutility.so libutility_s.a
 
-libutility.so: $(SRC)
-	$(CXX) -shared -fPIC $(CXXFLAGS) -o libutility.so $(SRC)
+%.o: %.cc
+	@echo Compiling $<
+	$(CXX) $(CXXFLAGS) -c -o $*.o $*.cc
+
+libutility.so: $(OBJ)
+	@echo Linking dynamic library $<
+	$(CXX) -shared $(CXXFLAGS) -o libutility.so $(OBJ)
+
+libutility_s.a: $(SRC)
+	@echo Linking static library $<
+	ar rcs libutility_s.a $(OBJ)
 
 clean:
-	-rm libutility.so
+	-rm libutility.so libutility_s.a

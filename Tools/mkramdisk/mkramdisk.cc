@@ -37,35 +37,37 @@ usage()
 }
 
 int
-copy_file(FILE *ofile, const char *filename, uint32_t *size)
+copyFile(Utility::File& outputFile, std::string filename, uint32_t& size)
 {
    char buffer[512];
    int r;
 
-   FILE* ifile = fopen(filename, "r");
-   if (ifile == NULL)
+   Utility::File inputFile(filename);
+   if (!inputFile.open())
    {
-      perror("Can't open input file");
+      fprintf(stderr, "Can't open input file: %s\n", filename.data());
 
-      return errno;
+      return inputFile.getLastError();
    }
 
-   *size = 0;
-   while ((r = fread(buffer, 1, sizeof(buffer), ifile)))
+   size = 0;
+   while ((r = inputFile.read(buffer, 1, sizeof(buffer))))
    {
-      *size += r;
-      fwrite(buffer, r, 1, ofile);
-   }
+      size += r;
+      outputFile.write(buffer, r, 1);
 
-   if (ferror(ofile) || ferror(ifile))
+      if (outputFile.error())
+      {
+         fprintf(stderr, "Wrinting to image failed\n");
+         return outputFile.getLastError();
+      }
+   }
+      
+   if (inputFile.error())
    {
-      perror("Copying file to image failed");
-      fclose(ifile);
-   
-      return errno;
+      fprintf(stderr, "Reading from %s failed\n", filename.data());
+      return inputFile.getLastError();
    }
-
-   fclose(ifile);
 
    return 0;
 }
@@ -73,6 +75,8 @@ copy_file(FILE *ofile, const char *filename, uint32_t *size)
 int
 main(int argc, char** argv)
 {
+   int error = 0;
+
    if (argc < 3)
    {
       usage();
@@ -82,42 +86,24 @@ main(int argc, char** argv)
 
 //   FILE* ofile = fopen(argv[1], "w");
    Utility::File outFile(argv[1]);
+   if (!outFile.open())
+   {
+      return outFile.getLastError();
+   }
+
    Utility::Directory dir(argv[2]);
 
-   // char tmpfilename[PATH_MAX];
-   // snprintf(tmpfilename, sizeof(tmpfilename), "%s/mkramdisk-superblock-XXXXXX", "/tmp");
-   // int tmpfd_header = mkstemp(tmpfilename);
-   // if (tmpfd_header == -1)
-   // {
-   //    perror("Can't create tmp file");
-   //    return EXIT_FAILURE;
-   // }
+   Utility::File tmpContentFile("content.tmp");
+   if (!tmpContentFile.open())
+   {
+      return tmpContentFile.getLastError();
+   }
 
-   // snprintf(tmpfilename, sizeof(tmpfilename), "%s/mkramdisk-content-XXXXXX", "/tmp");
-   // int tmpfd_content = mkstemp(tmpfilename);
-   // if (tmpfd_content == -1)
-   // {
-   //    perror("Can't create tmp file");
-   //    return EXIT_FAILURE;
-   // }
-
-   // FILE *tmpfile_header = fdopen(tmpfd_header, "r+");
-   // if (tmpfile_header == NULL)
-   // {
-   //    perror("Can't open tmp file");
-   //    error = errno;
-
-   //    goto out3;
-   // }
-
-   // FILE *tmpfile_content = fdopen(tmpfd_content, "r+");
-   // if (tmpfile_content == NULL)
-   // {
-   //    perror("Can't open tmp file");
-   //    error = errno;
-
-   //    goto out3;
-   // }
+   Utility::File tmpHeaderFile("header.tmp");
+   if (!tmpHeaderFile.open())
+   {
+      return tmpHeaderFile.getLastError();
+   }
 
    // if (chdir(argv[2]) == -1)
    // {
@@ -128,7 +114,7 @@ main(int argc, char** argv)
    // }
 
    uint32_t offset = 0;
-//   char namebuf[32];
+   char namebuf[32];
 //   struct dirent* dent;
 //   while ((dent = readdir(dir)) != NULL)
    for (auto entry : dir)
@@ -137,43 +123,39 @@ main(int argc, char** argv)
       if (entry.getName() != "." && entry.getName() != "..")
       {
          uint32_t size;
-         error = copy_file(tmpfile_content, entry.getPath(), &size);
+         error = copyFile(tmpContentFile, entry.getPath(), size);
          if (error != 0)
          {
-            break;
+            return error;
          }
 
          offset += size;
-         printf("ramdisk:%s (%lu:%lu)\n", dent->d_name, (unsigned long )offset, (unsigned long )size);
+         printf("ramdisk:%s (%lu:%lu)\n", entry.getName().data(), (unsigned long )offset, (unsigned long )size);
 
          memset(namebuf, 0, sizeof(namebuf));
-         strcpy(namebuf, dent->d_name);
+         strcpy(namebuf, entry.getName().data());
 
-         fwrite(namebuf, sizeof(namebuf), 1, tmpfile_header);
-         fwrite(&offset, sizeof(offset), 1, tmpfile_header);
-         fwrite(&size, sizeof(size), 1, tmpfile_header);
+         tmpHeaderFile.write(namebuf, 32, 1);
+         tmpHeaderFile.write(&offset, sizeof(offset), 1);
+         tmpHeaderFile.write(&size, sizeof(size), 1);
       }
    }
 
    // concatenate
    char buffer[128];
    int r;
-   fseek(tmpfile_header, 0L, SEEK_SET);
-   while ((r = fread(buffer, 1, sizeof(buffer), tmpfile_header)))
+
+   tmpHeaderFile.rewind();
+   while ((r = tmpHeaderFile.read(buffer, 1, sizeof(buffer))))
    {
-      fwrite(buffer, r, 1, ofile);
+      outFile.write(buffer, r, 1);
    }
    
-   fseek(tmpfile_content, 0L, SEEK_SET);
-   while ((r = fread(buffer, 1, sizeof(buffer), tmpfile_content)))
+   tmpContentFile.rewind();
+   while ((r = tmpContentFile.read(buffer, 1, sizeof(buffer))))
    {
-      fwrite(buffer, r, 1, ofile);
+      outFile.write(buffer, r, 1);
    }
-
-   fclose(tmpfile_header);
-   fclose(tmpfile_content);
-   closedir(dir);
-   fclose(ofile);
 
    return error;
 }

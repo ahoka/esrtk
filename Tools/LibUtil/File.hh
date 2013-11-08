@@ -20,6 +20,9 @@ public:
    int read(void *ptr, size_t size, size_t nmemb);
    int write(const void *ptr, size_t size, size_t nmemb);
 
+   bool seek(long offset);
+   void rewind();
+
    bool eof();
    bool error();
    int getLastError();

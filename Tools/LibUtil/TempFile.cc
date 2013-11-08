@@ -1,16 +1,38 @@
+#if 0
 #include "TempFile.hh"
 
 #include <cstdio>
+#include <cstdlib>
+#include <errno.h>
 
-TempFile::TempFile()
+using namespace Utility;
+
+std::string
+TempFile::createTempFile(std::string filename, std::string directory = "/tmp")
 {
-   char tmpfilename[PATH_MAX];
-   snprintf(tmpfilename, sizeof(tmpfilename), "%s/tmp-XXXXXX", "/tmp");
-   int tmpfd_header = mkstemp(tmpfilename);
+   if (filename.find("/"))
+   {
+      // XXX
+      return std::string();
+   }
+
+   char tempFileName[PATH_MAX];
+   snprintf(tempFileName, sizeof(tempFileName), "%s/%s-XXXXXX", directory.data(), filename.data());
+
+   int tempFile = mkstemp(path.c_str());
    if (tmpfd_header == -1)
    {
-      perror("Can't create tmp file");
-      return EXIT_FAILURE;
+      // XXX
+      return std::string();
    }
+
+   return path;
 }
 
+TempFile::TempFile(std::string filename)
+   : File("")
+{
+   
+}
+
+#endif

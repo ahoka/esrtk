@@ -8,7 +8,7 @@ Directory::Directory(std::string path_)
 {
    char buf[PATH_MAX];
 
-   path = realpath(path_.c_str(), buf);
+   path = realpath(path_.data(), buf);
 }
 
 Directory::Directory(const Directory& other)
@@ -34,7 +34,8 @@ Directory::DirectoryIterator::DirectoryIterator()
 }
 
 Directory::DirectoryIterator::DirectoryIterator(std::string path_)
-   : path(path_),
+   : dir(0),
+     path(path_),
      last(0)
 {
    if (open())
@@ -72,7 +73,7 @@ Directory::DirectoryIterator::operator++()
 bool
 Directory::DirectoryIterator::open()
 {
-   dir = opendir(path.c_str());
+   dir = opendir(path.data());
    if (dir == 0)
    {
       return false;
@@ -84,6 +85,11 @@ Directory::DirectoryIterator::open()
 bool
 Directory::DirectoryIterator::close()
 {
+   if (dir == 0)
+   {
+      return false;
+   }
+
    if (closedir(dir) == -1)
    {
       return false;

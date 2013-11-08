@@ -5,9 +5,9 @@
 #include <string>
 #include <cstdio>
 
-//#include <dirent.h>
-struct dirent;
 #include "DirectoryEntry.hh"
+
+struct dirent;
 
 namespace Utility
 {
