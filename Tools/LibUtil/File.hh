@@ -14,7 +14,7 @@ public:
    File(File& other); // loses ownership on copy!
    ~File();
 
-   bool open(const char* mode = "r+");
+   bool open(const char* mode = "r");
    bool close();
 
    int read(void *ptr, size_t size, size_t nmemb);

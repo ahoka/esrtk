@@ -9,7 +9,6 @@ File::File(std::string path_)
      file(0),
      lastError(0)
 {
-   fprintf(stderr, "File::File(%s)\n", path.c_str());
 }
 
 File::File(File& other)
@@ -31,7 +30,7 @@ File::~File()
 {
    if (file != 0)
    {
-      fclose(file);
+      std::fclose(file);
    }
 }
 
@@ -44,8 +43,7 @@ File::getPath()
 bool
 File::open(const char* mode)
 {
-   file = fopen(path.c_str(), mode);
-   fprintf(stderr, "File::open(%s) -> %p\n", path.c_str(), file);
+   file = std::fopen(path.c_str(), mode);
 
    if (file == 0)
    {
@@ -59,7 +57,7 @@ File::open(const char* mode)
 bool
 File::close()
 {
-   int r = fclose(file);
+   int r = std::fclose(file);
 
    if (r == EOF)
    {
@@ -75,7 +73,7 @@ File::close()
 int
 File::read(void *ptr, size_t size, size_t nmemb)
 {
-   int r = fread(ptr, size, nmemb, file);
+   int r = std::fread(ptr, size, nmemb, file);
    
    if (error())
    {
@@ -88,7 +86,7 @@ File::read(void *ptr, size_t size, size_t nmemb)
 int
 File::write(const void *ptr, size_t size, size_t nmemb)
 {
-   int r = fwrite(ptr, size, nmemb, file);
+   int r = std::fwrite(ptr, size, nmemb, file);
 
    if (error())
    {
@@ -101,7 +99,7 @@ File::write(const void *ptr, size_t size, size_t nmemb)
 bool
 File::seek(long offset)
 {
-   int r = fseek(file, offset, SEEK_SET);
+   int r = std::fseek(file, offset, SEEK_SET);
    if (r == -1)
    {
       lastError = errno;
@@ -115,19 +113,19 @@ File::seek(long offset)
 void
 File::rewind()
 {
-   ::rewind(file);
+   std::rewind(file);
 }
 
 bool
 File::eof()
 {
-   return feof(file);
+   return std::feof(file);
 }
 
 bool
 File::error()
 {
-   return ferror(file);
+   return std::ferror(file);
 }
 
 bool

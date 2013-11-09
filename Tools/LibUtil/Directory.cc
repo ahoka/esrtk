@@ -10,8 +10,6 @@ Directory::Directory(std::string path_)
    char buf[PATH_MAX];
 
    path = realpath(path_.data(), buf);
-
-   printf("Directory::Directory %s\n", path.c_str());
 }
 
 Directory::Directory(const Directory& other)
@@ -22,7 +20,6 @@ Directory::Directory(const Directory& other)
 Directory::DirectoryIterator
 Directory::begin()
 {
-   printf("Directory::begin: %s\n", path.c_str());
    return DirectoryIterator(path);
 }
 
@@ -42,7 +39,6 @@ Directory::DirectoryIterator::DirectoryIterator(std::string path_)
      path(path_),
      last(0)
 {
-   printf("creating iterator: %s", path.c_str());
    if (open())
    {
       last = readdir(dir);

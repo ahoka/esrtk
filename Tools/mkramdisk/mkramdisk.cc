@@ -43,7 +43,7 @@ copyFile(Utility::File& outputFile, std::string filename, uint32_t& size)
    int r;
 
    Utility::File inputFile(filename);
-   if (!inputFile.open())
+   if (!inputFile.open("r"))
    {
       fprintf(stderr, "Can't open input file %s: %s\n", filename.c_str(), strerror(inputFile.getLastError()));
 
@@ -85,7 +85,7 @@ main(int argc, char** argv)
    }
 
    Utility::File outFile(argv[1]);
-   if (!outFile.open())
+   if (!outFile.open("w"))
    {
       fprintf(stderr, "Can't open file: %s\n", outFile.getPath().c_str());
       return outFile.getLastError();
@@ -94,35 +94,23 @@ main(int argc, char** argv)
    Utility::Directory dir(argv[2]);
 
    Utility::File tmpContentFile("content.tmp");
-   if (!tmpContentFile.open())
+   if (!tmpContentFile.open("w+"))
    {
       fprintf(stderr, "Can't open file: %s\n", tmpContentFile.getPath().c_str());
       return tmpContentFile.getLastError();
    }
 
    Utility::File tmpHeaderFile("header.tmp");
-   if (!tmpHeaderFile.open())
+   if (!tmpHeaderFile.open("w+"))
    {
       fprintf(stderr, "Can't open file: %s\n", tmpHeaderFile.getPath().c_str());
       return tmpHeaderFile.getLastError();
    }
 
-   // if (chdir(argv[2]) == -1)
-   // {
-   //    perror("Can't chdir to input directory");
-   //    error = errno;
-
-   //    goto out3;
-   // }
-
    uint32_t offset = 0;
    char namebuf[32];
-//   struct dirent* dent;
-//   while ((dent = readdir(dir)) != NULL)
    for (auto entry : dir)
    {
-//      if (strcmp(dent->d_name, ".") && strcmp(dent->d_name, ".."))
-      printf("File: %s\n", entry.getName().c_str());
       if (entry.getName() != "." && entry.getName() != "..")
       {
          uint32_t size;
