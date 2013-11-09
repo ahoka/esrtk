@@ -1,6 +1,8 @@
 #ifndef SYSTEMTIMER_HH
 #define SYSTEMTIMER_HH
 
+#include <cstdint>
+
 class SystemTimer
 {
 public:
@@ -11,6 +13,7 @@ public:
    virtual bool startTimer() = 0;
    virtual bool stopTimer() = 0;
    virtual unsigned int getFrequency() = 0;
+   virtual void delay(unsigned long ms) = 0;
 
 protected:
    void tick();

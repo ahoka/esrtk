@@ -19,7 +19,8 @@ public:
    unsigned int getFrequency();
 
    static unsigned long readValue();
-   static void delay(unsigned long ms);
+   void delay(unsigned long ms);
+   static void msleep(unsigned long ms);
 
    void handleInterrupt();
 

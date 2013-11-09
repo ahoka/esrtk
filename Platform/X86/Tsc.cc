@@ -32,7 +32,7 @@ Tsc::calibrate()
    for (auto i = 0; i < measurements; i++)
    {
       uint64_t tsc0 = rdtsc();
-      Pit::delay(delay);
+      Pit::msleep(delay);
       uint64_t tsc1 = rdtsc();
 
       results[i] = (unsigned long)(tsc1 - tsc0) / delay;

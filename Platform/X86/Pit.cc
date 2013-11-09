@@ -79,8 +79,6 @@ Pit::delay(unsigned long ms)
 {
    long ticks = (long)ms * (OscillatorFrequency / 1000);
 
-//   printf("Sleeping %lu ticks\n", ticks);
-
    unsigned long lastTick = readValue();
    while (ticks > 1)
    {
@@ -90,10 +88,14 @@ Pit::delay(unsigned long ms)
          ticks -= lastTick - currentTick;
       }
 
-//      printf("Delay: %lu - %lu = %lu t: %lu\n", lastTick, currentTick, (lastTick - currentTick), ticks);
-
       lastTick = readValue();
    }
 }
 
 Pit pit;
+
+void
+Pit::msleep(unsigned long ms)
+{
+   pit.delay(ms);
+}
