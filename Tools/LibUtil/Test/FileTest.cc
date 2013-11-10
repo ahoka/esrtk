@@ -39,6 +39,14 @@ TEST(FileTest, testIsOpen)
    ASSERT_TRUE(isOpen);
 }
 
+TEST(FileTest, testOpenNonExisting)
+{
+   Utility::File file("TestFiles/nope");
+   bool r = file.open("r");
+
+   ASSERT_FALSE(r);
+}
+
 int
 main(int argc, char** argv)
 {

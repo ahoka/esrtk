@@ -1,6 +1,8 @@
 CXX?=		clang++
 CXXFLAGS=	-std=c++11 -g3 -O0 -fno-inline -Wall -Wextra -Werror \
-		-I../ -L.. -Wl,-rpath=../ -L../gtest -I../gtest/include
+		-I../ -L.. -Wl,-rpath=../
+
+include ../../gtest/gtest.mk
 
 all: FileTest
 
