@@ -1,16 +1,17 @@
-CXX?=		clang++
-CXXFLAGS=	-std=c++11 -g3 -O0 -fno-inline -Wall -Wextra -Werror \
-		-I../ -L.. -Wl,-rpath=../
-
+include ../../tools.mk
 include ../../gtest/gtest.mk
+include ../../LibUtil/libutil.mk
 
 all: FileTest
 
-FileTest: FileTest.cc
-	$(CXX) $(CXXFLAGS) -o FileTest FileTest.cc -lutility_s -lgtest -lpthread
+FileTest.o: FileTest.cc
+	$(CXX) $(CXXFLAGS) -c -o FileTest.o FileTest.cc
+
+FileTest: FileTest.o
+	$(CXX) $(LDFLAGS) -o FileTest FileTest.o $(STATICLIBS)
 
 clean:
-	-rm FileTest
+	-rm FileTest *.o
 
 
 
