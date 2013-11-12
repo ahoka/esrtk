@@ -18,7 +18,7 @@ usage()
 }
 
 void
-printFat(Fat::BootSector& fat)
+printBootSector(Fat::BootSector& fat)
 {
    printf("Jump code: 0x%x 0x%x 0x%x\n", fat.jumpCode[0], fat.jumpCode[1], fat.jumpCode[2]);
    printf("OEM name: '%.8s'\n", fat.oemName);
@@ -40,6 +40,49 @@ printFat(Fat::BootSector& fat)
    printf("Serial: %u\n", (unsigned)fat.serialNumber);
    printf("Volume label: %.11s\n", fat.volumeLabel);
    printf("FS Type: %.8s\n", fat.fileSystemType);
+}
+
+void
+fatTimeToHms(uint16_t time, int& h, int& m, int& s)
+{
+   s = (time & 0x1f) * 2;
+   m = (time >> 5) & 0x3f;
+   h = (time >> 11) & 0x1f;
+}
+
+void
+fatDateToYmd(uint16_t date, int& y, int& m, int& d)
+{
+   d = date & 0x1f;
+   m = (date >> 5) & 0xf;
+   y = 1980 + ((date >> 9) & 0x7f);
+}
+
+void
+printDirectoryEntry(Fat::DirectoryEntry& file)
+{
+   // LFN entry
+   if (file.attributes == 0xf)
+   {
+      return;
+   }
+
+   if (file.fileName[0] == 0xe5)
+   {
+      printf("File is deleted\n");
+   }
+   else
+   {
+      printf("File name: %.8s %.3s\n", file.fileName, file.fileName + 8); // empty extension
+   }
+   printf("Attributes: 0x%x\n", file.attributes); // ro:hidden:sysfile:volumelabel:subir:archive:un:un
+   int a, b, c;
+   fatTimeToHms(file.time, a, b, c);
+   printf("Time: %.2u:%.2u:%.2u\n", a, b, c);
+   fatDateToYmd(file.date, a, b, c);
+   printf("Date: %.2u-%.2u-%.2u\n", a, b, c);
+   printf("Starting cluster: 0x%x\n", file.startingCluster);
+   printf("File size: %u\n", file.fileSize);
 }
 
 int
@@ -70,27 +113,48 @@ main(int argc, char** argv)
    }
 
    Fat::BootSector& fat = *reinterpret_cast<Fat::BootSector*>(buffer);
-   printFat(fat);
+   printBootSector(fat);
 
    int fatStart = fat.bytesPerSector * fat.reservedSectors;
-   inFile.seek(fatStart);
+   int fatSize = fat.bytesPerSector * fat.fatCopies * fat.sectorsPerFat;
 
-   inFile.read(buffer, 1, sizeof(buffer));
+   int rootDirStart = fatStart + (fat.fatCopies * fat.sectorsPerFat * fat.bytesPerSector);
+   int rootDirSize = fat.rootDirectoryEntries * 32;
+
+   char* rootDir = new char[rootDirSize];
+
+   inFile.seek(rootDirStart);
+   inFile.read(rootDir, 1, rootDirSize);
    if (inFile.error())
    {
       fprintf(stderr, "Error reading file: %s\n", inFile.getPath().c_str());
       return inFile.getLastError();
    }
 
-   for (int i = 0; i < 512 / 2; i += 2)
-   {
-      if (i % 8 == 0)
+   Fat::DirectoryEntry* root = reinterpret_cast<Fat::DirectoryEntry*>(rootDir);
+   for (int i = 0; i < fat.rootDirectoryEntries; i++)
+   {   
+      printf("\n");
+      if (root->fileName[0] == 0)
       {
-	 printf("\n");
+	 break;
       }
-      printf("0x%hx\t", buffer[i]);
+      printDirectoryEntry(*root);
+      root++;
    }
-   printf("\n");
+
+   int dataStart = rootDirStart + fat.rootDirectoryEntries * 32;
+   int dataSize = (fat.totalSectors16 ? fat.totalSectors16 : fat.totalSectors) * fat.bytesPerSector - dataStart;;
+
+   printf("Root dir entries: %u\n", fat.rootDirectoryEntries);
+   printf("FAT: %u (%u)\n", fatStart, fatSize);
+   printf("Root Dir: %u (%u)\n", rootDirStart, rootDirSize);
+   printf("Data: %u (%u)\n", dataStart, dataSize);
+
+#define CLUSTER(x) (dataStart + (x) * fat.sectorsPerCluster * fat.bytesPerSector)
+#define FAT(x) (fatStart + (x) * 2)
+
+   delete[] rootDir;
 
    return error;
 }
