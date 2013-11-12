@@ -85,6 +85,9 @@ printDirectoryEntry(Fat::DirectoryEntry& file)
    printf("File size: %u\n", file.fileSize);
 }
 
+#define CLUSTER(x) (dataStart + (x) * fat.sectorsPerCluster * fat.bytesPerSector)
+#define FAT(x) (fatStart + (x) * 2)
+
 int
 main(int argc, char** argv)
 {
@@ -140,6 +143,16 @@ main(int argc, char** argv)
 	 break;
       }
       printDirectoryEntry(*root);
+      if ((root->attributes & Fat::Directory) == 0 &&
+	  (root->attributes & Fat::Hidden) == 0)
+      {
+      // 	 for (uint16_t cluster = root->startingCluster;
+      // 	      (cluster > 0x0001 && cluster < 0xfff7);
+      // 	      cluster = FAT(cluster))
+      // 	 {
+      // 	    printf("cluster: 0x%x\n", cluster);
+      // 	 }
+      // }
       root++;
    }
 
@@ -150,9 +163,6 @@ main(int argc, char** argv)
    printf("FAT: %u (%u)\n", fatStart, fatSize);
    printf("Root Dir: %u (%u)\n", rootDirStart, rootDirSize);
    printf("Data: %u (%u)\n", dataStart, dataSize);
-
-#define CLUSTER(x) (dataStart + (x) * fat.sectorsPerCluster * fat.bytesPerSector)
-#define FAT(x) (fatStart + (x) * 2)
 
    delete[] rootDir;
 

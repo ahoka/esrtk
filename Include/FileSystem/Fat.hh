@@ -41,6 +41,16 @@ struct DirectoryEntry
    uint32_t fileSize;
 } __attribute__((packed));
 
+enum Attributes
+{
+   ReadOnly = 1 << 0,
+   Hidden = 1 << 1,
+   System = 1 << 2,
+   VolumeName = 1 << 3,
+   Directory = 1 << 4,
+   Archive = 1 << 5
+};
+
 };
 
 #endif
