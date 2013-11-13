@@ -152,7 +152,7 @@ main(int argc, char** argv)
       // 	 {
       // 	    printf("cluster: 0x%x\n", cluster);
       // 	 }
-      // }
+      }
       root++;
    }
 

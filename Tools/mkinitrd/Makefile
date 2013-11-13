@@ -1,12 +1,6 @@
-CC=	clang
-CFLAGS=	-std=c99 -O2 -Wall -Wextra -Werror
+PROG=	mkmodule
+SRC=	mkmodule.cc
 
-all: mkmodule
-
-mkmodule: mkmodule.c
-	$(CC) $(CFLAGS) -o mkmodule mkmodule.c
-
-clean:
-	-rm mkmodule
-
+include ../tools.mk
+include ../LibUtil/libutil.mk
 
