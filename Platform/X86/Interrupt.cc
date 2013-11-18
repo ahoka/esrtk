@@ -8,7 +8,7 @@
 
 #include <StackTrace.hh>
 
-extern "C" void defaultIsr(InterruptFrame* frame);// __attribute__((noreturn));
+//extern "C" void defaultIsr(InterruptFrame* frame);// __attribute__((noreturn));
 extern "C" void isrDispatcher(InterruptFrame* frame);// __attribute__((noreturn));
 
 extern IdtPointer idtPointer;
@@ -21,9 +21,7 @@ void initIsr(int n, void (*handler)());
 
 #include "InterruptVectorsInit.icc"
 
-extern void pageFault(InterruptFrame* frame);
-
-void
+static void
 pageFault(InterruptFrame* frame)
 {
    uint32_t cr2 = getCr2();
@@ -49,8 +47,7 @@ pageFault(InterruptFrame* frame)
    Power::halt();
 }
 
-
-void
+static void
 defaultIsr(InterruptFrame* frame)
 {
    // TODO: make a list of handlers and register them there to be run from dispatcher

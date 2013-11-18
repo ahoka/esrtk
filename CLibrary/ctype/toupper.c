@@ -46,7 +46,7 @@ const short _C_toupper_[1 + CTYPE_NUM_CHARS] = {
 	0xf8,	0xf9,	0xfa,	0xfb,	0xfc,	0xfd,	0xfe,	0xff
 };
 
-const short *_toupper_tab_ = _C_toupper_;
+static const short *_toupper_tab_ = _C_toupper_;
 
 #undef toupper
 int

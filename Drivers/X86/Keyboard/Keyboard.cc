@@ -104,4 +104,4 @@ Keyboard::handleInterrupt()
    }
 }
 
-Keyboard keyboard;
+static Keyboard keyboard;

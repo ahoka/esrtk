@@ -145,4 +145,4 @@ Tsc::getTime()
    return (readTsc() - offset) / frequency;
 }
 
-Tsc tsc;
+static Tsc tsc;

@@ -92,7 +92,7 @@ Pit::delay(unsigned long ms)
    }
 }
 
-Pit pit;
+static Pit pit;
 
 void
 Pit::msleep(unsigned long ms)

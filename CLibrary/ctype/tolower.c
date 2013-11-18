@@ -45,7 +45,7 @@ const short _C_tolower_[1 + CTYPE_NUM_CHARS] = {
 	0xf8,	0xf9,	0xfa,	0xfb,	0xfc,	0xfd,	0xfe,	0xff
 };
 
-const short *_tolower_tab_ = _C_tolower_;
+static const short *_tolower_tab_ = _C_tolower_;
 
 #undef tolower
 int

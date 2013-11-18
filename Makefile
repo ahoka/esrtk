@@ -41,7 +41,7 @@ CPP=		$(CROSS)clang -m32 -E
 COPTS+=		-integrated-as -Weverything
 COPTS+=		-Wno-c++98-compat-pedantic \
 		-Wno-global-constructors -Wno-exit-time-destructors \
-		-Wno-padded -Wno-packed -Wno-missing-variable-declarations \
+		-Wno-padded -Wno-packed \
 		-Wno-weak-vtables
 CXXFLAGS+=	-std=c++11
 

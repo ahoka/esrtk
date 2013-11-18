@@ -149,6 +149,4 @@ void Pic::disableInterrupt(irq_t irq)
    }
 }
 
-extern Pic pic;
-Pic pic;
-
+static Pic pic;
