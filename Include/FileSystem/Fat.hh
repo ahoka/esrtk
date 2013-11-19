@@ -28,6 +28,32 @@ struct BootSector
    uint32_t serialNumber;
    uint8_t volumeLabel[11]; // "NO NAME   "
    uint8_t fileSystemType[8]; // "FAT16   "
+
+   size_t fatStart()
+   {
+      return bytesPerSector * reservedSectors;
+   }
+
+   size_t fatSize()
+   {
+      return bytesPerSector * fatCopies * sectorsPerFat;
+   }
+
+   size_t rootDirStart()
+   {
+      return fatStart() + (fatCopies * sectorsPerFat * bytesPerSector);
+   }
+
+   size_t rootDirSize()
+   {
+      return rootDirectoryEntries * 32;
+   }
+
+   size_t clusterSize()
+   {
+      return sectorsPerCluster * bytesPerSector;
+   }
+
 } __attribute__((packed));
 
 struct DirectoryEntry

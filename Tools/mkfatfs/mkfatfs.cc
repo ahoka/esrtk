@@ -89,6 +89,19 @@ printDirectoryEntry(Fat::DirectoryEntry& file)
 #define FAT(x) (fatStart + (x) * 2)
 
 int
+readCluster(Utility::File& backend, Fat::BootSector& fat, uint32_t cluster, char *buffer)
+{
+   inFile.seek(rootDirStart);
+   inFile.read(rootDir, 1, rootDirSize);
+
+   if (inFile.error())
+   {
+      fprintf(stderr, "Error reading file: %s\n", inFile.getPath().c_str());
+      return inFile.getLastError();
+   }
+}
+
+int
 main(int argc, char** argv)
 {
    int error = 0;
@@ -124,6 +137,8 @@ main(int argc, char** argv)
    int rootDirStart = fatStart + (fat.fatCopies * fat.sectorsPerFat * fat.bytesPerSector);
    int rootDirSize = fat.rootDirectoryEntries * 32;
 
+   int clusterSize = fat.sectorsPerCluster * fat.bytesPerSector;
+
    char* rootDir = new char[rootDirSize];
 
    inFile.seek(rootDirStart);
@@ -146,12 +161,12 @@ main(int argc, char** argv)
       if ((root->attributes & Fat::Directory) == 0 &&
 	  (root->attributes & Fat::Hidden) == 0)
       {
-      // 	 for (uint16_t cluster = root->startingCluster;
-      // 	      (cluster > 0x0001 && cluster < 0xfff7);
-      // 	      cluster = FAT(cluster))
-      // 	 {
-      // 	    printf("cluster: 0x%x\n", cluster);
-      // 	 }
+      	 for (uint16_t cluster = root->startingCluster;
+      	      (cluster > 0x0001 && cluster < 0xfff7);
+      	      cluster = FAT(cluster))
+      	 {
+      	    printf("cluster: 0x%x\n", cluster);
+      	 }
       }
       root++;
    }

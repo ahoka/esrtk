@@ -49,38 +49,12 @@ enum
 int
 putchar(int c)
 {
-
-/*    if (serialConsole) */
-/*    { */
-/*       SerialConsole::putChar(c); */
-/*    } */
-
-/*    if (!noVga) */
-/*    { */
-/* //      return System::console.putChar(c); */
-/*    } */
-
    return system_putchar(c);
 }
 
 int
 puts(const char* string)
 {
-/*    int ret = 0; */
-
-/*    if (!noVga) */
-/*    { */
-/* //      ret = System::console.putString(string); */
-/*    } */
-
-/*    if (serialConsole) */
-/*    { */
-/*       while (*string) */
-/*       { */
-/*          SerialConsole::putChar(*string++); */
-/*       } */
-/*    } */
-
    return system_puts(string);
 }
 
