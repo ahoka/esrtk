@@ -3,6 +3,7 @@
 #include <Platform.hh>
 #include <Debug.hh>
 #include <Power.hh>
+#include <Mutex.hh>
 
 #include <cstdio>
 
@@ -36,6 +37,12 @@ Supervisor::run()
    delete[] e;
    delete[] f;
    delete[] g;
+
+   Mutex lock;
+
+//   lock.tryEnter();
+   lock.enter();
+   lock.exit();
 
    Power::halt();
 }

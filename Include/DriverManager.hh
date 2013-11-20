@@ -1,6 +1,8 @@
 #ifndef DRIVERMANAGER_HH
 #define DRIVERMANAGER_HH
 
+//#include <SpinLock.hh>
+
 class Driver;
 
 class DriverManager
@@ -14,6 +16,7 @@ public:
 private:
    // xxx should be a hierarchy of drivers instead of a flat list
    static Driver* driverList;
+//   static SpinLock lock;
 };
 
 #endif

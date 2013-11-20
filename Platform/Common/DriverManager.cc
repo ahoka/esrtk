@@ -4,14 +4,17 @@
 #include <cstdio>
 
 Driver* DriverManager::driverList = 0;
+//SpinLock DriverManager::lock;
 
 bool
 DriverManager::registerDriver(Driver* driver)
 {
    printf("DriverManager: registering driver %p\n", driver);
 
+//   lock.enter();
    driver->next = driverList;
    driverList = driver;
+//   lock.exit();
 
    return true;
 }
