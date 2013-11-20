@@ -179,6 +179,7 @@ public:
    static uintptr_t mapRegion(uintptr_t paddr, std::size_t size);
    static bool unmapRegion(uintptr_t paddr, std::size_t size);
    static void* readPhysicalMemory(void* destination, const void* source, std::size_t size);
+   static bool createKernelStack(uintptr_t& start);
 
 private:
    Memory();

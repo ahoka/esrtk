@@ -13,7 +13,10 @@
 #include <cstring>
 
 extern Multiboot* mbd;
-extern uintptr_t initial_stack;
+//extern uintptr_t initial_stack;
+
+// used in Multiboot.S
+extern uintptr_t thread_zero_stack;
 
 uintptr_t Memory::heapEnd = HeapStart;
 uintptr_t Memory::stackEnd = StackStart;
@@ -96,19 +99,10 @@ Memory::init()
       }
    }
 
-   // map memory for the kernel stack
+   // map memory for the thread0 kernel stack
    //
-   printf("Mapping memory for the kernel stack: %p-%p (%u)\n", (void* )(StackStart - StackSize), (void* )StackStart, StackSize);
-   for (uintptr_t stackAddress = StackStart - StackSize;
-	stackAddress < StackStart;
-	stackAddress += PageSize)
-   {
-      uintptr_t stackPage = getPage();
-      KASSERT(stackPage != 0);
-
-      bool success = mapPage(stackAddress, stackPage);
-      KASSERT(success);
-   }
+   bool success = createKernelStack(thread_zero_stack);
+   KASSERT(success);
 
 //    printf("Freeing initial kernel stack: %p-%p\n", (void* )(initial_stack - InitialStackSize), (void* )initial_stack);
 //    for (uintptr_t oldStack = initial_stack - InitialStackSize;
@@ -119,14 +113,40 @@ Memory::init()
 //    }
 }
 
-bool Memory::mapPage(uintptr_t address, uintptr_t phys)
+bool
+Memory::createKernelStack(uintptr_t& start)
+{
+   start = stackEnd;
+
+   printf("Creating new kernel stack: %p-%p (%u)\n", (void* )start, (void* )(start - StackSize), StackSize);
+
+   for (uintptr_t stackAddress = (start - StackSize);
+	stackAddress < start;
+	stackAddress += PageSize)
+   {
+      uintptr_t stackPage = getPage();
+      KASSERT(stackPage != 0);
+
+      bool success = mapPage(stackAddress, stackPage);
+      KASSERT(success);
+   }
+
+   // add one unmapped page as guard
+   stackEnd = start - StackSize + PageSize;
+
+   return true;
+}
+
+bool
+Memory::mapPage(uintptr_t address, uintptr_t phys)
 {
    return PageDirectory::mapPage(address, phys);
 }
 
 // anonymous mapping of a physical page
 //
-uintptr_t Memory::mapPage(uintptr_t phys)
+uintptr_t
+Memory::mapPage(uintptr_t phys)
 {
    mapEnd -= PageSize;
 

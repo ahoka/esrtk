@@ -26,6 +26,7 @@ initial_stack:
 .comm stack, STACKSIZE, 32
 .comm mbd, 4
 .comm magic, 4
+.comm thread_zero_stack, 4
 
 .section .rodata
 .balign 0x1000
@@ -92,7 +93,8 @@ hiloader:
 	call supervisor_init
 
 	// set up the real kernel stack now that we have paging
-	movl $StackStart, %eax
+	//movl $StackStart, %eax
+        movl $thread_zero_stack, %eax
 	movl %eax, %esp
 
 	call kmain
