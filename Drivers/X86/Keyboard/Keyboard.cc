@@ -11,6 +11,7 @@
 #include <Time.hh>
 #include <Power.hh>
 #include <MemoryManager.hh>
+#include <Thread.hh>
 
 Keyboard::Keyboard()
 {
@@ -94,6 +95,10 @@ Keyboard::handleInterrupt()
          case Scancodes::F3:
             putchar('\n');
             MemoryManager::get().printStatistics();
+            break;
+         case Scancodes::F4:
+            putchar('\n');
+            Thread::printAll();
             break;
          case Scancodes::F9:
             Power::reboot();

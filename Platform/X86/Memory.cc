@@ -132,7 +132,7 @@ Memory::createKernelStack(uintptr_t& start)
    }
 
    // add one unmapped page as guard
-   stackEnd = start - StackSize + PageSize;
+   stackEnd = start - StackSize - PageSize;
 
    return true;
 }

@@ -1,12 +1,15 @@
 #include <Memory.hh>
 #include <Supervisor.hh>
 #include <Modules.hh>
+#include <Thread.hh>
 
 #include <X86/Apic.hh>
 #include <X86/PageDirectory.hh>
 #include <X86/Idt.hh>
 #include <X86/Gdt.hh>
 #include <X86/SerialConsole.hh>
+
+static Thread thread0;
 
 // the kernel drivers should be able to function
 // after calling this
@@ -23,4 +26,6 @@ Supervisor::init()
    Modules::init(); // mi called from md, not good!
    PageDirectory::init();
    Memory::init();
+
+   thread0.init(0, StackStart);
 }
