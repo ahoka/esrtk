@@ -3,12 +3,9 @@
 
 #include <Memory.hh>
 
-#include <DoublyLinkedItem.hh>
-#include <DoublyLinkedList.hh>
-
 #include <cstdint>
 
-class Thread : public DoublyLinkedItem<Thread>
+class Thread
 {
 public:
    Thread();
@@ -25,7 +22,6 @@ public:
 
 private:
    static unsigned long nextThreadId;
-   static DoublyLinkedList<Thread> list;
 };
 
 #endif

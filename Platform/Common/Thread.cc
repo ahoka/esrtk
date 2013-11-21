@@ -4,7 +4,6 @@
 #include <cstdio>
 
 unsigned long Thread::nextThreadId = 1;
-DoublyLinkedList<Thread> Thread::list;
 
 // for creating thread0
 //
@@ -22,7 +21,6 @@ Thread::init(unsigned long threadId, uintptr_t stack)
    kernelStack = stack;
 
    printf("Initializing thread: %lu %p...\n", threadId, (void*)stack);
-   list.insertLast(this);
 
    return true;
 }
@@ -37,7 +35,6 @@ Thread::init()
    KASSERT(success);
 
    printf("Initializing thread...\n");
-   list.insertLast(this);
 
    return success;
 }
@@ -45,8 +42,8 @@ Thread::init()
 void
 Thread::printAll()
 {
-   for (auto& t : list)
-   {
-      printf("%lu - %p\n", t.id, (void*)t.kernelStack);
-   }
+   // for (auto& t : list)
+   // {
+   //    printf("%lu - %p\n", t.id, (void*)t.kernelStack);
+   // }
 }
