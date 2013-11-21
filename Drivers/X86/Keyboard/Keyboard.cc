@@ -15,14 +15,12 @@
 
 Keyboard::Keyboard()
 {
-   printf("Keyboard::Keyboard()\n");
-   //   init();
+   Debug::info("Keyboard::Keyboard()\n");
 }
 
 Keyboard::~Keyboard()
 {
-   printf("Keyboard::~Keyboard()\n");
-   //   finalize();
+   Debug::info("Keyboard::~Keyboard()\n");
 }
 
 int

@@ -84,7 +84,7 @@ class Pic : InterruptController
 public:
    Pic()
    {
-      printf("Initializing PIC\n");
+      Debug::info("Initializing PIC\n");
       init();
    }
 

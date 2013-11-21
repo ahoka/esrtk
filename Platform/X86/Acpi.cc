@@ -1,3 +1,4 @@
+#include <Debug.hh>
 #include <Memory.hh>
 
 #include <X86/Parameters.hh>
@@ -19,17 +20,17 @@ Acpi::findRsdp(char* from, char* to)
 
 	 if (rsdp->calculateChecksum() != 0)
 	 {
-	    printf("Found RSDP with invalid checksum!\n");
+            Debug::warning("Found RSDP with invalid checksum!\n");
 	 }
 	 else
 	 {
 	    if (rsdp->calculateExtendedChecksum() == 0)
 	    {
-	       printf("Found ACPI 2.0+ RSDP\n");
+               Debug::info("Found ACPI 2.0+ RSDP\n");
 	    }
 	    else
 	    {
-	       printf("Found ACPI 1.0 RSDP\n");
+               Debug::info("Found ACPI 1.0 RSDP\n");
 	    }
 
 	    return rsdp;
@@ -49,7 +50,7 @@ Acpi::printAllDescriptors()
    Rsdp* rsdp = Acpi::findRsdp(mem, mem + 0x20000);
    if (rsdp == 0)
    {
-      printf("ACPI RSDP not found.\n");
+      Debug::warning("ACPI RSDP not found.\n");
       return;
    }
 
@@ -66,7 +67,7 @@ Acpi::printAllDescriptors()
    unsigned int rsdtSize = rsdt.length - sizeof(DescriptionHeader);
    if (rsdtSize > sizeof (entries))
    {
-      printf("Error: Entry size is too large to read ACPI table!\n");
+      Debug::error("Error: Entry size is too large to read ACPI table!\n");
       return;
    }
 
