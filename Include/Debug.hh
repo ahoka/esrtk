@@ -12,11 +12,28 @@
 
 class Debug {
 private:
-   Debug();
-   Debug(const Debug& orig);
-   ~Debug();
+   Debug() = delete;
+   Debug(const Debug& orig) = delete;
+   ~Debug() = delete;
+
 public:
    static void panic(const char*, ...) __attribute__((noreturn));
+   
+   static void info(const char*, ...);
+   static void warning(const char*, ...);
+   static void error(const char*, ...);
+
+
+   enum class DebugLevel
+   {
+      Silent = 0,
+      Info = 1,
+      Warning = 2,
+      Error = 3
+   };
+
+private:
+   static DebugLevel debugLevel;
 };
 
 #endif	/* DEBUG_H */
