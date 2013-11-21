@@ -140,6 +140,8 @@ Memory::createKernelStack(uintptr_t& start)
 bool
 Memory::mapPage(uintptr_t address, uintptr_t phys)
 {
+   Debug::info("Mapping page: %p to %p\n", phys, address);
+
    return PageDirectory::mapPage(address, phys);
 }
 
@@ -155,6 +157,7 @@ Memory::mapPage(uintptr_t phys)
       Debug::panic("Kernel map namespace exhausted.");
    }
 
+//   Debug::info("Mapping anonymous page: %p to %p\n", phys, mapEnd);
    bool success = PageDirectory::mapPage(mapEnd, phys);
    if (!success)
    {

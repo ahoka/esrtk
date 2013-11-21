@@ -136,7 +136,7 @@ run-pc: kernel.elf
 	$(QEMU) -M pc -net none -kernel kernel.elf -boot order=c -serial stdio -d cpu_reset
 
 run: kernel.elf
-	$(QEMU) -M q35 -net none -kernel kernel.elf -boot order=c -serial stdio -d cpu_reset
+	$(QEMU) -M q35 -net none -kernel kernel.elf -boot order=c -serial stdio -d cpu_reset 2>&1 | tee run.log
 
 serial: kernel.elf
 	$(QEMU) -net none -kernel kernel.elf -boot order=c -serial stdio -d cpu_reset -nographic

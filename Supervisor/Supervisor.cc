@@ -4,6 +4,7 @@
 #include <Debug.hh>
 #include <Power.hh>
 #include <Mutex.hh>
+#include <Thread.hh>
 
 #include <cstdio>
 
@@ -42,6 +43,10 @@ Supervisor::run()
 
 //   lock.tryEnter();
    lock.enter();
+
+   // Thread t;
+   // t.init();
+
    lock.exit();
 
    Power::halt();
