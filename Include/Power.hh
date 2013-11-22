@@ -7,8 +7,8 @@ private:
    Power(const Power& orig);
    virtual ~Power();
 public:
-   static void halt() __attribute__((noreturn));
-   static void reboot() __attribute__((noreturn));
+   static void halt [[noreturn]]  ();
+   static void reboot [[noreturn]] ();
 };
 
 #endif

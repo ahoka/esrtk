@@ -5,7 +5,7 @@ class Supervisor
 {
 public:
    static void init();
-   static void run() __attribute__((noreturn));
+   static void run [[noreturn]] ();
 private:
    Supervisor();
    virtual ~Supervisor();

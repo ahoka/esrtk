@@ -17,7 +17,7 @@ private:
    ~Debug() = delete;
 
 public:
-   static void panic(const char*, ...) __attribute__((noreturn));
+   static void panic [[noreturn]] (const char*, ...);
    
    static void info(const char*, ...);
    static void warning(const char*, ...);
