@@ -55,7 +55,7 @@ PageDirectory::init()
 
    // The last 4MB will be mapped to the page directory itself
    //
-   pageDirectory[1023] = (uint32_t )vtophys(pageDirectory) | 0x1;
+   pageDirectory[1023] = (uint32_t )vtophys(pageDirectory) | Present;
 
    // map kernel memory
    //
@@ -189,7 +189,7 @@ PageDirectory::mapPage(uint32_t vAddress, uint32_t pAddress, uint32_t** pageDire
       std::memset(newPt, 0, PageSize);
 
       // mark present
-      newPt = (uint32_t* )((uint32_t )newPt | 0x3);
+      newPt = (uint32_t* )((uint32_t )newPt | Present | Writable);
       pt = vtophys(newPt);
 
       pageDirectory[addressToPdeIndex(vAddress)] = pt;
@@ -205,7 +205,7 @@ PageDirectory::mapPage(uint32_t vAddress, uint32_t pAddress, uint32_t** pageDire
 //      return false;
    }
 
-   vpt[addressToPteIndex(vAddress)] = (unsigned long )pAddress | 0x3;
+   vpt[addressToPteIndex(vAddress)] = (unsigned long )pAddress | Present | Writable;
 
    invlpg(vAddress);
 
@@ -224,7 +224,7 @@ PageDirectory::unmapPage(uint32_t vAddress, uint32_t** pageDirectory)
    printf("Page directory: %p\n", pageDirectory);
 #endif
 
-   if (((unsigned long)pt & 0x1) == 0)
+   if (((unsigned long)pt & Present) == 0)
    {
       // wasnt mapped
       //
