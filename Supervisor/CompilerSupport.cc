@@ -1,11 +1,10 @@
-#ifdef __GNUC__
+#if defined(__GNUC__) || defined(__clang__)
 
 #include <Memory.hh>
 #include <CompilerSupport.hh>
-#include <cstdio>
-#include <cstdint>
+#include <Debug.hh>
 
-#define DEBUG
+#include <cstdint>
 
 // a pure virtual function is called
 void
@@ -115,12 +114,10 @@ __cxa_finalize(void* dso)
 void
 __cxaimpl_call_constructors()
 {
-#ifdef DEBUG
-   printf("Calling ctors: %p -> %p\n", &__start_ctors, &__end_ctors);
-#endif
+   Debug::info("Calling ctors: %p -> %p\n", &__start_ctors, &__end_ctors);
    for (__cxaimpl_constructor* c = &__start_ctors; c != &__end_ctors; c++)
    {
-      printf("Calling constructor at %p\n", *c);
+      Debug::info("Calling constructor at %p\n", *c);
       (*c)();
    }
 }
@@ -135,7 +132,7 @@ __cxaimpl_zero_bss()
    uintptr_t start = (uintptr_t )(&__start_bss) - KernelVirtualBase;
    uintptr_t end = (uintptr_t )(&__end_bss) - KernelVirtualBase;
    
-   printf("Zeroing .bss section: 0x%0x-0x%0x\n", start, end);
+   Debug::info("Zeroing .bss section: 0x%0x-0x%0x\n", start, end);
 
    for (uint8_t* p = (uint8_t* )start; p != (uint8_t* )end; p++)
    {
