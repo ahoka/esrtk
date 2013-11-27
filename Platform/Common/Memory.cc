@@ -5,14 +5,13 @@
 #include <Debug.hh>
 #include <Templates.hh>
 #include <Modules.hh>
+#include <Memory.hh>
 
-#include <X86/Memory.hh>
-#include <X86/Idt.hh>
+// XXX does not belong here
 #include <X86/PageDirectory.hh>
 
 #include <cstring>
 
-extern Multiboot* mbd;
 //extern uintptr_t initial_stack;
 
 // used in Multiboot.S
@@ -140,9 +139,16 @@ Memory::createKernelStack(uintptr_t& start)
 bool
 Memory::mapPage(uintptr_t address, uintptr_t phys)
 {
-   Debug::info("Mapping page: %p to %p\n", phys, address);
-
    return PageDirectory::mapPage(address, phys);
+}
+
+bool
+Memory::unmapPage(uintptr_t page)
+{
+   bool success = PageDirectory::unmapPage(page);
+   // TODO we need to know where to mark the vaddr free!
+
+   return success;
 }
 
 // anonymous mapping of a physical page
@@ -158,7 +164,7 @@ Memory::mapPage(uintptr_t phys)
    }
 
 //   Debug::info("Mapping anonymous page: %p to %p\n", phys, mapEnd);
-   bool success = PageDirectory::mapPage(mapEnd, phys);
+   bool success = mapPage(mapEnd, phys);
    if (!success)
    {
       return 0;
@@ -187,7 +193,7 @@ uintptr_t Memory::mapRegion(uintptr_t paddr, std::size_t size)
 	page < firstPage + rsize;
 	page += PageSize, vaddr += PageSize)
    {
-      bool success = PageDirectory::mapPage(vaddr, page);
+      bool success = mapPage(vaddr, page);
       if (!success)
       {
 	 Debug::panic("mapRegion unsuccesful.");
@@ -209,7 +215,7 @@ Memory::unmapRegion(uintptr_t paddr, std::size_t size)
 	page < firstPage + rsize;
 	page += PageSize)
    {
-      bool success = PageDirectory::unmapPage(page);
+      bool success = unmapPage(page);
       if (!success)
       {
 	 Debug::panic("unmapRegion unsuccesful.");
@@ -217,17 +223,6 @@ Memory::unmapRegion(uintptr_t paddr, std::size_t size)
    }
 
    return true;
-}
-
-// anonymous mapping of a physical page
-//
-bool
-Memory::unmapPage(uintptr_t page)
-{
-   bool success = PageDirectory::unmapPage(page);
-   // TODO we need to know where to mark the vaddr free!
-
-   return success;
 }
 
 bool
@@ -343,36 +338,4 @@ Memory::readPhysicalMemory(void* destination, const void* source, std::size_t si
    unmapRegion(mapped, mapLast - mapFirst);
 
    return destination;
-}
-
-// must be called when in 1:1 mapping
-//
-void
-Memory::copyMemoryMap()
-{
-   Multiboot* mb = mbd;
-   bool foundUsableMemory = false;
-
-   printf("Parsing multiboot (%p) memory map: 0x%0x-0x%0x\n", mbd,
-	  mb->memoryMapAddress,
-	  mb->memoryMapAddress + mb->memoryMapLength);
-
-   for (Multiboot::MemoryMap *map = (Multiboot::MemoryMap *)mb->memoryMapAddress;
-        map < (Multiboot::MemoryMap *)(mb->memoryMapAddress + mb->memoryMapLength);
-        map++)
-   {
-      if (map->type == Multiboot::MemoryMap::Available)
-      {
-         printf("Usable memory at %p-%p\n", (void *)map->address, (void *)(map->address + map->length));
-         KASSERT(memoryMapCount < MemoryMapMax);
-
-         memoryMap[memoryMapCount].address = (uintptr_t )map->address;
-         memoryMap[memoryMapCount].size = (std::size_t )map->length;
-         memoryMapCount++;
-
-	 foundUsableMemory = true;
-      }
-   }
-
-   KASSERT(foundUsableMemory);
 }

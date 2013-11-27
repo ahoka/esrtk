@@ -3,8 +3,8 @@
 #include <Memory.hh>
 #include <PageFrameAllocator.hh>
 #include <Modules.hh>
+#include <Memory.hh>
 
-#include <X86/Memory.hh>
 #include <X86/PageDirectory.hh>
 #include <X86/Parameters.hh>
 #include <X86/Assembly.hh>

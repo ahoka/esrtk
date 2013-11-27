@@ -3,8 +3,7 @@
 #include <Parameters.hh>
 #include <Modules.hh>
 #include <Templates.hh>
-
-#include <X86/Memory.hh>
+#include <Memory.hh>
 
 #include <cstdio>
 

@@ -1,6 +1,6 @@
 #ifdef __GNUC__
 
-#include <X86/Memory.hh>
+#include <Memory.hh>
 #include <CompilerSupport.hh>
 #include <cstdio>
 #include <cstdint>
@@ -116,7 +116,7 @@ void
 __cxaimpl_call_constructors()
 {
 #ifdef DEBUG
-   printf("%p -> %p\n", &__start_ctors, &__end_ctors);
+   printf("Calling ctors: %p -> %p\n", &__start_ctors, &__end_ctors);
 #endif
    for (__cxaimpl_constructor* c = &__start_ctors; c != &__end_ctors; c++)
    {
