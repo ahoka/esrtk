@@ -15,9 +15,6 @@
 
 //#define DEBUG
 
-#define PageValid (1 << 0)
-#define PageWritable (1 << 1)
-
 static uint32_t*
 phystov(uint32_t* p)
 {
@@ -178,7 +175,7 @@ PageDirectory::mapPage(uint32_t vAddress, uint32_t pAddress, uint32_t** pageDire
    printf("Mapping %p to %p (initial)\n", (void* )vAddress, (void* )pAddress);
 #endif
 
-   if (((unsigned long)pt & PageValid) == 0)
+   if (((unsigned long)pt & Present) == 0)
    {
       // allocate new
       uint32_t* newPt = (uint32_t* )PageFrameAllocator::getFreePage();
@@ -251,7 +248,7 @@ PageDirectory::unmapPage(uint32_t vAddress, uint32_t** pageDirectory)
 }
 
 bool
-PageDirectory::mapPage(uint32_t vAddress, uint32_t pAddress)
+PageDirectory::mapPage(uint32_t vAddress, uint32_t pAddress, int flags)
 {
    KASSERT((vAddress & PageMask) == 0);
    KASSERT((pAddress & PageMask) == 0);
@@ -266,7 +263,7 @@ PageDirectory::mapPage(uint32_t vAddress, uint32_t pAddress)
    printf("pde is at %p, content 0x%x\n", pde, *pde);
 #endif
 
-   if ((*pde & PageValid) == 0)
+   if ((*pde & Present) == 0)
    {
       // need to allocate the pde
       //
@@ -276,7 +273,7 @@ PageDirectory::mapPage(uint32_t vAddress, uint32_t pAddress)
       printf("got new page for pde: %p\n", (void *)newPde);
 #endif
       KASSERT(newPde != 0);
-      newPde |= (PageValid | PageWritable);
+      newPde |= (Present | Writable);
 #ifdef DEBUG
       printf("writing to pde: %p\n", (void *)newPde);
 #endif
@@ -293,13 +290,27 @@ PageDirectory::mapPage(uint32_t vAddress, uint32_t pAddress)
    printf("pte is at %p, content 0x%x\n", pte, *pte);
 #endif
 
-   if (*pte & PageValid)
+   if (*pte & Present)
    {
-      Debug::panic("Trying to map %p to the already used address %p\n", (void* )pAddress, (void* )vAddress);
-//      return false;
+      if (flags & MapLazy)
+      {
+	 Debug::panic("Trying to lazy map the already used address %p\n", (void* )vAddress);
+      }
+      else
+      {
+	 Debug::panic("Trying to map %p to the already used address %p\n", (void* )pAddress, (void* )vAddress);
+      }
    }
 
-   *pte = (pAddress & ~0xfffu) | (PageValid | PageWritable);
+   if (flags & MapLazy)
+   {
+      *pte = (pAddress & ~0xfffu) | Lazy | Writable;
+   }
+   else
+   {
+      *pte = (pAddress & ~0xfffu) | Present | Writable;
+   }
+
    invlpg(vAddress);
 
 #ifdef DEBUG
@@ -320,7 +331,7 @@ PageDirectory::unmapPage(uint32_t vAddress)
 
    uint32_t* pde = addressToPde(vAddress);
 
-   if ((*pde & PageValid) == 0)
+   if ((*pde & Present) == 0)
    {
       Debug::panic("Trying to unmap a not mapped page: %p (invalid PDE)\n", (void* )vAddress);
 //      return false;
@@ -328,16 +339,32 @@ PageDirectory::unmapPage(uint32_t vAddress)
 
    uint32_t* pte = addressToPte(vAddress);
 
-   if ((*pte & PageValid) == 0)
+   if ((*pte & Present) == 0)
    {
       Debug::panic("Trying to unmap a not mapped page: %p (invalid PTE: 0x%x)\n", (void* )vAddress, *pte);
 //      return false;
    }
 
    // TODO free page directory if empty
-   *pte = PageWritable;
+   *pte = Writable;
 
    invlpg(vAddress);
 
    return true;
+}
+
+uint32_t
+PageDirectory::getDirectoryEntry(uint32_t vAddress)
+{
+   KASSERT((vAddress & PageMask) == 0);
+
+   uint32_t* pde = addressToPde(vAddress);
+   if ((*pde & Present) == 0)
+   {
+      return 0;
+   }
+
+   uint32_t* pte = addressToPte(vAddress);
+
+   return *pte;
 }

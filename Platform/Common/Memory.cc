@@ -225,50 +225,6 @@ Memory::unmapRegion(uintptr_t paddr, std::size_t size)
    return true;
 }
 
-bool
-Memory::handlePageFault(uintptr_t address, InterruptFrame* /*frame*/)
-{
-   if (address >= HeapStart && address < heapEnd)
-   {
-      uintptr_t pageAddress = address & ~PageMask;
-#ifdef DEBUG
-      printf("Expanding kernel heap: %p initiated by access to %p\n",
-	     (void* )pageAddress, (void *)address);
-#endif
-      uintptr_t page = getPage();
-      KASSERT(page != 0);
-
-      bool rv = mapPage(pageAddress, page);
-      KASSERT(rv);
-
-      std::memset((void* )pageAddress, 0, PageSize);
-
-      return true;
-   }
-
-#if 0
-   // this is an instant triple fault
-   if (address < StackStart &&
-       address >= (StackStart - StackSize) &&
-       (frame->esp + 32) > address)
-   {
-      uintptr_t pageAddress = address & ~PageMask;
-
-      printf("Expanding kernel stack: %p\n", (void* )pageAddress);
-
-      uintptr_t page = getPage();
-      KASSERT(page != 0);
-
-      bool rv = map(pageAddress, page);
-      KASSERT(rv);
-
-      return true;
-   }
-#endif
-
-   return false;
-}
-
 // increment heapEnd, the page fault handler will allocate it when accessed
 //
 uintptr_t
