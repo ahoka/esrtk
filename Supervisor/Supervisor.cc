@@ -44,8 +44,10 @@ Supervisor::run()
 //   lock.tryEnter();
    lock.enter();
 
-   // Thread t;
-   // t.init();
+   Thread t1, t2, t3;
+   t1.init();
+   t2.init();
+   t3.init();
 
    lock.exit();
 
