@@ -1,5 +1,7 @@
-#include <Thread.hh>
 #include <Parameters.hh>
+#include <Scheduler.hh>
+
+#include <Thread.hh>
 
 #include <cstdio>
 
@@ -9,9 +11,12 @@ unsigned long Thread::nextThreadId = 1;
 //
 Thread::Thread()
    : id(-1ul),
-     kernelStack(0)
+     kernelStack(0),
+     state(Idle),
+     next(0)
 {
    printf("Creating thread...\n");
+   Scheduler::insert(this);
 }
 
 bool

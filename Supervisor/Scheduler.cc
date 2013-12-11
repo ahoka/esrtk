@@ -1,6 +1,14 @@
 #include <Scheduler.hh>
+#include <Thread.hh>
 
-//KernelThread* Scheduler::threads = 0;
+Thread* Scheduler::threads = 0;
+
+void
+Scheduler::insert(Thread* t)
+{
+   t->next = threads;
+   threads = t;
+}
 
 void
 Scheduler::tick()
@@ -12,4 +20,3 @@ void
 Scheduler::dispatch()
 {
 }
-

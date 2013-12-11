@@ -1,8 +1,7 @@
 #ifndef SCHEDULER_HH
 #define SCHEDULER_HH
 
-#include <KernelThread.hh>
-#include <DoublyLinkedList.hh>
+class Thread;
 
 class Scheduler
 {
@@ -10,11 +9,12 @@ public:
    Scheduler();
    ~Scheduler();
 
+   static void insert(Thread* t);
    static void tick();
    static void dispatch();
 
 private:
-//   static KernelThread threads;
+   static Thread* threads;
 };
 
 #endif

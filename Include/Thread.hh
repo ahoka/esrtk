@@ -14,11 +14,24 @@ public:
 
 //   Thread* getCurrentThread();
    static void printAll();
+
+   enum State
+   {
+      New,
+      Idle,
+      Ready,
+      Running,
+      Blocked,
+      Dead
+   };
    
 public:
    unsigned long id;
 //   uintptr_t userStack;
    uintptr_t kernelStack;
+   State state;
+
+   Thread* next;
 
 private:
    static unsigned long nextThreadId;
