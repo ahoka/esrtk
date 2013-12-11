@@ -6,9 +6,7 @@
 #include <Templates.hh>
 #include <Modules.hh>
 #include <Memory.hh>
-
-// XXX does not belong here
-#include <X86/PageDirectory.hh>
+#include <Hal.hh>
 
 #include <cstring>
 
@@ -139,13 +137,13 @@ Memory::createKernelStack(uintptr_t& start)
 bool
 Memory::mapPage(uintptr_t address, uintptr_t phys)
 {
-   return PageDirectory::mapPage(address, phys);
+   return Hal::mapPage(address, phys);
 }
 
 bool
 Memory::unmapPage(uintptr_t page)
 {
-   bool success = PageDirectory::unmapPage(page);
+   bool success = Hal::unmapPage(page);
    // TODO we need to know where to mark the vaddr free!
 
    return success;
