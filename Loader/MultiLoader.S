@@ -48,9 +48,10 @@ page_directory:
 .balign 16
 
 .global loader
-.set loader, (_loader - KernelVirtualBase)
-.global _loader
-_loader:
+//.set loader, (_loader - KernelVirtualBase)
+//.global _loader
+//_loader:
+loader:
 	movl $(page_directory - KernelVirtualBase), %ecx
 	movl %ecx, %cr3
 
