@@ -120,11 +120,7 @@ kernel.elf: Loader/MultiLoader.o $(OFILES)
 
 kernel.img: kernel.elf
 	@echo Building kernel image
-	$(HIDE) dd if=/dev/zero of=pad bs=1 count=750
-	$(HIDE) cat Loader/stage1 Loader/stage2 pad $< > tmp.img
-	dd if=/dev/zero of=pad2 bs=1 count=$((1440 * 1024 - $(du -b kernel.img | cut -f 1)))
-	cat tmp.img pad2 > kernel.img
-	$(HIDE) rm pad tmp.img pad2
+	./mkimage.sh kernel.elf kernel.img
 
 clean:
 	@-rm $(DFILES) kernel.elf pad kernel.img $(OFILES) > /dev/null 2>&1 || true

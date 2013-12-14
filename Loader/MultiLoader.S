@@ -1,8 +1,6 @@
 #include <X86/Parameters.hh>
 
-// setting up the Multiboot header - see GRUB docs for details
-
-        .set ALIGN,    1<<0                     // align loaded modules on page boundaries
+.set ALIGN,    1<<0                     // align loaded modules on page boundaries
 .set MEMINFO,  1<<1                     // provide memory map
 .set VBEINFO,  1<<2
 .set FLAGS,    ALIGN | MEMINFO		// this is the Multiboot 'flag' field
@@ -51,6 +49,7 @@ page_directory:
 
 .global loader
 .set loader, (_loader - KernelVirtualBase)
+.global _loader
 _loader:
 	movl $(page_directory - KernelVirtualBase), %ecx
 	movl %ecx, %cr3
