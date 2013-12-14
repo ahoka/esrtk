@@ -1,3 +1,5 @@
+#ifdef ENABLE_APIC
+
 #include <Debug.hh>
 #include <Memory.hh>
 
@@ -146,3 +148,5 @@ Apic::createLocalVectorTable(LvtMask mask,
                                  deliveryMode,
                                  vector);
 }
+
+#endif
