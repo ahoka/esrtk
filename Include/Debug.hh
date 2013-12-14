@@ -19,6 +19,7 @@ private:
 public:
    static void panic [[noreturn]] (const char*, ...);
    
+   static void verbose(const char*, ...);
    static void info(const char*, ...);
    static void warning(const char*, ...);
    static void error(const char*, ...);
@@ -26,10 +27,11 @@ public:
 
    enum class DebugLevel
    {
-      Silent = 0,
-      Info = 1,
-      Warning = 2,
-      Error = 3
+      Silent,
+      Error,
+      Warning,
+      Info,
+      Verbose
    };
 
 private:

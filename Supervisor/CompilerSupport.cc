@@ -114,10 +114,10 @@ __cxa_finalize(void* dso)
 void
 __cxaimpl_call_constructors()
 {
-   Debug::info("Calling ctors: %p -> %p\n", &__start_ctors, &__end_ctors);
+   Debug::verbose("Calling ctors: %p -> %p\n", &__start_ctors, &__end_ctors);
    for (__cxaimpl_constructor* c = &__start_ctors; c != &__end_ctors; c++)
    {
-      Debug::info("Calling constructor at %p\n", *c);
+      Debug::verbose("Calling constructor at %p\n", *c);
       (*c)();
    }
 }
@@ -132,7 +132,7 @@ __cxaimpl_zero_bss()
    uintptr_t start = (uintptr_t )(&__start_bss) - KernelVirtualBase;
    uintptr_t end = (uintptr_t )(&__end_bss) - KernelVirtualBase;
    
-   Debug::info("Zeroing .bss section: 0x%0x-0x%0x\n", start, end);
+   Debug::verbose("Zeroing .bss section: 0x%0x-0x%0x\n", start, end);
 
    for (uint8_t* p = (uint8_t* )start; p != (uint8_t* )end; p++)
    {

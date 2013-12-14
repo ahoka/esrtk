@@ -32,6 +32,22 @@ Debug::panic(const char* message, ...)
 }
 
 void
+Debug::verbose(const char* message, ...)
+{
+   if (debugLevel < DebugLevel::Verbose)
+   {
+      return;
+   }
+
+   va_list va;
+   va_start(va, message);
+
+   vprintf(message, va);
+
+   va_end(va);
+}
+
+void
 Debug::info(const char* message, ...)
 {
    if (debugLevel < DebugLevel::Info)

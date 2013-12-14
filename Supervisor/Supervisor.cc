@@ -21,6 +21,7 @@ Supervisor::run()
 
    Platform::init();
 
+#ifdef TEST
    char* a = new char[256];
    char* b = new char[256];
    char* c = new char[256];
@@ -50,6 +51,8 @@ Supervisor::run()
    t3.init();
 
    lock.exit();
+
+#endif
 
    Power::halt();
 }
