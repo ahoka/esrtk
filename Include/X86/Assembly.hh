@@ -18,7 +18,7 @@ extern "C" void rdmsr(uint32_t address, uint32_t* eax, uint32_t* edx);
 
 extern "C" uint64_t rdtsc();
 
-extern "C" void cpuid(uint32_t eax, void* result);
+extern "C" void cpuid(uint32_t eax, cpuid_t* result);
 extern "C" uint32_t cpuid0(char* result);
 
 extern "C" uint32_t getEflags();

@@ -126,6 +126,14 @@ int Tsc::probe()
 bool
 Tsc::startClock()
 {
+   cpuid_t id;
+
+   cpuid(0x80000007, &id);
+   if (id.eax & (1 << 8))
+   {
+      Debug::info("CPU supports invariant TSC\n");
+   }
+
    calibrate();
    // XXX should be the real system start time
    offset = readTsc();
