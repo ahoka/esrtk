@@ -4,9 +4,9 @@
 
 .macro push_context
         pushl %eax
+        pushl %ebx
         pushl %ecx
         pushl %edx
-        pushl %ebx
         pushl %esp
         pushl %ebp
         pushl %esi
@@ -26,9 +26,9 @@
         popl %esi
         popl %ebp
         popl %esp
-        popl %ebx
         popl %edx
         popl %ecx
+        popl %ebx
         popl %eax
 .endm
 
@@ -57,10 +57,14 @@ call_isr:
         xorl %ebp, %ebp
         
         call isrDispatcher
-	popl %esp
+	
+	// esp was pushed to stack for isrDispatcher,
+	// so remove it
+	addl $4, %esp
 
 	pop_context
 
+	// remove the error codes from the stack too
 	addl $8, %esp
 
         sti
