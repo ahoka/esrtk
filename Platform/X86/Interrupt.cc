@@ -9,7 +9,7 @@
 #include <StackTrace.hh>
 
 //extern "C" void defaultIsr(InterruptFrame* frame);// __attribute__((noreturn));
-extern "C" void isrDispatcher(InterruptFrame* frame);// __attribute__((noreturn));
+extern "C" InterruptFrame* isrDispatcher(InterruptFrame* frame);// __attribute__((noreturn));
 
 extern IdtPointer idtPointer;
 
@@ -74,17 +74,23 @@ defaultIsr(InterruptFrame* frame)
    // printf("\n");
 }
 
-void
+InterruptFrame*
 isrDispatcher(InterruptFrame* frame)
 {
    // XXX hardcoded hack
    if (frame->interrupt >= 32 && frame->interrupt < 48)
    {
+      if (frame->interrupt == 32)
+      {
+      }
+
       Interrupt::handleInterrupt(frame->interrupt - 32);
-      return;
+      return frame;
    }
 
    defaultIsr(frame);
+
+   return frame;
 }
 
 void

@@ -1,3 +1,4 @@
+#include <Debug.hh>
 #include <Clock.hh>
 
 Clock* Clock::clocks = 0;
@@ -37,6 +38,8 @@ Clock::probeAndInit()
 
    best->startClock();
    activeClock = best;
+
+   Debug::info("Selecting %s as best clock source\n", best->getName());
 }
 
 uint64_t

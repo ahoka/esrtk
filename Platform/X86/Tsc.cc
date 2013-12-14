@@ -2,11 +2,13 @@
 #include <X86/IoPort.hh>
 #include <X86/Pit.hh>
 
+#include <Debug.hh>
+
 #include <X86/Tsc.hh>
 
-#include <cstdio>
-
-Tsc::Tsc() : frequency(0), offset(0)
+Tsc::Tsc()
+   : frequency(0),
+     offset(0)
 {
    // empty
 }
@@ -19,14 +21,12 @@ Tsc::~Tsc()
 void
 Tsc::calibrate()
 {
-   printf("Calibrating TSC\n");
+   Debug::info("Calibrating TSC...\n");
 
    cli();
 
    const int measurements = 5;
-
    unsigned long results[measurements];
-
    unsigned long delay = 50;
 
    for (auto i = 0; i < measurements; i++)
@@ -103,7 +103,7 @@ Tsc::calibrate()
 
    sti();
 
-   printf("TSC frequency is: %lu Hz\n", frequency);
+   Debug::info("TSC frequency is %lu Hz\n", frequency);
 }
 
 unsigned long
@@ -130,6 +130,8 @@ Tsc::startClock()
    // XXX should be the real system start time
    offset = readTsc();
 
+   Debug::info("TSC offset is %llu\n", offset);
+
    return true;
 }
 
@@ -143,6 +145,12 @@ uint64_t
 Tsc::getTime()
 {
    return (readTsc() - offset) / frequency;
+}
+
+const char*
+Tsc::getName()
+{
+   return "TSC";
 }
 
 static Tsc tsc;

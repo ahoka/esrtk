@@ -15,6 +15,7 @@ public:
    bool startClock();
    bool stopClock();
    uint64_t getTime();
+   const char* getName();
 
 private:
    void calibrate();

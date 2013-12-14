@@ -14,6 +14,7 @@ private:
    virtual bool startClock() = 0;
    virtual bool stopClock() = 0;
    virtual uint64_t getTime() = 0;
+   virtual const char* getName() = 0;
 
    static Clock* clocks;
    static Clock* activeClock;
