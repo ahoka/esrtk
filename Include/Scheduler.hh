@@ -15,6 +15,7 @@ public:
 
 private:
    static Thread* threads;
+   static Thread* nextToRun;
 };
 
 #endif
