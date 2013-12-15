@@ -36,8 +36,10 @@ Pit::startTimer()
    KASSERT((divider & ~0xfffflu) == 0);
 
    outb(Command, SelectChannel0 | LatchBothBytes | RateGeneratorMode);
+   outb(0, 0x80);
 
    outb(Channel0, (uint8_t )divider);
+   outb(0, 0x80);
    outb(Channel0, (uint8_t )(divider >> 8));
 
    Interrupt::registerHandler(0, this);
@@ -64,8 +66,6 @@ Pit::getFrequency()
 unsigned long
 Pit::readValue()
 {
-   outb(Command, SelectChannel0 | LatchBothBytes | RateGeneratorMode);
-   
    unsigned long low = inb(Channel0);
    unsigned long high = inb(Channel0);
    
@@ -77,6 +77,8 @@ Pit::readValue()
 void
 Pit::delay(unsigned long ms)
 {
+   // we depend on the pit being initialized for system timer
+   //
    long ticks = (long)ms * (OscillatorFrequency / 1000);
 
    unsigned long lastTick = readValue();

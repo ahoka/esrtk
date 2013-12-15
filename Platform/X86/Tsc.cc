@@ -135,6 +135,7 @@ Tsc::startClock()
    }
 
    calibrate();
+
    // XXX should be the real system start time
    offset = readTsc();
 
