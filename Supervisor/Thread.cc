@@ -1,9 +1,8 @@
 #include <Parameters.hh>
 #include <Scheduler.hh>
+#include <Debug.hh>
 
 #include <Thread.hh>
-
-#include <cstdio>
 
 unsigned long Thread::nextThreadId = 1;
 
@@ -15,7 +14,7 @@ Thread::Thread()
      state(Idle),
      next(0)
 {
-   printf("Creating thread...\n");
+   Debug::verbose("Creating thread...\n");
    Scheduler::insert(this);
 }
 
@@ -25,7 +24,7 @@ Thread::init(unsigned long threadId, uintptr_t stack)
    id = threadId;
    kernelStack = stack;
 
-   printf("Initializing thread: %lu %p...\n", threadId, (void*)stack);
+   Debug::verbose("Initializing thread: %lu %p...\n", threadId, (void*)stack);
 
    return true;
 }
@@ -39,7 +38,7 @@ Thread::init()
    bool success = Memory::createKernelStack(kernelStack);
    KASSERT(success);
 
-   printf("Initializing thread...\n");
+   Debug::verbose("Initializing thread...\n");
 
    return success;
 }
@@ -49,6 +48,6 @@ Thread::printAll()
 {
    // for (auto& t : list)
    // {
-   //    printf("%lu - %p\n", t.id, (void*)t.kernelStack);
+   //    Debug::verbose("%lu - %p\n", t.id, (void*)t.kernelStack);
    // }
 }

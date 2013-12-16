@@ -14,7 +14,7 @@ Time::increment(unsigned long ms)
 uint64_t
 Time::getUptime()
 {
-   uint64_t time = Clock::getTimeValue();
+   uint64_t time = Clock::getTime();
 
 //   printf("clock: %lu, jiffies: %lu\n", (unsigned long)uptime, (unsigned long)time);
 

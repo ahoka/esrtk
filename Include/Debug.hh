@@ -35,6 +35,8 @@ public:
    };
 
 private:
+   static void printTimeStamp();
+
    static DebugLevel debugLevel;
 };
 

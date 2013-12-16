@@ -3,29 +3,26 @@
 
 #include <cstdint>
 
+class ClockProvider;
+
 class Clock
 {
 public:
    Clock();
-   virtual ~Clock();
+   ~Clock();
+
+   static uint64_t getTime();
+
+   static void registerProvider(ClockProvider* provider);
 
 private:
-   virtual int probe() = 0;
-   virtual bool startClock() = 0;
-   virtual bool stopClock() = 0;
-   virtual uint64_t getTime() = 0;
-   virtual const char* getName() = 0;
-
-   static Clock* clocks;
-   static Clock* activeClock;
-
-   Clock* nextClock;
+   static ClockProvider* clocks;
+   static ClockProvider* activeClock;
 
    friend class Platform;
    static void probeAndInit();
 
    friend class Time;
-   static uint64_t getTimeValue();
 };
 
 #endif

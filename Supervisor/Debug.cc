@@ -8,9 +8,10 @@
 #include <Debug.hh>
 #include <StackTrace.hh>
 #include <Power.hh>
+#include <Clock.hh>
 #include <cstdio>
 
-Debug::DebugLevel Debug::debugLevel = Debug::DebugLevel::Info;
+Debug::DebugLevel Debug::debugLevel = Debug::DebugLevel::Verbose;
 
 void
 Debug::panic(const char* message, ...)
@@ -32,12 +33,20 @@ Debug::panic(const char* message, ...)
 }
 
 void
+Debug::printTimeStamp()
+{
+//   printf("[%llu] ", Clock::getTimeInMicroSeconds());
+}
+
+void
 Debug::verbose(const char* message, ...)
 {
    if (debugLevel < DebugLevel::Verbose)
    {
       return;
    }
+
+   Debug::printTimeStamp();
 
    va_list va;
    va_start(va, message);
@@ -55,6 +64,8 @@ Debug::info(const char* message, ...)
       return;
    }
 
+   Debug::printTimeStamp();
+
    va_list va;
    va_start(va, message);
 
@@ -71,6 +82,8 @@ Debug::warning(const char* message, ...)
       return;
    }
 
+   Debug::printTimeStamp();
+
    va_list va;
    va_start(va, message);
 
@@ -86,6 +99,8 @@ Debug::error(const char* message, ...)
    {
       return;
    }
+
+   Debug::printTimeStamp();
 
    va_list va;
    va_start(va, message);

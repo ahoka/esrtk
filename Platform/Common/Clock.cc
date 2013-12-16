@@ -1,30 +1,41 @@
 #include <Debug.hh>
-#include <Clock.hh>
 
-Clock* Clock::clocks = 0;
-Clock* Clock::activeClock = 0;
+#include <Clock.hh>
+#include <ClockProvider.hh>
+
+#include <cstdio>
+
+ClockProvider* Clock::clocks = 0;
+ClockProvider* Clock::activeClock = 0;
 
 Clock::Clock()
 {
-   nextClock = clocks;
-   clocks = this;
 }
 
 Clock::~Clock()
 {
-   // XXX remove timer and run
-   // probeAndInit();
+}
+
+void
+Clock::registerProvider(ClockProvider* provider)
+{
+   Debug::verbose("Clock::registerProvider(%p)\n", provider);
+   provider->nextClock = clocks;
+   clocks = provider;
 }
 
 void
 Clock::probeAndInit()
 {
-   Clock* c = clocks;
-   Clock* best = 0;
+   Debug::verbose("Clock::probeAndInit()\n");
+   ClockProvider* c = clocks;
+   ClockProvider* best = 0;
    int bestProbe = 0;
 
    while (c != 0)
    {
+      KASSERT(c != 0);
+      printf("AAA %p\n", c);
       int probeResult = c->probe();
 
       if (c->probe() > bestProbe)
@@ -43,7 +54,7 @@ Clock::probeAndInit()
 }
 
 uint64_t
-Clock::getTimeValue()
+Clock::getTime()
 {
    if (activeClock == 0)
    {
@@ -51,6 +62,10 @@ Clock::getTimeValue()
    }
    else
    {
-      return activeClock->getTime();
+      auto freq = activeClock->getFrequency();
+
+      KASSERT(freq != 0);
+
+      return activeClock->getValue() / freq;
    }
 }

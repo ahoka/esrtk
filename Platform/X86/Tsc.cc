@@ -106,19 +106,20 @@ Tsc::calibrate()
    Debug::info("TSC frequency is %lu Hz\n", frequency);
 }
 
-unsigned long
+unsigned int
 Tsc::getFrequency()
 {
    return frequency;
 }
 
 uint64_t
-Tsc::readTsc()
+Tsc::getValue()
 {
    return rdtsc();
 }
 
-int Tsc::probe()
+int
+Tsc::probe()
 {
    return 100;
 }
@@ -137,7 +138,7 @@ Tsc::startClock()
    calibrate();
 
    // XXX should be the real system start time
-   offset = readTsc();
+   offset = getValue();
 
    Debug::info("TSC offset is %llu\n", offset);
 
@@ -148,12 +149,6 @@ bool
 Tsc::stopClock()
 {
    return true;
-}
-
-uint64_t
-Tsc::getTime()
-{
-   return (readTsc() - offset) / frequency;
 }
 
 const char*

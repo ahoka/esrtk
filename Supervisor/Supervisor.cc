@@ -8,6 +8,8 @@
 
 #include <cstdio>
 
+#define TEST
+
 extern "C" void
 supervisor_init()
 {
