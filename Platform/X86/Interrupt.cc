@@ -77,6 +77,8 @@ defaultIsr(InterruptFrame* frame)
 InterruptFrame*
 isrDispatcher(InterruptFrame* frame)
 {
+   KASSERT(Interrupt::getInterruptLevel() > 0);
+
    // XXX hardcoded hack
    if (frame->interrupt >= 32 && frame->interrupt < 48)
    {
@@ -89,6 +91,8 @@ isrDispatcher(InterruptFrame* frame)
    }
 
    defaultIsr(frame);
+
+   KASSERT(Interrupt::getInterruptLevel() > 0);
 
    return frame;
 }

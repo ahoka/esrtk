@@ -10,12 +10,15 @@
 #include <Power.hh>
 #include <Clock.hh>
 #include <cstdio>
+#include <Hal.hh>
 
 Debug::DebugLevel Debug::debugLevel = Debug::DebugLevel::Verbose;
 
 void
 Debug::panic(const char* message, ...)
 {
+   Hal::disableLocalInterrupts();
+
    va_list va;
    va_start(va, message);
 

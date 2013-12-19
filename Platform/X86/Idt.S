@@ -52,6 +52,8 @@ idtinit:
 call_isr:
 	push_context
 
+	incl interrupt_level
+
 	movl $0x10, %eax
 	movl %eax, %ds
 	movl %eax, %es
@@ -71,6 +73,8 @@ call_isr:
 	// so remove it
 	addl $4, %esp
 
+	decl interrupt_level
+	
 	pop_context
 
 	// remove the error codes from the stack too

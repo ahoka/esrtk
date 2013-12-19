@@ -86,8 +86,8 @@ cpuid0:
 	popl %ebx
 	ret
 
-.global getEflags
-getEflags:
+.global get_eflags
+get_eflags:
 	pushfl
 	popl %eax
 	ret
@@ -97,8 +97,8 @@ getCr2:
         movl %cr2, %eax
         ret
 
-.global setEflags
-setEflags:
+.global set_eflags
+set_eflags:
 	movl 4(%esp), %eax
 	pushl %eax
 	popfl
@@ -146,7 +146,7 @@ invlpg:
 .global get_eip
 get_eip:
 	popl %eax
-	jmpl %eax
+	jmpl *%eax
 	
 .global initPaging
 initPaging:

@@ -60,7 +60,7 @@ CPPFLAGS+=	-DHAVE_STRLCAT=0 -DHAVE_STRSEP=0 -DHAVE_STRLCPY=0 -D__ELF__
 CFLAGS+=	$(CPPFLAGS)
 CXXFLAGS+=	$(CPPFLAGS)
 
-SRCDIR=		Supervisor CLibrary CxxLibrary Drivers Platform FileSystem
+SRCDIR=		Supervisor CLibrary CxxLibrary Drivers Platform FileSystem Hal
 TESTDIR=	Test
 
 CCFILES:=	$(shell find $(SRCDIR) -name '*.cc')

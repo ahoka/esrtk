@@ -1,12 +1,14 @@
 #ifndef VGACONSOLE_H
 #define	VGACONSOLE_H
 
+#include <Mutex.hh>
 #include <Console.hh>
 #include <stdint.h>
 
 typedef uint16_t VgaCharacter;
 
-class VgaConsole : public Console {
+class VgaConsole : public Console
+{
 public:
    VgaConsole();
    virtual ~VgaConsole();
@@ -23,8 +25,10 @@ public:
    using Console::putChar;
 
 private:
-   VgaConsole(const VgaConsole& orig);
-   VgaConsole& operator=(const VgaConsole& orig);
+   VgaConsole(const VgaConsole& orig) = delete;
+   VgaConsole& operator=(const VgaConsole& orig) = delete;
+
+   int putCharUnlocked(int ch, int row, int column);
 
    VgaCharacter*
    vram()
@@ -33,6 +37,7 @@ private:
    }
 
    uint32_t vram_;
+   Mutex lock;
 
 //   backgroundColor(0x1f);
 //   foregroundColor(0xff);

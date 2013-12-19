@@ -47,6 +47,8 @@ public:
    static bool enableInterrupt(irq_t irq);
    static bool disableInterrupt(irq_t irq);
 
+   static int getInterruptLevel();
+
    static void setController(InterruptController* interruptController);
    static void handleInterrupt(irq_t irq);
 

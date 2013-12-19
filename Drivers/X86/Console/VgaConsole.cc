@@ -3,8 +3,8 @@
 #include <Memory.hh>
 #include <Debug.hh>
 
-extern VgaConsole vgaConsole;
-VgaConsole vgaConsole;
+//extern VgaConsole vgaConsole;
+static VgaConsole vgaConsole;
 
 VgaConsole::VgaConsole()
 {
@@ -12,10 +12,6 @@ VgaConsole::VgaConsole()
    KASSERT(vram_ != 0);
 
    clearScreen();
-}
-
-VgaConsole::VgaConsole(const VgaConsole& /*orig*/)
-{
 }
 
 VgaConsole::~VgaConsole()
@@ -41,7 +37,7 @@ VgaConsole::getChar()
 }
 
 int
-VgaConsole::putChar(int ch, int row, int column)
+VgaConsole::putCharUnlocked(int ch, int row, int column)
 {
    if (row > getRows() + 1 || column > getColumns() + 1)
    {
@@ -56,21 +52,43 @@ VgaConsole::putChar(int ch, int row, int column)
    return 1;
 }
 
+int
+VgaConsole::putChar(int ch, int row, int column)
+{
+   // bool l = lock.tryEnter();
+   // if (!l)
+   // {
+   //    return 0;
+   // }
+
+   int result = putCharUnlocked(ch, row, column);
+
+//   lock.exit();
+
+   return result;
+}
+
 void
 VgaConsole::clearScreen()
 {
+//   lock.enter();
+
    for (int column = 0; column < getColumns(); column++)
    {
       for (int row = 0; row < getRows(); row++)
       {
-	 putChar(' ', row, column);
+	 putCharUnlocked(' ', row, column);
       }
    }
+
+//   lock.exit();
 }
 
 void
 VgaConsole::scrollScreen()
 {
+//   lock.enter();
+
    for (int i = 0; i < getRows() * (getColumns() - 1); i++)
    {
       vram()[i] = vram()[i + getColumns()];
@@ -82,11 +100,15 @@ VgaConsole::scrollScreen()
    {
       vram()[i] = (VgaCharacter )((' ' & foregroundColor) | (backgroundColor << 8));
    }
+
+//   lock.exit();
 }
 
 void
 VgaConsole::setCursor(int row, int column)
 {
+//   lock.enter();
+
    uint16_t cursorIndex = (uint16_t )(row * getColumns() + column);
 
    outb(VgaIndexPort, VgaCursorLow);
@@ -94,4 +116,6 @@ VgaConsole::setCursor(int row, int column)
 
    outb(VgaIndexPort, VgaCursorHigh);
    outb(VgaDataPort, (cursorIndex >> 8) & 0xff);
+
+//   lock.exit();
 }

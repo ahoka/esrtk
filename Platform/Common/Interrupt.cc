@@ -6,6 +6,9 @@
 
 InterruptController* Interrupt::controller = 0;
 
+extern int interrupt_level;
+int interrupt_level = 0;
+
 void
 InterruptHandler::setNext(InterruptHandler* value)
 {
@@ -159,4 +162,10 @@ Interrupt::setController(InterruptController* interruptController)
    KASSERT((controller == 0 && interruptController != 0) || (interruptController == 0 && controller != 0));
 
    controller = interruptController;
+}
+
+int
+Interrupt::getInterruptLevel()
+{
+   return interrupt_level;
 }
