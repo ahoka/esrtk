@@ -7,6 +7,9 @@
 #  define UNSIGNED(x) x##u
 #endif
 
+#define KernelCodeSegment 0x08
+#define KernelDataSegment 0x10
+
 #define KernelVirtualBase UNSIGNED(0xc0000000)
 #define KernelLoadAddress UNSIGNED(0x100000)
 #define KernelPageNumber (KernelVirtualBase >> 22)

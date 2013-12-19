@@ -32,13 +32,13 @@ Thread::init(unsigned long threadId, uintptr_t stack)
 bool
 Thread::init()
 {
+   Debug::verbose("Initializing thread...\n");
+
    KASSERT(nextThreadId != 0);
    id = nextThreadId++;
 
    bool success = Memory::createKernelStack(kernelStack);
    KASSERT(success);
-
-   Debug::verbose("Initializing thread...\n");
 
    return success;
 }
@@ -50,4 +50,15 @@ Thread::printAll()
    // {
    //    Debug::verbose("%lu - %p\n", t.id, (void*)t.kernelStack);
    // }
+}
+
+void
+Thread::main()
+{
+   Debug::verbose("Thread main called!\n");
+
+   for (;;)
+   {
+      asm volatile("pause");
+   }
 }

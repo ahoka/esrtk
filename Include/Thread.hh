@@ -14,6 +14,7 @@ public:
 
 //   Thread* getCurrentThread();
    static void printAll();
+   static void main [[noreturn]] ();
 
    enum State
    {

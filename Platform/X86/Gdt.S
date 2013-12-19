@@ -1,3 +1,5 @@
+#include <Parameters.hh>
+
 // the descriptors
 .section .rodata
 .balign 16
@@ -35,9 +37,9 @@ gdtr:
 gdt_init:
 	movl $gdtr, %eax
 	lgdt (%eax)
-	ljmp $0x08, $gdtflush
+	ljmp $KernelCodeSegment, $gdtflush
 gdtflush:
-	movl $0x10, %eax
+	movl $KernelDataSegment, %eax
 	movl %eax, %ds
 	movl %eax, %es
 	movl %eax, %fs

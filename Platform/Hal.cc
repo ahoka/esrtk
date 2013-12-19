@@ -12,4 +12,3 @@ Hal::unmapPage(uintptr_t virt)
 {
    return PageDirectory::unmapPage(virt);
 }
-

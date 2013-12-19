@@ -157,17 +157,23 @@ Memory::createKernelStack(uintptr_t& start)
 }
 #else
 bool
-Memory::createKernelStack(uintptr_t& start)
+Memory::createKernelStack(uintptr_t& top)
 {
-   start = stackEnd;
-
    uintptr_t stackPage = getPage();
    KASSERT(stackPage != 0);
 
-   start = mapPage(stackPage);
-   KASSERT(start != 0);
+   uintptr_t bottom = mapPage(stackPage);
+   KASSERT(bottom != 0);
 
-   printf("Creating new kernel stack: %p-%p (%u)\n", (void* )start, (void* )(start - PageSize), PageSize);
+   top = bottom + PageSize;
+
+   printf("Creating new kernel stack: %p-%p (%u)\n", (void* )top, (void* )(bottom), PageSize);
+
+   uintptr_t newStack = Hal::initKernelStack(top);
+
+   printf("Stack after init: %p\n", (void*)newStack);
+
+   top = newStack;
 
    return true;
 }

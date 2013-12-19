@@ -1,3 +1,5 @@
+#include <Parameters.hh>
+
 // the descriptors
 .text
 .balign 16
@@ -31,6 +33,13 @@
         popl %ebx
         popl %eax
 .endm
+
+.global create_context
+create_context:
+	pushl $0x02 // eflags
+	pushl $KernelCodeSegment // cs
+	pushl %eax // eip
+	iret
 
 .global idtinit
 idtinit:
