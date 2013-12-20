@@ -8,6 +8,7 @@
 MemoryManager* MemoryManager::self = 0;
 
 MemoryManager::MemoryManager()
+   : freeList()
 {
    // empty!
 }

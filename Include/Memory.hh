@@ -40,9 +40,6 @@ enum
 class PhysicalPage
 {
 public:
-   PhysicalPage* prev;
-   PhysicalPage* next;
-
    enum
    {
       // extreme value
@@ -50,6 +47,9 @@ public:
    };
 
    PhysicalPage()
+      : prev(this),
+	next(this),
+	address(Invalid)
    {
       // empty
    }
@@ -87,6 +87,10 @@ public:
    }
 
 private:
+   friend class PageCluster;
+
+   PhysicalPage* prev;
+   PhysicalPage* next;
    uintptr_t address;
 
    enum

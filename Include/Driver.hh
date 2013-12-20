@@ -6,6 +6,9 @@ class Driver
 public:
    Driver();
    virtual ~Driver();
+
+   Driver(const Driver&) = delete;
+   Driver& operator = (const Driver&) = delete;
    
    virtual int probe() = 0;
    virtual bool init() = 0;

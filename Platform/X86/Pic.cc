@@ -95,7 +95,7 @@ public:
 
 void Pic::endOfInterrupt(irq_t irq)
 {
-   KASSERT(irq >= 0 && irq < 16);
+   KASSERT(irq < 16);
 
 //   printf("Debug: IRQ%d EOI\n", irq);
 
@@ -109,7 +109,7 @@ void Pic::endOfInterrupt(irq_t irq)
 
 void Pic::enableInterrupt(irq_t irq)
 {
-   KASSERT(irq >= 0 && irq < 16);
+   KASSERT(irq < 16);
 
    if (irq > 7)
    {
@@ -130,7 +130,7 @@ void Pic::enableInterrupt(irq_t irq)
 
 void Pic::disableInterrupt(irq_t irq)
 {
-   KASSERT(irq >= 0 && irq < 16);
+   KASSERT(irq < 16);
 
    if (irq > 7)
    {

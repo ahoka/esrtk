@@ -6,6 +6,9 @@
 Console* Console::consoleList = 0;
 
 Console::Console()
+   : next(0),
+     currentRow(0),
+     currentColumn(0)
 {
    init();
 

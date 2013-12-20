@@ -8,6 +8,9 @@ public:
    Console();
    virtual ~Console();
 
+   Console(const Console&) = delete;
+   Console& operator=(const Console&) = delete;
+
    int init();
    int putChar(char ch);
    int putString(const char* str);

@@ -11,8 +11,11 @@
 class InterruptHandler
 {
 public:
-   InterruptHandler() {}
-   virtual ~InterruptHandler() {}
+   InterruptHandler();
+   virtual ~InterruptHandler() = default;
+
+   InterruptHandler(const InterruptHandler&) = delete;
+   InterruptHandler& operator = (const InterruptHandler&) = delete;
 
    virtual void handleInterrupt() = 0;
    void setNext(InterruptHandler* value);

@@ -7,6 +7,8 @@
 static VgaConsole vgaConsole;
 
 VgaConsole::VgaConsole()
+   : vram_(0),
+     lock()
 {
    vram_ = Memory::mapPage(0xb8000);
    KASSERT(vram_ != 0);

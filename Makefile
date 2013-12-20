@@ -31,18 +31,19 @@ COPTS=		-O2 -march=i686 -m32 -g3 \
 
 CFLAGS=		-std=c99 $(COPTS)
 
-CXXFLAGS=	$(COPTS) \
-		-fno-exceptions -fno-rtti \
-		-Weffc++
+CXXFLAGS=	$(COPTS) -fno-exceptions -fno-rtti
 
-CC=		$(CROSS)clang
-CXX=		$(CROSS)clang++
-CPP=		$(CROSS)clang -m32 -E
-COPTS+=		-integrated-as -Weverything
-COPTS+=		-Wno-c++98-compat-pedantic \
-		-Wno-global-constructors -Wno-exit-time-destructors \
-		-Wno-padded -Wno-packed \
-		-Wno-weak-vtables
+#CC=		$(CROSS)clang
+#CXX=		$(CROSS)clang++
+#CPP=		$(CROSS)clang -m32 -E
+CC=		gcc
+CXX=		g++
+CPP=		gcc -m32 -nostdinc -E
+#COPTS+=		-integrated-as -Weverything
+#COPTS+=		-Wno-c++98-compat-pedantic \
+#		-Wno-global-constructors -Wno-exit-time-destructors \
+#		-Wno-padded -Wno-packed \
+#		-Wno-weak-vtables -Weffc++
 CXXFLAGS+=	-std=c++11
 
 CPPFLAGS+=	-I$(PWD)/Include

@@ -11,10 +11,15 @@ class DoublyLinkedItem
 {
 public:
    DoublyLinkedItem()
+      : prev(static_cast<T*>(this)),
+	next(static_cast<T*>(this))
    {
-      setPrev(static_cast<T*>(this));
-      setNext(static_cast<T*>(this));
    }
+
+   virtual ~DoublyLinkedItem() = default;
+
+   DoublyLinkedItem(const DoublyLinkedItem&) = delete;
+   DoublyLinkedItem& operator = (const DoublyLinkedItem& other) = delete;
 
 private:
    void insertAfter(T* item)
