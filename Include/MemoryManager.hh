@@ -52,7 +52,7 @@ private:
 	 address = newAddress;
       }
 
-      uintptr_t getSize()
+      std::size_t getSize()
       {
 	 return size;
       }

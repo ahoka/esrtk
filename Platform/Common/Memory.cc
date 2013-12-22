@@ -36,7 +36,7 @@ Memory::init()
    printf(".rodata: %p-%p\n", &__start_rodata, &__end_rodata);
    printf(".bss: %p-%p\n", &__start_bss, &__end_bss);
 
-   printf("Page size: %u, PhysicalPage structure size: %u\n", PageSize, sizeof(PhysicalPage));
+   printf("Page size: %u, PhysicalPage structure size: %zu\n", PageSize, sizeof(PhysicalPage));
 
    usedPages.init();
    freePages.init();

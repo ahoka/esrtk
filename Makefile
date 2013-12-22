@@ -1,17 +1,31 @@
 # Makefile for kernel
 #
 
-BUILD_HOST=	$(shell uname)
-BUILD_ROOT=	$(PWD)
-
+BUILD_ROOT := $(dir $(lastword $(MAKEFILE_LIST)))
 PLATFORM=	X86
+
+FIND:=		find
+
+TOOLCHAIN=	gnu
+
+ifeq ($(shell uname -o), Msys)
+BUILD_HOST:=	Windows
+FIND:=			"C:\MinGW\msys\1.0\bin\find.exe"
+MAKE:=			make
+else
+BUILD_HOST:=	$(shell uname)
+endif
+
+CROSS=
 
 ifeq ($(BUILD_HOST), Darwin)
 CROSS=		i686-elf-
-else ifeq ($(BUILD_HOST), Msys)
+COPTS+=		-DCROSS_COMPILER=1
+endif
+
+ifeq ($(BUILD_HOST), Windows)
 CROSS=		i686-elf-
-else
-CROSS=
+COPTS+=		-DCROSS_COMPILER=1
 endif
 
 AS=		$(CROSS)as
@@ -24,7 +38,7 @@ LDFLAGS=	-melf_i386
 
 ASFLAGS+=	--32
 
-COPTS=		-O2 -march=i686 -m32 -g3 \
+COPTS+=		-O2 -march=i686 -m32 -g3 \
 		-Wall -Wextra -Werror \
 		-nostdlib -nostdinc -fno-builtin \
 		-fno-stack-protector
@@ -33,27 +47,33 @@ CFLAGS=		-std=c99 $(COPTS)
 
 CXXFLAGS=	$(COPTS) -fno-exceptions -fno-rtti
 
-#CC=		$(CROSS)clang
-#CXX=		$(CROSS)clang++
-#CPP=		$(CROSS)clang -m32 -E
-CC=		gcc
-CXX=		g++
-CPP=		gcc -m32 -nostdinc -E
-#COPTS+=		-integrated-as -Weverything
-#COPTS+=		-Wno-c++98-compat-pedantic \
-#		-Wno-global-constructors -Wno-exit-time-destructors \
-#		-Wno-padded -Wno-packed \
-#		-Wno-weak-vtables -Weffc++
+ifeq ($(TOOLCHAIN), clang)
+CC=			$(CROSS)clang
+CXX=		$(CROSS)clang++
+CPP=		$(CROSS)clang -m32 -E
+
+COPTS+=		-integrated-as -Weverything
+COPTS+=		-Wno-c++98-compat-pedantic \
+		-Wno-global-constructors -Wno-exit-time-destructors \
+		-Wno-padded -Wno-packed \
+		-Wno-weak-vtables
+else
+CC=			$(CROSS)gcc
+CXX=		$(CROSS)g++
+CPP=		$(CROSS)gcc -m32 -nostdinc -E
+#COPTS+=		-Wno-format
+endif
+
 CXXFLAGS+=	-std=c++11
 
-CPPFLAGS+=	-I$(PWD)/Include
-CPPFLAGS+=	-I$(PWD)/CInclude
-CPPFLAGS+=	-I$(PWD)/CxxInclude
-CPPFLAGS+=	-I$(PWD)/Templates
+CPPFLAGS+=	-I$(BUILD_ROOT)/Include
+CPPFLAGS+=	-I$(BUILD_ROOT)/CInclude
+CPPFLAGS+=	-I$(BUILD_ROOT)/CxxInclude
+CPPFLAGS+=	-I$(BUILD_ROOT)/Templates
 
 # XXX these should be only provided for Standard
 #
-CPPFLAGS+=	-I$(PWD)/BsdCompat
+CPPFLAGS+=	-I$(BUILD_ROOT)/BsdCompat
 CPPFLAGS+=	-DHAVE_NBTOOL_CONFIG_H=0
 
 CPPFLAGS+=	-DHAVE_STRLCAT=0 -DHAVE_STRSEP=0 -DHAVE_STRLCPY=0 -D__ELF__
@@ -64,11 +84,11 @@ CXXFLAGS+=	$(CPPFLAGS)
 SRCDIR=		Supervisor CLibrary CxxLibrary Drivers Platform FileSystem Hal
 TESTDIR=	Test
 
-CCFILES:=	$(shell find $(SRCDIR) -name '*.cc')
-CFILES:=	$(shell find $(SRCDIR) -name '*.c')
-SFILES:=	$(shell find $(SRCDIR) -name '*.S')
+CCFILES:=	$(shell $(FIND) $(SRCDIR) -name '*.cc')
+CFILES:=	$(shell $(FIND) $(SRCDIR) -name '*.c')
+SFILES:=	$(shell $(FIND) $(SRCDIR) -name '*.S')
 
-TCCFILES:=	$(shell find $(TESTDIR) -name '*.cc')
+TCCFILES:=	$(shell $(FIND) $(TESTDIR) -name '*.cc')
 
 SRC=		$(CCFILES) $(CFILES) $(SFILES)
 
@@ -77,7 +97,7 @@ OFILES=		$(CCFILES:.cc=.o) $(SFILES:.S=.o) $(CFILES:.c=.o)
 
 #HIDE=	@
 
-all:	kernel.elf kernel.img
+all:	Loader/MultiLoader.o kernel.elf kernel.img
 
 .PHONY: buildinfo
 buildinfo:
@@ -87,16 +107,17 @@ buildinfo:
 	@echo C Preprocessor: $(CPP)
 	@echo Assembler: $(AS)
 	@echo Linker: $(LD)
+	@echo Make: $(MAKE)
 
 %.o: %.cc
 	@echo Compiling $<
 	$(HIDE) $(CXX) $(CXXFLAGS) -c -o $*.o $*.cc
 
-%.o: %.c Makefile
+%.o: %.c
 	@echo Compiling $<
 	$(HIDE) $(CC) $(CFLAGS) -c -o $*.o $*.c
 
-%.o: %.S Makefile
+%.o: %.S
 	@echo Compiling $<
 	$(HIDE) $(CPP) $(CPPFLAGS) -DASSEMBLER $*.S | $(AS) $(ASFLAGS) -o $*.o
 
@@ -114,7 +135,7 @@ buildinfo:
 
 depend: $(DFILES)
 
-kernel.elf: Loader/MultiLoader.o $(OFILES) 
+kernel.elf: Loader/MultiLoader.o $(OFILES)
 	@echo Linking kernel executable
 	$(HIDE) $(LD) $(LDFLAGS) -T Platform/${PLATFORM}/linker.ld -o $@ $^
 	@$(SIZE) $@

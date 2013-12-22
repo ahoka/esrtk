@@ -20,10 +20,10 @@ uint64_t roundTo(uint64_t num, uint32_t size)
 template <class T>
 T roundTo(T num, uint32_t size)
 {
-   uint32_t orig = reinterpret_cast<uint32_t>(num);
+   uint32_t orig = uint32_t(num);
    uint32_t rounded = (orig + (size - 1)) & ~(size - 1);
    
-   return reinterpret_cast<T>(rounded);
+   return T(rounded);
 }
 
 template <uint64_t>
