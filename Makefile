@@ -6,9 +6,9 @@ PLATFORM=	X86
 
 FIND:=		find
 
-TOOLCHAIN=	gnu
+TOOLCHAIN=	gcc
 
-ifeq ($(shell uname -o), Msys)
+ifeq ($(shell uname -o 2>/dev/null), Msys)
 BUILD_HOST:=	Windows
 FIND:=			"C:\MinGW\msys\1.0\bin\find.exe"
 MAKE:=			make
