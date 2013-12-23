@@ -44,6 +44,8 @@ pageFault(InterruptFrame* frame)
 	  (frame->error & (1 << 2)) ? "user" : "supervisor",
 	  frame->error);
 
+   StackTrace::printStackTrace(reinterpret_cast<void*>(frame->ebp));
+
    Power::halt();
 }
 

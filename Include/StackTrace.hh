@@ -5,6 +5,7 @@ class StackTrace
 {
 public:
    static void printStackTrace();
+   static void printStackTrace(void* data);
 };
 
 #endif

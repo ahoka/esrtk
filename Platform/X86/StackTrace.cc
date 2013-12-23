@@ -5,11 +5,9 @@
 typedef unsigned long reg_t;
 
 void
-StackTrace::printStackTrace()
+StackTrace::printStackTrace(void* data)
 {
-   reg_t* ebp;
-
-   asm volatile("movl %%ebp, %0" : "=g"(ebp));
+   reg_t* ebp = reinterpret_cast<reg_t*>(data);
 
    printf("Stack trace:\n");
 
@@ -21,4 +19,14 @@ StackTrace::printStackTrace()
 
       ebp = reinterpret_cast<reg_t*>(*ebp);
    }
+}
+
+void
+StackTrace::printStackTrace()
+{
+   reg_t* ebp;
+
+   asm volatile("movl %%ebp, %0" : "=g"(ebp));
+
+   printStackTrace(ebp);
 }
