@@ -74,7 +74,8 @@ MemoryManager::allocate(std::size_t size)
 #endif
 
    std::size_t rsize = roundTo(size + sizeof(Segment), PageSize);
-   Segment* segment = reinterpret_cast<Segment*>(allocateBackend(rsize));
+//   Segment* segment = reinterpret_cast<Segment*>(allocateBackend(rsize));
+   Segment* segment = new (reinterpret_cast<void*>(allocateBackend(rsize))) Segment;
 
    segment->setSize(rsize - sizeof(Segment));
    segment->setAddress(reinterpret_cast<uintptr_t>(segment + 1));

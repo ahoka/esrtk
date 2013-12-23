@@ -42,6 +42,11 @@ private:
 	 // empty
       }
 
+      void* operator new (std::size_t, void* storage)
+      {
+	 return storage;
+      }
+
       void setSize(uintptr_t newSize)
       {
 	 size = newSize;
