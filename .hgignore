@@ -7,3 +7,5 @@ kernel.elf
 kernel.img
 .DS_Store
 .*\.log
+syntax: glob
+.settings/
