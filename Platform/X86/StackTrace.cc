@@ -17,6 +17,11 @@ StackTrace::printStackTrace(void* data)
 
       printf("  0x%lx\n", ip);
 
+      if (ip == 0)
+      {
+         break;
+      }
+
       ebp = reinterpret_cast<reg_t*>(*ebp);
    }
 }
