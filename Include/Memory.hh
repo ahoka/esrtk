@@ -196,7 +196,7 @@ public:
    static bool createKernelStack(uintptr_t& start);
 
 private:
-   Memory();
+   Memory() = delete;
 
    static uintptr_t heapEnd;
    static uintptr_t stackEnd;
