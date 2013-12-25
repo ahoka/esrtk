@@ -40,18 +40,24 @@ public:
       list.insertLast(&n2);
       list.insertLast(&n3);
 
-      std::cout << "Iterating forward:" << std::endl;
+      std::cout << "Iterating forward using range:" << std::endl;
       for (auto r = list.range(); !r.empty(); r.popFront())
       {
          TestItem& item = r.front();
          std::cout << item << std::endl;
       }
 
-      std::cout << "Iterating backward:" << std::endl;
+      std::cout << "Iterating backward using range:" << std::endl;
       for (auto r = list.range(); !r.empty(); r.popBack())
       {
          TestItem& item = r.back();
          std::cout << item << std::endl;         
+      }
+
+      std::cout << "Iterating forward using iterator:" << std::endl;
+      for (auto item : list)
+      {
+         std::cout << item << std::endl;
       }
    }
 };
