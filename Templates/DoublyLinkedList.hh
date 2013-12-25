@@ -21,8 +21,8 @@ public:
    public:
       DoublyLinkedListRange(DoublyLinkedList* owningList)
 	 : list(owningList),
-           firstItem(list->begin()),
-           lastItem(list->end())
+           firstItem(list->firstItem()),
+           lastItem(list->lastItem())
       {
       }
 
@@ -58,10 +58,10 @@ public:
          return *lastItem->prev;
       }
 
-      ForwardRange<T> save()
-      {
-         return *this;
-      }
+//      ForwardRange<T> save() override
+//      {
+//         return *this;
+//      }
 
    private:
       DoublyLinkedList* list;

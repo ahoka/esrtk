@@ -7,8 +7,8 @@ template <class T>
 class Range
 {
 public:
-   Range() = default;
-   virtual ~Range() = default;
+   Range() {};
+   virtual ~Range() {};
    virtual bool empty() = 0;
    virtual void popFront() = 0;
    virtual Ref<T> front() = 0;

@@ -43,10 +43,10 @@ public:
          return *firstItem;
       }
 
-      ForwardRange<T> save()
-      {
-         return *this;
-      }
+//      ForwardRange<T> save()
+//      {
+//         return *this;
+//      }
 
    private:
       SinglyLinkedList* list;
