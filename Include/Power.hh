@@ -1,14 +1,16 @@
 #ifndef POWER_H
 #define	POWER_H
 
-class Power {
-private:
-   Power();
-   Power(const Power& orig);
-   virtual ~Power();
+class Power
+{
 public:
-   static void halt [[noreturn]]  ();
-   static void reboot [[noreturn]] ();
+   static void halt() __attribute__((noreturn));
+   static void reboot() __attribute__((noreturn));
+
+private:
+   Power() = delete;
+   Power(const Power&) = delete;
+   ~Power() = delete;
 };
 
 #endif
