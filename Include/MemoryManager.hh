@@ -31,7 +31,7 @@ private:
 
    static void* allocateBackend(std::size_t size);
 
-   class alignas(long double) Segment : public DoublyLinkedItem<Segment>
+   class Segment : public DoublyLinkedItem<Segment>
    {
    public:
       Segment() :
@@ -89,7 +89,7 @@ private:
 
       // Segment* prevSegment;
       // Segment* nextSegment;
-   };// __attribute__((aligned(16)));
+   } __attribute__((aligned(16)));
 
    static Segment* headerOf(void* segment);
 
