@@ -62,6 +62,7 @@ MemoryManager::allocate(std::size_t size)
       if (s.getSize() >= size)
       {
 	 freeList.remove(&s);
+	 s.updateChecksum();
 	 s.markAllocated();
 #ifdef DEBUG
 	 printf("Debug: allocating from freelist\n");
@@ -98,6 +99,7 @@ MemoryManager::deallocate(void *data)
 #endif
 
    freeList.insertLast(segment);
+   segment->updateChecksum();
 }
 
 void
