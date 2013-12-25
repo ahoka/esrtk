@@ -1,11 +1,12 @@
 # Test cases for templates
 
-all: SinglyLinkedListTest DoublyLinkedListTest
+all: DoublyLinkedListTest
+all: SinglyLinkedListTest
 
-CPP=clang++ -E
+CPP=c++ -E
 CPPFLAGS=-std=c++11 -I../Templates
 
-CXX=clang++
+CXX=c++
 CXXFLAGS=-O2 -g3 $(CPPFLAGS)
 
 %.cc.d: %.cc
