@@ -46,7 +46,8 @@ void*
 MemoryManager::allocateBackend(std::size_t size)
 {
    std::size_t rsize = roundTo(size, PageSize);
-   void* data = reinterpret_cast<void*>(Memory::sbrk(rsize));
+
+   void* data = reinterpret_cast<void*>(Memory::mapAnonymousRegion(rsize));
 
    KASSERT(data != 0);
 
