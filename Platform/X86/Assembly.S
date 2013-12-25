@@ -150,9 +150,7 @@ get_eip:
 	
 .global initPaging
 initPaging:
-        movl %esp, %ebp
-        push %edx
-        movl 8(%esp), %edx
+        movl 4(%esp), %edx
 
         movl %cr0, %eax
         andl $(~(1 << 31)), %eax
@@ -167,11 +165,6 @@ initPaging:
         movl %cr0, %eax
         orl $(1 << 31), %eax
         movl %eax, %cr0
-
-        pop %edx
-        
-        movl (%ebp), %eax
-        movl %ebp, %esp
 
 	ret
 
