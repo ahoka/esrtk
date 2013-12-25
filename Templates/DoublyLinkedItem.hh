@@ -18,8 +18,13 @@ public:
 
    virtual ~DoublyLinkedItem() = default;
 
-   DoublyLinkedItem(const DoublyLinkedItem&) {};
-   DoublyLinkedItem& operator = (const DoublyLinkedItem& other) {};
+   DoublyLinkedItem(const DoublyLinkedItem&)
+   {
+   }
+
+   DoublyLinkedItem& operator = (const DoublyLinkedItem&)
+   {
+   }
 
 private:
    void insertAfter(T* item)

@@ -7,8 +7,13 @@ template <class T>
 class ForwardRange : public Range<T>
 {
 public:
-   ForwardRange() {};
-   ~ForwardRange() {};
+   ForwardRange()
+   {
+   }
+
+   ~ForwardRange()
+   {
+   }
 
 //   virtual ForwardRange<T> save() = 0;
 };

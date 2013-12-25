@@ -6,7 +6,8 @@ PLATFORM=	X86
 
 FIND:=		find
 
-TOOLCHAIN=	gcc
+#TOOLCHAIN=	gcc
+TOOLCHAIN=	clang
 
 ifeq ($(shell uname -o 2>/dev/null), Msys)
 BUILD_HOST:=	Windows
