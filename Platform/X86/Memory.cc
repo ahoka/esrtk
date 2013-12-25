@@ -34,6 +34,8 @@ Memory::copyMemoryMap()
       }
    }
 
+   printf("Finished copying memory map\n");
+
    KASSERT(foundUsableMemory);
 }
 

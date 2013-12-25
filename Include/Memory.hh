@@ -184,7 +184,6 @@ public:
    static bool handlePageFault(uintptr_t address, InterruptFrame* frame);
    static void copyMemoryMap();
 
-   static uintptr_t sbrk(std::size_t size);
    static uintptr_t getPage();
    static void putPage(uintptr_t paddr);
    static bool mapPage(uintptr_t vaddr, uintptr_t paddr);
@@ -192,6 +191,7 @@ public:
    static bool unmapPage(uintptr_t vaddr);
    static uintptr_t mapRegion(uintptr_t paddr, std::size_t size);
    static bool unmapRegion(uintptr_t paddr, std::size_t size);
+   static uintptr_t mapAnonymousRegion(std::size_t size);
    static void* readPhysicalMemory(void* destination, const void* source, std::size_t size);
    static bool createKernelStack(uintptr_t& start);
 

@@ -59,9 +59,10 @@ Memory::init()
    PhysicalPage* p = bootstrapPage + 1;
    for (unsigned int i = 0; i < memoryMapCount; i++)
    {
-      printf("Adding memory range from %p-%p\n",
+      printf("Adding memory range %p-%p (%zu)\n",
 	     (void* )memoryMap[i].address,
-	     (void* )(memoryMap[i].address + memoryMap[i].size));
+	     (void* )(memoryMap[i].address + memoryMap[i].size),
+	     memoryMap[i].size);
 
       for (uintptr_t addr = memoryMap[i].address;
 	   addr < memoryMap[i].address + memoryMap[i].size;
@@ -72,7 +73,8 @@ Memory::init()
 #ifdef DEBUG
 	    printf("Allocating new page structure\n");
 #endif
-	    p = (PhysicalPage* )sbrk(PageSize);
+	    //p = (PhysicalPage* )sbrk(PageSize);
+	    p = (PhysicalPage* )mapPage(getPage()); // XXX make a function for this
 	    KASSERT(p != 0);
 
 	    freeStructures = PageSize / sizeof (PhysicalPage);
@@ -216,6 +218,35 @@ Memory::mapPage(uintptr_t phys)
    return mapEnd;
 }
 
+// anonymous memory mapping
+//
+uintptr_t Memory::mapAnonymousRegion(std::size_t size)
+{
+   std::size_t rsize = roundTo<uintptr_t>(size, PageSize);
+   mapEnd -= rsize;
+
+   if (mapEnd <= heapEnd)
+   {
+      Debug::panic("Kernel map name space exhausted.");
+   }
+
+   uintptr_t vaddr = mapEnd;
+   for (std::size_t i = 0; i < rsize / PageSize; i++, vaddr += PageSize)
+   {
+      uintptr_t emptyPage = getPage();
+      KASSERT(emptyPage != 0);
+      bool success = mapPage(vaddr, emptyPage);
+      if (!success)
+      {
+         Debug::panic("mapRegion unsuccesful.");
+         // XXX unmap and return error
+         //return 0;
+      }
+   }
+
+   return mapEnd + rsize;
+}
+
 // anonymous mapping of a memory region
 //
 uintptr_t Memory::mapRegion(uintptr_t paddr, std::size_t size)
@@ -266,30 +297,6 @@ Memory::unmapRegion(uintptr_t paddr, std::size_t size)
    }
 
    return true;
-}
-
-// increment heapEnd, the page fault handler will allocate it when accessed
-//
-uintptr_t
-Memory::sbrk(std::size_t size)
-{
-   uintptr_t oldEnd = heapEnd;
-
-   // align size with PageSize
-   //
-   heapEnd += roundTo<std::size_t>(size, PageSize);
-   KASSERT((heapEnd & PageMask) == 0);
-
-   if (heapEnd >= mapEnd)
-   {
-      Debug::panic("Kernel heap exhausted.");
-   }
-
-#ifdef DEBUG
-   printf("Heap sbrk: %p -> %p (%u)\n", (void *)oldEnd, (void *)heapEnd, heapEnd - oldEnd);
-#endif
-
-   return oldEnd;
 }
 
 // get a free physical page
