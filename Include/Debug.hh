@@ -17,13 +17,12 @@ private:
    ~Debug() = delete;
 
 public:
-   static void panic (const char*, ...) __attribute__((noreturn));
+   static void panic (const char*, ...) __attribute__((noreturn, format (printf, 1, 2)));
    
-   static void verbose(const char*, ...);
-   static void info(const char*, ...);
-   static void warning(const char*, ...);
-   static void error(const char*, ...);
-
+   static void verbose(const char*, ...) __attribute__((format (printf, 1, 2)));
+   static void info(const char*, ...) __attribute__((format (printf, 1, 2)));
+   static void warning(const char*, ...) __attribute__((format (printf, 1, 2)));
+   static void error(const char*, ...) __attribute__((format (printf, 1, 2)));
 
    enum class DebugLevel
    {

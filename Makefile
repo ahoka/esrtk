@@ -49,10 +49,10 @@ COPTS+=		-Wno-c++98-compat-pedantic \
 		-Wno-padded -Wno-packed \
 		-Wno-weak-vtables
 else
-CC=			$(CROSS)gcc
+CC=		$(CROSS)gcc
 CXX=		$(CROSS)g++
 CPP=		$(CROSS)gcc -m32 -nostdinc -E
-#COPTS+=		-Wno-format
+COPTS+=		-fdiagnostics-color=always
 endif
 
 CXXFLAGS+=	-std=c++11
@@ -146,6 +146,9 @@ run-pc: kernel.elf
 
 run: kernel.elf
 	$(QEMU) -M q35 -net none -kernel kernel.elf -boot order=c -serial stdio -d cpu_reset 2>&1 | tee run.log
+
+run-debug: kernel.elf
+	$(QEMU) -M q35 -net none -kernel kernel.elf -boot order=c -serial stdio -s -S 2>&1 | tee run.log
 
 serial: kernel.elf
 	$(QEMU) -net none -kernel kernel.elf -boot order=c -serial stdio -d cpu_reset -nographic

@@ -5,6 +5,8 @@
 
 #include <cstdio>
 
+#define DEBUG
+
 MemoryManager* MemoryManager::self = 0;
 
 MemoryManager::MemoryManager()
@@ -61,6 +63,7 @@ MemoryManager::allocate(std::size_t size)
    {
       if (s.getSize() >= size)
       {
+	 printf("Found item with size: %zu\n", s.getSize());
 	 freeList.remove(&s);
 	 s.updateChecksum();
 	 s.markAllocated();

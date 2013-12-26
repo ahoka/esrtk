@@ -42,6 +42,9 @@ private:
 	 allocated(false)
       {
          Debug::verbose("Segment(%p)\n", this);
+	 address = 0;
+	 size = 0;
+	 allocated = false;
          updateChecksum();
       }
 
@@ -120,6 +123,7 @@ private:
          }
 
          Debug::verbose("Checksum updated: %u\n", sum);
+	 dump();
 
          checksum = sum;
 
@@ -155,8 +159,8 @@ private:
                      "allocated:        %d\n"
                      "checksum:         0x%x\n",
                      this,
-                     address,
-                     size,
+                     (void*)address,
+                     (std::size_t)size,
                      allocated,
                      checksum);
       }
