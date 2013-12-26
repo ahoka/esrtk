@@ -6,28 +6,18 @@ PLATFORM=	X86
 
 FIND:=		find
 
-#TOOLCHAIN=	gcc
-TOOLCHAIN=	clang
+TOOLCHAIN=	gcc
+#TOOLCHAIN=	clang
 
 ifeq ($(shell uname -o 2>/dev/null), Msys)
 BUILD_HOST:=	Windows
-FIND:=			"C:\MinGW\msys\1.0\bin\find.exe"
-MAKE:=			make
+FIND:=		"C:\MinGW\msys\1.0\bin\find.exe"
 else
 BUILD_HOST:=	$(shell uname)
 endif
 
-CROSS=
-
-ifeq ($(BUILD_HOST), Darwin)
 CROSS=		i686-elf-
 COPTS+=		-DCROSS_COMPILER=1
-endif
-
-ifeq ($(BUILD_HOST), Windows)
-CROSS=		i686-elf-
-COPTS+=		-DCROSS_COMPILER=1
-endif
 
 AS=		$(CROSS)as
 LD=		$(CROSS)ld
