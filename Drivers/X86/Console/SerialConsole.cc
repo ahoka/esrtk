@@ -21,22 +21,22 @@ SerialConsole::init()
    outb(Com0 + FifoControl, 0);
 }
 
-int
-SerialConsole::getChar()
-{
-   uint8_t ch;
-
-//   init();
-
-   while (inb(Com0 + LineStatus) & (1 << 5))
-   {
-      asm volatile("pause");
-   }
-
-   ch = inb(Com0 + Data);
-
-   return ch;
-}
+//int
+//SerialConsole::getChar()
+//{
+//   uint8_t ch;
+//
+////   init();
+//
+//   while (inb(Com0 + LineStatus) & (1 << 5))
+//   {
+//      asm volatile("pause");
+//   }
+//
+//   ch = inb(Com0 + Data);
+//
+//   return ch;
+//}
 
 int
 SerialConsole::putChar(int ch)

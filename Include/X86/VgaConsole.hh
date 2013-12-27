@@ -15,7 +15,6 @@ public:
 
    int init();
 
-   int getChar();
    int getColumns();
    int getRows();
    int putChar(int ch, int row, int column);

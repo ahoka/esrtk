@@ -26,7 +26,6 @@ public:
 protected:
    virtual int getRows() = 0;
    virtual int getColumns() = 0;
-   virtual int getChar() = 0;
 
 private:
    static const int printfBufferSize = 128;

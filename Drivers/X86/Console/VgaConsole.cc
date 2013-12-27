@@ -34,12 +34,6 @@ VgaConsole::getRows()
    return 25;
 }
 
-int
-VgaConsole::getChar()
-{
-   return 'a';
-}
-
 VgaCharacter
 VgaConsole::asciiToVga(uint8_t c)
 {

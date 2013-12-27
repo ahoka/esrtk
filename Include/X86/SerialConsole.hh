@@ -4,7 +4,7 @@
 class SerialConsole {
 public:
    static void init();
-   static int getChar();
+   //static int getChar();
    static int putChar(int ch);
 
 private:
