@@ -8,7 +8,9 @@ static VgaConsole vgaConsole;
 
 VgaConsole::VgaConsole()
    : vram_(0),
-     lock()
+     lock(),
+     backgroundColor(BrightBlue),
+     foregroundColor(White)
 {
    vram_ = Memory::mapPage(0xb8000);
    KASSERT(vram_ != 0);
@@ -38,6 +40,12 @@ VgaConsole::getChar()
    return 'a';
 }
 
+VgaCharacter
+VgaConsole::asciiToVga(uint8_t c)
+{
+   return (uint16_t )(c | (backgroundColor << 4 | foregroundColor) << 8);
+}
+
 int
 VgaConsole::putCharUnlocked(int ch, int row, int column)
 {
@@ -47,9 +55,7 @@ VgaConsole::putCharUnlocked(int ch, int row, int column)
       return 0;
    }
 
-   uint16_t repr = (uint16_t )((ch & foregroundColor) | (backgroundColor << 8));
-
-   vram()[row * getColumns() + column] = repr;
+   vram()[row * getColumns() + column] = asciiToVga(ch);
 
    return 1;
 }
@@ -100,7 +106,7 @@ VgaConsole::scrollScreen()
 	i < getRows() * getColumns();
 	i++)
    {
-      vram()[i] = (VgaCharacter )((' ' & foregroundColor) | (backgroundColor << 8));
+      vram()[i] = asciiToVga(' ');
    }
 
 //   lock.exit();

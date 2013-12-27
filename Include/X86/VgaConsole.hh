@@ -29,6 +29,7 @@ private:
    VgaConsole& operator=(const VgaConsole& orig) = delete;
 
    int putCharUnlocked(int ch, int row, int column);
+   VgaCharacter asciiToVga(uint8_t c);
 
    VgaCharacter*
    vram()
@@ -42,13 +43,33 @@ private:
 //   backgroundColor(0x1f);
 //   foregroundColor(0xff);
 
-   enum
+   enum VgaColors
    {
-      backgroundColor = 0x1f,
-      foregroundColor = 0xff
+      Black = 0,
+      Blue = 1,
+      Green = 2,
+      Cyan = 3,
+      Red = 4,
+      Magenta = 5,
+      Brown = 6,
+      LightGray = 7,
+      DarkGray = 8,
+      BrightBlue = 9,
+      BrightGreen = 10,
+      BrightCyan = 11,
+      Pink = 12,
+      BrightMagenta = 13,
+      Yellow = 14,
+      White = 15
    };
-   // uint8_t backgroundColor;
-   // uint8_t foregroundColor;
+
+//   enum
+//   {
+//      backgroundColor = BrightBlue,
+//      foregroundColor = White
+//   };
+   uint8_t backgroundColor;
+   uint8_t foregroundColor;
 
    enum
    {
