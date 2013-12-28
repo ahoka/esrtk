@@ -1,0 +1,9 @@
+*.o
+*~
+*.d
+#*#
+pad
+*.elf
+*.img
+.DS_Store
+*.log
