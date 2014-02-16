@@ -3,6 +3,9 @@
 
 #include <Debug.hh>
 #include <Parameters.hh>
+#include <Platform/MemorySegment.hh>
+#include <Platform/PhysicalPage.hh>
+#include <Platform/PageCluster.hh>
 
 #include <cstdint>
 #include <cstddef>
@@ -17,162 +20,10 @@ extern void* __start_bss;
 extern void* __end_bss;
 extern void* __end_kernel;
 
-struct MemorySegment
-{
-   uintptr_t address;
-   std::size_t size;
-   uint8_t* bitmap;
-
-   MemorySegment() :
-      address(0),
-      size(0),
-      bitmap(0)
-   {
-   }
-};
-
 enum
 {
    MemoryMapMax = 32,
    PhysMapSize = 128 * 1024
-};
-
-class PhysicalPage
-{
-public:
-   enum
-   {
-      // extreme value
-      Invalid = ~0UL
-   };
-
-   PhysicalPage()
-      : prev(this),
-	next(this),
-	address(Invalid)
-   {
-      // empty
-   }
-
-   uintptr_t getAddress()
-   {
-      return address & AddressMask;
-   }
-
-   // this wont preserve color
-   void setAddress(uintptr_t addr)
-   {
-      address = addr;
-   }
-
-   void setColor(uint8_t color)
-   {
-      address &= AddressMask;
-      address |= color;
-   }
-
-   uint8_t getColor()
-   {
-      return static_cast<uint8_t>(address & ColorMask);
-   }
-
-   bool isValid()
-   {
-      return address == Invalid;
-   }
-
-   bool isInvalid()
-   {
-      return !isValid();
-   }
-
-private:
-   friend class PageCluster;
-
-   PhysicalPage* prev;
-   PhysicalPage* next;
-   uintptr_t address;
-
-   enum
-   {
-      AddressMask = ~PageMask,
-      ColorMask = PageMask
-   };
-};
-
-class PageCluster
-{
-public:
-   enum
-   {
-      Free,
-      Anonymous,
-      KernelHeap,
-      KernelStack
-   };
-
-   void insert(PhysicalPage* page)
-   {
-      KASSERT(page != 0);      
-
-      PhysicalPage* oldNext = head.next;
-
-      page->next = head.next;
-      head.next = page;
-
-      oldNext->prev = page;
-      page->prev = &head;
-   }
-
-   void remove(PhysicalPage* page)
-   {
-      KASSERT(page != 0);
-
-      PhysicalPage* oldPrev = page->prev;
-      PhysicalPage* oldNext = page->next;
-
-      oldPrev->next = oldNext;
-      oldNext->prev = oldPrev;
-   }
-
-   PhysicalPage* get()
-   {
-      PhysicalPage* page = 0;
-
-      if (head.next->getAddress() != PhysicalPage::Invalid)
-      {
-	 page = head.next;
-	 remove(head.next);
-      }
-
-      return page;
-   }
-
-   PhysicalPage* find(uintptr_t address)
-   {
-      for (PhysicalPage* page = head.next;
-	   page->getAddress() != PhysicalPage::Invalid;
-	   page = page->next)
-      {
-	 if (page->getAddress() == address)
-	 {
-	    return page;
-	 }
-      }
-
-      return 0;
-   }
-
-   void init()
-   {
-      // this is our elephant in cairo :-)
-      head.setAddress(PhysicalPage::Invalid);
-      head.next = &head;
-      head.prev = &head;
-   }
-
-private:
-   PhysicalPage head;
 };
 
 struct InterruptFrame;

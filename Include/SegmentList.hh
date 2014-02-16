@@ -30,6 +30,8 @@ public:
 
       void remove()
       {
+	 KASSERT(next->getSize() != 0);
+
 	 Segment* item = next->prevSegment;
 
 	 Segment* oldNext = item->nextSegment;

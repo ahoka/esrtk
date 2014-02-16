@@ -1,4 +1,4 @@
-#include <Console.hh>
+#include <Driver/Console.hh>
 
 // XXX
 #include <X86/SerialConsole.hh>

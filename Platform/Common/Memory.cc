@@ -184,6 +184,7 @@ Memory::createKernelStack(uintptr_t& top)
 bool
 Memory::mapPage(uintptr_t address, uintptr_t phys)
 {
+//   printf("Memory::mapPage %p -> %p\n", (void*)phys, (void*)address);
    return Hal::mapPage(address, phys);
 }
 

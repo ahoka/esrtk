@@ -2,7 +2,7 @@
 #define	VGACONSOLE_H
 
 #include <Mutex.hh>
-#include <Console.hh>
+#include <Driver/Console.hh>
 #include <stdint.h>
 
 typedef uint16_t VgaCharacter;

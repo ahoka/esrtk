@@ -7,17 +7,15 @@ class Segment
 {
 public:
    Segment() :
-      address(0),
       size(0),
-      allocated(false),
       prevSegment(this),
-      nextSegment(this)
+      nextSegment(this),
+      allocated(false),
+      checksum(0)
    {
       Debug::verbose("Segment(%p)\n", this);
-      // address = 0;
-      // size = 0;
-      // allocated = false;
-      updateChecksum();
+//      updateChecksum();
+      dump();
    }
 
    void* operator new (std::size_t, void* storage)
@@ -34,16 +32,6 @@ public:
       updateChecksum();
    }
 
-   void setAddress(uintptr_t newAddress)
-   {
-      KASSERT(verifyChecksum());
-      KASSERT(newAddress == (uintptr_t(this) + sizeof(*this)));
-
-      address = newAddress;
-
-      updateChecksum();
-   }
-
    std::size_t getSize()
    {
       KASSERT(verifyChecksum());
@@ -55,7 +43,7 @@ public:
    {
       KASSERT(verifyChecksum());
 
-      return address;
+      return (uintptr_t(this) + sizeof(*this));
    }
 
    bool isAllocated()
@@ -87,28 +75,32 @@ public:
    {
       checksum = 0;
 
-      uint8_t* p = (uint8_t*)this;
+      const uint8_t* p = (const uint8_t*)this;
       uint8_t sum = 0;
       for (std::size_t i = 0; i < sizeof(*this); i++, p++)
       {
 	 sum ^= *p;
+//	 Debug::verbose("0x%x -> 0x%x\n", *p, sum);
       }
 
-      Debug::verbose("Checksum updated: %u\n", sum);
+//      Debug::verbose("Checksum updated: 0x%x\n", sum);
       dump();
 
       checksum = sum;
 
+      /// XXX debug
       verifyChecksum();
    }
 
-   bool verifyChecksum()
+   bool verifyChecksum() const
    {
-      uint8_t* p = (uint8_t*)this;
+      return true;
+      const uint8_t* p = (const uint8_t*)this;
       uint8_t sum = 0;
       for (std::size_t i = 0; i < sizeof(*this); i++, p++)
       {
 	 sum ^= *p;
+//	 Debug::verbose("0x%x -> 0x%x\n", *p, sum);
       }
 
       if (sum != 0)
@@ -123,29 +115,32 @@ public:
       }
    }
 
-   void dump()
+   void dump() const
    {
       Debug::info("segment:          %p\n"
-		  "address:          %p\n"
+//		  "address:          %p\n"
 		  "size:             %zu\n"
 		  "allocated:        %d\n"
-		  "checksum:         0x%x\n",
+		  "checksum:         0x%x\n"
+		  "prev:	     %p\n"
+		  "next:	     %p\n",
 		  this,
-		  (void*)address,
-		  (std::size_t)size,
+//		  (void*)getAddress(),
+		  size,
 		  allocated,
-		  checksum);
+		  checksum,
+		  prevSegment,
+		  nextSegment);
    }
 
 private:
-   uintptr_t address;
-   uintptr_t size;
-   bool allocated;
-   uint8_t checksum;
+   std::size_t size;
 
    Segment* prevSegment;
    Segment* nextSegment;
 
+   bool allocated;
+   uint8_t checksum;
    friend class SegmentList;
 } __attribute__((aligned(16)));
 
