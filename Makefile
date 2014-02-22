@@ -62,6 +62,9 @@ CPPFLAGS+=	-I$(BUILD_ROOT)/CInclude
 CPPFLAGS+=	-I$(BUILD_ROOT)/CxxInclude
 CPPFLAGS+=	-I$(BUILD_ROOT)/Templates
 
+# XXX unify with the above through transformation
+INCDIRS=	$(BUILD_ROOT)/Include $(BUILD_ROOT)/CInclude $(BUILD_ROOT)/CxxInclude $(BUILD_ROOT)/Templates
+
 # XXX these should be only provided for Standard
 #
 CPPFLAGS+=	-I$(BUILD_ROOT)/BsdCompat
@@ -99,6 +102,9 @@ buildinfo:
 	@echo Assembler: $(AS)
 	@echo Linker: $(LD)
 	@echo Make: $(MAKE)
+
+cppcheck:
+	cppcheck -q -i $(INCDIRS) $(SRCDIR)
 
 %.o: %.cc
 	@echo Compiling $<
