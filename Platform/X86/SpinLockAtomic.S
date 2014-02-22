@@ -23,5 +23,5 @@ spinlock_unlock:
 	movl $1, %eax
 	movl $0, %ecx
 	movl 4(%esp), %ebx
-	lock cmpxchg %ecx, 4(%ebx)
+	lock cmpxchg %ecx, (%ebx)
 	ret
