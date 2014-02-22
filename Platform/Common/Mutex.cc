@@ -50,5 +50,5 @@ Mutex::exit()
 
    long ret = spinlock_unlock(&lock);
 //   printf("Unlock: %lu\n", ret);
-   KASSERT(ret == 0);
+   KASSERT(ret == 1);
 }
