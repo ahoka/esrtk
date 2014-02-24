@@ -19,8 +19,10 @@ extern "C" void x86_isr_init(int n, void (*handler)());
 
 #include "InterruptVectorsInit.icc"
 
+// XXX this should be refactored to be MI
+//
 static void
-pageFault(InterruptFrame* frame)
+x86_isr_page_fault(InterruptFrame* frame)
 {
    uint32_t cr2 = getCr2();
 
@@ -48,12 +50,12 @@ pageFault(InterruptFrame* frame)
 }
 
 static void
-defaultIsr(InterruptFrame* frame)
+x86_isr_default_handler(InterruptFrame* frame)
 {
    // TODO: make a list of handlers and register them there to be run from dispatcher
    if (frame->interrupt == 14)
    {
-      pageFault(frame);
+      x86_isr_page_fault(frame);
       return;
    }
 
@@ -86,7 +88,7 @@ x86_isr_dispatcher(InterruptFrame* frame)
       return frame;
    }
 
-   defaultIsr(frame);
+   x86_isr_default_handler(frame);
 
    KASSERT(Interrupt::getInterruptLevel() > 0);
 
