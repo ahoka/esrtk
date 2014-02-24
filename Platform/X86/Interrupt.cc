@@ -52,13 +52,6 @@ x86_isr_page_fault(InterruptFrame* frame)
 static void
 x86_isr_default_handler(InterruptFrame* frame)
 {
-   // TODO: make a list of handlers and register them there to be run from dispatcher
-   if (frame->interrupt == 14)
-   {
-      x86_isr_page_fault(frame);
-      return;
-   }
-
    if (frame->error == 0)
    {
       printf("\n");
@@ -80,6 +73,13 @@ InterruptFrame*
 x86_isr_dispatcher(InterruptFrame* frame)
 {
    KASSERT(Interrupt::getInterruptLevel() > 0);
+
+   // TODO: make a list of handlers and register them there to be run from dispatcher
+   if (frame->interrupt == 14)
+   {
+      x86_isr_page_fault(frame);
+      return frame;
+   }
 
    // XXX hardcoded hack
    if (frame->interrupt >= 32 && frame->interrupt < 48)
