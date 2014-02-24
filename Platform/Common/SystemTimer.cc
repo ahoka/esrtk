@@ -22,9 +22,10 @@ SystemTimer::~SystemTimer()
 void
 SystemTimer::tick()
 {
-   Scheduler::tick();
    KASSERT(getFrequency() <= 500);
    Time::increment(1000 / getFrequency());
+
+   Scheduler::schedule();
 }
 
 void

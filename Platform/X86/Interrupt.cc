@@ -8,16 +8,14 @@
 
 #include <StackTrace.hh>
 
-//extern "C" void defaultIsr(InterruptFrame* frame);// __attribute__((noreturn));
-extern "C" InterruptFrame* isrDispatcher(InterruptFrame* frame);// __attribute__((noreturn));
-
 extern IdtPointer idtPointer;
 
 // Idt descriptors
 static IdtEntry idtEntries[NUMIDT];
 IdtPointer idtPointer;
 
-void initIsr(int n, void (*handler)());
+extern "C" InterruptFrame* x86_isr_dispatcher(InterruptFrame* frame);
+extern "C" void x86_isr_init(int n, void (*handler)());
 
 #include "InterruptVectorsInit.icc"
 
@@ -77,17 +75,13 @@ defaultIsr(InterruptFrame* frame)
 }
 
 InterruptFrame*
-isrDispatcher(InterruptFrame* frame)
+x86_isr_dispatcher(InterruptFrame* frame)
 {
    KASSERT(Interrupt::getInterruptLevel() > 0);
 
    // XXX hardcoded hack
    if (frame->interrupt >= 32 && frame->interrupt < 48)
    {
-      if (frame->interrupt == 32)
-      {
-      }
-
       Interrupt::handleInterrupt(frame->interrupt - 32);
       return frame;
    }
@@ -100,7 +94,7 @@ isrDispatcher(InterruptFrame* frame)
 }
 
 void
-initIsr(int n, void (*handler)())
+x86_isr_init(int n, void (*handler)())
 {
    idtEntries[n].baseLow = (uint16_t)((uint32_t)(handler) & 0xffff);
    idtEntries[n].baseHigh = (uint16_t)(((uint32_t)(handler) >> 16) & 0xffff);

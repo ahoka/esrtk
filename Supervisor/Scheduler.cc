@@ -3,10 +3,22 @@
 
 #include <cstdio>
 
-static Thread* currentThread = 0;
+Thread* Scheduler::currentThread = 0;
 
 Thread* Scheduler::threads = 0;
 Thread* Scheduler::nextToRun = 0;
+
+void
+Scheduler::setCurrentThread(Thread* thread)
+{
+   currentThread = thread;
+}
+
+Thread*
+Scheduler::getCurrentThread()
+{
+   return currentThread;
+}
 
 void
 Scheduler::insert(Thread* t)
@@ -15,9 +27,8 @@ Scheduler::insert(Thread* t)
    threads = t;
 }
 
-// running in interrupt context
 void
-Scheduler::tick()
+Scheduler::schedule()
 {
    if (nextToRun == 0)
    {
@@ -28,9 +39,4 @@ Scheduler::tick()
 
    currentThread = nextToRun;
    nextToRun = nextToRun->next;
-}
-
-void
-Scheduler::dispatch()
-{
 }

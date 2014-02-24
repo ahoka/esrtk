@@ -67,7 +67,7 @@ call_isr:
         // interrupt handlers
         xorl %ebp, %ebp
         
-        call isrDispatcher
+        call x86_isr_dispatcher
 	
 	// esp was pushed to stack for isrDispatcher,
 	// so remove it

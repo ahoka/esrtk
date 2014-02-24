@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/usr/bin/env bash
 #
 ##
 # Generate the interrupt vector table
@@ -11,7 +11,7 @@ rm -f InterruptVectorsInit.icc
 # 10, 11, 12, 13, 14, 17 push error codes
 #
 
-for idt in $(seq 0 255)
+for idt in {0..255}
 do
     echo extern \"C\" void isr$idt\(\)\; >> InterruptVectorsInit.icc
 done
@@ -23,7 +23,7 @@ done
     echo {
 ) >> InterruptVectorsInit.icc
 
-for idt in $(seq 0 255)
+for idt in {0..255}
 do
     (
         echo -e .global isr$idt
@@ -43,7 +43,7 @@ do
         echo
     ) >> InterruptVectors.is
 
-    echo -e \\t initIsr\($idt, \&isr$idt\)\; >> InterruptVectorsInit.icc
+    echo -e \\t x86_isr_init\($idt, \&isr$idt\)\; >> InterruptVectorsInit.icc
 done
 
 echo -e } \\n >> InterruptVectorsInit.icc

@@ -6,16 +6,19 @@ class Thread;
 class Scheduler
 {
 public:
-   Scheduler();
-   ~Scheduler();
-
    static void insert(Thread* t);
-   static void tick();
-   static void dispatch();
+   static void schedule();
+
+   static Thread* getCurrentThread();
+   static void setCurrentThread(Thread* thread);
 
 private:
+   Scheduler() = delete;
+   ~Scheduler() = delete;
+
    static Thread* threads;
    static Thread* nextToRun;
+   static Thread* currentThread;
 };
 
 #endif
