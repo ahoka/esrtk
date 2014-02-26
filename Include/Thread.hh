@@ -12,7 +12,8 @@ public:
    bool init();
    bool init(unsigned long threadId, uintptr_t stack);
 
-//   Thread* getCurrentThread();
+   void dump();
+
    static void printAll();
    static void main [[noreturn]] ();
 

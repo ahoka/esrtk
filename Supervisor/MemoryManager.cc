@@ -5,7 +5,7 @@
 
 #include <cstdio>
 
-#define DEBUG
+//#define DEBUG
 
 MemoryManager* MemoryManager::self = 0;
 

@@ -3,6 +3,7 @@
 #include <Debug.hh>
 
 #include <Thread.hh>
+#include <cstdio>
 
 unsigned long Thread::nextThreadId = 1;
 
@@ -15,7 +16,6 @@ Thread::Thread()
      next(0)
 {
    Debug::verbose("Creating thread...\n");
-   Scheduler::insert(this);
 }
 
 bool
@@ -25,6 +25,9 @@ Thread::init(unsigned long threadId, uintptr_t stack)
    kernelStack = stack;
 
    Debug::verbose("Initializing thread: %lu %p...\n", threadId, (void*)stack);
+   dump();
+
+   Scheduler::insert(this);
 
    return true;
 }
@@ -39,6 +42,12 @@ Thread::init()
 
    bool success = Memory::createKernelStack(kernelStack);
    KASSERT(success);
+
+   dump();
+
+   if (success) {
+      Scheduler::insert(this);
+   }
 
    return success;
 }
@@ -61,4 +70,10 @@ Thread::main()
    {
       asm volatile("pause");
    }
+}
+
+void
+Thread::dump()
+{
+   printf("thread: %lu %p %u\n", id, (void *)kernelStack, state);
 }

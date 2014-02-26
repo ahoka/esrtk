@@ -71,7 +71,9 @@ call_isr:
 	
 	// esp was pushed to stack for isrDispatcher,
 	// so remove it
-	addl $4, %esp
+	//addl $4, %esp
+
+	movl %eax, %esp
 
 	decl interrupt_level
 	

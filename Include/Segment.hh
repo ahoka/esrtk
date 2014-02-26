@@ -15,7 +15,7 @@ public:
    {
       Debug::verbose("Segment(%p)\n", this);
 //      updateChecksum();
-      dump();
+//      dump();
    }
 
    void* operator new (std::size_t, void* storage)
@@ -84,7 +84,7 @@ public:
       }
 
 //      Debug::verbose("Checksum updated: 0x%x\n", sum);
-      dump();
+//      dump();
 
       checksum = sum;
 
@@ -105,7 +105,7 @@ public:
 
       if (sum != 0)
       {
-	 dump();
+//	 dump();
 	 Debug::panic("Allocator checksum error, possible memory corruption: 0x%x\n", sum);
       }
       else

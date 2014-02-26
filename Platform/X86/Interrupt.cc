@@ -8,6 +8,9 @@
 
 #include <StackTrace.hh>
 
+#include <Scheduler.hh>
+#include <Thread.hh>
+
 extern IdtPointer idtPointer;
 
 // Idt descriptors
@@ -74,23 +77,34 @@ x86_isr_dispatcher(InterruptFrame* frame)
 {
    KASSERT(Interrupt::getInterruptLevel() > 0);
 
+   printf("disp\n");
+   Thread* currentThread = Scheduler::getCurrentThread();
+   currentThread->dump();
+   currentThread->kernelStack = (uintptr_t )frame;
+
    // TODO: make a list of handlers and register them there to be run from dispatcher
    if (frame->interrupt == 14)
    {
       x86_isr_page_fault(frame);
-      return frame;
+      goto exit;
    }
 
    // XXX hardcoded hack
    if (frame->interrupt >= 32 && frame->interrupt < 48)
    {
       Interrupt::handleInterrupt(frame->interrupt - 32);
-      return frame;
+      goto exit;
    }
 
    x86_isr_default_handler(frame);
 
+  exit:
    KASSERT(Interrupt::getInterruptLevel() > 0);
+
+   currentThread = Scheduler::getCurrentThread();
+   InterruptFrame* newFrame = (InterruptFrame* )currentThread->kernelStack;
+
+   KASSERT(newFrame != 0);
 
    return frame;
 }
