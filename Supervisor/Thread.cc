@@ -18,6 +18,14 @@ Thread::Thread()
    Debug::verbose("Creating thread...\n");
 }
 
+Thread::Thread(unsigned long Id)
+   : id(Id),
+     kernelStack(0),
+     state(Idle),
+     next(0)
+{
+}
+
 bool
 Thread::init(unsigned long threadId, uintptr_t stack)
 {
@@ -64,7 +72,7 @@ Thread::printAll()
 void
 Thread::main()
 {
-   Debug::verbose("Thread main called!\n");
+//   Debug::verbose("Thread main called!\n");
 
    for (;;)
    {
@@ -75,5 +83,5 @@ Thread::main()
 void
 Thread::dump()
 {
-   printf("thread: %lu %p %u\n", id, (void *)kernelStack, state);
+   printf("thread: %p %lu %p %u\n", this, id, (void *)kernelStack, state);
 }

@@ -77,6 +77,8 @@ x86_isr_dispatcher(InterruptFrame* frame)
 {
    KASSERT(Interrupt::getInterruptLevel() > 0);
 
+//   frame->print();
+
    printf("disp\n");
    Thread* currentThread = Scheduler::getCurrentThread();
    currentThread->dump();
@@ -104,7 +106,13 @@ x86_isr_dispatcher(InterruptFrame* frame)
    currentThread = Scheduler::getCurrentThread();
    InterruptFrame* newFrame = (InterruptFrame* )currentThread->kernelStack;
 
+   printf("new stack: %p\n", newFrame);
+
+   ((InterruptFrame*)newFrame)->print();
+
    KASSERT(newFrame != 0);
+
+   frame = newFrame;
 
    return frame;
 }

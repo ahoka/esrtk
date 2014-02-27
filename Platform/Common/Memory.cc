@@ -158,6 +158,8 @@ Memory::createKernelStack(uintptr_t& start)
    return true;
 }
 #else
+
+#include <X86/Idt.hh>
 bool
 Memory::createKernelStack(uintptr_t& top)
 {
@@ -171,9 +173,14 @@ Memory::createKernelStack(uintptr_t& top)
 
    printf("Creating new kernel stack: %p-%p (%u)\n", (void* )top, (void* )(bottom), PageSize);
 
-   uintptr_t newStack = Hal::initKernelStack(top);
+   std::memset((void*)bottom, 0, PageSize);
+
+//   uintptr_t newStack = Hal::initKernelStack(top);
+   uintptr_t newStack = top - 68;
 
    printf("Stack after init: %p\n", (void*)newStack);
+
+   ((InterruptFrame*)newStack)->print();
 
    top = newStack;
 

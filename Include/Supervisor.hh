@@ -1,6 +1,8 @@
 #ifndef SUPERVISOR_H
 #define	SUPERVISOR_H
 
+#include <Thread.hh>
+
 class Supervisor
 {
 public:
@@ -10,6 +12,8 @@ private:
    Supervisor();
    virtual ~Supervisor();
    Supervisor(const Supervisor& orig);
+
+   static Thread thread0;
 };
 
 extern "C" void supervisor_init();

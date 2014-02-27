@@ -9,6 +9,8 @@ class Thread
 {
 public:
    Thread();
+   Thread(unsigned long);
+
    bool init();
    bool init(unsigned long threadId, uintptr_t stack);
 

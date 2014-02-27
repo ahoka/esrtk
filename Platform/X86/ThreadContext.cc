@@ -15,13 +15,29 @@
 uintptr_t
 Hal::initKernelStack(uintptr_t top)
 {
-   uint32_t* sp = reinterpret_cast<uint32_t*>(top);
+   const std::size_t initSize = (5 * 4) + (12 * 4);
 
-   sp[-5] = reinterpret_cast<uint32_t>(&Thread::main);
-   sp[-4] = KernelCodeSegment;
-   sp[-3] = 0x2; // XXX magic number
-   sp[-2] = 0; // these should be discarded
-   sp[-1] = 0; //
+   uint32_t* sp = reinterpret_cast<uint32_t*>(top - initSize);
 
-   return top - 4 * sizeof(uint32_t);
+   sp[12] = reinterpret_cast<uint32_t>(&Thread::main);
+   sp[13] = KernelCodeSegment;
+   sp[14] = 0x2; // XXX magic number
+   sp[15] = 0; // these should be discarded
+   sp[16] = 0; //
+
+   sp[11] = 0x0; //
+   sp[10] = 0x0; //
+   sp[9] = 0x0; //
+   sp[8] = 0x0; //
+   sp[7] = 0x0; //
+   sp[6] = 0x0; //
+   sp[5] = 0x0; //
+   sp[4] = 0x0; //
+   sp[3] = KernelDataSegment; //
+   sp[2] = KernelDataSegment; //
+   sp[1] = KernelDataSegment; //
+   sp[0] = KernelDataSegment; //
+
+   // subtract the above and the registers
+   return top - initSize;
 }

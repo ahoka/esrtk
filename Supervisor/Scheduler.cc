@@ -3,20 +3,26 @@
 
 #include <cstdio>
 
-Thread* Scheduler::currentThread = 0;
+static Thread thread0;
 
 Thread* Scheduler::threads = 0;
+Thread* Scheduler::currentThread = 0;
 Thread* Scheduler::nextToRun = 0;
 
 void
 Scheduler::setCurrentThread(Thread* thread)
 {
+//   printf("set current thread\n");
+//   thread->dump();
    currentThread = thread;
 }
 
 Thread*
 Scheduler::getCurrentThread()
 {
+//   printf("get current thread\n");
+//   currentThread->dump();
+
    return currentThread;
 }
 
@@ -24,8 +30,8 @@ void
 Scheduler::insert(Thread* t)
 {
    if (threads == 0) {
-      printf("setting thread zero\n");
-      t->dump();
+//      printf("setting thread zero\n");
+//      t->dump();
       setCurrentThread(t);
       getCurrentThread()->dump();
    }

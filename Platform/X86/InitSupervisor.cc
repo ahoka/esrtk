@@ -9,7 +9,7 @@
 #include <X86/Gdt.hh>
 #include <X86/SerialConsole.hh>
 
-static Thread thread0;
+Thread Supervisor::thread0(0);
 
 // the kernel drivers should be able to function
 // after calling this
