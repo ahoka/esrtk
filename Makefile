@@ -27,7 +27,7 @@ QEMU=		qemu-system-i386
 
 LDFLAGS=	-melf_i386
 
-ASFLAGS+=	--32
+ASFLAGS+=	--32 -g
 
 COPTS+=		-O2 -march=i686 -m32 -g3 \
 		-Wall -Wextra -Werror \

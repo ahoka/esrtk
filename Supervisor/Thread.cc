@@ -4,6 +4,7 @@
 
 #include <Thread.hh>
 #include <cstdio>
+#include <Hal.hh>
 
 unsigned long Thread::nextThreadId = 1;
 
@@ -45,10 +46,15 @@ Thread::init()
 {
    Debug::verbose("Initializing thread...\n");
 
+   InterruptFlags flags;
+   Hal::saveLocalInterrupts(flags);
+   Hal::disableLocalInterrupts();
+
    KASSERT(nextThreadId != 0);
    id = nextThreadId++;
 
    bool success = Memory::createKernelStack(kernelStack);
+   Hal::restoreLocalInterrupts(flags);
    KASSERT(success);
 
    dump();

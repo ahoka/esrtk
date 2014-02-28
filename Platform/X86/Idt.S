@@ -34,13 +34,6 @@
         popl %eax
 .endm
 
-.global create_context
-create_context:
-	pushl $0x02 // eflags
-	pushl $KernelCodeSegment // cs
-	pushl %eax // eip
-	iret
-
 .global idtinit
 idtinit:
 	movl $idtPointer, %eax
@@ -54,7 +47,7 @@ call_isr:
 
 	incl interrupt_level
 
-	movl $0x10, %eax
+	movl $KernelDataSegment, %eax
 	movl %eax, %ds
 	movl %eax, %es
 	movl %eax, %fs
@@ -65,13 +58,13 @@ call_isr:
 
         // clear ebp to make call chains sane in
         // interrupt handlers
-        xorl %ebp, %ebp
+//        xorl %ebp, %ebp
         
         call x86_isr_dispatcher
 	
 	// esp was pushed to stack for isrDispatcher,
 	// so remove it
-	//addl $4, %esp
+	addl $4, %esp
 
 	movl %eax, %esp
 

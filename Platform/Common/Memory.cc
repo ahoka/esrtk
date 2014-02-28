@@ -8,6 +8,8 @@
 #include <Memory.hh>
 #include <Hal.hh>
 
+#include <X86/ThreadContext.hh>
+
 #include <cstring>
 
 //extern uintptr_t initial_stack;
@@ -173,14 +175,13 @@ Memory::createKernelStack(uintptr_t& top)
 
    printf("Creating new kernel stack: %p-%p (%u)\n", (void* )top, (void* )(bottom), PageSize);
 
-   std::memset((void*)bottom, 0, PageSize);
+   uintptr_t newStack = Hal::initKernelStack(top);
+//   uintptr_t newStack = top - 68;
 
-//   uintptr_t newStack = Hal::initKernelStack(top);
-   uintptr_t newStack = top - 68;
-
+   printf("<<<\n");
    printf("Stack after init: %p\n", (void*)newStack);
-
    ((InterruptFrame*)newStack)->print();
+   printf("<<<\n");
 
    top = newStack;
 
@@ -191,8 +192,13 @@ Memory::createKernelStack(uintptr_t& top)
 bool
 Memory::mapPage(uintptr_t address, uintptr_t phys)
 {
-//   printf("Memory::mapPage %p -> %p\n", (void*)phys, (void*)address);
-   return Hal::mapPage(address, phys);
+   bool success = Hal::mapPage(address, phys);
+
+   if (success) {
+      std::memset((void*)address, 0, PageSize);
+   }
+
+   return success;
 }
 
 bool
@@ -209,21 +215,28 @@ Memory::unmapPage(uintptr_t page)
 uintptr_t
 Memory::mapPage(uintptr_t phys)
 {
-   mapEnd -= PageSize;
+   InterruptFlags flags;
+   Hal::saveLocalInterrupts(flags);
+   Hal::disableLocalInterrupts();
 
-   if (mapEnd <= heapEnd)
+   mapEnd -= PageSize;
+   uintptr_t virt = mapEnd;
+
+   Hal::restoreLocalInterrupts(flags);
+
+   if (virt <= heapEnd)
    {
       Debug::panic("Kernel map namespace exhausted.");
    }
 
 //   Debug::info("Mapping anonymous page: %p to %p\n", phys, mapEnd);
-   bool success = mapPage(mapEnd, phys);
+   bool success = mapPage(virt, phys);
    if (!success)
    {
       return 0;
    }
 
-   return mapEnd;
+   return virt;
 }
 
 // anonymous memory mapping
@@ -231,14 +244,21 @@ Memory::mapPage(uintptr_t phys)
 uintptr_t Memory::mapAnonymousRegion(std::size_t size)
 {
    std::size_t rsize = roundTo<uintptr_t>(size, PageSize);
-   mapEnd -= rsize;
 
-   if (mapEnd <= heapEnd)
+   InterruptFlags flags;
+   Hal::saveLocalInterrupts(flags);
+   Hal::disableLocalInterrupts();
+
+   mapEnd -= rsize;
+   uintptr_t vaddr = mapEnd;
+
+   Hal::restoreLocalInterrupts(flags);
+
+   if (vaddr <= heapEnd)
    {
       Debug::panic("Kernel map name space exhausted.");
    }
 
-   uintptr_t vaddr = mapEnd;
    for (std::size_t i = 0; i < rsize / PageSize; i++, vaddr += PageSize)
    {
       uintptr_t emptyPage = getPage();
@@ -260,7 +280,15 @@ uintptr_t Memory::mapAnonymousRegion(std::size_t size)
 uintptr_t Memory::mapRegion(uintptr_t paddr, std::size_t size)
 {
    std::size_t rsize = roundTo<uintptr_t>(size, PageSize);
+
+   InterruptFlags flags;
+   Hal::saveLocalInterrupts(flags);
+   Hal::disableLocalInterrupts();
+
    mapEnd -= rsize;
+   uintptr_t vaddr = mapEnd;
+
+   Hal::restoreLocalInterrupts(flags);
 
    uintptr_t firstPage = roundDown(paddr, PageSize);
    uintptr_t offset = paddr - firstPage;
@@ -270,7 +298,6 @@ uintptr_t Memory::mapRegion(uintptr_t paddr, std::size_t size)
       Debug::panic("Kernel map namespace exhausted.");
    }
 
-   uintptr_t vaddr = mapEnd;
    for (uintptr_t page = firstPage;
 	page < firstPage + rsize;
 	page += PageSize, vaddr += PageSize)

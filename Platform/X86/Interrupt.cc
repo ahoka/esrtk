@@ -10,6 +10,7 @@
 
 #include <Scheduler.hh>
 #include <Thread.hh>
+#include <X86/ThreadContext.hh>
 
 extern IdtPointer idtPointer;
 
@@ -79,10 +80,13 @@ x86_isr_dispatcher(InterruptFrame* frame)
 
 //   frame->print();
 
-   printf("disp\n");
-   Thread* currentThread = Scheduler::getCurrentThread();
-   currentThread->dump();
-   currentThread->kernelStack = (uintptr_t )frame;
+   if (frame->interrupt == 32)
+   {
+      printf("disp\n");
+      Thread* currentThread = Scheduler::getCurrentThread();
+      currentThread->dump();
+      currentThread->kernelStack = (uintptr_t )frame;
+   }
 
    // TODO: make a list of handlers and register them there to be run from dispatcher
    if (frame->interrupt == 14)
@@ -103,16 +107,19 @@ x86_isr_dispatcher(InterruptFrame* frame)
   exit:
    KASSERT(Interrupt::getInterruptLevel() > 0);
 
-   currentThread = Scheduler::getCurrentThread();
-   InterruptFrame* newFrame = (InterruptFrame* )currentThread->kernelStack;
+   if (frame->interrupt == 32)
+   {
+      Thread* currentThread = Scheduler::getCurrentThread();
+      InterruptFrame* newFrame = (InterruptFrame* )currentThread->kernelStack;
 
-   printf("new stack: %p\n", newFrame);
+      printf("new stack: %p\n", newFrame);
 
-   ((InterruptFrame*)newFrame)->print();
+//   ((InterruptFrame*)newFrame)->print();
 
-   KASSERT(newFrame != 0);
+      KASSERT(newFrame != 0);
 
-   frame = newFrame;
+      frame = newFrame;
+   }
 
    return frame;
 }
