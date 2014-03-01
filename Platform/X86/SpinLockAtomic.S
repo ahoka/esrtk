@@ -20,8 +20,10 @@ spinlock_try:
 
 .global spinlock_unlock
 spinlock_unlock:
-	movl $1, %eax
-	movl $0, %ecx
+	//movl $1, %eax
+	//movl $0, %ecx
 	movl 4(%esp), %ebx
-	lock cmpxchg %ecx, (%ebx)
+	//lock cmpxchg %ecx, (%ebx)
+	movl (%ebx), %eax
+	movl $0, (%ebx)
 	ret
