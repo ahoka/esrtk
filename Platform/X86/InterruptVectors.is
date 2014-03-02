@@ -1,1786 +1,2298 @@
-.global isr0
-isr0:
+.text
+.balign 16
+.global x86_isr_vector_0
+x86_isr_vector_0:
 	 cli
 	 pushl $0
 	 pushl $0
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr1
-isr1:
+.text
+.balign 16
+.global x86_isr_vector_1
+x86_isr_vector_1:
 	 cli
 	 pushl $0
 	 pushl $1
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr2
-isr2:
+.text
+.balign 16
+.global x86_isr_vector_2
+x86_isr_vector_2:
 	 cli
 	 pushl $0
 	 pushl $2
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr3
-isr3:
+.text
+.balign 16
+.global x86_isr_vector_3
+x86_isr_vector_3:
 	 cli
 	 pushl $0
 	 pushl $3
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr4
-isr4:
+.text
+.balign 16
+.global x86_isr_vector_4
+x86_isr_vector_4:
 	 cli
 	 pushl $0
 	 pushl $4
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr5
-isr5:
+.text
+.balign 16
+.global x86_isr_vector_5
+x86_isr_vector_5:
 	 cli
 	 pushl $0
 	 pushl $5
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr6
-isr6:
+.text
+.balign 16
+.global x86_isr_vector_6
+x86_isr_vector_6:
 	 cli
 	 pushl $0
 	 pushl $6
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr7
-isr7:
+.text
+.balign 16
+.global x86_isr_vector_7
+x86_isr_vector_7:
 	 cli
 	 pushl $0
 	 pushl $7
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr8
-isr8:
+.text
+.balign 16
+.global x86_isr_vector_8
+x86_isr_vector_8:
 	 cli
 	 pushl $0
 	 pushl $8
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr9
-isr9:
+.text
+.balign 16
+.global x86_isr_vector_9
+x86_isr_vector_9:
 	 cli
 	 pushl $0
 	 pushl $9
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr10
-isr10:
+.text
+.balign 16
+.global x86_isr_vector_10
+x86_isr_vector_10:
 	 cli
 	 pushl $10
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr11
-isr11:
+.text
+.balign 16
+.global x86_isr_vector_11
+x86_isr_vector_11:
 	 cli
 	 pushl $11
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr12
-isr12:
+.text
+.balign 16
+.global x86_isr_vector_12
+x86_isr_vector_12:
 	 cli
 	 pushl $12
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr13
-isr13:
+.text
+.balign 16
+.global x86_isr_vector_13
+x86_isr_vector_13:
 	 cli
 	 pushl $13
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr14
-isr14:
+.text
+.balign 16
+.global x86_isr_vector_14
+x86_isr_vector_14:
 	 cli
 	 pushl $14
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr15
-isr15:
+.text
+.balign 16
+.global x86_isr_vector_15
+x86_isr_vector_15:
 	 cli
 	 pushl $0
 	 pushl $15
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr16
-isr16:
+.text
+.balign 16
+.global x86_isr_vector_16
+x86_isr_vector_16:
 	 cli
 	 pushl $0
 	 pushl $16
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr17
-isr17:
+.text
+.balign 16
+.global x86_isr_vector_17
+x86_isr_vector_17:
 	 cli
 	 pushl $17
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr18
-isr18:
+.text
+.balign 16
+.global x86_isr_vector_18
+x86_isr_vector_18:
 	 cli
 	 pushl $0
 	 pushl $18
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr19
-isr19:
+.text
+.balign 16
+.global x86_isr_vector_19
+x86_isr_vector_19:
 	 cli
 	 pushl $0
 	 pushl $19
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr20
-isr20:
+.text
+.balign 16
+.global x86_isr_vector_20
+x86_isr_vector_20:
 	 cli
 	 pushl $0
 	 pushl $20
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr21
-isr21:
+.text
+.balign 16
+.global x86_isr_vector_21
+x86_isr_vector_21:
 	 cli
 	 pushl $0
 	 pushl $21
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr22
-isr22:
+.text
+.balign 16
+.global x86_isr_vector_22
+x86_isr_vector_22:
 	 cli
 	 pushl $0
 	 pushl $22
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr23
-isr23:
+.text
+.balign 16
+.global x86_isr_vector_23
+x86_isr_vector_23:
 	 cli
 	 pushl $0
 	 pushl $23
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr24
-isr24:
+.text
+.balign 16
+.global x86_isr_vector_24
+x86_isr_vector_24:
 	 cli
 	 pushl $0
 	 pushl $24
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr25
-isr25:
+.text
+.balign 16
+.global x86_isr_vector_25
+x86_isr_vector_25:
 	 cli
 	 pushl $0
 	 pushl $25
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr26
-isr26:
+.text
+.balign 16
+.global x86_isr_vector_26
+x86_isr_vector_26:
 	 cli
 	 pushl $0
 	 pushl $26
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr27
-isr27:
+.text
+.balign 16
+.global x86_isr_vector_27
+x86_isr_vector_27:
 	 cli
 	 pushl $0
 	 pushl $27
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr28
-isr28:
+.text
+.balign 16
+.global x86_isr_vector_28
+x86_isr_vector_28:
 	 cli
 	 pushl $0
 	 pushl $28
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr29
-isr29:
+.text
+.balign 16
+.global x86_isr_vector_29
+x86_isr_vector_29:
 	 cli
 	 pushl $0
 	 pushl $29
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr30
-isr30:
+.text
+.balign 16
+.global x86_isr_vector_30
+x86_isr_vector_30:
 	 cli
 	 pushl $0
 	 pushl $30
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr31
-isr31:
+.text
+.balign 16
+.global x86_isr_vector_31
+x86_isr_vector_31:
 	 cli
 	 pushl $0
 	 pushl $31
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr32
-isr32:
+.text
+.balign 16
+.global x86_isr_vector_32
+x86_isr_vector_32:
 	 cli
 	 pushl $0
 	 pushl $32
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr33
-isr33:
+.text
+.balign 16
+.global x86_isr_vector_33
+x86_isr_vector_33:
 	 cli
 	 pushl $0
 	 pushl $33
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr34
-isr34:
+.text
+.balign 16
+.global x86_isr_vector_34
+x86_isr_vector_34:
 	 cli
 	 pushl $0
 	 pushl $34
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr35
-isr35:
+.text
+.balign 16
+.global x86_isr_vector_35
+x86_isr_vector_35:
 	 cli
 	 pushl $0
 	 pushl $35
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr36
-isr36:
+.text
+.balign 16
+.global x86_isr_vector_36
+x86_isr_vector_36:
 	 cli
 	 pushl $0
 	 pushl $36
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr37
-isr37:
+.text
+.balign 16
+.global x86_isr_vector_37
+x86_isr_vector_37:
 	 cli
 	 pushl $0
 	 pushl $37
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr38
-isr38:
+.text
+.balign 16
+.global x86_isr_vector_38
+x86_isr_vector_38:
 	 cli
 	 pushl $0
 	 pushl $38
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr39
-isr39:
+.text
+.balign 16
+.global x86_isr_vector_39
+x86_isr_vector_39:
 	 cli
 	 pushl $0
 	 pushl $39
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr40
-isr40:
+.text
+.balign 16
+.global x86_isr_vector_40
+x86_isr_vector_40:
 	 cli
 	 pushl $0
 	 pushl $40
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr41
-isr41:
+.text
+.balign 16
+.global x86_isr_vector_41
+x86_isr_vector_41:
 	 cli
 	 pushl $0
 	 pushl $41
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr42
-isr42:
+.text
+.balign 16
+.global x86_isr_vector_42
+x86_isr_vector_42:
 	 cli
 	 pushl $0
 	 pushl $42
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr43
-isr43:
+.text
+.balign 16
+.global x86_isr_vector_43
+x86_isr_vector_43:
 	 cli
 	 pushl $0
 	 pushl $43
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr44
-isr44:
+.text
+.balign 16
+.global x86_isr_vector_44
+x86_isr_vector_44:
 	 cli
 	 pushl $0
 	 pushl $44
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr45
-isr45:
+.text
+.balign 16
+.global x86_isr_vector_45
+x86_isr_vector_45:
 	 cli
 	 pushl $0
 	 pushl $45
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr46
-isr46:
+.text
+.balign 16
+.global x86_isr_vector_46
+x86_isr_vector_46:
 	 cli
 	 pushl $0
 	 pushl $46
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr47
-isr47:
+.text
+.balign 16
+.global x86_isr_vector_47
+x86_isr_vector_47:
 	 cli
 	 pushl $0
 	 pushl $47
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr48
-isr48:
+.text
+.balign 16
+.global x86_isr_vector_48
+x86_isr_vector_48:
 	 cli
 	 pushl $0
 	 pushl $48
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr49
-isr49:
+.text
+.balign 16
+.global x86_isr_vector_49
+x86_isr_vector_49:
 	 cli
 	 pushl $0
 	 pushl $49
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr50
-isr50:
+.text
+.balign 16
+.global x86_isr_vector_50
+x86_isr_vector_50:
 	 cli
 	 pushl $0
 	 pushl $50
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr51
-isr51:
+.text
+.balign 16
+.global x86_isr_vector_51
+x86_isr_vector_51:
 	 cli
 	 pushl $0
 	 pushl $51
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr52
-isr52:
+.text
+.balign 16
+.global x86_isr_vector_52
+x86_isr_vector_52:
 	 cli
 	 pushl $0
 	 pushl $52
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr53
-isr53:
+.text
+.balign 16
+.global x86_isr_vector_53
+x86_isr_vector_53:
 	 cli
 	 pushl $0
 	 pushl $53
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr54
-isr54:
+.text
+.balign 16
+.global x86_isr_vector_54
+x86_isr_vector_54:
 	 cli
 	 pushl $0
 	 pushl $54
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr55
-isr55:
+.text
+.balign 16
+.global x86_isr_vector_55
+x86_isr_vector_55:
 	 cli
 	 pushl $0
 	 pushl $55
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr56
-isr56:
+.text
+.balign 16
+.global x86_isr_vector_56
+x86_isr_vector_56:
 	 cli
 	 pushl $0
 	 pushl $56
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr57
-isr57:
+.text
+.balign 16
+.global x86_isr_vector_57
+x86_isr_vector_57:
 	 cli
 	 pushl $0
 	 pushl $57
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr58
-isr58:
+.text
+.balign 16
+.global x86_isr_vector_58
+x86_isr_vector_58:
 	 cli
 	 pushl $0
 	 pushl $58
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr59
-isr59:
+.text
+.balign 16
+.global x86_isr_vector_59
+x86_isr_vector_59:
 	 cli
 	 pushl $0
 	 pushl $59
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr60
-isr60:
+.text
+.balign 16
+.global x86_isr_vector_60
+x86_isr_vector_60:
 	 cli
 	 pushl $0
 	 pushl $60
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr61
-isr61:
+.text
+.balign 16
+.global x86_isr_vector_61
+x86_isr_vector_61:
 	 cli
 	 pushl $0
 	 pushl $61
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr62
-isr62:
+.text
+.balign 16
+.global x86_isr_vector_62
+x86_isr_vector_62:
 	 cli
 	 pushl $0
 	 pushl $62
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr63
-isr63:
+.text
+.balign 16
+.global x86_isr_vector_63
+x86_isr_vector_63:
 	 cli
 	 pushl $0
 	 pushl $63
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr64
-isr64:
+.text
+.balign 16
+.global x86_isr_vector_64
+x86_isr_vector_64:
 	 cli
 	 pushl $0
 	 pushl $64
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr65
-isr65:
+.text
+.balign 16
+.global x86_isr_vector_65
+x86_isr_vector_65:
 	 cli
 	 pushl $0
 	 pushl $65
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr66
-isr66:
+.text
+.balign 16
+.global x86_isr_vector_66
+x86_isr_vector_66:
 	 cli
 	 pushl $0
 	 pushl $66
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr67
-isr67:
+.text
+.balign 16
+.global x86_isr_vector_67
+x86_isr_vector_67:
 	 cli
 	 pushl $0
 	 pushl $67
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr68
-isr68:
+.text
+.balign 16
+.global x86_isr_vector_68
+x86_isr_vector_68:
 	 cli
 	 pushl $0
 	 pushl $68
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr69
-isr69:
+.text
+.balign 16
+.global x86_isr_vector_69
+x86_isr_vector_69:
 	 cli
 	 pushl $0
 	 pushl $69
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr70
-isr70:
+.text
+.balign 16
+.global x86_isr_vector_70
+x86_isr_vector_70:
 	 cli
 	 pushl $0
 	 pushl $70
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr71
-isr71:
+.text
+.balign 16
+.global x86_isr_vector_71
+x86_isr_vector_71:
 	 cli
 	 pushl $0
 	 pushl $71
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr72
-isr72:
+.text
+.balign 16
+.global x86_isr_vector_72
+x86_isr_vector_72:
 	 cli
 	 pushl $0
 	 pushl $72
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr73
-isr73:
+.text
+.balign 16
+.global x86_isr_vector_73
+x86_isr_vector_73:
 	 cli
 	 pushl $0
 	 pushl $73
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr74
-isr74:
+.text
+.balign 16
+.global x86_isr_vector_74
+x86_isr_vector_74:
 	 cli
 	 pushl $0
 	 pushl $74
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr75
-isr75:
+.text
+.balign 16
+.global x86_isr_vector_75
+x86_isr_vector_75:
 	 cli
 	 pushl $0
 	 pushl $75
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr76
-isr76:
+.text
+.balign 16
+.global x86_isr_vector_76
+x86_isr_vector_76:
 	 cli
 	 pushl $0
 	 pushl $76
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr77
-isr77:
+.text
+.balign 16
+.global x86_isr_vector_77
+x86_isr_vector_77:
 	 cli
 	 pushl $0
 	 pushl $77
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr78
-isr78:
+.text
+.balign 16
+.global x86_isr_vector_78
+x86_isr_vector_78:
 	 cli
 	 pushl $0
 	 pushl $78
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr79
-isr79:
+.text
+.balign 16
+.global x86_isr_vector_79
+x86_isr_vector_79:
 	 cli
 	 pushl $0
 	 pushl $79
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr80
-isr80:
+.text
+.balign 16
+.global x86_isr_vector_80
+x86_isr_vector_80:
 	 cli
 	 pushl $0
 	 pushl $80
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr81
-isr81:
+.text
+.balign 16
+.global x86_isr_vector_81
+x86_isr_vector_81:
 	 cli
 	 pushl $0
 	 pushl $81
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr82
-isr82:
+.text
+.balign 16
+.global x86_isr_vector_82
+x86_isr_vector_82:
 	 cli
 	 pushl $0
 	 pushl $82
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr83
-isr83:
+.text
+.balign 16
+.global x86_isr_vector_83
+x86_isr_vector_83:
 	 cli
 	 pushl $0
 	 pushl $83
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr84
-isr84:
+.text
+.balign 16
+.global x86_isr_vector_84
+x86_isr_vector_84:
 	 cli
 	 pushl $0
 	 pushl $84
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr85
-isr85:
+.text
+.balign 16
+.global x86_isr_vector_85
+x86_isr_vector_85:
 	 cli
 	 pushl $0
 	 pushl $85
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr86
-isr86:
+.text
+.balign 16
+.global x86_isr_vector_86
+x86_isr_vector_86:
 	 cli
 	 pushl $0
 	 pushl $86
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr87
-isr87:
+.text
+.balign 16
+.global x86_isr_vector_87
+x86_isr_vector_87:
 	 cli
 	 pushl $0
 	 pushl $87
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr88
-isr88:
+.text
+.balign 16
+.global x86_isr_vector_88
+x86_isr_vector_88:
 	 cli
 	 pushl $0
 	 pushl $88
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr89
-isr89:
+.text
+.balign 16
+.global x86_isr_vector_89
+x86_isr_vector_89:
 	 cli
 	 pushl $0
 	 pushl $89
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr90
-isr90:
+.text
+.balign 16
+.global x86_isr_vector_90
+x86_isr_vector_90:
 	 cli
 	 pushl $0
 	 pushl $90
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr91
-isr91:
+.text
+.balign 16
+.global x86_isr_vector_91
+x86_isr_vector_91:
 	 cli
 	 pushl $0
 	 pushl $91
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr92
-isr92:
+.text
+.balign 16
+.global x86_isr_vector_92
+x86_isr_vector_92:
 	 cli
 	 pushl $0
 	 pushl $92
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr93
-isr93:
+.text
+.balign 16
+.global x86_isr_vector_93
+x86_isr_vector_93:
 	 cli
 	 pushl $0
 	 pushl $93
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr94
-isr94:
+.text
+.balign 16
+.global x86_isr_vector_94
+x86_isr_vector_94:
 	 cli
 	 pushl $0
 	 pushl $94
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr95
-isr95:
+.text
+.balign 16
+.global x86_isr_vector_95
+x86_isr_vector_95:
 	 cli
 	 pushl $0
 	 pushl $95
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr96
-isr96:
+.text
+.balign 16
+.global x86_isr_vector_96
+x86_isr_vector_96:
 	 cli
 	 pushl $0
 	 pushl $96
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr97
-isr97:
+.text
+.balign 16
+.global x86_isr_vector_97
+x86_isr_vector_97:
 	 cli
 	 pushl $0
 	 pushl $97
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr98
-isr98:
+.text
+.balign 16
+.global x86_isr_vector_98
+x86_isr_vector_98:
 	 cli
 	 pushl $0
 	 pushl $98
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr99
-isr99:
+.text
+.balign 16
+.global x86_isr_vector_99
+x86_isr_vector_99:
 	 cli
 	 pushl $0
 	 pushl $99
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr100
-isr100:
+.text
+.balign 16
+.global x86_isr_vector_100
+x86_isr_vector_100:
 	 cli
 	 pushl $0
 	 pushl $100
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr101
-isr101:
+.text
+.balign 16
+.global x86_isr_vector_101
+x86_isr_vector_101:
 	 cli
 	 pushl $0
 	 pushl $101
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr102
-isr102:
+.text
+.balign 16
+.global x86_isr_vector_102
+x86_isr_vector_102:
 	 cli
 	 pushl $0
 	 pushl $102
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr103
-isr103:
+.text
+.balign 16
+.global x86_isr_vector_103
+x86_isr_vector_103:
 	 cli
 	 pushl $0
 	 pushl $103
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr104
-isr104:
+.text
+.balign 16
+.global x86_isr_vector_104
+x86_isr_vector_104:
 	 cli
 	 pushl $0
 	 pushl $104
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr105
-isr105:
+.text
+.balign 16
+.global x86_isr_vector_105
+x86_isr_vector_105:
 	 cli
 	 pushl $0
 	 pushl $105
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr106
-isr106:
+.text
+.balign 16
+.global x86_isr_vector_106
+x86_isr_vector_106:
 	 cli
 	 pushl $0
 	 pushl $106
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr107
-isr107:
+.text
+.balign 16
+.global x86_isr_vector_107
+x86_isr_vector_107:
 	 cli
 	 pushl $0
 	 pushl $107
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr108
-isr108:
+.text
+.balign 16
+.global x86_isr_vector_108
+x86_isr_vector_108:
 	 cli
 	 pushl $0
 	 pushl $108
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr109
-isr109:
+.text
+.balign 16
+.global x86_isr_vector_109
+x86_isr_vector_109:
 	 cli
 	 pushl $0
 	 pushl $109
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr110
-isr110:
+.text
+.balign 16
+.global x86_isr_vector_110
+x86_isr_vector_110:
 	 cli
 	 pushl $0
 	 pushl $110
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr111
-isr111:
+.text
+.balign 16
+.global x86_isr_vector_111
+x86_isr_vector_111:
 	 cli
 	 pushl $0
 	 pushl $111
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr112
-isr112:
+.text
+.balign 16
+.global x86_isr_vector_112
+x86_isr_vector_112:
 	 cli
 	 pushl $0
 	 pushl $112
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr113
-isr113:
+.text
+.balign 16
+.global x86_isr_vector_113
+x86_isr_vector_113:
 	 cli
 	 pushl $0
 	 pushl $113
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr114
-isr114:
+.text
+.balign 16
+.global x86_isr_vector_114
+x86_isr_vector_114:
 	 cli
 	 pushl $0
 	 pushl $114
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr115
-isr115:
+.text
+.balign 16
+.global x86_isr_vector_115
+x86_isr_vector_115:
 	 cli
 	 pushl $0
 	 pushl $115
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr116
-isr116:
+.text
+.balign 16
+.global x86_isr_vector_116
+x86_isr_vector_116:
 	 cli
 	 pushl $0
 	 pushl $116
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr117
-isr117:
+.text
+.balign 16
+.global x86_isr_vector_117
+x86_isr_vector_117:
 	 cli
 	 pushl $0
 	 pushl $117
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr118
-isr118:
+.text
+.balign 16
+.global x86_isr_vector_118
+x86_isr_vector_118:
 	 cli
 	 pushl $0
 	 pushl $118
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr119
-isr119:
+.text
+.balign 16
+.global x86_isr_vector_119
+x86_isr_vector_119:
 	 cli
 	 pushl $0
 	 pushl $119
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr120
-isr120:
+.text
+.balign 16
+.global x86_isr_vector_120
+x86_isr_vector_120:
 	 cli
 	 pushl $0
 	 pushl $120
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr121
-isr121:
+.text
+.balign 16
+.global x86_isr_vector_121
+x86_isr_vector_121:
 	 cli
 	 pushl $0
 	 pushl $121
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr122
-isr122:
+.text
+.balign 16
+.global x86_isr_vector_122
+x86_isr_vector_122:
 	 cli
 	 pushl $0
 	 pushl $122
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr123
-isr123:
+.text
+.balign 16
+.global x86_isr_vector_123
+x86_isr_vector_123:
 	 cli
 	 pushl $0
 	 pushl $123
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr124
-isr124:
+.text
+.balign 16
+.global x86_isr_vector_124
+x86_isr_vector_124:
 	 cli
 	 pushl $0
 	 pushl $124
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr125
-isr125:
+.text
+.balign 16
+.global x86_isr_vector_125
+x86_isr_vector_125:
 	 cli
 	 pushl $0
 	 pushl $125
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr126
-isr126:
+.text
+.balign 16
+.global x86_isr_vector_126
+x86_isr_vector_126:
 	 cli
 	 pushl $0
 	 pushl $126
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr127
-isr127:
+.text
+.balign 16
+.global x86_isr_vector_127
+x86_isr_vector_127:
 	 cli
 	 pushl $0
 	 pushl $127
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr128
-isr128:
+.text
+.balign 16
+.global x86_isr_vector_128
+x86_isr_vector_128:
 	 cli
 	 pushl $0
 	 pushl $128
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr129
-isr129:
+.text
+.balign 16
+.global x86_isr_vector_129
+x86_isr_vector_129:
 	 cli
 	 pushl $0
 	 pushl $129
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr130
-isr130:
+.text
+.balign 16
+.global x86_isr_vector_130
+x86_isr_vector_130:
 	 cli
 	 pushl $0
 	 pushl $130
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr131
-isr131:
+.text
+.balign 16
+.global x86_isr_vector_131
+x86_isr_vector_131:
 	 cli
 	 pushl $0
 	 pushl $131
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr132
-isr132:
+.text
+.balign 16
+.global x86_isr_vector_132
+x86_isr_vector_132:
 	 cli
 	 pushl $0
 	 pushl $132
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr133
-isr133:
+.text
+.balign 16
+.global x86_isr_vector_133
+x86_isr_vector_133:
 	 cli
 	 pushl $0
 	 pushl $133
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr134
-isr134:
+.text
+.balign 16
+.global x86_isr_vector_134
+x86_isr_vector_134:
 	 cli
 	 pushl $0
 	 pushl $134
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr135
-isr135:
+.text
+.balign 16
+.global x86_isr_vector_135
+x86_isr_vector_135:
 	 cli
 	 pushl $0
 	 pushl $135
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr136
-isr136:
+.text
+.balign 16
+.global x86_isr_vector_136
+x86_isr_vector_136:
 	 cli
 	 pushl $0
 	 pushl $136
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr137
-isr137:
+.text
+.balign 16
+.global x86_isr_vector_137
+x86_isr_vector_137:
 	 cli
 	 pushl $0
 	 pushl $137
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr138
-isr138:
+.text
+.balign 16
+.global x86_isr_vector_138
+x86_isr_vector_138:
 	 cli
 	 pushl $0
 	 pushl $138
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr139
-isr139:
+.text
+.balign 16
+.global x86_isr_vector_139
+x86_isr_vector_139:
 	 cli
 	 pushl $0
 	 pushl $139
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr140
-isr140:
+.text
+.balign 16
+.global x86_isr_vector_140
+x86_isr_vector_140:
 	 cli
 	 pushl $0
 	 pushl $140
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr141
-isr141:
+.text
+.balign 16
+.global x86_isr_vector_141
+x86_isr_vector_141:
 	 cli
 	 pushl $0
 	 pushl $141
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr142
-isr142:
+.text
+.balign 16
+.global x86_isr_vector_142
+x86_isr_vector_142:
 	 cli
 	 pushl $0
 	 pushl $142
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr143
-isr143:
+.text
+.balign 16
+.global x86_isr_vector_143
+x86_isr_vector_143:
 	 cli
 	 pushl $0
 	 pushl $143
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr144
-isr144:
+.text
+.balign 16
+.global x86_isr_vector_144
+x86_isr_vector_144:
 	 cli
 	 pushl $0
 	 pushl $144
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr145
-isr145:
+.text
+.balign 16
+.global x86_isr_vector_145
+x86_isr_vector_145:
 	 cli
 	 pushl $0
 	 pushl $145
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr146
-isr146:
+.text
+.balign 16
+.global x86_isr_vector_146
+x86_isr_vector_146:
 	 cli
 	 pushl $0
 	 pushl $146
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr147
-isr147:
+.text
+.balign 16
+.global x86_isr_vector_147
+x86_isr_vector_147:
 	 cli
 	 pushl $0
 	 pushl $147
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr148
-isr148:
+.text
+.balign 16
+.global x86_isr_vector_148
+x86_isr_vector_148:
 	 cli
 	 pushl $0
 	 pushl $148
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr149
-isr149:
+.text
+.balign 16
+.global x86_isr_vector_149
+x86_isr_vector_149:
 	 cli
 	 pushl $0
 	 pushl $149
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr150
-isr150:
+.text
+.balign 16
+.global x86_isr_vector_150
+x86_isr_vector_150:
 	 cli
 	 pushl $0
 	 pushl $150
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr151
-isr151:
+.text
+.balign 16
+.global x86_isr_vector_151
+x86_isr_vector_151:
 	 cli
 	 pushl $0
 	 pushl $151
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr152
-isr152:
+.text
+.balign 16
+.global x86_isr_vector_152
+x86_isr_vector_152:
 	 cli
 	 pushl $0
 	 pushl $152
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr153
-isr153:
+.text
+.balign 16
+.global x86_isr_vector_153
+x86_isr_vector_153:
 	 cli
 	 pushl $0
 	 pushl $153
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr154
-isr154:
+.text
+.balign 16
+.global x86_isr_vector_154
+x86_isr_vector_154:
 	 cli
 	 pushl $0
 	 pushl $154
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr155
-isr155:
+.text
+.balign 16
+.global x86_isr_vector_155
+x86_isr_vector_155:
 	 cli
 	 pushl $0
 	 pushl $155
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr156
-isr156:
+.text
+.balign 16
+.global x86_isr_vector_156
+x86_isr_vector_156:
 	 cli
 	 pushl $0
 	 pushl $156
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr157
-isr157:
+.text
+.balign 16
+.global x86_isr_vector_157
+x86_isr_vector_157:
 	 cli
 	 pushl $0
 	 pushl $157
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr158
-isr158:
+.text
+.balign 16
+.global x86_isr_vector_158
+x86_isr_vector_158:
 	 cli
 	 pushl $0
 	 pushl $158
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr159
-isr159:
+.text
+.balign 16
+.global x86_isr_vector_159
+x86_isr_vector_159:
 	 cli
 	 pushl $0
 	 pushl $159
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr160
-isr160:
+.text
+.balign 16
+.global x86_isr_vector_160
+x86_isr_vector_160:
 	 cli
 	 pushl $0
 	 pushl $160
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr161
-isr161:
+.text
+.balign 16
+.global x86_isr_vector_161
+x86_isr_vector_161:
 	 cli
 	 pushl $0
 	 pushl $161
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr162
-isr162:
+.text
+.balign 16
+.global x86_isr_vector_162
+x86_isr_vector_162:
 	 cli
 	 pushl $0
 	 pushl $162
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr163
-isr163:
+.text
+.balign 16
+.global x86_isr_vector_163
+x86_isr_vector_163:
 	 cli
 	 pushl $0
 	 pushl $163
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr164
-isr164:
+.text
+.balign 16
+.global x86_isr_vector_164
+x86_isr_vector_164:
 	 cli
 	 pushl $0
 	 pushl $164
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr165
-isr165:
+.text
+.balign 16
+.global x86_isr_vector_165
+x86_isr_vector_165:
 	 cli
 	 pushl $0
 	 pushl $165
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr166
-isr166:
+.text
+.balign 16
+.global x86_isr_vector_166
+x86_isr_vector_166:
 	 cli
 	 pushl $0
 	 pushl $166
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr167
-isr167:
+.text
+.balign 16
+.global x86_isr_vector_167
+x86_isr_vector_167:
 	 cli
 	 pushl $0
 	 pushl $167
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr168
-isr168:
+.text
+.balign 16
+.global x86_isr_vector_168
+x86_isr_vector_168:
 	 cli
 	 pushl $0
 	 pushl $168
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr169
-isr169:
+.text
+.balign 16
+.global x86_isr_vector_169
+x86_isr_vector_169:
 	 cli
 	 pushl $0
 	 pushl $169
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr170
-isr170:
+.text
+.balign 16
+.global x86_isr_vector_170
+x86_isr_vector_170:
 	 cli
 	 pushl $0
 	 pushl $170
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr171
-isr171:
+.text
+.balign 16
+.global x86_isr_vector_171
+x86_isr_vector_171:
 	 cli
 	 pushl $0
 	 pushl $171
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr172
-isr172:
+.text
+.balign 16
+.global x86_isr_vector_172
+x86_isr_vector_172:
 	 cli
 	 pushl $0
 	 pushl $172
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr173
-isr173:
+.text
+.balign 16
+.global x86_isr_vector_173
+x86_isr_vector_173:
 	 cli
 	 pushl $0
 	 pushl $173
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr174
-isr174:
+.text
+.balign 16
+.global x86_isr_vector_174
+x86_isr_vector_174:
 	 cli
 	 pushl $0
 	 pushl $174
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr175
-isr175:
+.text
+.balign 16
+.global x86_isr_vector_175
+x86_isr_vector_175:
 	 cli
 	 pushl $0
 	 pushl $175
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr176
-isr176:
+.text
+.balign 16
+.global x86_isr_vector_176
+x86_isr_vector_176:
 	 cli
 	 pushl $0
 	 pushl $176
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr177
-isr177:
+.text
+.balign 16
+.global x86_isr_vector_177
+x86_isr_vector_177:
 	 cli
 	 pushl $0
 	 pushl $177
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr178
-isr178:
+.text
+.balign 16
+.global x86_isr_vector_178
+x86_isr_vector_178:
 	 cli
 	 pushl $0
 	 pushl $178
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr179
-isr179:
+.text
+.balign 16
+.global x86_isr_vector_179
+x86_isr_vector_179:
 	 cli
 	 pushl $0
 	 pushl $179
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr180
-isr180:
+.text
+.balign 16
+.global x86_isr_vector_180
+x86_isr_vector_180:
 	 cli
 	 pushl $0
 	 pushl $180
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr181
-isr181:
+.text
+.balign 16
+.global x86_isr_vector_181
+x86_isr_vector_181:
 	 cli
 	 pushl $0
 	 pushl $181
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr182
-isr182:
+.text
+.balign 16
+.global x86_isr_vector_182
+x86_isr_vector_182:
 	 cli
 	 pushl $0
 	 pushl $182
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr183
-isr183:
+.text
+.balign 16
+.global x86_isr_vector_183
+x86_isr_vector_183:
 	 cli
 	 pushl $0
 	 pushl $183
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr184
-isr184:
+.text
+.balign 16
+.global x86_isr_vector_184
+x86_isr_vector_184:
 	 cli
 	 pushl $0
 	 pushl $184
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr185
-isr185:
+.text
+.balign 16
+.global x86_isr_vector_185
+x86_isr_vector_185:
 	 cli
 	 pushl $0
 	 pushl $185
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr186
-isr186:
+.text
+.balign 16
+.global x86_isr_vector_186
+x86_isr_vector_186:
 	 cli
 	 pushl $0
 	 pushl $186
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr187
-isr187:
+.text
+.balign 16
+.global x86_isr_vector_187
+x86_isr_vector_187:
 	 cli
 	 pushl $0
 	 pushl $187
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr188
-isr188:
+.text
+.balign 16
+.global x86_isr_vector_188
+x86_isr_vector_188:
 	 cli
 	 pushl $0
 	 pushl $188
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr189
-isr189:
+.text
+.balign 16
+.global x86_isr_vector_189
+x86_isr_vector_189:
 	 cli
 	 pushl $0
 	 pushl $189
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr190
-isr190:
+.text
+.balign 16
+.global x86_isr_vector_190
+x86_isr_vector_190:
 	 cli
 	 pushl $0
 	 pushl $190
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr191
-isr191:
+.text
+.balign 16
+.global x86_isr_vector_191
+x86_isr_vector_191:
 	 cli
 	 pushl $0
 	 pushl $191
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr192
-isr192:
+.text
+.balign 16
+.global x86_isr_vector_192
+x86_isr_vector_192:
 	 cli
 	 pushl $0
 	 pushl $192
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr193
-isr193:
+.text
+.balign 16
+.global x86_isr_vector_193
+x86_isr_vector_193:
 	 cli
 	 pushl $0
 	 pushl $193
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr194
-isr194:
+.text
+.balign 16
+.global x86_isr_vector_194
+x86_isr_vector_194:
 	 cli
 	 pushl $0
 	 pushl $194
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr195
-isr195:
+.text
+.balign 16
+.global x86_isr_vector_195
+x86_isr_vector_195:
 	 cli
 	 pushl $0
 	 pushl $195
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr196
-isr196:
+.text
+.balign 16
+.global x86_isr_vector_196
+x86_isr_vector_196:
 	 cli
 	 pushl $0
 	 pushl $196
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr197
-isr197:
+.text
+.balign 16
+.global x86_isr_vector_197
+x86_isr_vector_197:
 	 cli
 	 pushl $0
 	 pushl $197
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr198
-isr198:
+.text
+.balign 16
+.global x86_isr_vector_198
+x86_isr_vector_198:
 	 cli
 	 pushl $0
 	 pushl $198
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr199
-isr199:
+.text
+.balign 16
+.global x86_isr_vector_199
+x86_isr_vector_199:
 	 cli
 	 pushl $0
 	 pushl $199
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr200
-isr200:
+.text
+.balign 16
+.global x86_isr_vector_200
+x86_isr_vector_200:
 	 cli
 	 pushl $0
 	 pushl $200
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr201
-isr201:
+.text
+.balign 16
+.global x86_isr_vector_201
+x86_isr_vector_201:
 	 cli
 	 pushl $0
 	 pushl $201
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr202
-isr202:
+.text
+.balign 16
+.global x86_isr_vector_202
+x86_isr_vector_202:
 	 cli
 	 pushl $0
 	 pushl $202
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr203
-isr203:
+.text
+.balign 16
+.global x86_isr_vector_203
+x86_isr_vector_203:
 	 cli
 	 pushl $0
 	 pushl $203
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr204
-isr204:
+.text
+.balign 16
+.global x86_isr_vector_204
+x86_isr_vector_204:
 	 cli
 	 pushl $0
 	 pushl $204
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr205
-isr205:
+.text
+.balign 16
+.global x86_isr_vector_205
+x86_isr_vector_205:
 	 cli
 	 pushl $0
 	 pushl $205
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr206
-isr206:
+.text
+.balign 16
+.global x86_isr_vector_206
+x86_isr_vector_206:
 	 cli
 	 pushl $0
 	 pushl $206
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr207
-isr207:
+.text
+.balign 16
+.global x86_isr_vector_207
+x86_isr_vector_207:
 	 cli
 	 pushl $0
 	 pushl $207
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr208
-isr208:
+.text
+.balign 16
+.global x86_isr_vector_208
+x86_isr_vector_208:
 	 cli
 	 pushl $0
 	 pushl $208
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr209
-isr209:
+.text
+.balign 16
+.global x86_isr_vector_209
+x86_isr_vector_209:
 	 cli
 	 pushl $0
 	 pushl $209
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr210
-isr210:
+.text
+.balign 16
+.global x86_isr_vector_210
+x86_isr_vector_210:
 	 cli
 	 pushl $0
 	 pushl $210
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr211
-isr211:
+.text
+.balign 16
+.global x86_isr_vector_211
+x86_isr_vector_211:
 	 cli
 	 pushl $0
 	 pushl $211
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr212
-isr212:
+.text
+.balign 16
+.global x86_isr_vector_212
+x86_isr_vector_212:
 	 cli
 	 pushl $0
 	 pushl $212
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr213
-isr213:
+.text
+.balign 16
+.global x86_isr_vector_213
+x86_isr_vector_213:
 	 cli
 	 pushl $0
 	 pushl $213
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr214
-isr214:
+.text
+.balign 16
+.global x86_isr_vector_214
+x86_isr_vector_214:
 	 cli
 	 pushl $0
 	 pushl $214
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr215
-isr215:
+.text
+.balign 16
+.global x86_isr_vector_215
+x86_isr_vector_215:
 	 cli
 	 pushl $0
 	 pushl $215
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr216
-isr216:
+.text
+.balign 16
+.global x86_isr_vector_216
+x86_isr_vector_216:
 	 cli
 	 pushl $0
 	 pushl $216
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr217
-isr217:
+.text
+.balign 16
+.global x86_isr_vector_217
+x86_isr_vector_217:
 	 cli
 	 pushl $0
 	 pushl $217
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr218
-isr218:
+.text
+.balign 16
+.global x86_isr_vector_218
+x86_isr_vector_218:
 	 cli
 	 pushl $0
 	 pushl $218
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr219
-isr219:
+.text
+.balign 16
+.global x86_isr_vector_219
+x86_isr_vector_219:
 	 cli
 	 pushl $0
 	 pushl $219
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr220
-isr220:
+.text
+.balign 16
+.global x86_isr_vector_220
+x86_isr_vector_220:
 	 cli
 	 pushl $0
 	 pushl $220
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr221
-isr221:
+.text
+.balign 16
+.global x86_isr_vector_221
+x86_isr_vector_221:
 	 cli
 	 pushl $0
 	 pushl $221
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr222
-isr222:
+.text
+.balign 16
+.global x86_isr_vector_222
+x86_isr_vector_222:
 	 cli
 	 pushl $0
 	 pushl $222
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr223
-isr223:
+.text
+.balign 16
+.global x86_isr_vector_223
+x86_isr_vector_223:
 	 cli
 	 pushl $0
 	 pushl $223
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr224
-isr224:
+.text
+.balign 16
+.global x86_isr_vector_224
+x86_isr_vector_224:
 	 cli
 	 pushl $0
 	 pushl $224
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr225
-isr225:
+.text
+.balign 16
+.global x86_isr_vector_225
+x86_isr_vector_225:
 	 cli
 	 pushl $0
 	 pushl $225
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr226
-isr226:
+.text
+.balign 16
+.global x86_isr_vector_226
+x86_isr_vector_226:
 	 cli
 	 pushl $0
 	 pushl $226
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr227
-isr227:
+.text
+.balign 16
+.global x86_isr_vector_227
+x86_isr_vector_227:
 	 cli
 	 pushl $0
 	 pushl $227
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr228
-isr228:
+.text
+.balign 16
+.global x86_isr_vector_228
+x86_isr_vector_228:
 	 cli
 	 pushl $0
 	 pushl $228
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr229
-isr229:
+.text
+.balign 16
+.global x86_isr_vector_229
+x86_isr_vector_229:
 	 cli
 	 pushl $0
 	 pushl $229
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr230
-isr230:
+.text
+.balign 16
+.global x86_isr_vector_230
+x86_isr_vector_230:
 	 cli
 	 pushl $0
 	 pushl $230
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr231
-isr231:
+.text
+.balign 16
+.global x86_isr_vector_231
+x86_isr_vector_231:
 	 cli
 	 pushl $0
 	 pushl $231
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr232
-isr232:
+.text
+.balign 16
+.global x86_isr_vector_232
+x86_isr_vector_232:
 	 cli
 	 pushl $0
 	 pushl $232
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr233
-isr233:
+.text
+.balign 16
+.global x86_isr_vector_233
+x86_isr_vector_233:
 	 cli
 	 pushl $0
 	 pushl $233
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr234
-isr234:
+.text
+.balign 16
+.global x86_isr_vector_234
+x86_isr_vector_234:
 	 cli
 	 pushl $0
 	 pushl $234
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr235
-isr235:
+.text
+.balign 16
+.global x86_isr_vector_235
+x86_isr_vector_235:
 	 cli
 	 pushl $0
 	 pushl $235
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr236
-isr236:
+.text
+.balign 16
+.global x86_isr_vector_236
+x86_isr_vector_236:
 	 cli
 	 pushl $0
 	 pushl $236
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr237
-isr237:
+.text
+.balign 16
+.global x86_isr_vector_237
+x86_isr_vector_237:
 	 cli
 	 pushl $0
 	 pushl $237
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr238
-isr238:
+.text
+.balign 16
+.global x86_isr_vector_238
+x86_isr_vector_238:
 	 cli
 	 pushl $0
 	 pushl $238
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr239
-isr239:
+.text
+.balign 16
+.global x86_isr_vector_239
+x86_isr_vector_239:
 	 cli
 	 pushl $0
 	 pushl $239
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr240
-isr240:
+.text
+.balign 16
+.global x86_isr_vector_240
+x86_isr_vector_240:
 	 cli
 	 pushl $0
 	 pushl $240
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr241
-isr241:
+.text
+.balign 16
+.global x86_isr_vector_241
+x86_isr_vector_241:
 	 cli
 	 pushl $0
 	 pushl $241
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr242
-isr242:
+.text
+.balign 16
+.global x86_isr_vector_242
+x86_isr_vector_242:
 	 cli
 	 pushl $0
 	 pushl $242
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr243
-isr243:
+.text
+.balign 16
+.global x86_isr_vector_243
+x86_isr_vector_243:
 	 cli
 	 pushl $0
 	 pushl $243
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr244
-isr244:
+.text
+.balign 16
+.global x86_isr_vector_244
+x86_isr_vector_244:
 	 cli
 	 pushl $0
 	 pushl $244
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr245
-isr245:
+.text
+.balign 16
+.global x86_isr_vector_245
+x86_isr_vector_245:
 	 cli
 	 pushl $0
 	 pushl $245
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr246
-isr246:
+.text
+.balign 16
+.global x86_isr_vector_246
+x86_isr_vector_246:
 	 cli
 	 pushl $0
 	 pushl $246
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr247
-isr247:
+.text
+.balign 16
+.global x86_isr_vector_247
+x86_isr_vector_247:
 	 cli
 	 pushl $0
 	 pushl $247
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr248
-isr248:
+.text
+.balign 16
+.global x86_isr_vector_248
+x86_isr_vector_248:
 	 cli
 	 pushl $0
 	 pushl $248
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr249
-isr249:
+.text
+.balign 16
+.global x86_isr_vector_249
+x86_isr_vector_249:
 	 cli
 	 pushl $0
 	 pushl $249
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr250
-isr250:
+.text
+.balign 16
+.global x86_isr_vector_250
+x86_isr_vector_250:
 	 cli
 	 pushl $0
 	 pushl $250
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr251
-isr251:
+.text
+.balign 16
+.global x86_isr_vector_251
+x86_isr_vector_251:
 	 cli
 	 pushl $0
 	 pushl $251
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr252
-isr252:
+.text
+.balign 16
+.global x86_isr_vector_252
+x86_isr_vector_252:
 	 cli
 	 pushl $0
 	 pushl $252
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr253
-isr253:
+.text
+.balign 16
+.global x86_isr_vector_253
+x86_isr_vector_253:
 	 cli
 	 pushl $0
 	 pushl $253
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr254
-isr254:
+.text
+.balign 16
+.global x86_isr_vector_254
+x86_isr_vector_254:
 	 cli
 	 pushl $0
 	 pushl $254
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 
-.global isr255
-isr255:
+.text
+.balign 16
+.global x86_isr_vector_255
+x86_isr_vector_255:
 	 cli
 	 pushl $0
 	 pushl $255
-	 jmp call_isr
+	 jmp x86_isr_vector_common
 

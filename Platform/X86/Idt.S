@@ -1,8 +1,5 @@
+#include <Assembly.hh>
 #include <Parameters.hh>
-
-// the descriptors
-.text
-.balign 16
 
 .macro push_context
         pushl %eax
@@ -34,15 +31,17 @@
         popl %eax
 .endm
 
-.global idtinit
-idtinit:
+FUNCTION(x86_idt_init)
 	movl $idtPointer, %eax
 	lidt (%eax)
 	ret
-
+END(x86_idt_init)
+	
 #include "InterruptVectors.is"
 
-call_isr:
+.text
+.balign 16
+x86_isr_vector_common:
 	push_context
 
 	incl interrupt_level

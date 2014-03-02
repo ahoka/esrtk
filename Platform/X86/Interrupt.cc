@@ -144,5 +144,5 @@ initInterrupts()
    // generated function
    initInterruptVectors();
 
-   idtinit();
+   x86_idt_init();
 }

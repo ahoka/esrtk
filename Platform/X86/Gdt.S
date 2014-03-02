@@ -1,3 +1,4 @@
+#include <Assembly.hh>
 #include <Parameters.hh>
 
 // the descriptors
@@ -30,11 +31,7 @@ gdtr:
 .word egdt - gdt - 1
 .long gdt
 
-.text
-.balign 16
-
-.global gdt_init
-gdt_init:
+FUNCTION(x86_gdt_init)
 	movl $gdtr, %eax
 	lgdt (%eax)
 	ljmp $KernelCodeSegment, $gdtflush
@@ -46,3 +43,5 @@ gdtflush:
 	movl %eax, %gs
 	movl %eax, %ss
 	ret
+END(x86_gdt_init)
+

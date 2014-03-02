@@ -39,7 +39,7 @@ CFLAGS=		-std=c99 $(COPTS)
 CXXFLAGS=	$(COPTS) -fno-exceptions -fno-rtti
 
 ifeq ($(TOOLCHAIN), clang)
-CC=			$(CROSS)clang
+CC=		$(CROSS)clang
 CXX=		$(CROSS)clang++
 CPP=		$(CROSS)clang -m32 -E
 

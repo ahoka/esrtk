@@ -19,7 +19,7 @@ Thread Supervisor::thread0(0);
 void
 Supervisor::init()
 {
-   gdt_init();
+   x86_gdt_init();
    SerialConsole::init();
    initInterrupts();
    Memory::copyMemoryMap();
