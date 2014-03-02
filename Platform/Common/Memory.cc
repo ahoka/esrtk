@@ -12,6 +12,8 @@
 
 #include <cstring>
 
+//#define DEBUG
+
 //extern uintptr_t initial_stack;
 
 // used in Multiboot.S
@@ -27,6 +29,9 @@ unsigned int Memory::memoryMapCount = 0;
 PageCluster Memory::usedPages;
 PageCluster Memory::freePages;
 
+spinlock_softirq_t Memory::pagesLock;
+spinlock_softirq_t Memory::memoryMapLock;
+
 //#define DEBUG
 
 void
@@ -39,6 +44,9 @@ Memory::init()
    printf(".bss: %p-%p\n", &__start_bss, &__end_bss);
 
    printf("Page size: %u, PhysicalPage structure size: %zu\n", PageSize, sizeof(PhysicalPage));
+
+   spinlock_softirq_init(&pagesLock);
+   spinlock_softirq_init(&memoryMapLock);
 
    usedPages.init();
    freePages.init();
@@ -75,10 +83,17 @@ Memory::init()
 #ifdef DEBUG
 	    printf("Allocating new page structure\n");
 #endif
-	    //p = (PhysicalPage* )sbrk(PageSize);
-	    p = (PhysicalPage* )mapPage(getPage()); // XXX make a function for this
+	    //p = (PhysicalPage* )sbrk(PageSize)
+	    uintptr_t ppage = getPage();
+	    KASSERT(ppage != 0);
+#ifdef DEBUG
+	    printf("Got a physical page at %p\n", (void*)ppage);
+#endif
+	    p = (PhysicalPage* )mapPage(ppage); // XXX make a function for this
 	    KASSERT(p != 0);
-
+#ifdef DEBUG
+	    printf("Done!\n");
+#endif	    
 	    freeStructures = PageSize / sizeof (PhysicalPage);
 	 }
 
@@ -92,6 +107,9 @@ Memory::init()
 	 }
 	 else
 	 {
+#ifdef DEBUG
+	    printf("Inserting free page: %p\n", (void* )addr);
+#endif
 	    freePages.insert(p);
 	 }
 
@@ -215,18 +233,18 @@ Memory::unmapPage(uintptr_t page)
 uintptr_t
 Memory::mapPage(uintptr_t phys)
 {
-   InterruptFlags flags;
-   Hal::saveLocalInterrupts(flags);
-   Hal::disableLocalInterrupts();
+   spinlock_softirq_enter(&memoryMapLock);
 
    mapEnd -= PageSize;
    uintptr_t virt = mapEnd;
 
-   Hal::restoreLocalInterrupts(flags);
+   spinlock_softirq_exit(&memoryMapLock);
 
-   if (virt <= heapEnd)
+   if (virt <= (uintptr_t)&__end_kernel)
+//   if (virt <= heapEnd)
    {
-      Debug::panic("Kernel map namespace exhausted.");
+      printf("%p <= %p\n", (void*)virt, (void*)heapEnd);
+      Debug::panic("Memory::mapPage: Kernel map namespace exhausted.");
    }
 
 //   Debug::info("Mapping anonymous page: %p to %p\n", phys, mapEnd);
@@ -245,18 +263,19 @@ uintptr_t Memory::mapAnonymousRegion(std::size_t size)
 {
    std::size_t rsize = roundTo<uintptr_t>(size, PageSize);
 
-   InterruptFlags flags;
-   Hal::saveLocalInterrupts(flags);
-   Hal::disableLocalInterrupts();
+   spinlock_softirq_enter(&memoryMapLock);
 
    mapEnd -= rsize;
    uintptr_t vaddr = mapEnd;
 
-   Hal::restoreLocalInterrupts(flags);
+   spinlock_softirq_exit(&memoryMapLock);
 
-   if (vaddr <= heapEnd)
+
+   if (vaddr <= (uintptr_t)&__end_kernel)
+//   if (vaddr <= heapEnd)
    {
-      Debug::panic("Kernel map name space exhausted.");
+      printf("%p <= %p\n", (void*)vaddr, (void*)heapEnd);
+      Debug::panic("Memory::mapAnonymousRegion: Kernel map name space exhausted.");
    }
 
    for (std::size_t i = 0; i < rsize / PageSize; i++, vaddr += PageSize)
@@ -281,21 +300,21 @@ uintptr_t Memory::mapRegion(uintptr_t paddr, std::size_t size)
 {
    std::size_t rsize = roundTo<uintptr_t>(size, PageSize);
 
-   InterruptFlags flags;
-   Hal::saveLocalInterrupts(flags);
-   Hal::disableLocalInterrupts();
+   spinlock_softirq_enter(&memoryMapLock);
 
    mapEnd -= rsize;
    uintptr_t vaddr = mapEnd;
 
-   Hal::restoreLocalInterrupts(flags);
+   spinlock_softirq_exit(&memoryMapLock);
 
    uintptr_t firstPage = roundDown(paddr, PageSize);
    uintptr_t offset = paddr - firstPage;
 
-   if (mapEnd <= heapEnd)
+   if (vaddr <= (uintptr_t)&__end_kernel)
+//   if (vaddr <= heapEnd)
    {
-      Debug::panic("Kernel map namespace exhausted.");
+      printf("%p <= %p\n", (void*)vaddr, (void*)heapEnd);
+      Debug::panic("Memory::mapRegion: Kernel map namespace exhausted.");
    }
 
    for (uintptr_t page = firstPage;
@@ -339,15 +358,20 @@ Memory::unmapRegion(uintptr_t paddr, std::size_t size)
 uintptr_t
 Memory::getPage()
 {
-   PhysicalPage* page = freePages.get();
+   uintptr_t address = 0;
 
+   spinlock_softirq_enter(&pagesLock);
+
+   PhysicalPage* page = freePages.get();
    if (page != 0)
    {
       usedPages.insert(page);
-      return page->getAddress();
+      address = page->getAddress();
    }
 
-   return 0;
+   spinlock_softirq_exit(&pagesLock);
+
+   return address;
 }
 
 // free a physical page
@@ -355,15 +379,20 @@ Memory::getPage()
 void
 Memory::putPage(uintptr_t address)
 {
+   spinlock_softirq_enter(&pagesLock);
+
    PhysicalPage* page = usedPages.find(address);
 
    if (page == 0)
    {
+      spinlock_softirq_exit(&pagesLock);
       Debug::panic("Trying to free an unallocated physical page: %p\n", (void* )address);
    }
 
    usedPages.remove(page);
    freePages.insert(page);
+
+   spinlock_softirq_exit(&pagesLock);
 }
 
 void*

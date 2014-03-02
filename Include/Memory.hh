@@ -7,6 +7,8 @@
 #include <Platform/PhysicalPage.hh>
 #include <Platform/PageCluster.hh>
 
+#include <spinlock.h>
+
 #include <cstdint>
 #include <cstddef>
 
@@ -49,10 +51,12 @@ public:
 private:
    Memory() = delete;
 
+   static spinlock_softirq_t memoryMapLock;
    static uintptr_t heapEnd;
    static uintptr_t stackEnd;
    static uintptr_t mapEnd;
 
+   static spinlock_softirq_t pagesLock;
    static PageCluster usedPages;
    static PageCluster freePages;
 

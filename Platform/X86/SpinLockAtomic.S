@@ -3,8 +3,8 @@
 FUNCTION(spinlock_enter)
 	movl $0, %eax
 	movl $1, %ecx
-	movl 4(%esp), %ebx
-	lock cmpxchg %ecx, (%ebx)
+	movl 4(%esp), %edx
+	lock cmpxchg %ecx, (%edx)
 	jz 1f
 	pause
 	jmp spinlock_enter
@@ -15,15 +15,14 @@ END(spinlock_enter)
 FUNCTION(spinlock_try)
 	movl $0, %eax
 	movl $1, %ecx
-	movl 4(%esp), %ebx
-	lock cmpxchg %ecx, (%ebx)
+	movl 4(%esp), %edx
+	lock cmpxchg %ecx, (%edx)
 	ret
 END(spinlock_try)
 
 FUNCTION(spinlock_exit)
-	movl 4(%esp), %ebx
-	movl (%ebx), %eax
-	movl $0, (%ebx)
+	movl 4(%esp), %edx
+	movl (%edx), %eax
+	movl $0, (%edx)
 	ret
 END(spinlock_exit)
-

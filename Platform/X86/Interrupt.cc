@@ -26,6 +26,22 @@ extern "C" void x86_isr_init(int n, void (*handler)());
 static void
 x86_isr_page_fault(InterruptFrame* frame)
 {
+   static int nestingFlag;
+
+   // protect the kernel from trying to handle nested page faults
+   //
+   if (nestingFlag == 1)
+   {
+      Debug::panic("Nested page fault");
+   } else if (nestingFlag == 2) {
+      printf("Nested page fault, panic failed!\n");
+      Power::reboot();
+   } else if (nestingFlag > 2) {
+      Power::reboot();
+   }
+
+   nestingFlag++;
+
    uint32_t cr2 = get_cr2();
 
    if ((frame->error & 0x1) == 0 && Memory::handlePageFault(cr2, frame))
@@ -33,6 +49,7 @@ x86_isr_page_fault(InterruptFrame* frame)
 #ifdef DEBUG
       printf("Page fault handled: %p\n", (void* )cr2);
 #endif
+      nestingFlag--;
       return;
    }
 
@@ -48,6 +65,7 @@ x86_isr_page_fault(InterruptFrame* frame)
 
    StackTrace::printStackTrace(reinterpret_cast<void*>(frame->ebp));
 
+   cli();
    Power::halt();
 }
 

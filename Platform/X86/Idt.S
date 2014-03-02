@@ -57,7 +57,7 @@ x86_isr_vector_common:
 
         // clear ebp to make call chains sane in
         // interrupt handlers
-//        xorl %ebp, %ebp
+        xorl %ebp, %ebp
         
         call x86_isr_dispatcher
 	
