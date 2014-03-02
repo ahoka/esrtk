@@ -1,16 +1,16 @@
 #include <Assembly.hh>
 
-FUNCTION(spinlock_lock)
+FUNCTION(spinlock_enter)
 	movl $0, %eax
 	movl $1, %ecx
 	movl 4(%esp), %ebx
 	lock cmpxchg %ecx, (%ebx)
 	jz 1f
 	pause
-	jmp spinlock_lock
+	jmp spinlock_enter
 1:	
 	ret
-END(spinlock_lock)
+END(spinlock_enter)
 
 FUNCTION(spinlock_try)
 	movl $0, %eax
@@ -20,10 +20,10 @@ FUNCTION(spinlock_try)
 	ret
 END(spinlock_try)
 
-FUNCTION(spinlock_unlock)
+FUNCTION(spinlock_exit)
 	movl 4(%esp), %ebx
 	movl (%ebx), %eax
 	movl $0, (%ebx)
 	ret
-END(spinlock_unlock)
+END(spinlock_exit)
 

@@ -72,4 +72,14 @@ private:
    friend class InterruptController;
 };
 
+class InterruptLevel
+{
+public:
+   enum
+   {
+      None = 0,
+      SoftInterrupt = 1
+   };
+};
+
 #endif

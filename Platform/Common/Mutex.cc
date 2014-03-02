@@ -15,12 +15,13 @@ Mutex::Mutex()
 void
 Mutex::enter()
 {
+   KASSERT(Interrupt::getInterruptLevel() == InterruptLevel::None);
    // if (Interrupt::getInterruptLevel() > 0)
    // {
    //    return;
    // }
 
-   long ret = spinlock_lock(&lock);
+   long ret = spinlock_enter(&lock);
    KASSERT(ret == 0);
 //   printf("Lock: %lu\n", ret);
 }
@@ -28,13 +29,14 @@ Mutex::enter()
 bool
 Mutex::tryEnter()
 {
+   KASSERT(Interrupt::getInterruptLevel() == InterruptLevel::None);
    // if (Interrupt::getInterruptLevel() > 0)
    // {
    //    return true;
    // }
 
 //   printf("Try Lock was: %lu\n", lock);
-   long ret = spinlock_try(&lock);
+   long ret = spinlock_exit(&lock);
 //   printf("Try Lock: 0x%lx\n", ret);
 
    return ret == 0;
@@ -43,12 +45,13 @@ Mutex::tryEnter()
 void
 Mutex::exit()
 {
+   KASSERT(Interrupt::getInterruptLevel() == InterruptLevel::None);
    // if (Interrupt::getInterruptLevel() > 0)
    // {
    //    return;
    // }
 
-   long ret = spinlock_unlock(&lock);
+   long ret = spinlock_exit(&lock);
 //   printf("Unlock: %lu\n", ret);
    KASSERT(ret == 1);
 }
