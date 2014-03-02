@@ -12,6 +12,11 @@ public:
       KernelStack
    };
 
+   PageCluster()
+   {
+      // must be empty
+   }
+
    void insert(PhysicalPage* page)
    {
       KASSERT(page != 0);      
@@ -67,7 +72,7 @@ public:
    void init()
    {
       // this is our elephant in cairo :-)
-      head.setAddress(PhysicalPage::Invalid);
+      head.init();
       head.next = &head;
       head.prev = &head;
    }

@@ -37,6 +37,8 @@ Hal::initKernelStack(uintptr_t top)
    context->print();
    printf("----\n");
 
+   KASSERT(context->cs == KernelCodeSegment);
+
    // const std::size_t initSize = (5 * 4) + (12 * 4);
 
    // uint32_t* sp = reinterpret_cast<uint32_t*>(top - initSize);

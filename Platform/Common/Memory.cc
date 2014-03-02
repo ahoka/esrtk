@@ -56,8 +56,8 @@ Memory::init()
 
    // init page clusters
    PhysicalPage* bootstrapPage = (PhysicalPage* )firstFreePage;
+   bootstrapPage->init((uintptr_t )bootstrapPage - KernelVirtualBase);
 
-   bootstrapPage->setAddress((uintptr_t )bootstrapPage - KernelVirtualBase);
    printf("Inserting bootstrap page to used pages cluster: %p\n", (void* )bootstrapPage->getAddress());
    usedPages.insert(bootstrapPage);
    
@@ -86,18 +86,12 @@ Memory::init()
 	    //p = (PhysicalPage* )sbrk(PageSize)
 	    uintptr_t ppage = getPage();
 	    KASSERT(ppage != 0);
-#ifdef DEBUG
-	    printf("Got a physical page at %p\n", (void*)ppage);
-#endif
 	    p = (PhysicalPage* )mapPage(ppage); // XXX make a function for this
 	    KASSERT(p != 0);
-#ifdef DEBUG
-	    printf("Done!\n");
-#endif	    
 	    freeStructures = PageSize / sizeof (PhysicalPage);
 	 }
 
-	 p->setAddress(addr);
+	 p->init(addr);
 	 if ((addr >= KernelLoadAddress) && (addr < firstFreePage - KernelVirtualBase))
 	 {
 #ifdef DEBUG
@@ -178,13 +172,13 @@ Memory::createKernelStack(uintptr_t& start)
    return true;
 }
 #else
-
-#include <X86/Idt.hh>
 bool
 Memory::createKernelStack(uintptr_t& top)
 {
    uintptr_t stackPage = getPage();
    KASSERT(stackPage != 0);
+
+   printf("physycal page for ks: %p\n", (void*)stackPage);
 
    uintptr_t bottom = mapPage(stackPage);
    KASSERT(bottom != 0);
@@ -367,6 +361,8 @@ Memory::getPage()
    {
       usedPages.insert(page);
       address = page->getAddress();
+
+      printf("getPage: %p -> %p\n", page, (void*)address);
    }
 
    spinlock_softirq_exit(&pagesLock);

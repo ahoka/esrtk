@@ -11,11 +11,25 @@ public:
    };
 
    PhysicalPage()
-      : prev(this),
-	next(this),
-	address(Invalid)
+   // : prev(this),
+   // 	next(this),
+   // 	address(Invalid)
    {
       // empty
+   }
+
+   void init()
+   {
+      this->prev = this;
+      this->next = this;
+      this->address = Invalid;
+   }
+
+   void init(uintptr_t address)
+   {
+      this->prev = this;
+      this->next = this;
+      this->address = address;
    }
 
    uintptr_t getAddress()

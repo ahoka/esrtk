@@ -24,35 +24,35 @@ Supervisor::run()
    Platform::init();
 
 #ifdef TEST
-   char* a = new char[256];
-   char* b = new char[256];
-   char* c = new char[256];
-   char* d = new char[256];
+   // char* a = new char[256];
+   // char* b = new char[256];
+   // char* c = new char[256];
+   // char* d = new char[256];
 
-   delete[] a;
-   delete[] b;
-   delete[] c;
-   delete[] d;
+   // delete[] a;
+   // delete[] b;
+   // delete[] c;
+   // delete[] d;
 
-   char* e = new char[128];
-   char* f = new char[256];
-   char* g = new char[768];
+   // char* e = new char[128];
+   // char* f = new char[256];
+   // char* g = new char[768];
 
-   delete[] e;
-   delete[] f;
-   delete[] g;
+   // delete[] e;
+   // delete[] f;
+   // delete[] g;
 
-   Mutex lock;
+//   Mutex lock;
 
 //   lock.tryEnter();
-   lock.enter();
+//   lock.enter();
 
    Thread t1, t2, t3;
    t1.init();
    t2.init();
    t3.init();
 
-   lock.exit();
+//   lock.exit();
 
 #endif
 
