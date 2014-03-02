@@ -67,18 +67,18 @@ extern "C" uint32_t cpuid0(char* result);
 extern "C" uint32_t get_eflags();
 extern "C" void set_eflags(uint32_t eflags);
 
-extern "C" uint32_t getCr2();
+extern "C" uint32_t get_cr2();
 
 extern "C" void invlpg(uint32_t page);
-extern "C" void setCr3(uint32_t cr3);
-extern "C" uint32_t getCr3();
+extern "C" void set_cr3(uint32_t cr3);
+extern "C" uint32_t get_cr3();
 extern "C" void setCr0(uint32_t cr0);
-extern "C" uint32_t getCr0();
-extern "C" void setCr4(uint32_t cr4);
-extern "C" uint32_t getCr4();
+extern "C" uint32_t get_cr0();
+extern "C" void set_cr4(uint32_t cr4);
+extern "C" uint32_t get_cr4();
 
 extern "C" uintptr_t get_eip();
 
-extern "C" void initPaging(uint32_t cr3);
+extern "C" void x86_init_paging(uint32_t cr3);
 
 #endif

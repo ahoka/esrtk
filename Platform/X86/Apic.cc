@@ -1,10 +1,11 @@
 #ifdef ENABLE_APIC
 
+#include <X86/Apic.hh>
+
 #include <Debug.hh>
 #include <Memory.hh>
 
-#include <X86/Assembly.hh>
-#include <X86/Apic.hh>
+#include <X86/Processor.hh>
 #include <X86/CpuRegisters.hh>
 
 #include <cstdio>

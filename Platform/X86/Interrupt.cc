@@ -1,16 +1,14 @@
 #include <X86/Idt.hh>
-#include <X86/Assembly.hh>
-#include <Memory.hh>
+#include <X86/Processor.hh>
+#include <X86/ThreadContext.hh>
 
+#include <Memory.hh>
 #include <Interrupt.hh>
 #include <Power.hh>
 #include <Debug.hh>
-
 #include <StackTrace.hh>
-
 #include <Scheduler.hh>
 #include <Thread.hh>
-#include <X86/ThreadContext.hh>
 
 extern IdtPointer idtPointer;
 
@@ -28,7 +26,7 @@ extern "C" void x86_isr_init(int n, void (*handler)());
 static void
 x86_isr_page_fault(InterruptFrame* frame)
 {
-   uint32_t cr2 = getCr2();
+   uint32_t cr2 = get_cr2();
 
    if ((frame->error & 0x1) == 0 && Memory::handlePageFault(cr2, frame))
    {

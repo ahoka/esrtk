@@ -1,7 +1,7 @@
 #include <Hal.hh>
 
 #include <X86/PageDirectory.hh>
-#include <X86/Assembly.hh>
+#include <X86/Processor.hh>
 
 bool
 Hal::mapPage(uintptr_t virt, uintptr_t phys)

@@ -1,22 +1,19 @@
+#include <Assembly.hh>
+
 // C callable assembly functions for X86
 //
-
-.text
-.balign 16
-
-.global cli
-cli:
+FUNCTION(cli)
         cli
         ret
+END(cli)
 
-.global sti
-sti:
+FUNCTION(sti)
         sti
         ret
+END(sti)
 
 // rdmsr(in u32 address, out u32 eax, out u32 edx)
-.global rdmsr
-rdmsr:
+FUNCTION(rdmsr)
         pushl %edi
 	movl 8(%esp), %ecx
 	rdmsr
@@ -26,19 +23,19 @@ rdmsr:
         movl %edx, (%edi)
         popl %edi
 	ret
-
+END(rdmsr)
+	
 // wrmsr(in u32 address, in u32 eax, in u32 edx)
-.global wrmsr
-wrmsr:	
+FUNCTION(wrmsr)
 	movl 4(%esp), %ecx
 	movl 8(%esp), %eax
 	movl 12(%esp), %edx
 	wrmsr
 	ret
+END(wrmsr)
 
 // rdtsc, serialized with cpuid instruction
-.global rdtsc
-rdtsc:
+FUNCTION(rdtsc)
 	pushl %ebx
 	pushl %edi
         xorl %eax, %eax
@@ -47,10 +44,10 @@ rdtsc:
         popl %edi
 	popl %ebx
 	ret
+END(rdtsc)
 
 // cpuid(u32 eax, u32* result)
-.global cpuid
-cpuid:
+FUNCTION(cpuid)
 	pushl %ebx
 	pushl %edi
 	movl 12(%esp), %eax
@@ -66,10 +63,10 @@ cpuid:
 	popl %edi
 	popl %ebx
 	ret
+END(cpuid)
 
 // u32 cpuid0(char* vendorid)
-.global cpuid0
-cpuid0:
+FUNCTION(cpuid0)
 	pushl %ebx
 	pushl %edi
 	movl 12(%esp), %edi
@@ -85,71 +82,71 @@ cpuid0:
 	popl %edi
 	popl %ebx
 	ret
+END(cpuid0)
 
-.global get_eflags
-get_eflags:
+FUNCTION(get_eflags)
 	pushfl
 	popl %eax
 	ret
+END(get_eflags)
 
-.global getCr2
-getCr2:
+FUNCTION(get_cr2)
         movl %cr2, %eax
         ret
+END(get_cr2)
 
-.global set_eflags
-set_eflags:
+FUNCTION(set_eflags)
 	movl 4(%esp), %eax
 	pushl %eax
 	popfl
 	ret
+END(set_eflags)
 
-.global setCr3
-setCr3:
+FUNCTION(set_cr3)
 	movl 4(%esp), %eax
         movl %eax, %cr3
 	ret
+END(set_cr3)
 
-.global getCr3
-getCr3:
+FUNCTION(get_cr3)
         movl %cr3, %eax
 	ret
+END(get_cr3)
 
-.global getCr0
-getCr0:
+FUNCTION(get_cr0)
         movl %cr0, %eax
         ret
+END(get_cr0)
 
-.global setCr0
-setCr0:
+FUNCTION(set_cr0)
         movl 4(%esp), %eax
         movl %eax, %cr0
         ret
+END(set_cr0)
 
-.global getCr4
-getCr4:
+FUNCTION(get_cr4)
         movl %cr4, %eax
         ret
+END(get_cr4)
 
-.global setCr4
-setCr4:
+FUNCTION(set_cr4)
         movl 4(%esp), %eax
         movl %eax, %cr4
         ret
+END(set_cr4)
 
-.global invlpg
-invlpg:
+FUNCTION(invlpg)
         movl 4(%esp), %eax
         invlpg (%eax)
         ret
+END(invlpg)
 
-.global get_eip
-get_eip:
+FUNCTION(get_eip)
 	popl %eax
 	jmpl *%eax
-	
-.global initPaging
-initPaging:
+END(get_eip)
+
+FUNCTION(x86_init_paging)
         movl 4(%esp), %edx
 
         movl %cr0, %eax
@@ -167,6 +164,7 @@ initPaging:
         movl %eax, %cr0
 
 	ret
+END(x86_init_paging)
 
 // not yet finised
 #if 0

@@ -12,10 +12,6 @@ Hal::initKernelStack(uintptr_t top)
    uintptr_t stack = top - sizeof(InterruptFrame);
    InterruptFrame* context = (InterruptFrame*)stack;
 
-   printf("+---\n");
-   context->print();
-   printf("+---\n");
-
    context->gs = KernelDataSegment;
    context->fs = KernelDataSegment;
    context->es = KernelDataSegment;

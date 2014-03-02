@@ -1,14 +1,14 @@
+#include <X86/PageDirectory.hh>
+#include <X86/Parameters.hh>
+#include <X86/Processor.hh>
+#include <X86/CpuRegisters.hh>
+
 #include <Debug.hh>
 #include <Templates.hh>
 #include <Memory.hh>
 #include <PageFrameAllocator.hh>
 #include <Modules.hh>
 #include <Memory.hh>
-
-#include <X86/PageDirectory.hh>
-#include <X86/Parameters.hh>
-#include <X86/Assembly.hh>
-#include <X86/CpuRegisters.hh>
 
 #include <cstring>
 #include <cstdio>
@@ -83,7 +83,7 @@ PageDirectory::init()
 
    // call it via identity mapped address
    //
-   void (*initp)(uint32_t) = (void (*)(uint32_t))vtophys((void*)&initPaging);
+   void (*initp)(uint32_t) = (void (*)(uint32_t))vtophys((void*)&x86_init_paging);
    initp(vtophys((uint32_t )pageDirectory));
 
    // unmap identity mapped region

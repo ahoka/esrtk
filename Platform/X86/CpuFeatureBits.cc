@@ -1,7 +1,7 @@
-#include <X86/Assembly.hh>
-#include <cstdio>
-
 #include <X86/CpuRegisters.hh>
+#include <X86/Processor.hh>
+
+#include <cstdio>
 
 // struct Features
 // {
@@ -15,7 +15,6 @@
 //    { "fpu", false },
 //    { "fpu", false },
 // };
-
 
 void
 printCpuFeatures()

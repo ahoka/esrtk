@@ -1,10 +1,10 @@
-#include <X86/Assembly.hh>
+#include <X86/Tsc.hh>
+
+#include <X86/Processor.hh>
 #include <X86/IoPort.hh>
 #include <X86/Pit.hh>
 
 #include <Debug.hh>
-
-#include <X86/Tsc.hh>
 
 Tsc::Tsc()
    : frequency(0),
