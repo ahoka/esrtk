@@ -12,28 +12,21 @@ Thread* Scheduler::nextToRun = 0;
 void
 Scheduler::setCurrentThread(Thread* thread)
 {
-//   printf("set current thread\n");
-//   thread->dump();
    currentThread = thread;
 }
 
 Thread*
 Scheduler::getCurrentThread()
 {
-//   printf("get current thread\n");
-//   currentThread->dump();
-
    return currentThread;
 }
 
 void
 Scheduler::insert(Thread* t)
 {
+   // XXX
    if (threads == 0) {
-//      printf("setting thread zero\n");
-//      t->dump();
       setCurrentThread(t);
-      getCurrentThread()->dump();
    }
 
    t->next = threads;
@@ -43,8 +36,6 @@ Scheduler::insert(Thread* t)
 void
 Scheduler::schedule()
 {
-   printf("sched\n");
-
    if (nextToRun == 0)
    {
       nextToRun = threads;
@@ -54,6 +45,4 @@ Scheduler::schedule()
 
    currentThread = nextToRun;
    nextToRun = nextToRun->next;
-
-   currentThread->dump();
 }

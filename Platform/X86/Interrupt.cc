@@ -59,9 +59,46 @@ x86_isr_page_fault(InterruptFrame* frame)
    printf("\nPage fault: %s\n", (frame->error & (1 << 0)) ? "protection violation" : "page not present");
    printf("%s 0x%x from 0x%x in %s mode\nError Code: 0x%x\n",
 	  (frame->error & (1 << 1)) ? "Writing" : "Reading",
-	  cr2, frame->rip,
+	  cr2, frame->eip,
 	  (frame->error & (1 << 2)) ? "user" : "supervisor",
 	  frame->error);
+
+   StackTrace::printStackTrace(reinterpret_cast<void*>(frame->ebp));
+
+   cli();
+   Power::halt();
+}
+
+static void
+x86_isr_general_protection_fault(InterruptFrame* frame)
+{
+   printf("\n");
+   frame->print();
+
+   printf("\nGeneral protection fault: ");
+
+   switch ((frame->error >> 1) & 0x3)
+   {
+      case 0:
+	 printf("GDT");
+	 break;
+      case 2:
+	 printf("LDT");
+	 break;
+      case 1:
+      case 3:
+	 printf("IDT");
+	 break;
+   }
+
+   printf(": 0x%x", (frame->error >> 3) & 0x1fff);
+
+   if (frame->error & 0x1)
+   {
+      printf(" (external)");
+   }
+
+   printf("\n\n");
 
    StackTrace::printStackTrace(reinterpret_cast<void*>(frame->ebp));
 
@@ -83,10 +120,6 @@ x86_isr_default_handler(InterruptFrame* frame)
    {
       Debug::panic("\n\nUnhandled Interrupt: %u, Error Code: 0x%x\n", frame->interrupt, frame->error);
    }
-
-   // printf("\nInterrupt frame:\n");
-   // frame->print();
-   // printf("\n");
 }
 
 InterruptFrame*
@@ -94,17 +127,18 @@ x86_isr_dispatcher(InterruptFrame* frame)
 {
    KASSERT(Interrupt::getInterruptLevel() > 0);
 
-//   frame->print();
-
    if (frame->interrupt == 32)
    {
-      printf("disp\n");
       Thread* currentThread = Scheduler::getCurrentThread();
-      currentThread->dump();
       currentThread->kernelStack = (uintptr_t )frame;
    }
 
    // TODO: make a list of handlers and register them there to be run from dispatcher
+   if (frame->interrupt == 13)
+   {
+      x86_isr_general_protection_fault(frame);
+   }
+
    if (frame->interrupt == 14)
    {
       x86_isr_page_fault(frame);
@@ -127,10 +161,6 @@ x86_isr_dispatcher(InterruptFrame* frame)
    {
       Thread* currentThread = Scheduler::getCurrentThread();
       InterruptFrame* newFrame = (InterruptFrame* )currentThread->kernelStack;
-
-      printf("new stack: %p\n", newFrame);
-
-//   ((InterruptFrame*)newFrame)->print();
 
       KASSERT(newFrame != 0);
 

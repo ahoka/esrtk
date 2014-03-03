@@ -6,7 +6,6 @@
         pushl %ebx
         pushl %ecx
         pushl %edx
-        pushl %esp
         pushl %ebp
         pushl %esi
         pushl %edi
@@ -24,7 +23,6 @@
         popl %edi
         popl %esi
         popl %ebp
-        popl %esp
         popl %edx
         popl %ecx
         popl %ebx
@@ -74,5 +72,5 @@ x86_isr_vector_common:
 	// remove the error codes from the stack too
 	addl $8, %esp
 
-        sti
+	// interrupts will be re-enabled from the stack frame
 	iret

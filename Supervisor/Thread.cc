@@ -34,7 +34,6 @@ Thread::init(unsigned long threadId, uintptr_t stack)
    kernelStack = stack;
 
    Debug::verbose("Initializing thread: %lu %p...\n", threadId, (void*)stack);
-   dump();
 
    Scheduler::insert(this);
 
@@ -57,8 +56,6 @@ Thread::init()
    Hal::restoreLocalInterrupts(flags);
    KASSERT(success);
 
-   dump();
-
    if (success) {
       Scheduler::insert(this);
    }
@@ -78,7 +75,7 @@ Thread::printAll()
 void
 Thread::main()
 {
-//   Debug::verbose("Thread main called!\n");
+   Debug::verbose("Thread main called!\n");
 
    for (;;)
    {

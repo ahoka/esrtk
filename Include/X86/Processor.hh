@@ -13,6 +13,7 @@ struct cpuid_t {
 enum Flags
 {
    Carry		= (1 << 0),
+   Reserved		= (1 << 1),
    Parity		= (1 << 2),
    Adjust		= (1 << 4),
    Zero			= (1 << 6),
