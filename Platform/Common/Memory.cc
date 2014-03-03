@@ -178,8 +178,6 @@ Memory::createKernelStack(uintptr_t& top)
    uintptr_t stackPage = getPage();
    KASSERT(stackPage != 0);
 
-   printf("physycal page for ks: %p\n", (void*)stackPage);
-
    uintptr_t bottom = mapPage(stackPage);
    KASSERT(bottom != 0);
 
@@ -188,12 +186,6 @@ Memory::createKernelStack(uintptr_t& top)
    printf("Creating new kernel stack: %p-%p (%u)\n", (void* )top, (void* )(bottom), PageSize);
 
    uintptr_t newStack = Hal::initKernelStack(top);
-//   uintptr_t newStack = top - 68;
-
-   printf("<<<\n");
-   printf("Stack after init: %p\n", (void*)newStack);
-   ((InterruptFrame*)newStack)->print();
-   printf("<<<\n");
 
    top = newStack;
 
@@ -361,8 +353,6 @@ Memory::getPage()
    {
       usedPages.insert(page);
       address = page->getAddress();
-
-      printf("getPage: %p -> %p\n", page, (void*)address);
    }
 
    spinlock_softirq_exit(&pagesLock);

@@ -35,7 +35,6 @@ Clock::probeAndInit()
    while (c != 0)
    {
       KASSERT(c != 0);
-      printf("AAA %p\n", c);
       int probeResult = c->probe();
 
       if (c->probe() > bestProbe)
