@@ -15,6 +15,12 @@ Hal::unmapPage(uintptr_t virt)
    return PageDirectory::unmapPage(virt);
 }
 
+uintptr_t
+Hal::getPhysicalAddress(uintptr_t virt)
+{
+   return PageDirectory::getPhysicalPage(virt);
+}
+
 void
 Hal::disableLocalInterrupts()
 {

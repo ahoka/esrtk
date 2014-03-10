@@ -353,18 +353,25 @@ PageDirectory::unmapPage(uint32_t vAddress)
    return true;
 }
 
-uint32_t
-PageDirectory::getDirectoryEntry(uint32_t vAddress)
+uintptr_t
+PageDirectory::getPageTableEntry(uint32_t vAddress)
 {
    KASSERT((vAddress & PageMask) == 0);
 
    uint32_t* pde = addressToPde(vAddress);
+
    if ((*pde & Present) == 0)
    {
-      return 0;
+      return 0u;
    }
 
    uint32_t* pte = addressToPte(vAddress);
 
-   return *pte;
+   return (*pte);
+}
+
+uintptr_t
+PageDirectory::getPhysicalPage(uint32_t vAddress)
+{
+   return getPageTableEntry(vAddress) & ~PageMask;
 }

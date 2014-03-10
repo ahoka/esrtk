@@ -19,13 +19,6 @@ public:
    };
 
 private:
-   enum
-   {
-      PageTableBase = 0xffc00000u,
-      PageDirectoryBase = 0xfffff000u,
-      SecondaryPageTableBase = 0xff800000u,
-      SecondaryPageDirectoryBase = 0xffbffc00u
-   };
 
    enum
    {
