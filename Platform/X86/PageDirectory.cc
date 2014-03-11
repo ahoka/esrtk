@@ -383,3 +383,18 @@ PageDirectory::getPhysicalPage(uint32_t vAddress)
 {
    return getPageTableEntry(vAddress) & ~PageMask;
 }
+
+void
+PageDirectory::createPageDirectory()
+{
+   uint32_t directory = Memory::getPage();
+
+   mapPage(SecondaryPageDirectoryBase, directory, 0);
+
+   /// XXX copy kernel address space
+   // for (uintptr_t address = KernelVirtualBase;
+   // 	address < SecondaryPageTableBase; address += ???)
+   // {
+   // }
+}
+

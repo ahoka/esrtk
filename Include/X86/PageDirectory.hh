@@ -49,6 +49,8 @@ private:
 
    static uint32_t* addressToPde(uint32_t address, uint32_t pageDirectoryBase);
    static uint32_t* addressToPte(uint32_t address, uint32_t pageTableBase);
+
+   static void createPageDirectory();
 };
 
 #endif
