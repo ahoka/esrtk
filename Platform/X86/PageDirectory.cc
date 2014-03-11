@@ -100,7 +100,8 @@ PageDirectory::init()
       bool wasDot = false;
       for (int i = 0; i < 4096; i += 4)
       {
-         if (wasEmpty && pageDirectory[i] == 0 && pageDirectory[i+1] == 0 && pageDirectory[i+2] == 0 && pageDirectory[i+3] == 0)
+         if (wasEmpty && pageDirectory[i] == 0 && pageDirectory[i+1]
+	     == 0 && pageDirectory[i+2] == 0 && pageDirectory[i+3] == 0)
          {
             if (!wasDot)
             {
@@ -110,11 +111,13 @@ PageDirectory::init()
          }
          else
          {
-            printf("%p %p %p %p\n", pageDirectory[i], pageDirectory[i+1], pageDirectory[i+2], pageDirectory[i+3]);
+            printf("%p %p %p %p\n", pageDirectory[i], pageDirectory[i+1],
+		   pageDirectory[i+2], pageDirectory[i+3]);
             wasDot = false;
          }
 
-         if (pageDirectory[i] == 0 && pageDirectory[i+1] == 0 && pageDirectory[i+2] == 0 && pageDirectory[i+3] == 0)
+         if (pageDirectory[i] == 0 && pageDirectory[i+1] == 0
+	     && pageDirectory[i+2] == 0 && pageDirectory[i+3] == 0)
          {
             wasEmpty = true;
          }
@@ -148,20 +151,20 @@ PageDirectory::addressToPteIndex(uint32_t address)
 }
 
 uint32_t*
-PageDirectory::addressToPde(uint32_t address)
+PageDirectory::addressToPde(uint32_t address, uint32_t pageDirectoryBase)
 {
    uint32_t index = addressToPdeIndex(address);
 
-   return (uint32_t* )(PageDirectoryBase + index * 4);
+   return (uint32_t* )(pageDirectoryBase + index * 4);
 }
 
 uint32_t*
-PageDirectory::addressToPte(uint32_t address)
+PageDirectory::addressToPte(uint32_t address, uint32_t pageTableBase)
 {
    uint32_t pdeIndex = addressToPdeIndex(address);
    uint32_t pteIndex = addressToPteIndex(address);
 
-   return (uint32_t* )(PageTableBase + pdeIndex * 0x1000 + pteIndex * 4);
+   return (uint32_t* )(pageTableBase + pdeIndex * 0x1000 + pteIndex * 4);
 }
 
 bool
@@ -248,7 +251,8 @@ PageDirectory::unmapPage(uint32_t vAddress, uint32_t** pageDirectory)
 }
 
 bool
-PageDirectory::mapPage(uint32_t vAddress, uint32_t pAddress, int flags)
+PageDirectory::mapPage(uint32_t pageDirectoryBase, uint32_t pageTableBase,
+		       uint32_t vAddress, uint32_t pAddress, int flags)
 {
    KASSERT((vAddress & PageMask) == 0);
    KASSERT((pAddress & PageMask) == 0);
@@ -257,7 +261,7 @@ PageDirectory::mapPage(uint32_t vAddress, uint32_t pAddress, int flags)
    printf("Mapping %p to %p\n", (void* )vAddress, (void* )pAddress);
 #endif
 
-   uint32_t* pde = addressToPde(vAddress);
+   uint32_t* pde = addressToPde(vAddress, pageDirectoryBase);
 
 #ifdef DEBUG
    printf("pde is at %p, content 0x%x\n", pde, *pde);
@@ -279,13 +283,13 @@ PageDirectory::mapPage(uint32_t vAddress, uint32_t pAddress, int flags)
 #endif
       *pde = newPde;
 
-      uintptr_t newpte = (uintptr_t )addressToPte(vAddress) & ~PageMask;
+      uintptr_t newpte = (uintptr_t )addressToPte(vAddress, pageTableBase) & ~PageMask;
       invlpg(newpte);
 
       std::memset((void *)newpte, 0, PageSize);
    }
 
-   uint32_t* pte = addressToPte(vAddress);
+   uint32_t* pte = addressToPte(vAddress, pageTableBase);
 #ifdef DEBUG
    printf("pte is at %p, content 0x%x\n", pte, *pte);
 #endif
@@ -321,6 +325,12 @@ PageDirectory::mapPage(uint32_t vAddress, uint32_t pAddress, int flags)
 }
 
 bool
+PageDirectory::mapPage(uint32_t vAddress, uint32_t pAddress, int flags)
+{
+   return mapPage(PageDirectoryBase, PageTableBase, vAddress, pAddress, flags);
+}
+
+bool
 PageDirectory::unmapPage(uint32_t vAddress)
 {
    KASSERT((vAddress & PageMask) == 0);
@@ -329,20 +339,18 @@ PageDirectory::unmapPage(uint32_t vAddress)
 #endif
 
 
-   uint32_t* pde = addressToPde(vAddress);
+   uint32_t* pde = addressToPde(vAddress, PageDirectoryBase);
 
    if ((*pde & Present) == 0)
    {
       Debug::panic("Trying to unmap a not mapped page: %p (invalid PDE)\n", (void* )vAddress);
-//      return false;
    }
 
-   uint32_t* pte = addressToPte(vAddress);
+   uint32_t* pte = addressToPte(vAddress, PageTableBase);
 
    if ((*pte & Present) == 0)
    {
       Debug::panic("Trying to unmap a not mapped page: %p (invalid PTE: 0x%x)\n", (void* )vAddress, *pte);
-//      return false;
    }
 
    // TODO free page directory if empty
@@ -358,14 +366,14 @@ PageDirectory::getPageTableEntry(uint32_t vAddress)
 {
    KASSERT((vAddress & PageMask) == 0);
 
-   uint32_t* pde = addressToPde(vAddress);
+   uint32_t* pde = addressToPde(vAddress, PageDirectoryBase);
 
    if ((*pde & Present) == 0)
    {
       return 0u;
    }
 
-   uint32_t* pte = addressToPte(vAddress);
+   uint32_t* pte = addressToPte(vAddress, PageTableBase);
 
    return (*pte);
 }
