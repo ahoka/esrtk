@@ -52,7 +52,7 @@ else
 CC=		$(CROSS)gcc
 CXX=		$(CROSS)g++
 CPP=		$(CROSS)gcc -m32 -nostdinc -E
-COPTS+=		-fdiagnostics-color=always
+#COPTS+=		-fdiagnostics-color=always
 endif
 
 CXXFLAGS+=	-std=c++11
