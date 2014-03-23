@@ -6,14 +6,17 @@ PLATFORM=	X86
 
 FIND:=		find
 
-TOOLCHAIN=	gcc
+TOOLCHAIN?=	gcc
 #TOOLCHAIN=	clang
 
 ifeq ($(shell uname -o 2>/dev/null), Msys)
 BUILD_HOST:=	Windows
-FIND:=		"C:\MinGW\msys\1.0\bin\find.exe"
 else
 BUILD_HOST:=	$(shell uname)
+endif
+
+ifeq ($(BUILD_HOST), Windows)
+FIND:=		"C:\MinGW\msys\1.0\bin\find.exe"
 endif
 
 CROSS=		i686-elf-
@@ -22,8 +25,8 @@ COPTS+=		-DCROSS_COMPILER=1
 AS=		$(CROSS)as
 LD=		$(CROSS)ld
 SIZE=		$(CROSS)size
+
 QEMU=		qemu-system-i386
-#QEMU=		qemu
 
 LDFLAGS=	-melf_i386
 
