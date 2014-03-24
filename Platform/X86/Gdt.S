@@ -45,3 +45,6 @@ gdtflush:
 	ret
 END(x86_gdt_init)
 
+FUNCTION(x86_gdt_get)
+        sgdt (%eax)
+END(x86_gdt_get)
