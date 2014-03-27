@@ -331,6 +331,12 @@ PageDirectory::mapPage(uint32_t vAddress, uint32_t pAddress, int flags)
 }
 
 bool
+PageDirectory::mapSecondaryPage(uint32_t vAddress, uint32_t pAddress, int flags)
+{
+   return mapPage(PageDirectoryBase, PageTableBase, vAddress, pAddress, flags);
+}
+
+bool
 PageDirectory::unmapPage(uint32_t vAddress)
 {
    KASSERT((vAddress & PageMask) == 0);
@@ -384,17 +390,21 @@ PageDirectory::getPhysicalPage(uint32_t vAddress)
    return getPageTableEntry(vAddress) & ~PageMask;
 }
 
-void
+uintptr_t
 PageDirectory::createPageDirectory()
 {
    uint32_t directory = Memory::getPage();
 
-   mapPage(SecondaryPageDirectoryBase, directory, 0);
+   mapPage(SecondaryPageDirectoryBase, directory);
 
    /// XXX copy kernel address space
    // for (uintptr_t address = KernelVirtualBase;
-   // 	address < SecondaryPageTableBase; address += ???)
+   //  	address < SecondaryPageTableBase; address += ???)
    // {
    // }
+
+   unmapPage(SecondaryPageDirectoryBase);
+
+   return directory;
 }
 

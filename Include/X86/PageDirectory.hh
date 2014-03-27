@@ -44,13 +44,15 @@ private:
    static bool mapPage(uint32_t pageDirectoryBase, uint32_t pageTableBase,
 		       uint32_t vAddress, uint32_t pAddress, int flags);
 
+   static bool mapSecondaryPage(uint32_t vAddress, uint32_t pAddress, int flags = 0);
+
    static uint32_t addressToPdeIndex(uint32_t address);
    static uint32_t addressToPteIndex(uint32_t address);
 
    static uint32_t* addressToPde(uint32_t address, uint32_t pageDirectoryBase);
    static uint32_t* addressToPte(uint32_t address, uint32_t pageTableBase);
 
-   static void createPageDirectory();
+   static uintptr_t createPageDirectory();
 };
 
 #endif
