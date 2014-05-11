@@ -33,7 +33,9 @@ DriverManager::probeAndInit()
    {
       if (driver->probe() > 0)
       {
+         printf("Initalizing driver %s\n", driver->name());
          driver->init();
+         driver->state = Driver::State::Initialized;
       }
       driver = driver->next;
    }

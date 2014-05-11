@@ -7,14 +7,19 @@ public:
    Driver();
    virtual ~Driver();
 
-   Driver(const Driver&) = delete;
-   Driver& operator = (const Driver&) = delete;
-   
    virtual int probe() = 0;
    virtual bool init() = 0;
    virtual bool finalize() = 0;
+   virtual const char* name() const = 0;
+
+protected:
+   int driverInfo(const char*, ...);
    
 private:
+   Driver(const Driver&) = delete;
+   Driver& operator = (const Driver&) = delete;
+
+   // XXX hide this
    enum class State
    {
       Uninitalized,

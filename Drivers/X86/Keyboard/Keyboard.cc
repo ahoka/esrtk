@@ -35,6 +35,8 @@ Keyboard::init()
    bool success = Interrupt::registerHandler(1, this);
    Interrupt::enableInterrupt(1);
 
+   driverInfo("initalized\n");
+
    return success;
 }
 
@@ -45,6 +47,12 @@ Keyboard::finalize()
    bool success = Interrupt::deregisterHandler(1, this);
 
    return success;
+}
+
+const char*
+Keyboard::name() const
+{
+   return "keyboard";
 }
 
 void

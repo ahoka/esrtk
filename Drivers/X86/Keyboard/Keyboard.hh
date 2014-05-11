@@ -10,6 +10,7 @@ public:
    int probe();
    bool init();
    bool finalize();
+   const char* name() const;
 
    // this should be interruptHandler()
    void handleInterrupt();
