@@ -8,6 +8,12 @@ class X86Pci
 public:
    static const int PCI_CONFIG_ADDRESS = 0x0cf8;
    static const int PCI_CONFIG_DATA = 0x0cfc;
+   enum
+   {
+      PCI_MODE1_ENABLE =	 0x80000000UL,
+      PCI_MODE1_ADDRESS_REG =	 0x0cf8,
+      PCI_MODE1_DATA_REG =	 0x0cfc
+   };
 
    static uint32_t makeTag(uint8_t bus, uint8_t device, uint8_t function)
    {
@@ -54,12 +60,12 @@ Pci::readConfigurationRegister32(uint8_t bus, uint8_t device, uint8_t function, 
 void
 Pci::init()
 {
-   outl(PCI_MODE1_ADDRESS_REG, PCI_MODE1_ENABLE);
-   outb(PCI_MODE1_ADDRESS_REG + 3, 0);
-   outw(PCI_MODE1_ADDRESS_REG + 2, 0);
+   outl(X86Pci::PCI_MODE1_ADDRESS_REG, X86Pci::PCI_MODE1_ENABLE);
+   outb(X86Pci::PCI_MODE1_ADDRESS_REG + 3, 0);
+   outw(X86Pci::PCI_MODE1_ADDRESS_REG + 2, 0);
 
-   uint32_t val = inl(PCI_MODE1_ADDRESS_REG);
-   if ((val & 0x80fffffc) != PCI_MODE1_ENABLE) {
+   uint32_t val = inl(X86Pci::PCI_MODE1_ADDRESS_REG);
+   if ((val & 0x80fffffc) != X86Pci::PCI_MODE1_ENABLE) {
       // sometimes happen on qemu but still works?
       printf("PCI init FAILED! Not MODE1 PCI?\n");
       return;
@@ -69,28 +75,5 @@ Pci::init()
       printf("PCI init OK.\n");
    }
 
-   listDevices();
-}
-
-void
-Pci::listDevices()
-{
-   printf("Listing PCI devices:\n");
-
-   for (int bus = 0; bus < 256; bus++)
-   {
-      for (int dev = 0; dev < 32; dev++)
-      {
-	 for (int fun = 0; fun < 8; fun++)
-	 {
-	    uint16_t vid = Pci::getVendorId((uint8_t )bus, (uint8_t )dev, (uint8_t )fun);
-	    if (vid != 0xffff)
-	    {
-	       uint16_t did = Pci::getDeviceId((uint8_t )bus, (uint8_t )dev, (uint8_t )fun);
-               uint8_t deviceClass = readConfigurationRegister8((uint8_t )bus, (uint8_t )dev, (uint8_t )fun, 8);
-	       printf("%x:%x:%x %s: 0x%0hx:0x%0hx\n", bus, dev, fun, getClassName(deviceClass), vid, did);
-	    }
-	 }
-      }
-   }
+   probeDevices();
 }
