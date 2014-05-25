@@ -4,6 +4,8 @@
 #include <Power.hh>
 #include <cstdio>
 
+#include <X86/Acpi.hh>
+
 extern "C" void kmain(void) __attribute__((noreturn));
 
 void
@@ -25,6 +27,8 @@ kmain(void)
 
    // Call C++ constructors
    __cxaimpl_call_constructors();
+
+   Acpi::printAllDescriptors();
 
    Supervisor::run();
 }

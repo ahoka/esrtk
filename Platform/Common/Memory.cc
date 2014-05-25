@@ -286,6 +286,8 @@ uintptr_t Memory::mapRegion(uintptr_t paddr, std::size_t size)
 {
    std::size_t rsize = roundTo<uintptr_t>(size, PageSize);
 
+   printf("Memory::mapRegion: %p-%p\n", (void*)paddr, (void*)(paddr + size));
+
    spinlock_softirq_enter(&memoryMapLock);
 
    mapEnd -= rsize;

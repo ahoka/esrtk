@@ -9,7 +9,6 @@
 Rsdp *
 Acpi::findRsdp(char* from, char* to)
 {
-//   for (char* mem = (char*)0x0e0000; mem < (char*)0x0fffff; mem += 16)
    for (char* mem = from; mem < to; mem += 16)
    {
       if (mem[0] == 'R' && mem[1] == 'S' && mem[2] == 'D' &&
@@ -53,6 +52,13 @@ Acpi::printAllDescriptors()
       Debug::warning("ACPI RSDP not found.\n");
       return;
    }
+   else
+   {
+      Debug::info("RSDP found at %p\n", (void*)((uintptr_t)rsdp - (uintptr_t)mem + 0x0e0000u));
+   }
+
+   printf("\n");
+   rsdp->print();
 
    Rsdt rsdt;
 
@@ -61,8 +67,13 @@ Acpi::printAllDescriptors()
                               sizeof(rsdt));
 
    printf("\n");
-   rsdt.printHeader();
-   printf("\n");
+   rsdt.print();
+
+   if (rsdt.length == 0)
+   {
+      Debug::error("Error: Zero length RSDT!\n");
+      return;
+   }
 
    unsigned int rsdtSize = rsdt.length - sizeof(DescriptionHeader);
    if (rsdtSize > sizeof (entries))
@@ -83,7 +94,7 @@ Acpi::printAllDescriptors()
       Memory::readPhysicalMemory(reinterpret_cast<void*>(&ds),
                                  reinterpret_cast<const void*>(entries[i]),
                                  sizeof(ds));
-      ds.printHeader();
+      ds.print();
       printf("\n");
    }
 }

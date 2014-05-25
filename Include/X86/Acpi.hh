@@ -17,7 +17,7 @@ struct DescriptionHeader
    uint8_t creatorId[4];
    uint32_t creatorRevision;
 
-   void printHeader()
+   void print()
    {
       printf("Signature:\t\t%c%c%c%c\n", signature[0],
 	     signature[1], signature[2], signature[3]);
@@ -59,6 +59,22 @@ struct Rsdp
    uint64_t xsdtAddress;
    uint8_t extendedChecksum;
    uint8_t _reserved[3];
+
+   void print()
+   {
+      printf("Signature:\t\t%c%c%c%c%c%c%c%c\n", signature[0],
+	     signature[1], signature[2], signature[3],
+             signature[4], signature[5], signature[6], signature[7]);
+      printf("Checksum:\t\t0x%x\n", checksum);
+      printf("OEM ID:\t\t\t%c%c%c%c%c%c\n",
+	     oemId[0], oemId[1], oemId[2],
+	     oemId[3], oemId[4], oemId[5]);
+      printf("Revision:\t\t%u\n", revision);
+      printf("RSDT Address:\t\t0x%x\n", rsdtAddress);
+      printf("Length:\t\t\t%u\n", length);
+      printf("XSDT Address:\t\t0x%llx\n", xsdtAddress);
+      printf("XChecksum:\t\t0x%x\n", extendedChecksum);
+   }
 
    uint8_t calculateChecksum()
    {

@@ -32,6 +32,18 @@ Memory::copyMemoryMap()
 
 	 foundUsableMemory = true;
       }
+      else if (map->type == Multiboot::MemoryMap::Reserved)
+      {
+         printf("Reserved memory at %p-%p\n", (void *)map->address, (void *)(map->address + map->length));
+      }
+      else if (map->type == Multiboot::MemoryMap::Acpi)
+      {
+         printf("ACPI memory at %p-%p\n", (void *)map->address, (void *)(map->address + map->length));
+      }
+      else if (map->type == Multiboot::MemoryMap::Nvs)
+      {
+         printf("NVS memory at %p-%p\n", (void *)map->address, (void *)(map->address + map->length));
+      }
    }
 
    printf("Finished copying memory map\n");
