@@ -32,8 +32,6 @@ PageCluster Memory::freePages;
 spinlock_softirq_t Memory::pagesLock;
 spinlock_softirq_t Memory::memoryMapLock;
 
-//#define DEBUG
-
 void
 Memory::init()
 {
@@ -198,10 +196,6 @@ Memory::mapPage(uintptr_t address, uintptr_t phys)
 {
    bool success = Hal::mapPage(address, phys);
 
-   if (success) {
-      std::memset((void*)address, 0, PageSize);
-   }
-
    return success;
 }
 
@@ -286,7 +280,9 @@ uintptr_t Memory::mapRegion(uintptr_t paddr, std::size_t size)
 {
    std::size_t rsize = roundTo<uintptr_t>(size, PageSize);
 
+#ifdef DEBUG
    printf("Memory::mapRegion: %p-%p\n", (void*)paddr, (void*)(paddr + size));
+#endif
 
    spinlock_softirq_enter(&memoryMapLock);
 

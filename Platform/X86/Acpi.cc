@@ -68,6 +68,7 @@ Acpi::printAllDescriptors()
 
    printf("\n");
    rsdt.print();
+   printf("\n");
 
    if (rsdt.length == 0)
    {

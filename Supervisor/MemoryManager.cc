@@ -4,6 +4,7 @@
 #include <Debug.hh>
 
 #include <cstdio>
+#include <cstring>
 
 //#define DEBUG
 
@@ -52,7 +53,10 @@ MemoryManager::allocateBackend(std::size_t size)
    void* data;
    if (rsize == PageSize)
    {
-      data = reinterpret_cast<void*>(Memory::mapPage(Memory::getPage()));
+      uintptr_t page = Memory::getPage();
+      KASSERT(page != 0);
+
+      data = reinterpret_cast<void*>(Memory::mapPage(page));
    }
    else
    {
@@ -64,6 +68,10 @@ MemoryManager::allocateBackend(std::size_t size)
 #endif
 
    KASSERT(data != 0);
+
+   // zero memory to avoid leaking anything
+   //
+   std::memset(data, 0, rsize);
 
    return data;
 }
