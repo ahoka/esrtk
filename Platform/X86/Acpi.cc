@@ -1,9 +1,13 @@
+#include <X86/Acpi.hh>
+
 #include <Debug.hh>
 #include <Memory.hh>
 
 #include <X86/Parameters.hh>
-#include <X86/Acpi.hh>
+#include <X86/Ebda.hh>
+#include <X86/Bios.hh>
 
+#include <cstring>
 #include <cstdio>
 
 Rsdp *
@@ -44,9 +48,39 @@ void
 Acpi::printAllDescriptors()
 {
    uint32_t entries[256];
-   char* mem = (char* )Memory::mapRegion(0x0e0000, 0x20000);
+   uintptr_t ebdaAddress;
+   Rsdp rsdpCopy;
 
-   Rsdp* rsdp = Acpi::findRsdp(mem, mem + 0x20000);
+   ebdaAddress = Ebda::getEbda();
+
+   printf("EBDA: %p\n", (void*)ebdaAddress);
+
+   char* ebda = (char* )Memory::mapRegion(ebdaAddress, ebdaAddress + 0x400);
+
+   Rsdp* rsdp = Acpi::findRsdp(ebda, ebda + 0x400u);
+   if (rsdp == 0)
+   {
+      char* mem = (char* )Memory::mapRegion(X86_BIOS_ROM_START, X86_BIOS_ROM_SIZE);
+
+      rsdp = Acpi::findRsdp(mem, mem + X86_BIOS_ROM_SIZE);
+      if (rsdp != 0)
+      {
+         Debug::info("RSDP found in EBDA at %p\n", (void*)((uintptr_t)rsdp - (uintptr_t)mem + 0x0e0000u));
+         memcpy(&rsdpCopy, rsdp, sizeof(Rsdp));
+         rsdp = &rsdpCopy;
+      }
+
+      Memory::unmapRegion((uintptr_t)mem, 0x20000);
+   }
+   else
+   {
+      Debug::info("RSDP found in ROM at %p\n", (void*)((uintptr_t)rsdp - (uintptr_t)ebda + ebdaAddress));
+      memcpy(&rsdpCopy, rsdp, sizeof(Rsdp));
+      rsdp = &rsdpCopy;
+   }
+
+   Memory::unmapRegion((uintptr_t)ebda, 0x400);
+
    if (rsdp == 0)
    {
       Debug::warning("ACPI RSDP not found.\n");
@@ -54,7 +88,7 @@ Acpi::printAllDescriptors()
    }
    else
    {
-      Debug::info("RSDP found at %p\n", (void*)((uintptr_t)rsdp - (uintptr_t)mem + 0x0e0000u));
+
    }
 
    printf("\n");
@@ -86,8 +120,6 @@ Acpi::printAllDescriptors()
    Memory::readPhysicalMemory(static_cast<void*>(entries),
                               reinterpret_cast<const void*>(rsdp->rsdtAddress + sizeof (DescriptionHeader)),
                               sizeof (entries));
-
-   Memory::unmapRegion((uintptr_t)mem, 0x20000);
 
    DescriptionHeader ds;
    for (unsigned int i = 0; i < rsdtSize / 4; i++)
