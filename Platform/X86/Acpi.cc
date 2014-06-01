@@ -44,6 +44,28 @@ Acpi::findRsdp(char* from, char* to)
    return 0;
 }
 
+static void readMadt(uintptr_t madtAddress, size_t size)
+{
+   auto start = Memory::mapRegion(madtAddress, madtAddress + size);
+
+   Madt* madt = (Madt* )start;
+
+   printf("LAPIC Address: %p\n", (void*)madt->lapicAddress);
+   printf("Flags: 0x%x\n", madt->flags);
+
+   for (auto remaining = size - sizeof(Madt); remaining > 0;)
+   {
+      auto controller = (MadtInterruptController*)(start + remaining);
+      printf("Type: 0x%x, Length: %zu\n", controller->type, (size_t)controller->length);
+
+      remaining =- controller->length;
+   }
+
+   printf("\n");
+
+   Memory::unmapRegion((uintptr_t)madt, (uintptr_t)madt + size);
+}
+
 void
 Acpi::printAllDescriptors()
 {
@@ -129,5 +151,11 @@ Acpi::printAllDescriptors()
                                  sizeof(ds));
       ds.print();
       printf("\n");
+
+      if (ds.signature[0] == 'A' && ds.signature[1] == 'P' &&
+          ds.signature[2] == 'I' && ds.signature[3] == 'C')
+      {
+         readMadt(entries[i], ds.length);
+      }
    }
 }

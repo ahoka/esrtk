@@ -47,6 +47,30 @@ struct Xsdt : DescriptionHeader
    uint64_t entry[1];
 };// __attribute__((packed));
 
+struct Madt : DescriptionHeader
+{
+   uint32_t lapicAddress;
+   uint32_t flags;
+   //
+   enum
+   {
+      PCAT_COMPAT = 0x1
+   };
+};
+
+struct MadtInterruptController
+{
+   uint8_t type;
+   uint8_t length;
+};
+
+struct MadtLocalApic : MadtInterruptController
+{
+   uint8_t processorId;
+   uint8_t apicId;
+   uint32_t flags;
+};
+
 struct Rsdp
 {
    uint8_t signature[8];
