@@ -60,7 +60,7 @@ static void readMadt(uintptr_t madtAddress, size_t size)
    {
       auto controller = (MadtInterruptController*)(start + offset);
 
-      if (controller->type == MadtInterruptController::LAPIC)
+      if (controller->type == MadtInterruptController::Lapic)
       {
          auto lapic = (MadtLocalApic*)controller;
 
@@ -70,7 +70,7 @@ static void readMadt(uintptr_t madtAddress, size_t size)
 
          assert(lapic->length == 8);
       }
-      else if (controller->type == MadtInterruptController::IOAPIC)
+      else if (controller->type == MadtInterruptController::IoApic)
       {
          auto ioapic = (MadtIoApic*)controller;
 
@@ -82,7 +82,7 @@ static void readMadt(uintptr_t madtAddress, size_t size)
 
          assert(ioapic->length == 12);
       }
-      else if (controller->type == MadtInterruptController::OVERRIDE)
+      else if (controller->type == MadtInterruptController::Override)
       {
          auto override = (MadtInputSourceOverride*)controller;
 
@@ -124,6 +124,22 @@ static void readMadt(uintptr_t madtAddress, size_t size)
          printf("Trigger mode: %s, %s\n", pol, tm);
 
          assert(override->length == 10);
+      }
+      else if (controller->type == MadtInterruptController::NmiSource)
+      {
+         auto nmiSource = (MadtNmiSource*)controller;
+
+         printf("NMI Source: Length: %zu, Flags: 0x%hx, GSI: %u\n",
+                (size_t)nmiSource->length, nmiSource->flags,
+		nmiSource->gsi);
+      }
+      else if (controller->type == MadtInterruptController::LapicNmi)
+      {
+         auto lapicNmi = (MadtLapicNmi*)controller;
+
+         printf("LAPIC NMI: Length: %zu, ACPI Processor ID: %hhu, Flags: 0x%hx, LAPIC LINT: %hhu\n",
+                (size_t)lapicNmi->length, lapicNmi->processorId, lapicNmi->flags,
+                lapicNmi->lapicLint);
       }
       else 
       {

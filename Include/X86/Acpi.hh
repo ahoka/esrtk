@@ -78,9 +78,11 @@ struct MadtInterruptController
    
    enum Type
    {
-      LAPIC = 0x0,
-      IOAPIC = 0x1,
-      OVERRIDE = 0x2
+      Lapic = 0x0,
+      IoApic = 0x1,
+      Override = 0x2,
+      NmiSource = 0x3,
+      LapicNmi = 0x4
    };
 } __attribute__((packed));
 
@@ -133,6 +135,19 @@ struct MadtInputSourceOverride : MadtInterruptController
    uint8_t source;
    uint32_t gsi;
    uint16_t flags;
+};
+
+struct MadtNmiSource : MadtInterruptController
+{
+   uint16_t flags;
+   uint32_t gsi;
+};
+
+struct MadtLapicNmi : MadtInterruptController
+{
+   uint8_t processorId;
+   uint16_t flags;
+   uint8_t lapicLint;
 };
 
 struct Rsdp
