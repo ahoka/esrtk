@@ -82,6 +82,49 @@ static void readMadt(uintptr_t madtAddress, size_t size)
 
          assert(ioapic->length == 12);
       }
+      else if (controller->type == MadtInterruptController::OVERRIDE)
+      {
+         auto override = (MadtInputSourceOverride*)controller;
+
+         printf("Override: Length: %zu, Bus: %hhu, Source: %hhu, GSI: %u, Flags: 0x%x\n",
+                (size_t)override->length, override->bus, override->source,
+                override->gsi, override->flags);
+
+         uint8_t polarity = MpsIntiFlags::getPolarity(override->flags);
+         uint8_t triggerMode = MpsIntiFlags::getTriggerMode(override->flags);
+
+         const char* pol = "Unknown";
+         if (polarity == MpsIntiFlags::ActiveHigh)
+         {
+            pol = "Active High";
+         }
+         else if (polarity == MpsIntiFlags::ActiveLow)
+         {
+            pol = "Active Low";
+         }
+         else if (polarity == MpsIntiFlags::Conforming)
+         {
+            pol = "Conforming";
+         }
+
+         const char* tm = "Unknown";
+         if (triggerMode == MpsIntiFlags::EdgeTriggered)
+         {
+            tm = "Edge-Triggered";
+         }
+         else if (triggerMode == MpsIntiFlags::LevelTriggered)
+         {
+            tm = "Level-Triggered";
+         }
+         else if (triggerMode == MpsIntiFlags::Conforming)
+         {
+            tm = "Conforming";
+         }
+
+         printf("Trigger mode: %s, %s\n", pol, tm);
+
+         assert(override->length == 10);
+      }
       else 
       {
          printf("Type: 0x%x, Length: %zu\n", controller->type, (size_t)controller->length);

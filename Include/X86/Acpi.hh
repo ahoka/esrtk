@@ -35,6 +35,19 @@ struct DescriptionHeader
       printf("Creator Revision:\t0x%x\n",
 	     creatorRevision);
    }
+
+   uint8_t calculateChecksum()
+   {
+      uint8_t sum = 0;
+
+      uint8_t* table = (uint8_t *)this;
+      for (unsigned int i = 0; i < length; i++)
+      {
+	 sum += table[i];
+      }
+
+      return sum;
+   }
 } __attribute__((packed));
 
 struct Rsdt : DescriptionHeader
@@ -66,8 +79,37 @@ struct MadtInterruptController
    enum Type
    {
       LAPIC = 0x0,
-      IOAPIC = 0x1
+      IOAPIC = 0x1,
+      OVERRIDE = 0x2
    };
+} __attribute__((packed));
+
+struct MpsIntiFlags
+{
+   enum Polarity
+   {
+      Conforming = 0x0,
+      ActiveHigh = 0x1,
+      ActiveLow = 0x3
+   };
+
+   enum TriggerMode
+   {
+//      Conforming = 0x0,
+      EdgeTriggered = 0x1,
+      LevelTriggered = 0x3
+   };
+
+   static uint8_t getPolarity(uint16_t flags)
+   {
+      return flags & 0x3;
+   }
+
+   static uint8_t getTriggerMode(uint16_t flags)
+   {
+      return (flags >> 2) & 0x3;
+   }
+
 } __attribute__((packed));
 
 struct MadtLocalApic : MadtInterruptController
@@ -83,6 +125,14 @@ struct MadtIoApic : MadtInterruptController
    uint8_t reserved_;
    uint32_t ioApicAddress;
    uint32_t gsiBase;
+};
+
+struct MadtInputSourceOverride : MadtInterruptController
+{
+   uint8_t bus;
+   uint8_t source;
+   uint32_t gsi;
+   uint16_t flags;
 };
 
 struct Rsdp
