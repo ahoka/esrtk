@@ -62,6 +62,11 @@ struct MadtInterruptController
 {
    uint8_t type;
    uint8_t length;
+   
+   enum Type
+   {
+      LAPIC = 0x0
+   };
 };
 
 struct MadtLocalApic : MadtInterruptController

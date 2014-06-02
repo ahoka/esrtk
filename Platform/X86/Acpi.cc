@@ -57,8 +57,24 @@ static void readMadt(uintptr_t madtAddress, size_t size)
    {
       auto controller = (MadtInterruptController*)(start + remaining);
       printf("Type: 0x%x, Length: %zu\n", controller->type, (size_t)controller->length);
+      printf("Remaining: %zu\n", remaining);
 
-      remaining =- controller->length;
+      if (controller->type == MadtInterruptController::LAPIC)
+      {
+         auto lapic = (MadtLocalApic*)controller;
+
+         printf("LAPIC: Processor ID: %u, Apic ID: %u, Flags: 0x%x\n", 
+                lapic->processorId, lapic->apicId, lapic->flags);
+      }
+
+      if (remaining > controller->length)
+      {
+         remaining =- controller->length;
+      }
+      {
+         printf("MADT size mismatch?\n");
+         break;
+      }
    }
 
    printf("\n");
