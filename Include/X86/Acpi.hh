@@ -67,7 +67,7 @@ struct MadtInterruptController
    {
       LAPIC = 0x0
    };
-};
+} __attribute__((packed));
 
 struct MadtLocalApic : MadtInterruptController
 {

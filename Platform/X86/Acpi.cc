@@ -53,28 +53,26 @@ static void readMadt(uintptr_t madtAddress, size_t size)
    printf("LAPIC Address: %p\n", (void*)madt->lapicAddress);
    printf("Flags: 0x%x\n", madt->flags);
 
-   for (auto remaining = size - sizeof(Madt); remaining > 0;)
+   static_assert(sizeof(Madt) == 44, "MADT struct size is incorrent");
+   auto offset = sizeof(Madt);
+   while (offset < size)
    {
-      auto controller = (MadtInterruptController*)(start + remaining);
-      printf("Type: 0x%x, Length: %zu\n", controller->type, (size_t)controller->length);
-      printf("Remaining: %zu\n", remaining);
+      auto controller = (MadtInterruptController*)(start + offset);
 
       if (controller->type == MadtInterruptController::LAPIC)
       {
          auto lapic = (MadtLocalApic*)controller;
 
-         printf("LAPIC: Processor ID: %u, Apic ID: %u, Flags: 0x%x\n", 
-                lapic->processorId, lapic->apicId, lapic->flags);
+         printf("LAPIC: Length: %zu Processor ID: %u, Apic ID: %u, Flags: 0x%x\n",
+                (size_t)lapic->length, lapic->processorId,
+                lapic->apicId, lapic->flags);
+      }
+      else 
+      {
+         printf("Type: 0x%x, Length: %zu\n", controller->type, (size_t)controller->length);
       }
 
-      if (remaining > controller->length)
-      {
-         remaining =- controller->length;
-      }
-      {
-         printf("MADT size mismatch?\n");
-         break;
-      }
+      offset += controller->length;
    }
 
    printf("\n");

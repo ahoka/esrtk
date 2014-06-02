@@ -158,6 +158,9 @@ run-pc: kernel.elf
 run: kernel.elf
 	$(QEMU) -M q35 -net none -kernel kernel.elf -boot order=c -serial stdio -d cpu_reset 2>&1 | tee run.log
 
+run-smp: kernel.elf
+	$(QEMU) -M q35 -smp 2 -net none -kernel kernel.elf -boot order=c -serial stdio -d cpu_reset 2>&1 | tee run.log
+
 run-debug: kernel.elf
 	$(QEMU) -M q35 -net none -kernel kernel.elf -boot order=c -serial stdio -s -S 2>&1 | tee run.log
 
