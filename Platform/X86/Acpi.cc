@@ -9,6 +9,7 @@
 
 #include <cstring>
 #include <cstdio>
+#include <cassert>
 
 Rsdp *
 Acpi::findRsdp(char* from, char* to)
@@ -63,9 +64,23 @@ static void readMadt(uintptr_t madtAddress, size_t size)
       {
          auto lapic = (MadtLocalApic*)controller;
 
-         printf("LAPIC: Length: %zu Processor ID: %u, Apic ID: %u, Flags: 0x%x\n",
+         printf("LAPIC: Length: %zu, Processor ID: %u, Apic ID: %u, Flags: 0x%x\n",
                 (size_t)lapic->length, lapic->processorId,
                 lapic->apicId, lapic->flags);
+
+         assert(lapic->length == 8);
+      }
+      else if (controller->type == MadtInterruptController::IOAPIC)
+      {
+         auto ioapic = (MadtIoApic*)controller;
+
+         printf("I/O APIC: Length: %zu, I/O Apic Id: %u, I/O Apic Address: %p, GSI Base: %u\n",
+                (size_t)ioapic->length,
+                ioapic->ioApicId,
+                (void*)ioapic->ioApicAddress,
+                ioapic->gsiBase);
+
+         assert(ioapic->length == 12);
       }
       else 
       {

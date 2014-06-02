@@ -65,7 +65,8 @@ struct MadtInterruptController
    
    enum Type
    {
-      LAPIC = 0x0
+      LAPIC = 0x0,
+      IOAPIC = 0x1
    };
 } __attribute__((packed));
 
@@ -74,6 +75,14 @@ struct MadtLocalApic : MadtInterruptController
    uint8_t processorId;
    uint8_t apicId;
    uint32_t flags;
+};
+
+struct MadtIoApic : MadtInterruptController
+{
+   uint8_t ioApicId;
+   uint8_t reserved_;
+   uint32_t ioApicAddress;
+   uint32_t gsiBase;
 };
 
 struct Rsdp
