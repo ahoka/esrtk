@@ -1,5 +1,3 @@
-#ifdef ENABLE_APIC
-
 #include <X86/Apic.hh>
 
 #include <Debug.hh>
@@ -18,30 +16,34 @@ Apic::Apic()
    init();
 }
 
-void
-Apic::read32(uint32_t offset, uint32_t *a)
+uint32_t
+Apic::read32(uint32_t offset)
 {
-   *a = *(volatile uint32_t *)(apicAddress + offset);
+   return *(volatile uint32_t *)(apicAddress + offset);
+}
+
+uint64_t
+Apic::read64(uint32_t offset)
+{
+   uint32_t a, b;
+
+   a = *(volatile uint32_t *)(apicAddress + offset);
+   b = *(volatile uint32_t *)(apicAddress + offset + 4);
+
+   return (uint64_t )a | ((uint64_t )b << 32);
 }
 
 void
-Apic::read64(uint32_t offset, uint32_t *a, uint32_t *b)
+Apic::write32(uint32_t offset, uint32_t value)
 {
-   *a = *(volatile uint32_t *)(apicAddress + offset);
-   *b = *(volatile uint32_t *)(apicAddress + offset + 4);
+   *(volatile uint32_t *)(apicAddress + offset) = value;
 }
 
 void
-Apic::write32(uint32_t offset, uint32_t a)
+Apic::write64(uint32_t offset, uint64_t value)
 {
-   *(volatile uint32_t *)(apicAddress + offset) = a;
-}
-
-void
-Apic::write64(uint32_t offset, uint32_t a, uint32_t b)
-{
-   *(volatile uint32_t *)(apicAddress + offset) = a;
-   *(volatile uint32_t *)(apicAddress + offset + 4) = b;
+   *(volatile uint32_t *)(apicAddress + offset) = value;
+   *(volatile uint32_t *)(apicAddress + offset + 4) = value >> 32;
 }
 
 int
@@ -62,7 +64,6 @@ Apic::probe()
 void
 Apic::init()
 {
-   uint32_t eax, edx;
    cpuid_t id;
 
    cpuid(0x1, &id);
@@ -77,19 +78,15 @@ Apic::init()
       return;
    }
 
-   rdmsr(0x001b, &eax, &edx);
-
-   // make sure the apic is at a 32bit address
-   // KASSERT((edx & 0x0f) == 0);
-   // KASSERT(false);
+   uint64_t msr = x86_rdmsr(IA32_APIC_BASE);
    
-   apicAddress = eax & 0xfffff000;
+   apicAddress = msr & IA32_APIC_BASE_ADDRESS_MASK;
 
-   if (eax & 0x100)
+   if (msr & IA32_APIC_BASE_BSP)
    {
       flags |= ApicIsBsp;
    }
-   if (eax & 0x800)
+   if (msr & IA32_APIC_BASE_EN)
    {
       flags |= ApicIsEnabled;
    }
@@ -102,6 +99,13 @@ Apic::init()
    printf("APIC: CPU type: %s\n", (flags & ApicIsBsp) ? "BSP" : "APU");
    printf("APIC: state: %s\n", (flags & ApicIsEnabled) ? "enabled" : "disabled");
    printf("APIC: LAPIC Id: %u\n", getLocalApicId());
+
+   uint64_t version = read32(LocalApicVersionRegister);
+   printf("APIC: 0x%llx\n", version);
+
+   printf("APIC: Version: 0x%hhx, LVTs: %u\n",
+	  (uint8_t)(version & 0xff),
+	  (uint32_t)((version >> 16) & 0x7f) + 1);
 }
 
 void
@@ -112,10 +116,8 @@ Apic::printInformation()
 uint32_t
 Apic::getLocalApicId()
 {
-   uint32_t apicId;
-   
-   apic.read32(0x20, &apicId);
-   
+   uint32_t apicId = apic.read32(0x20);
+
    // XXX
    return (apicId >> 24) & 0xf;
 }
@@ -149,5 +151,3 @@ Apic::createLocalVectorTable(LvtMask mask,
                                  deliveryMode,
                                  vector);
 }
-
-#endif

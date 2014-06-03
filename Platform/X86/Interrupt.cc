@@ -65,7 +65,7 @@ x86_isr_page_fault(InterruptFrame* frame)
 
    StackTrace::printStackTrace(reinterpret_cast<void*>(frame->ebp));
 
-   cli();
+   x86_cli();
    Power::halt();
 }
 
@@ -102,7 +102,7 @@ x86_isr_general_protection_fault(InterruptFrame* frame)
 
    StackTrace::printStackTrace(reinterpret_cast<void*>(frame->ebp));
 
-   cli();
+   x86_cli();
    Power::halt();
 }
 

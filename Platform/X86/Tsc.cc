@@ -23,7 +23,7 @@ Tsc::calibrate()
 {
    Debug::info("Calibrating TSC...\n");
 
-   cli();
+   x86_cli();
 
    const int measurements = 5;
    unsigned long results[measurements];
@@ -101,7 +101,7 @@ Tsc::calibrate()
 
 #endif
 
-   sti();
+   x86_sti();
 
    Debug::info("TSC frequency is %lu Hz\n", frequency);
 }

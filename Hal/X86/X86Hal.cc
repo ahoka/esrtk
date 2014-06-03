@@ -24,13 +24,13 @@ Hal::getPhysicalAddress(uintptr_t virt)
 void
 Hal::disableLocalInterrupts()
 {
-   cli();
+   x86_cli();
 }
 
 void
 Hal::enableLocalInterrupts()
 {
-   sti();
+   x86_sti();
 }
 
 void
@@ -51,10 +51,10 @@ Hal::restoreLocalInterrupts(InterruptFlags& flags)
 {
    if (flags == 0)
    {
-      cli();
+      x86_cli();
    }
    else
    {
-      sti();
+      x86_sti();
    }
 }

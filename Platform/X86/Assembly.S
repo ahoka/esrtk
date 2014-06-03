@@ -2,38 +2,50 @@
 
 // C callable assembly functions for X86
 //
-FUNCTION(cli)
+FUNCTION(x86_cli)
         cli
         ret
-END(cli)
+END(x86_cli)
 
-FUNCTION(sti)
+FUNCTION(x86_sti)
         sti
         ret
-END(sti)
+END(x86_sti)
 
 // rdmsr(in u32 address, out u32 eax, out u32 edx)
-FUNCTION(rdmsr)
-        pushl %edi
-	movl 8(%esp), %ecx
+//FUNCTION(x86_rdmsr)
+//        pushl %edi
+//	movl 8(%esp), %ecx
+//	rdmsr
+//        movl 12(%esp), %edi
+//        movl %eax, (%edi)
+//        movl 16(%esp), %edi
+//        movl %edx, (%edi)
+//        popl %edi
+//	ret
+//END(x86_rdmsr)
+FUNCTION(x86_rdmsr)
+	movl 4(%esp), %ecx
 	rdmsr
-        movl 12(%esp), %edi
-        movl %eax, (%edi)
-        movl 16(%esp), %edi
-        movl %edx, (%edi)
-        popl %edi
 	ret
-END(rdmsr)
+END(x86_rdmsr)
 	
 // wrmsr(in u32 address, in u32 eax, in u32 edx)
-FUNCTION(wrmsr)
+//FUNCTION(x86_wrmsr)
+//	movl 4(%esp), %ecx
+//	movl 8(%esp), %eax
+//	movl 12(%esp), %edx
+//	wrmsr
+//	ret
+//END(x86_wrmsr)
+FUNCTION(x86_wrmsr)
 	movl 4(%esp), %ecx
 	movl 8(%esp), %eax
 	movl 12(%esp), %edx
 	wrmsr
 	ret
-END(wrmsr)
-
+END(x86_wrmsr)
+	
 // rdtsc, serialized with cpuid instruction
 FUNCTION(rdtsc)
 	pushl %ebx

@@ -24,41 +24,11 @@ enum Flags
    Overflow		= (1 << 11)
 };
 
-#if 0
-struct Flags
-{
-   unsigned CarryFlag			: 1;
-   unsigned _unused1_			: 1;
-   unsigned ParityFlag			: 1;
-   unsigned _unused2_			: 1;
-   unsigned AdjustFlag			: 1;
-   unsigned _unused3_			: 1;
-   unsigned ZeroFlag			: 1;
-   unsigned SignFlag			: 1;
-   unsigned TrapFlag			: 1;
-   unsigned InterruptEnableFlag		: 1;
-   unsigned DirectionFlag		: 1;
-   unsigned OverflowFlag		: 1;
-   unsigned IoPrivilegeLevel		: 2;
-   unsigned NestedTask			: 1;
-   unsigned _reserved4_			: 1;
-   unsigned ResumeFlag			: 1;
-   unsigned Virtual8086Flag		: 1;
-   unsigned AlignmentCheck		: 1;
-   unsigned VirtualInterruptFlag	: 1;
-   unsigned VirtualInterruptPending	: 1;
-   unsigned IdFlag			: 1;
-   unsigned _reserved5_			: 10;
-};
+extern "C" void x86_cli();
+extern "C" void x86_sti();
 
-static_assert(sizeof(Flags) == 32, "struct Flags should be 32 bits in size");
-#endif
-
-extern "C" void cli();
-extern "C" void sti();
-
-extern "C" void wrmsr(uint32_t address, uint32_t eax, uint32_t edx);
-extern "C" void rdmsr(uint32_t address, uint32_t* eax, uint32_t* edx);
+extern "C" void x86_wrmsr(uint32_t address, uint64_t value);
+extern "C" uint64_t x86_rdmsr(uint32_t address);
 
 extern "C" uint64_t rdtsc();
 

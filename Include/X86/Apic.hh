@@ -11,10 +11,18 @@ public:
    void printInformation();
    int probe();
 
-   void read32(uint32_t offset, uint32_t *a);
-   void read64(uint32_t offset, uint32_t *a, uint32_t *b);
-   void write32(uint32_t offset, uint32_t a);
-   void write64(uint32_t offset, uint32_t a, uint32_t b);
+   uint32_t read32(uint32_t offset);
+   uint64_t read64(uint32_t offset);
+   void write32(uint32_t offset, uint32_t value);
+   void write64(uint32_t offset, uint64_t value);
+
+   enum
+   {
+      IA32_APIC_BASE = 0x001b,
+      IA32_APIC_BASE_BSP = (1 << 8),
+      IA32_APIC_BASE_EN = (1 << 11),
+      IA32_APIC_BASE_ADDRESS_MASK = 0xfffff000
+   };
 
    enum
    {

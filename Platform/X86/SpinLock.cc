@@ -12,7 +12,7 @@ extern "C" long
 spinlock_softirq_enter(spinlock_softirq_t* lock)
 {
    lock->flags = get_eflags();
-   cli();
+   x86_cli();
 
    return spinlock_enter(&lock->lock);
 }
@@ -22,7 +22,7 @@ spinlock_softirq_exit(spinlock_softirq_t* lock)
 {
    if (lock->flags & InterruptEnable)
    {
-      sti();
+      x86_sti();
    }
 
    return spinlock_exit(&lock->lock);
