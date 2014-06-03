@@ -100,12 +100,17 @@ Apic::init()
    printf("APIC: state: %s\n", (flags & ApicIsEnabled) ? "enabled" : "disabled");
    printf("APIC: LAPIC Id: %u\n", getLocalApicId());
 
-   uint64_t version = read32(LocalApicVersionRegister);
-   printf("APIC: 0x%llx\n", version);
-
+   uint64_t version = read32(LocalApicVersion);
    printf("APIC: Version: 0x%hhx, LVTs: %u\n",
 	  (uint8_t)(version & 0xff),
 	  (uint32_t)((version >> 16) & 0x7f) + 1);
+
+
+   uint32_t siv = read32(SpuriousInterruptVector);
+   write32(SpuriousInterruptVector, siv | ApicSoftwareEnable);
+
+   // EOI
+   write32(Eoi, 0x00);
 }
 
 void

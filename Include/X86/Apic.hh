@@ -26,10 +26,23 @@ public:
 
    enum
    {
-      LocalApicIdRegister = 0x0020,
-      LocalApicVersionRegister = 0x0030,
-      EoiRegister = 0x00b0,
-      ErrorStatusRegister = 0x0280
+      LocalApicId = 0x0020,
+      LocalApicVersion = 0x0030,
+      Eoi = 0x00b0,
+      SpuriousInterruptVector = 0x0f0,
+      ErrorStatus = 0x0280,
+      LvtCmci = 0x02f0,
+      InterruptCommandLow = 0x0300,
+      InterruptCommandHigh = 0x0310,
+      LvtLint0 = 0x0350,
+      LvtLint1 = 0x0360,
+      LvtError = 0x0370
+   };
+
+   enum
+   {
+      SpuriousVectorMask = 0xff,
+      ApicSoftwareEnable = (1 << 8),
    };
 
    enum LvtDeliveryMode
