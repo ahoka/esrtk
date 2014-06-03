@@ -1,5 +1,3 @@
-#include <X86/Acpi.hh>
-
 #include <Debug.hh>
 #include <Memory.hh>
 
@@ -10,6 +8,8 @@
 #include <cstring>
 #include <cstdio>
 #include <cassert>
+
+#include <X86/Acpi.hh>
 
 Rsdp *
 Acpi::findRsdp(char* from, char* to)

@@ -1,9 +1,15 @@
-#ifndef CSTDIO_HH
-#define CSTDIO_HH
+#ifndef CSTDIO__
+#define CSTDIO__
 
-extern "C"
-{
 #include <stdio.h>
-}
+
+namespace std
+{
+   using ::putchar;
+   using ::puts;
+   
+   using ::printf;
+   using ::vprintf;
+};
 
 #endif
