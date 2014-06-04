@@ -45,14 +45,50 @@ Acpi::findRsdp(char* from, char* to)
    return 0;
 }
 
+static void printMadtIntiFlags(uint16_t flags)
+{
+   uint8_t polarity = MpsIntiFlags::getPolarity(flags);
+   uint8_t triggerMode = MpsIntiFlags::getTriggerMode(flags);
+
+   const char* pol = "Unknown";
+   if (polarity == MpsIntiFlags::ActiveHigh)
+   {
+      pol = "Active High";
+   }
+   else if (polarity == MpsIntiFlags::ActiveLow)
+   {
+      pol = "Active Low";
+   }
+   else if (polarity == MpsIntiFlags::Conforming)
+   {
+      pol = "Conforming";
+   }
+
+   const char* tm = "Unknown";
+   if (triggerMode == MpsIntiFlags::EdgeTriggered)
+   {
+      tm = "Edge-Triggered";
+   }
+   else if (triggerMode == MpsIntiFlags::LevelTriggered)
+   {
+      tm = "Level-Triggered";
+   }
+   else if (triggerMode == MpsIntiFlags::Conforming)
+   {
+      tm = "Conforming";
+   }
+
+   Debug::verbose("Trigger mode: %s, %s\n", pol, tm);
+}
+
 static void readMadt(uintptr_t madtAddress, size_t size)
 {
    auto start = Memory::mapRegion(madtAddress, madtAddress + size);
 
    Madt* madt = (Madt* )start;
 
-   printf("LAPIC Address: %p\n", (void*)madt->lapicAddress);
-   printf("Flags: 0x%x\n", madt->flags);
+   Debug::verbose("LAPIC Address: %p\n", (void*)madt->lapicAddress);
+   Debug::verbose("Flags: 0x%x\n", madt->flags);
 
    static_assert(sizeof(Madt) == 44, "MADT struct size is incorrent");
    auto offset = sizeof(Madt);
@@ -64,7 +100,7 @@ static void readMadt(uintptr_t madtAddress, size_t size)
       {
          auto lapic = (MadtLocalApic*)controller;
 
-         printf("LAPIC: Length: %zu, Processor ID: %u, Apic ID: %u, Flags: 0x%x\n",
+         Debug::verbose("LAPIC: Length: %zu, Processor ID: %u, Apic ID: %u, Flags: 0x%x\n",
                 (size_t)lapic->length, lapic->processorId,
                 lapic->apicId, lapic->flags);
 
@@ -74,7 +110,7 @@ static void readMadt(uintptr_t madtAddress, size_t size)
       {
          auto ioapic = (MadtIoApic*)controller;
 
-         printf("I/O APIC: Length: %zu, I/O Apic Id: %u, I/O Apic Address: %p, GSI Base: %u\n",
+         Debug::verbose("I/O APIC: Length: %zu, I/O Apic Id: %u, I/O Apic Address: %p, GSI Base: %u\n",
                 (size_t)ioapic->length,
                 ioapic->ioApicId,
                 (void*)ioapic->ioApicAddress,
@@ -86,42 +122,11 @@ static void readMadt(uintptr_t madtAddress, size_t size)
       {
          auto override = (MadtInputSourceOverride*)controller;
 
-         printf("Override: Length: %zu, Bus: %hhu, Source: %hhu, GSI: %u, Flags: 0x%x\n",
+         Debug::verbose("Override: Length: %zu, Bus: %hhu, Source: %hhu, GSI: %u, Flags: 0x%x\n",
                 (size_t)override->length, override->bus, override->source,
                 override->gsi, override->flags);
 
-         uint8_t polarity = MpsIntiFlags::getPolarity(override->flags);
-         uint8_t triggerMode = MpsIntiFlags::getTriggerMode(override->flags);
-
-         const char* pol = "Unknown";
-         if (polarity == MpsIntiFlags::ActiveHigh)
-         {
-            pol = "Active High";
-         }
-         else if (polarity == MpsIntiFlags::ActiveLow)
-         {
-            pol = "Active Low";
-         }
-         else if (polarity == MpsIntiFlags::Conforming)
-         {
-            pol = "Conforming";
-         }
-
-         const char* tm = "Unknown";
-         if (triggerMode == MpsIntiFlags::EdgeTriggered)
-         {
-            tm = "Edge-Triggered";
-         }
-         else if (triggerMode == MpsIntiFlags::LevelTriggered)
-         {
-            tm = "Level-Triggered";
-         }
-         else if (triggerMode == MpsIntiFlags::Conforming)
-         {
-            tm = "Conforming";
-         }
-
-         printf("Trigger mode: %s, %s\n", pol, tm);
+         printMadtIntiFlags(override->flags);
 
          assert(override->length == 10);
       }
@@ -129,27 +134,31 @@ static void readMadt(uintptr_t madtAddress, size_t size)
       {
          auto nmiSource = (MadtNmiSource*)controller;
 
-         printf("NMI Source: Length: %zu, Flags: 0x%hx, GSI: %u\n",
+         Debug::verbose("NMI Source: Length: %zu, Flags: 0x%hx, GSI: %u\n",
                 (size_t)nmiSource->length, nmiSource->flags,
 		nmiSource->gsi);
+
+         printMadtIntiFlags(nmiSource->flags);
       }
       else if (controller->type == MadtInterruptController::LapicNmi)
       {
          auto lapicNmi = (MadtLapicNmi*)controller;
 
-         printf("LAPIC NMI: Length: %zu, ACPI Processor ID: %hhu, Flags: 0x%hx, LAPIC LINT: %hhu\n",
+         Debug::verbose("LAPIC NMI: Length: %zu, ACPI Processor ID: %hhu, Flags: 0x%hx, LAPIC LINT: %hhu\n",
                 (size_t)lapicNmi->length, lapicNmi->processorId, lapicNmi->flags,
                 lapicNmi->lapicLint);
+
+         printMadtIntiFlags(lapicNmi->flags);
       }
       else 
       {
-         printf("Type: 0x%x, Length: %zu\n", controller->type, (size_t)controller->length);
+         Debug::verbose("Type: 0x%x, Length: %zu\n", controller->type, (size_t)controller->length);
       }
 
       offset += controller->length;
    }
 
-   printf("\n");
+   Debug::verbose("\n");
 
    Memory::unmapRegion((uintptr_t)madt, (uintptr_t)madt + size);
 }
@@ -163,7 +172,7 @@ Acpi::printAllDescriptors()
 
    ebdaAddress = Ebda::getEbda();
 
-   printf("EBDA: %p\n", (void*)ebdaAddress);
+   Debug::verbose("EBDA: %p\n", (void*)ebdaAddress);
 
    char* ebda = (char* )Memory::mapRegion(ebdaAddress, ebdaAddress + 0x400);
 
@@ -201,7 +210,7 @@ Acpi::printAllDescriptors()
 
    }
 
-   printf("\n");
+   Debug::verbose("\n");
    rsdp->print();
 
    Rsdt rsdt;
@@ -210,9 +219,9 @@ Acpi::printAllDescriptors()
                               reinterpret_cast<const void*>(rsdp->rsdtAddress),
                               sizeof(rsdt));
 
-   printf("\n");
+   Debug::verbose("\n");
    rsdt.print();
-   printf("\n");
+   Debug::verbose("\n");
 
    if (rsdt.length == 0)
    {
@@ -238,7 +247,7 @@ Acpi::printAllDescriptors()
                                  reinterpret_cast<const void*>(entries[i]),
                                  sizeof(ds));
       ds.print();
-      printf("\n");
+      Debug::verbose("\n");
 
       if (ds.signature[0] == 'A' && ds.signature[1] == 'P' &&
           ds.signature[2] == 'I' && ds.signature[3] == 'C')
