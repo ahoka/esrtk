@@ -144,9 +144,9 @@ static void readMadt(uintptr_t madtAddress, size_t size)
       {
          auto lapicNmi = (MadtLapicNmi*)controller;
 
-         Debug::verbose("LAPIC NMI: Length: %zu, ACPI Processor ID: %hhu, Flags: 0x%hx, LAPIC LINT: %hhu\n",
-                (size_t)lapicNmi->length, lapicNmi->processorId, lapicNmi->flags,
-                lapicNmi->lapicLint);
+         Debug::verbose("LAPIC NMI: Length: %zu, ACPI Processor ID: %hhu, "
+                        "Flags: 0x%hx, LAPIC LINT: %hhu\n", (size_t)lapicNmi->length,
+                        lapicNmi->processorId, lapicNmi->flags, lapicNmi->lapicLint);
 
          printMadtIntiFlags(lapicNmi->flags);
       }

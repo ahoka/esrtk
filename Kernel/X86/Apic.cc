@@ -5,6 +5,7 @@
 
 #include <X86/Processor.hh>
 #include <X86/CpuRegisters.hh>
+#include <X86/IoPort.hh>
 
 #include <cstdio>
 
@@ -75,6 +76,7 @@ Apic::init()
    else
    {
       printf("APIC: not found\n");
+      enabled = false;
       return;
    }
 
@@ -96,8 +98,10 @@ Apic::init()
    apicAddress = Memory::mapPage(apicAddress);
    KASSERT(apicAddress != 0);
 
-   printf("APIC: CPU type: %s\n", (flags & ApicIsBsp) ? "BSP" : "APU");
-   printf("APIC: state: %s\n", (flags & ApicIsEnabled) ? "enabled" : "disabled");
+   printf("APIC: CPU type: %s\n",
+          (flags & ApicIsBsp) ? "BSP" : "APU");
+   printf("APIC: state: %s\n",
+          (flags & ApicIsEnabled) ? "enabled" : "disabled");
    printf("APIC: LAPIC Id: %u\n", getLocalApicId());
 
    uint64_t version = read32(LocalApicVersion);
@@ -105,12 +109,32 @@ Apic::init()
 	  (uint8_t)(version & 0xff),
 	  (uint32_t)((version >> 16) & 0x7f) + 1);
 
+   // virtual wire mode
+   // outb(0x22, 0x70);
+   // outb(0x23, 0x1);
+
+   // write32(LvtLint0, createLocalVectorTable(DeliveryModeExtInt, 0));
+
+   // XXX this should come from acpi
+   write32(LvtLint1, createLocalVectorTable(DeliveryModeNmi, 0));
 
    uint32_t siv = read32(SpuriousInterruptVector);
+   printf("APIC: Spurious Vector: %u\n", siv & SpuriousVectorMask);
    write32(SpuriousInterruptVector, siv | ApicSoftwareEnable);
+
+   enabled = true;
 
    // EOI
    write32(Eoi, 0x00);
+}
+
+void Apic::endOfInterrupt()
+{
+   // non specific now
+   if (enabled)
+   {
+      write32(Eoi, 0x00);
+   }
 }
 
 void
@@ -145,14 +169,11 @@ Apic::createLocalVectorTable(LvtMask mask,
    return lvt;
 }
 
+// ISA-like
 uint32_t
-Apic::createLocalVectorTable(LvtMask mask,
-                             LvtDeliveryMode deliveryMode,
+Apic::createLocalVectorTable(LvtDeliveryMode deliveryMode,
                              uint8_t vector)
 {
-   return createLocalVectorTable(mask,
-                                 (LvtTriggerMode )0,
-                                 (LvtPinPolarity )0,
-                                 deliveryMode,
-                                 vector);
+   return createLocalVectorTable(NotMasked, Edge, ActiveHigh,
+                                 deliveryMode, vector);
 }

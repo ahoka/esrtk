@@ -11,6 +11,8 @@ public:
    void printInformation();
    int probe();
 
+   void endOfInterrupt();
+
    uint32_t read32(uint32_t offset);
    uint64_t read64(uint32_t offset);
    void write32(uint32_t offset, uint32_t value);
@@ -84,15 +86,13 @@ public:
       ApicIsBsp = (1 << 1)
    };
 
-   // For LINT0 and LINT1
    uint32_t createLocalVectorTable(LvtMask mask,
                                    LvtTriggerMode triggerMode,
                                    LvtPinPolarity polarity,
                                    LvtDeliveryMode deliveryMode,
                                    uint8_t vector);
 
-   uint32_t createLocalVectorTable(LvtMask mask,
-                                   LvtDeliveryMode deliveryMode,
+   uint32_t createLocalVectorTable(LvtDeliveryMode deliveryMode,
                                    uint8_t vector);
 
    uint32_t getLocalApicId();
@@ -101,6 +101,8 @@ private:
 
    uint32_t apicAddress;
    uint32_t flags;
+
+   bool enabled;
 };
 
 extern Apic apic;

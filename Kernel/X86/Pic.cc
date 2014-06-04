@@ -9,6 +9,9 @@
 
 #include <cstdio>
 
+// XXX
+#include <X86/Apic.hh>
+
 class Pic : InterruptController
 {
    enum Ports
@@ -93,7 +96,8 @@ public:
    void disableInterrupt(irq_t irq);
 };
 
-void Pic::endOfInterrupt(irq_t irq)
+void
+Pic::endOfInterrupt(irq_t irq)
 {
    KASSERT(irq < 16);
 
@@ -105,6 +109,9 @@ void Pic::endOfInterrupt(irq_t irq)
    }
    
    outb(MasterCommand, EndOfInterrupt);
+
+   // XXX
+   apic.endOfInterrupt();
 }
 
 void Pic::enableInterrupt(irq_t irq)

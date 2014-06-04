@@ -53,12 +53,12 @@ struct DescriptionHeader
 struct Rsdt : DescriptionHeader
 {
    uint32_t entry[1];
-};// __attribute__((packed));
+} __attribute__((packed));
 
 struct Xsdt : DescriptionHeader
 {
    uint64_t entry[1];
-};// __attribute__((packed));
+} __attribute__((packed));
 
 struct Madt : DescriptionHeader
 {
@@ -69,7 +69,7 @@ struct Madt : DescriptionHeader
    {
       PCAT_COMPAT = 0x1
    };
-};
+} __attribute__((packed));
 
 struct MadtInterruptController
 {
@@ -119,7 +119,7 @@ struct MadtLocalApic : MadtInterruptController
    uint8_t processorId;
    uint8_t apicId;
    uint32_t flags;
-};
+} __attribute__((packed));
 
 struct MadtIoApic : MadtInterruptController
 {
@@ -127,7 +127,7 @@ struct MadtIoApic : MadtInterruptController
    uint8_t reserved_;
    uint32_t ioApicAddress;
    uint32_t gsiBase;
-};
+} __attribute__((packed));
 
 struct MadtInputSourceOverride : MadtInterruptController
 {
@@ -135,20 +135,20 @@ struct MadtInputSourceOverride : MadtInterruptController
    uint8_t source;
    uint32_t gsi;
    uint16_t flags;
-};
+} __attribute__((packed));
 
 struct MadtNmiSource : MadtInterruptController
 {
    uint16_t flags;
    uint32_t gsi;
-};
+} __attribute__((packed));
 
 struct MadtLapicNmi : MadtInterruptController
 {
    uint8_t processorId;
    uint16_t flags;
    uint8_t lapicLint;
-};
+} __attribute__((packed));
 
 struct Rsdp
 {
