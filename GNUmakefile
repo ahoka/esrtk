@@ -80,7 +80,7 @@ CPPFLAGS+=	-DHAVE_STRLCAT=0 -DHAVE_STRSEP=0 -DHAVE_STRLCPY=0 -D__ELF__
 CFLAGS+=	$(CPPFLAGS)
 CXXFLAGS+=	$(CPPFLAGS)
 
-SRCDIR=		Supervisor CLibrary CxxLibrary Drivers Platform FileSystem Hal
+SRCDIR=		Supervisor CLibrary CxxLibrary Drivers Kernel FileSystem Hal
 TESTDIR=	Test
 
 CCFILES:=	$(shell $(FIND) $(SRCDIR) -name '*.cc')
@@ -139,7 +139,7 @@ depend: $(DFILES)
 
 kernel.elf: Loader/MultiLoader.o $(OFILES)
 	@echo Linking kernel executable
-	$(HIDE) $(LD) $(LDFLAGS) -T Platform/${PLATFORM}/linker.ld -o $@ $^
+	$(HIDE) $(LD) $(LDFLAGS) -T Kernel/${PLATFORM}/linker.ld -o $@ $^
 	@$(SIZE) $@
 
 kernel.img: kernel.elf
