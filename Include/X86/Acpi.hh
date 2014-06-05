@@ -1,6 +1,8 @@
 #ifndef ACPI_HH
 #define ACPI_HH
 
+#include <Driver/Driver.hh>
+
 #include <cstdint>
 #include <cstdio>
 #include <cstddef>
@@ -208,11 +210,21 @@ struct Rsdp
    }
 } __attribute__((packed));
 
-class Acpi
+class Acpi : Driver
 {
 public:
-   static Rsdp* findRsdp(char*, char*);
-   static void printAllDescriptors();
+   int probe();
+   bool init();
+   bool finalize();
+
+   const char* name() const;
+
+private:
+   Rsdp* findRsdp();
+   Rsdp* findRsdpSignature(char*, char*);
+   void printAllDescriptors();
+
+   Rsdp* rsdpM;
 };
 
 #endif

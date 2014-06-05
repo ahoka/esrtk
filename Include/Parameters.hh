@@ -11,7 +11,8 @@
 
 enum SystemConstants
 {
-   PathMax = 256
+   PathMax = 256,
+   CpuMax = 255
 };
 
 enum SystemParameters

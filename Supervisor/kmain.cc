@@ -28,7 +28,5 @@ kmain(void)
    // Call C++ constructors
    __cxaimpl_call_constructors();
 
-   Acpi::printAllDescriptors();
-
    Supervisor::run();
 }

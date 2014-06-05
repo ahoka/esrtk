@@ -11,8 +11,84 @@
 
 #include <X86/Acpi.hh>
 
+// Driver object
+Acpi acpi;
+//
+
+int
+Acpi::probe()
+{
+   if (findRsdp() != 0)
+   {
+      return 100;
+   }
+
+   return 0;
+}
+
+bool
+Acpi::init()
+{
+   rsdpM = findRsdp();
+   assert(rsdpM != 0);
+
+   printAllDescriptors();
+
+   return true;
+}
+
+bool
+Acpi::finalize()
+{
+   return true;
+}
+
+const char*
+Acpi::name() const
+{
+   return "acpi";
+}
+
+Rsdp*
+Acpi::findRsdp()
+{
+   Rsdp rsdpCopy;
+
+   uintptr_t ebdaAddress = Ebda::getEbda();
+
+   Debug::verbose("EBDA: %p\n", (void*)ebdaAddress);
+
+   char* ebda = (char* )Memory::mapRegion(ebdaAddress, ebdaAddress + 0x400);
+
+   Rsdp* rsdp = Acpi::findRsdpSignature(ebda, ebda + 0x400u);
+   if (rsdp == 0)
+   {
+      char* mem = (char* )Memory::mapRegion(X86_BIOS_ROM_START, X86_BIOS_ROM_SIZE);
+
+      rsdp = Acpi::findRsdpSignature(mem, mem + X86_BIOS_ROM_SIZE);
+      if (rsdp != 0)
+      {
+         Debug::info("RSDP found in EBDA at %p\n", (void*)((uintptr_t)rsdp - (uintptr_t)mem + 0x0e0000u));
+         memcpy(&rsdpCopy, rsdp, sizeof(Rsdp));
+         rsdp = &rsdpCopy;
+      }
+
+      Memory::unmapRegion((uintptr_t)mem, 0x20000);
+   }
+   else
+   {
+      Debug::info("RSDP found in ROM at %p\n", (void*)((uintptr_t)rsdp - (uintptr_t)ebda + ebdaAddress));
+      memcpy(&rsdpCopy, rsdp, sizeof(Rsdp));
+      rsdp = &rsdpCopy;
+   }
+
+   Memory::unmapRegion((uintptr_t)ebda, 0x400);
+
+   return rsdp;
+}
+
 Rsdp *
-Acpi::findRsdp(char* from, char* to)
+Acpi::findRsdpSignature(char* from, char* to)
 {
    for (char* mem = from; mem < to; mem += 16)
    {
@@ -167,56 +243,15 @@ void
 Acpi::printAllDescriptors()
 {
    uint32_t entries[256];
-   uintptr_t ebdaAddress;
-   Rsdp rsdpCopy;
 
-   ebdaAddress = Ebda::getEbda();
+   assert(rsdpM != 0);
 
-   Debug::verbose("EBDA: %p\n", (void*)ebdaAddress);
-
-   char* ebda = (char* )Memory::mapRegion(ebdaAddress, ebdaAddress + 0x400);
-
-   Rsdp* rsdp = Acpi::findRsdp(ebda, ebda + 0x400u);
-   if (rsdp == 0)
-   {
-      char* mem = (char* )Memory::mapRegion(X86_BIOS_ROM_START, X86_BIOS_ROM_SIZE);
-
-      rsdp = Acpi::findRsdp(mem, mem + X86_BIOS_ROM_SIZE);
-      if (rsdp != 0)
-      {
-         Debug::info("RSDP found in EBDA at %p\n", (void*)((uintptr_t)rsdp - (uintptr_t)mem + 0x0e0000u));
-         memcpy(&rsdpCopy, rsdp, sizeof(Rsdp));
-         rsdp = &rsdpCopy;
-      }
-
-      Memory::unmapRegion((uintptr_t)mem, 0x20000);
-   }
-   else
-   {
-      Debug::info("RSDP found in ROM at %p\n", (void*)((uintptr_t)rsdp - (uintptr_t)ebda + ebdaAddress));
-      memcpy(&rsdpCopy, rsdp, sizeof(Rsdp));
-      rsdp = &rsdpCopy;
-   }
-
-   Memory::unmapRegion((uintptr_t)ebda, 0x400);
-
-   if (rsdp == 0)
-   {
-      Debug::warning("ACPI RSDP not found.\n");
-      return;
-   }
-   else
-   {
-
-   }
-
-   Debug::verbose("\n");
-   rsdp->print();
+   rsdpM->print();
 
    Rsdt rsdt;
 
    Memory::readPhysicalMemory(static_cast<void*>(&rsdt),
-                              reinterpret_cast<const void*>(rsdp->rsdtAddress),
+                              reinterpret_cast<const void*>(rsdpM->rsdtAddress),
                               sizeof(rsdt));
 
    Debug::verbose("\n");
@@ -237,7 +272,7 @@ Acpi::printAllDescriptors()
    }
 
    Memory::readPhysicalMemory(static_cast<void*>(entries),
-                              reinterpret_cast<const void*>(rsdp->rsdtAddress + sizeof (DescriptionHeader)),
+                              reinterpret_cast<const void*>(rsdpM->rsdtAddress + sizeof (DescriptionHeader)),
                               sizeof (entries));
 
    DescriptionHeader ds;
