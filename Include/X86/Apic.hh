@@ -45,6 +45,7 @@ public:
    {
       SpuriousVectorMask = 0xff,
       ApicSoftwareEnable = (1 << 8),
+      ApicFocusDisabled = (1 << 9)
    };
 
    enum LvtDeliveryMode
@@ -86,6 +87,9 @@ public:
       ApicIsBsp = (1 << 1)
    };
 
+   uint32_t getLocalApicId();
+
+private:
    uint32_t createLocalVectorTable(LvtMask mask,
                                    LvtTriggerMode triggerMode,
                                    LvtPinPolarity polarity,
@@ -95,8 +99,8 @@ public:
    uint32_t createLocalVectorTable(LvtDeliveryMode deliveryMode,
                                    uint8_t vector);
 
-   uint32_t getLocalApicId();
-private:
+   void printLocalVectorTable(uint32_t lvt);
+
    void init();
 
    uint32_t apicAddress;

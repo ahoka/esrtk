@@ -109,18 +109,26 @@ Apic::init()
 	  (uint8_t)(version & 0xff),
 	  (uint32_t)((version >> 16) & 0x7f) + 1);
 
-   // virtual wire mode
+   // virtual wire mode?
    // outb(0x22, 0x70);
    // outb(0x23, 0x1);
 
-   // write32(LvtLint0, createLocalVectorTable(DeliveryModeExtInt, 0));
+   auto lint0 = read32(LvtLint0);
+   printf("LINT0: 0x%x\n", lint0);
+   printLocalVectorTable(lint0);
+
+   auto lint1 = read32(LvtLint1);
+   printf("LINT1: 0x%x\n", lint1);
+   printLocalVectorTable(lint1);
+
+//   write32(LvtLint0, createLocalVectorTable(DeliveryModeExtInt, 0));
 
    // XXX this should come from acpi
    write32(LvtLint1, createLocalVectorTable(DeliveryModeNmi, 0));
 
    uint32_t siv = read32(SpuriousInterruptVector);
    printf("APIC: Spurious Vector: %u\n", siv & SpuriousVectorMask);
-   write32(SpuriousInterruptVector, siv | ApicSoftwareEnable);
+   write32(SpuriousInterruptVector, siv | ApicSoftwareEnable | ApicFocusDisabled);
 
    enabled = true;
 
@@ -176,4 +184,19 @@ Apic::createLocalVectorTable(LvtDeliveryMode deliveryMode,
 {
    return createLocalVectorTable(NotMasked, Edge, ActiveHigh,
                                  deliveryMode, vector);
+}
+
+
+void
+Apic::printLocalVectorTable(uint32_t lvt)
+{
+   uint8_t mask = (lvt >> 15) & 0x1u;
+
+   uint8_t triggerMode = (lvt >> 14) & 0x1u;
+   uint8_t polarity = (lvt >> 12) & 0x1u;
+   uint8_t deliveryMode = (lvt >> 7) & 0x7u;
+   uint8_t vector = lvt & 0xff;
+
+   printf("LVT: Vector: %u, Deliv: %u, Pol: %u, TMode: %u, Masked: %u\n",
+          vector, deliveryMode, polarity, triggerMode, mask);
 }
