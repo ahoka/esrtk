@@ -28,7 +28,6 @@ namespace
    spinlock_softirq_t memoryMapLock;
 };
 
-
 void
 Memory::addMemoryMapEntry(uintptr_t start, size_t length)
 {
