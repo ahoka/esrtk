@@ -51,17 +51,22 @@ MemoryManager::allocateBackend(std::size_t size)
    std::size_t rsize = roundTo(size, PageSize);
 
    void* data;
+#if 1
    if (rsize == PageSize)
    {
       uintptr_t page = Memory::getPage();
       KASSERT(page != 0);
 
-      data = reinterpret_cast<void*>(Memory::mapPage(page));
+      data = reinterpret_cast<void*>(Memory::mapAnonymousPage(page));
    }
    else
    {
       data = reinterpret_cast<void*>(Memory::mapAnonymousRegion(rsize));
    }
+#else
+   // XXX DEBUG WHY THIS CRASHES
+   void* data = reinterpret_cast<void*>(Memory::mapAnonymousRegion(rsize));
+#endif
 
 #ifdef DEBUG
    printf("Allocating from backend: %p\n", data);

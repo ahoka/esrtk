@@ -95,7 +95,7 @@ Apic::init()
 
    printf("APIC: base address: 0x%x\n", apicAddress);
 
-   apicAddress = Memory::mapPage(apicAddress);
+   apicAddress = Memory::mapRegion(apicAddress, 4096u, Memory::MapUncacheable);
    KASSERT(apicAddress != 0);
 
    printf("APIC: CPU type: %s\n",

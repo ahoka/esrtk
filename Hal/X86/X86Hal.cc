@@ -4,9 +4,9 @@
 #include <X86/Processor.hh>
 
 bool
-Hal::mapPage(uintptr_t virt, uintptr_t phys)
+Hal::mapPage(uintptr_t virt, uintptr_t phys, int flags)
 {
-   return PageDirectory::mapPage(virt, phys);
+   return PageDirectory::mapPage(virt, phys, flags);
 }
 
 bool

@@ -347,19 +347,21 @@ PageDirectory::mapPage(uint32_t pageDirectoryBase, uint32_t pageTableBase,
    }
 
    unsigned int fl = Writable;
-   if (flags & Flags::Uncachable)
+   if (flags & Flags::Uncacheable)
    {
       fl |= DontCache;
    }
 
    if (flags & Flags::Lazy)
    {
-      *pte = (pAddress & ~0xfffu) | Lazy | fl;
+      fl |= Lazy;
    }
    else
    {
-      *pte = (pAddress & ~0xfffu) | Present | fl;
+      fl |= Present;
    }
+
+   *pte = (pAddress & ~0xfffu) | fl;
 
    invlpg(vAddress);
 

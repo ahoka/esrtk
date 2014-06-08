@@ -1,6 +1,8 @@
 #ifndef PAGECLUSTER_HH
 #define PAGECLUSTER_HH
 
+#include <cassert>
+
 class PageCluster
 {
 public:
@@ -19,9 +21,11 @@ public:
 
    void insert(PhysicalPage* page)
    {
-      KASSERT(page != 0);      
+      assert(page != 0);
 
       PhysicalPage* oldNext = head.next;
+
+      assert(oldNext != 0);
 
       page->next = head.next;
       head.next = page;
@@ -32,10 +36,13 @@ public:
 
    void remove(PhysicalPage* page)
    {
-      KASSERT(page != 0);
+      assert(page != 0);
 
       PhysicalPage* oldPrev = page->prev;
       PhysicalPage* oldNext = page->next;
+
+      assert(oldPrev != 0);
+      assert(oldNext != 0);
 
       oldPrev->next = oldNext;
       oldNext->prev = oldPrev;

@@ -11,7 +11,7 @@ namespace PageDirectory
       {
          None = 0,
          Lazy = (1 << 0),
-         Uncachable = (1 << 1)
+         Uncacheable = (1 << 1)
       };
    };
 

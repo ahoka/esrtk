@@ -32,6 +32,12 @@ struct InterruptFrame;
 
 namespace Memory
 {
+   enum Flags
+   {
+      MapLazy = (1 << 0),
+      MapUncacheable = (1 << 1)
+   };
+
    void init();
    bool handlePageFault(uintptr_t address, InterruptFrame* frame);
    void copyMemoryMap();
@@ -40,15 +46,15 @@ namespace Memory
    uintptr_t getPage();
    void putPage(uintptr_t paddr);
 
-   bool mapPage(uintptr_t vaddr, uintptr_t paddr);
-   uintptr_t mapPage(uintptr_t paddr);
+   bool mapPage(uintptr_t vaddr, uintptr_t paddr, int flags = 0);
+   uintptr_t mapAnonymousPage(uintptr_t paddr, int flags = 0);
    bool unmapPage(uintptr_t vaddr);
 
-   uintptr_t mapRegion(uintptr_t paddr, std::size_t size);
-   bool unmapRegion(uintptr_t paddr, std::size_t size);
-   uintptr_t mapAnonymousRegion(std::size_t size);
+   uintptr_t mapRegion(uintptr_t paddr, size_t size, int flags = 0);
+   bool unmapRegion(uintptr_t paddr, size_t size);
+   uintptr_t mapAnonymousRegion(size_t size, int flags = 0);
 
-   void* readPhysicalMemory(void* destination, const void* source, std::size_t size);
+   void* readPhysicalMemory(void* destination, const void* source, size_t size);
 
    bool createKernelStack(uintptr_t& start);
 };

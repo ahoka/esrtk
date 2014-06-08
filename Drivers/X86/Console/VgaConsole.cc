@@ -12,7 +12,8 @@ VgaConsole::VgaConsole()
      backgroundColor(BrightBlue),
      foregroundColor(White)
 {
-   vram_ = Memory::mapPage(0xb8000);
+   // TODO: MAP AS WC!
+   vram_ = Memory::mapAnonymousPage(0xb8000u);
    KASSERT(vram_ != 0);
 
    clearScreen();

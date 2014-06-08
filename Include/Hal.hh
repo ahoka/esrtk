@@ -8,7 +8,7 @@ using InterruptFlags = uint32_t;
 class Hal
 {
 public:
-   static bool mapPage(uintptr_t virt, uintptr_t phys);
+   static bool mapPage(uintptr_t virt, uintptr_t phys, int flags);
    static bool unmapPage(uintptr_t virt);
    static uintptr_t getPhysicalAddress(uintptr_t virt);
 

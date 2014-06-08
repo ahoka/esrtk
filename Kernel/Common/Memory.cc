@@ -12,6 +12,14 @@
 
 #include <cstring>
 
+#undef DEBUG
+
+#ifdef DEBUG
+# define D(x) x
+#else
+# define D(x)
+#endif
+
 namespace
 {
    uintptr_t heapEnd = HeapStart;
@@ -84,13 +92,11 @@ Memory::init()
       {
 	 if (freeStructures == 0)
 	 {
-#ifdef DEBUG
-	    printf("Allocating new page structure\n");
-#endif
+	    D(printf("Allocating new page structure\n"));
 	    //p = (PhysicalPage* )sbrk(PageSize)
 	    uintptr_t ppage = getPage();
 	    KASSERT(ppage != 0);
-	    p = (PhysicalPage* )mapPage(ppage); // XXX make a function for this
+	    p = (PhysicalPage* )mapAnonymousPage(ppage); // XXX make a function for this
 	    KASSERT(p != 0);
 	    freeStructures = PageSize / sizeof (PhysicalPage);
 	 }
@@ -98,16 +104,12 @@ Memory::init()
 	 p->init(addr);
 	 if ((addr >= KernelLoadAddress) && (addr < firstFreePage - KernelVirtualBase))
 	 {
-#ifdef DEBUG
-	    printf("Found used page: %p\n", (void* )addr);
-#endif
+	    D(printf("Found used page: %p\n", (void* )addr));
 	    usedPages.insert(p);
 	 }
 	 else
 	 {
-#ifdef DEBUG
-	    printf("Inserting free page: %p\n", (void* )addr);
-#endif
+	    D(printf("Inserting free page: %p\n", (void* )addr));
 	    freePages.insert(p);
 	 }
 
@@ -177,7 +179,7 @@ Memory::createKernelStack(uintptr_t& top)
    uintptr_t stackPage = getPage();
    KASSERT(stackPage != 0);
 
-   uintptr_t bottom = mapPage(stackPage);
+   uintptr_t bottom = mapAnonymousPage(stackPage);
    KASSERT(bottom != 0);
 
    top = bottom + PageSize;
@@ -193,9 +195,9 @@ Memory::createKernelStack(uintptr_t& top)
 #endif
 
 bool
-Memory::mapPage(uintptr_t address, uintptr_t phys)
+Memory::mapPage(uintptr_t address, uintptr_t phys, int flags)
 {
-   bool success = Hal::mapPage(address, phys);
+   bool success = Hal::mapPage(address, phys, flags);
 
    return success;
 }
@@ -212,7 +214,7 @@ Memory::unmapPage(uintptr_t page)
 // anonymous mapping of a physical page
 //
 uintptr_t
-Memory::mapPage(uintptr_t phys)
+Memory::mapAnonymousPage(uintptr_t phys, int flags)
 {
    spinlock_softirq_enter(&memoryMapLock);
 
@@ -229,7 +231,7 @@ Memory::mapPage(uintptr_t phys)
    }
 
 //   Debug::info("Mapping anonymous page: %p to %p\n", phys, mapEnd);
-   bool success = mapPage(virt, phys);
+   bool success = mapPage(virt, phys, flags);
    if (!success)
    {
       return 0;
@@ -240,7 +242,7 @@ Memory::mapPage(uintptr_t phys)
 
 // anonymous memory mapping
 //
-uintptr_t Memory::mapAnonymousRegion(std::size_t size)
+uintptr_t Memory::mapAnonymousRegion(size_t size, int flags)
 {
    std::size_t rsize = roundTo<uintptr_t>(size, PageSize);
 
@@ -263,7 +265,7 @@ uintptr_t Memory::mapAnonymousRegion(std::size_t size)
    {
       uintptr_t emptyPage = getPage();
       KASSERT(emptyPage != 0);
-      bool success = mapPage(vaddr, emptyPage);
+      bool success = mapPage(vaddr, emptyPage, flags);
       if (!success)
       {
          Debug::panic("mapRegion unsuccesful.");
@@ -277,13 +279,11 @@ uintptr_t Memory::mapAnonymousRegion(std::size_t size)
 
 // anonymous mapping of a memory region
 //
-uintptr_t Memory::mapRegion(uintptr_t paddr, std::size_t size)
+uintptr_t Memory::mapRegion(uintptr_t paddr, size_t size, int flags)
 {
    std::size_t rsize = roundTo<uintptr_t>(size, PageSize);
 
-#ifdef DEBUG
-   printf("Memory::mapRegion: %p-%p\n", (void*)paddr, (void*)(paddr + size));
-#endif
+   D(printf("Memory::mapRegion: %p-%p\n", (void*)paddr, (void*)(paddr + size)));
 
    spinlock_softirq_enter(&memoryMapLock);
 
@@ -306,7 +306,7 @@ uintptr_t Memory::mapRegion(uintptr_t paddr, std::size_t size)
 	page < firstPage + rsize;
 	page += PageSize, vaddr += PageSize)
    {
-      bool success = mapPage(vaddr, page);
+      bool success = mapPage(vaddr, page, flags);
       if (!success)
       {
 	 Debug::panic("mapRegion unsuccesful.");
@@ -343,6 +343,8 @@ Memory::unmapRegion(uintptr_t paddr, std::size_t size)
 uintptr_t
 Memory::getPage()
 {
+   D(printf("Memory::getPage\n"));
+
    uintptr_t address = 0;
 
    spinlock_softirq_enter(&pagesLock);
@@ -356,6 +358,8 @@ Memory::getPage()
 
    spinlock_softirq_exit(&pagesLock);
 
+   D(printf("Memory::getPage done: %p\n", (void*)address));
+
    return address;
 }
 
@@ -364,6 +368,8 @@ Memory::getPage()
 void
 Memory::putPage(uintptr_t address)
 {
+   D(printf("Memory::putPage: %p\n", (void*)address));
+
    spinlock_softirq_enter(&pagesLock);
 
    PhysicalPage* page = usedPages.find(address);

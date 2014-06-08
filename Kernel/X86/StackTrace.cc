@@ -13,6 +13,7 @@ StackTrace::printStackTrace(void* data)
 
    while (ebp != 0)
    {
+      printf("epb: %p\n", ebp);
       reg_t ip = *(ebp + 1);
 
       printf("  0x%lx\n", ip);

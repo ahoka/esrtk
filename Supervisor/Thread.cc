@@ -56,6 +56,8 @@ Thread::init()
    Hal::restoreLocalInterrupts(flags);
    KASSERT(success);
 
+   Debug::verbose("Thread's new stack is %p\n", (void*)kernelStack);
+
    if (success) {
       Scheduler::insert(this);
    }
