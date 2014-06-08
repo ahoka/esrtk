@@ -15,29 +15,69 @@
 
 //#define DEBUG
 
-static uint32_t*
-phystov(uint32_t* p)
+namespace PageDirectory
 {
-   return (uint32_t *)((uint32_t )p + KernelVirtualBase);
-}
+   enum
+   {
+      Present =		(1 << 0),
+      Writable =	(1 << 1),
+      User =		(1 << 2),
+      WriteThrough =	(1 << 3),
+      DontCache =	(1 << 4),
+      Accesses =	(1 << 5),
+      Size =		(1 << 6),
+      Global =		(1 << 7),
+      //
+      // Implementation dependent
+      //
+      Lazy =		(1 << 8)
+   };
 
-static uint32_t*
-vtophys(uint32_t* p)
-{
-   return (uint32_t *)((uint32_t )p - KernelVirtualBase);
-}
+   // for initial page directory
+   //
+   bool mapPage(uint32_t vAddress, uint32_t pAddress, uint32_t** pageDirectory);
+   bool unmapPage(uint32_t vAddress, uint32_t** pageDirectory);
 
-static void*
-vtophys(void* p)
-{
-   return (void* )((uint32_t )p - KernelVirtualBase);
-}
+   bool mapPage(uint32_t pageDirectoryBase, uint32_t pageTableBase,
+		       uint32_t vAddress, uint32_t pAddress, int flags);
 
-static uint32_t
-vtophys(uint32_t p)
+   bool mapSecondaryPage(uint32_t vAddress, uint32_t pAddress, int flags = 0);
+
+   uint32_t addressToPdeIndex(uint32_t address);
+   uint32_t addressToPteIndex(uint32_t address);
+
+   uint32_t* addressToPde(uint32_t address, uint32_t pageDirectoryBase);
+   uint32_t* addressToPte(uint32_t address, uint32_t pageTableBase);
+
+   uintptr_t createPageDirectory();
+};
+
+namespace
 {
-   return p - KernelVirtualBase;
-}
+   uint32_t*
+   phystov(uint32_t* p)
+   {
+      return (uint32_t *)((uint32_t )p + KernelVirtualBase);
+   }
+
+   uint32_t*
+   vtophys(uint32_t* p)
+   {
+      return (uint32_t *)((uint32_t )p - KernelVirtualBase);
+   }
+
+   void*
+   vtophys(void* p)
+   {
+      return (void* )((uint32_t )p - KernelVirtualBase);
+   }
+
+   uint32_t
+   vtophys(uint32_t p)
+   {
+      return p - KernelVirtualBase;
+   }
+};
 
 void
 PageDirectory::init()
@@ -296,7 +336,7 @@ PageDirectory::mapPage(uint32_t pageDirectoryBase, uint32_t pageTableBase,
 
    if (*pte & Present)
    {
-      if (flags & MapLazy)
+      if (flags & Flags::Lazy)
       {
 	 Debug::panic("Trying to lazy map the already used address %p\n", (void* )vAddress);
       }
@@ -306,13 +346,19 @@ PageDirectory::mapPage(uint32_t pageDirectoryBase, uint32_t pageTableBase,
       }
    }
 
-   if (flags & MapLazy)
+   unsigned int fl = Writable;
+   if (flags & Flags::Uncachable)
    {
-      *pte = (pAddress & ~0xfffu) | Lazy | Writable;
+      fl |= DontCache;
+   }
+
+   if (flags & Flags::Lazy)
+   {
+      *pte = (pAddress & ~0xfffu) | Lazy | fl;
    }
    else
    {
-      *pte = (pAddress & ~0xfffu) | Present | Writable;
+      *pte = (pAddress & ~0xfffu) | Present | fl;
    }
 
    invlpg(vAddress);
@@ -343,7 +389,6 @@ PageDirectory::unmapPage(uint32_t vAddress)
 #ifdef DEBUG
    printf("Unmapping page: %p\n", (void* )vAddress);
 #endif
-
 
    uint32_t* pde = addressToPde(vAddress, PageDirectoryBase);
 
