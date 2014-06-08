@@ -27,11 +27,7 @@ Memory::copyMemoryMap()
       if (map->type == MultibootStructure::MemoryMap::Available)
       {
          printf("Usable memory at %p-%p\n", (void *)map->address, (void *)(map->address + map->length));
-         KASSERT(memoryMapCount < MemoryMapMax);
-
-         memoryMap[memoryMapCount].address = (uintptr_t )map->address;
-         memoryMap[memoryMapCount].size = (std::size_t )map->length;
-         memoryMapCount++;
+         addMemoryMapEntry(map->address, map->length);
 
 	 foundUsableMemory = true;
       }
@@ -56,8 +52,9 @@ Memory::copyMemoryMap()
 
 
 bool
-Memory::handlePageFault(uintptr_t address, InterruptFrame* /*frame*/)
+Memory::handlePageFault(uintptr_t /*address*/, InterruptFrame* /*frame*/)
 {
+#ifdef HAS_HEAP
    if (address >= HeapStart && address < heapEnd)
    {
       uintptr_t pageAddress = address & ~PageMask;
@@ -75,6 +72,7 @@ Memory::handlePageFault(uintptr_t address, InterruptFrame* /*frame*/)
 
       return true;
    }
+#endif
 
 #if 0
    // this is an instant triple fault

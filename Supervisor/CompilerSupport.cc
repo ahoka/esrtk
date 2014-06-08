@@ -6,6 +6,16 @@
 
 #include <cstdint>
 
+extern void* __start_text;
+extern void* __end_text;
+extern void* __start_rodata;
+extern void* __end_rodata;
+extern void* __start_data;
+extern void* __end_data;
+extern void* __start_bss;
+extern void* __end_bss;
+extern void* __end_kernel;
+
 // a pure virtual function is called
 void
 __cxa_pure_virtual()

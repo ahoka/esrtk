@@ -30,42 +30,27 @@ enum
 
 struct InterruptFrame;
 
-class Memory
+namespace Memory
 {
-public:
-   static void init();
-   static bool handlePageFault(uintptr_t address, InterruptFrame* frame);
-   static void copyMemoryMap();
+   void init();
+   bool handlePageFault(uintptr_t address, InterruptFrame* frame);
+   void copyMemoryMap();
+   void addMemoryMapEntry(uintptr_t start, size_t length);
 
-   static uintptr_t getPage();
-   static void putPage(uintptr_t paddr);
+   uintptr_t getPage();
+   void putPage(uintptr_t paddr);
 
-   static bool mapPage(uintptr_t vaddr, uintptr_t paddr);
-   static uintptr_t mapPage(uintptr_t paddr);
-   static bool unmapPage(uintptr_t vaddr);
+   bool mapPage(uintptr_t vaddr, uintptr_t paddr);
+   uintptr_t mapPage(uintptr_t paddr);
+   bool unmapPage(uintptr_t vaddr);
 
-   static uintptr_t mapRegion(uintptr_t paddr, std::size_t size);
-   static bool unmapRegion(uintptr_t paddr, std::size_t size);
-   static uintptr_t mapAnonymousRegion(std::size_t size);
+   uintptr_t mapRegion(uintptr_t paddr, std::size_t size);
+   bool unmapRegion(uintptr_t paddr, std::size_t size);
+   uintptr_t mapAnonymousRegion(std::size_t size);
 
-   static void* readPhysicalMemory(void* destination, const void* source, std::size_t size);
+   void* readPhysicalMemory(void* destination, const void* source, std::size_t size);
 
-   static bool createKernelStack(uintptr_t& start);
-
-private:
-   Memory() = delete;
-
-   static spinlock_softirq_t memoryMapLock;
-   static uintptr_t heapEnd;
-   static uintptr_t stackEnd;
-   static uintptr_t mapEnd;
-
-   static spinlock_softirq_t pagesLock;
-   static PageCluster usedPages;
-   static PageCluster freePages;
-
-   static MemorySegment memoryMap[MemoryMapMax];
-   static unsigned int memoryMapCount;
+   bool createKernelStack(uintptr_t& start);
 };
 
 #endif

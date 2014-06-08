@@ -12,18 +12,32 @@
 
 #include <cstring>
 
-uintptr_t Memory::heapEnd = HeapStart;
-uintptr_t Memory::stackEnd = StackStart;
-uintptr_t Memory::mapEnd = MapStart;
+namespace
+{
+   uintptr_t heapEnd = HeapStart;
+   uintptr_t stackEnd = StackStart;
+   uintptr_t mapEnd = MapStart;
 
-MemorySegment Memory::memoryMap[MemoryMapMax];
-unsigned int Memory::memoryMapCount = 0;
+   MemorySegment memoryMap[MemoryMapMax];
+   unsigned int memoryMapCount = 0;
 
-PageCluster Memory::usedPages;
-PageCluster Memory::freePages;
+   PageCluster usedPages;
+   PageCluster freePages;
 
-spinlock_softirq_t Memory::pagesLock;
-spinlock_softirq_t Memory::memoryMapLock;
+   spinlock_softirq_t pagesLock;
+   spinlock_softirq_t memoryMapLock;
+};
+
+
+void
+Memory::addMemoryMapEntry(uintptr_t start, size_t length)
+{
+   KASSERT(memoryMapCount < MemoryMapMax);
+   
+   memoryMap[memoryMapCount].address = start;
+   memoryMap[memoryMapCount].size = length;
+   memoryMapCount++;
+}
 
 void
 Memory::init()
