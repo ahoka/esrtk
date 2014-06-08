@@ -26,8 +26,8 @@ private:
       Initialized
    };
    
-   State state;
-   Driver* next;
+   State stateM;
+   Driver* nextM;
 
    friend class DriverManager;
 };

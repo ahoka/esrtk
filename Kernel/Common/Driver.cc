@@ -3,8 +3,8 @@
 #include <cstdio>
 
 Driver::Driver() : 
-   state(State::Uninitalized),
-   next(0)
+   stateM(State::Uninitalized),
+   nextM(0)
 {
    DriverManager::registerDriver(this);
 }
@@ -12,7 +12,7 @@ Driver::Driver() :
 Driver::~Driver()
 {
    // dummy
-   state = State::Uninitalized;
+   stateM = State::Uninitalized;
 }
 
 int

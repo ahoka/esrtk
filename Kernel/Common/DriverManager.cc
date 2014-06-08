@@ -12,7 +12,7 @@ DriverManager::registerDriver(Driver* driver)
    printf("DriverManager: registering driver %p\n", driver);
 
 //   lock.enter();
-   driver->next = driverList;
+   driver->nextM = driverList;
    driverList = driver;
 //   lock.exit();
 
@@ -31,12 +31,12 @@ DriverManager::probeAndInit()
    Driver* driver = driverList;
    while (driver != 0)
    {
-      if (driver->probe() > 0)
+      if (driver->stateM == Driver::State::Uninitalized && driver->probe() > 0)
       {
          printf("Initalizing driver %s\n", driver->name());
          driver->init();
-         driver->state = Driver::State::Initialized;
+         driver->stateM = Driver::State::Initialized;
       }
-      driver = driver->next;
+      driver = driver->nextM;
    }
 }
