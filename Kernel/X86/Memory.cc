@@ -3,25 +3,28 @@
 
 #include <cstring>
 
-extern Multiboot* mbd;
+using Multiboot::MultibootStructure;
 
 // must be called when in 1:1 mapping
 //
 void
 Memory::copyMemoryMap()
 {
-   Multiboot* mb = mbd;
+   const MultibootStructure* mb = Multiboot::getMultibootStructure();
    bool foundUsableMemory = false;
 
-   printf("Parsing multiboot (%p) memory map: 0x%0x-0x%0x\n", mbd,
+   // XXX does not belong here
+   mb->print();
+
+   printf("Parsing multiboot (%p) memory map: 0x%0x-0x%0x\n", mb,
 	  mb->memoryMapAddress,
 	  mb->memoryMapAddress + mb->memoryMapLength);
 
-   for (Multiboot::MemoryMap *map = (Multiboot::MemoryMap *)mb->memoryMapAddress;
-        map < (Multiboot::MemoryMap *)(mb->memoryMapAddress + mb->memoryMapLength);
+   for (MultibootStructure::MemoryMap *map = (MultibootStructure::MemoryMap *)mb->memoryMapAddress;
+        map < (MultibootStructure::MemoryMap *)(mb->memoryMapAddress + mb->memoryMapLength);
         map++)
    {
-      if (map->type == Multiboot::MemoryMap::Available)
+      if (map->type == MultibootStructure::MemoryMap::Available)
       {
          printf("Usable memory at %p-%p\n", (void *)map->address, (void *)(map->address + map->length));
          KASSERT(memoryMapCount < MemoryMapMax);
@@ -32,15 +35,15 @@ Memory::copyMemoryMap()
 
 	 foundUsableMemory = true;
       }
-      else if (map->type == Multiboot::MemoryMap::Reserved)
+      else if (map->type == MultibootStructure::MemoryMap::Reserved)
       {
          printf("Reserved memory at %p-%p\n", (void *)map->address, (void *)(map->address + map->length));
       }
-      else if (map->type == Multiboot::MemoryMap::Acpi)
+      else if (map->type == MultibootStructure::MemoryMap::Acpi)
       {
          printf("ACPI memory at %p-%p\n", (void *)map->address, (void *)(map->address + map->length));
       }
-      else if (map->type == Multiboot::MemoryMap::Nvs)
+      else if (map->type == MultibootStructure::MemoryMap::Nvs)
       {
          printf("NVS memory at %p-%p\n", (void *)map->address, (void *)(map->address + map->length));
       }

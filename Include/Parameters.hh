@@ -12,6 +12,7 @@
 enum SystemConstants
 {
    PathMax = 256,
+   BootCommandLineMax = 256,
    CpuMax = 255
 };
 

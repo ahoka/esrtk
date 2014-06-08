@@ -12,13 +12,6 @@
 
 #include <cstring>
 
-//#define DEBUG
-
-//extern uintptr_t initial_stack;
-
-// used in Multiboot.S
-extern uintptr_t thread_zero_stack;
-
 uintptr_t Memory::heapEnd = HeapStart;
 uintptr_t Memory::stackEnd = StackStart;
 uintptr_t Memory::mapEnd = MapStart;
@@ -110,12 +103,7 @@ Memory::init()
       }
    }
 
-   // map memory for the thread0 kernel stack
-   //
-//   bool success = createKernelStack(thread_zero_stack);
-
    uintptr_t start = stackEnd;
-
    printf("Creating initial kernel stack: %p-%p (%u)\n", (void* )start, (void* )(start - StackSize), StackSize);
 
    for (uintptr_t stackAddress = (start - StackSize);

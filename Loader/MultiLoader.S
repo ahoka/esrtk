@@ -90,6 +90,7 @@ hiloader:
         pushl %eax
         popfl
 
+        call copy_multiboot_structure
 	call supervisor_init
 
 	// set up the real kernel stack now that we have paging

@@ -6,7 +6,9 @@
 
 #include <cstring>
 
-extern Multiboot* mbd;
+using namespace Multiboot;
+
+extern MultibootStructure* mbd;
 
 uintptr_t __start_modules = ~0u;
 uintptr_t __end_modules = 0u;
@@ -23,7 +25,7 @@ void
 Modules::init()
 {
    // this should be a MultibootModules::init() function
-   if (mbd->flags & Multiboot::ModulesValid)
+   if (mbd->flags & MultibootStructure::ModulesValid)
    {
       int count = 0;
       for (unsigned int i = 0; i < mbd->modulesCount; i++)
