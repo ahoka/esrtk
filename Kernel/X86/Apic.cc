@@ -124,7 +124,7 @@ Apic::init()
 //   write32(LvtLint0, createLocalVectorTable(DeliveryModeExtInt, 0));
 
    // XXX this should come from acpi
-   write32(LvtLint1, createLocalVectorTable(DeliveryModeNmi, 0));
+   write32(LvtLint1, createLocalVectorTable(Lvt::DeliveryModeNmi, 0));
 
    uint32_t siv = read32(SpuriousInterruptVector);
    printf("APIC: Spurious Vector: %u\n", siv & SpuriousVectorMask);
@@ -136,13 +136,22 @@ Apic::init()
    write32(Eoi, 0x00);
 }
 
-void Apic::endOfInterrupt()
+void
+Apic::endOfInterrupt()
 {
    // non specific now
    if (enabled)
    {
       write32(Eoi, 0x00);
    }
+}
+
+int
+Apic::initOtherProcessors(uintptr_t vector)
+{
+   assert(vector < 0x100000);
+
+   return 0;
 }
 
 void
@@ -160,10 +169,10 @@ Apic::getLocalApicId()
 }
 
 uint32_t
-Apic::createLocalVectorTable(LvtMask mask,
-                             LvtTriggerMode triggerMode,
-                             LvtPinPolarity polarity,
-                             LvtDeliveryMode deliveryMode,
+Apic::createLocalVectorTable(Lvt::Mask mask,
+                             Lvt::TriggerMode triggerMode,
+                             Lvt::PinPolarity polarity,
+                             Lvt::DeliveryMode deliveryMode,
                              uint8_t vector)
 {
    uint32_t lvt = 0;
@@ -179,10 +188,10 @@ Apic::createLocalVectorTable(LvtMask mask,
 
 // ISA-like
 uint32_t
-Apic::createLocalVectorTable(LvtDeliveryMode deliveryMode,
+Apic::createLocalVectorTable(Lvt::DeliveryMode deliveryMode,
                              uint8_t vector)
 {
-   return createLocalVectorTable(NotMasked, Edge, ActiveHigh,
+   return createLocalVectorTable(Lvt::NotMasked, Lvt::Edge, Lvt::ActiveHigh,
                                  deliveryMode, vector);
 }
 

@@ -27,9 +27,17 @@ Memory::copyMemoryMap()
       if (map->type == MultibootStructure::MemoryMap::Available)
       {
          printf("Usable memory at %p-%p\n", (void *)map->address, (void *)(map->address + map->length));
-         addMemoryMapEntry(map->address, map->length);
-
-	 foundUsableMemory = true;
+         if (map->address + map->length <= 0x100000)
+         {
+            // dont add low mem to the pool
+            // we need it for special porpuses, like startup code for APs
+            printf("Skipping Low Memory...\n");
+         }
+         else
+         {
+            addMemoryMapEntry(map->address, map->length);
+            foundUsableMemory = true;
+         }
       }
       else if (map->type == MultibootStructure::MemoryMap::Reserved)
       {

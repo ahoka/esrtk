@@ -48,37 +48,40 @@ public:
       ApicFocusDisabled = (1 << 9)
    };
 
-   enum LvtDeliveryMode
+   struct Lvt
    {
-      DeliveryModeFixed = 0,
-      DeliveryModeSmi = 2,
-      DeliveryModeNmi = 4,
-      DeliveryModeInit = 5,
-      DeliveryModeExtInt = 7
-   };
+      enum DeliveryMode
+      {
+         DeliveryModeFixed = 0,
+         DeliveryModeSmi = 2,
+         DeliveryModeNmi = 4,
+         DeliveryModeInit = 5,
+         DeliveryModeExtInt = 7
+      };
 
-   enum LvtDeliverytStatus
-   {
-      DeliveryStatusIdle = 0,
-      DeliveryStatusSendPending = 1
-   };
+      enum DeliverytStatus
+      {
+         DeliveryStatusIdle = 0,
+         DeliveryStatusSendPending = 1
+      };
 
-   enum LvtMask
-   {
-      NotMasked = 0,
-      Masked = 1
-   };
+      enum Mask
+      {
+         NotMasked = 0,
+         Masked = 1
+      };
 
-   enum LvtTriggerMode
-   {
-      Edge = 0,
-      Level = 1
-   };
+      enum TriggerMode
+      {
+         Edge = 0,
+         Level = 1
+      };
 
-   enum LvtPinPolarity
-   {
-      ActiveHigh = 0,
-      ActiveLow = 1
+      enum PinPolarity
+      {
+         ActiveHigh = 0,
+         ActiveLow = 1
+      };
    };
 
    enum ApicFlags
@@ -87,16 +90,74 @@ public:
       ApicIsBsp = (1 << 1)
    };
 
+   enum
+   {
+      InternalApicMinVersion = 0x10
+   };
+
+   struct Icr
+   {
+      enum DeliveryMode
+      {
+         Fixed = 0x0 << 8,
+         LowestPriority = 0x1 << 8,
+         SMI = 0x2 << 8,
+         Reserved_0 = 0x3 << 8,
+         NMI = 0x4 << 8,
+         INIT = 0x5 << 8,
+         StartUp = 0x6 << 8,
+         Reserved_1 = 0x7 << 8
+      };
+
+      enum DestinationMode
+      {
+         Physical = 0,
+         Logical = 1 << 11
+      };
+
+      enum DeliveryStatus
+      {
+         Idle = 0,
+         SendPending = 1 << 12
+      };
+
+      enum Level
+      {
+         DeAssert = 0,
+         Assert = 1 << 14
+      };
+
+      enum TriggerMode
+      {
+         Edge = 0,
+         Level = 1 << 15
+      };
+
+      enum DestinationShorthand
+      {
+         NoShorthand = 0x0 << 18,
+         Self = 0x1 << 18,
+         AllIncludingSelf = 0x2 << 18,
+         AllExcludingSelf = 0x3 << 18
+      };
+
+      enum
+      {
+         DestinationFieldShift = 56
+      };
+   };
+
    uint32_t getLocalApicId();
+   int initOtherProcessors(uintptr_t vector);
 
 private:
-   uint32_t createLocalVectorTable(LvtMask mask,
-                                   LvtTriggerMode triggerMode,
-                                   LvtPinPolarity polarity,
-                                   LvtDeliveryMode deliveryMode,
+   uint32_t createLocalVectorTable(Lvt::Mask mask,
+                                   Lvt::TriggerMode triggerMode,
+                                   Lvt::PinPolarity polarity,
+                                   Lvt::DeliveryMode deliveryMode,
                                    uint8_t vector);
 
-   uint32_t createLocalVectorTable(LvtDeliveryMode deliveryMode,
+   uint32_t createLocalVectorTable(Lvt::DeliveryMode deliveryMode,
                                    uint8_t vector);
 
    void printLocalVectorTable(uint32_t lvt);
