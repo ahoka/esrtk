@@ -5,6 +5,9 @@
 #include <X86/Ebda.hh>
 #include <X86/Bios.hh>
 
+#include <X86/LocalApic.hh>
+#include <X86/IoApic.hh>
+
 #include <cstring>
 #include <cstdio>
 #include <cassert>
@@ -157,20 +160,19 @@ static void printMadtIntiFlags(uint16_t flags)
    Debug::verbose("Trigger mode: %s, %s\n", pol, tm);
 }
 
-static void readMadt(uintptr_t madtAddress, size_t size)
+static void
+readMadt(Madt* madt, size_t size)
 {
-   auto start = Memory::mapRegion(madtAddress, madtAddress + size);
-
-   Madt* madt = (Madt* )start;
-
    Debug::verbose("LAPIC Address: %p\n", (void*)madt->lapicAddress);
    Debug::verbose("Flags: 0x%x\n", madt->flags);
+
+   new LocalApic(madt->lapicAddress);
 
    static_assert(sizeof(Madt) == 44, "MADT struct size is incorrent");
    auto offset = sizeof(Madt);
    while (offset < size)
    {
-      auto controller = (MadtInterruptController*)(start + offset);
+      auto controller = (MadtInterruptController*)((uintptr_t)madt + offset);
 
       if (controller->type == MadtInterruptController::Lapic)
       {
@@ -185,6 +187,7 @@ static void readMadt(uintptr_t madtAddress, size_t size)
       else if (controller->type == MadtInterruptController::IoApic)
       {
          auto ioapic = (MadtIoApic*)controller;
+         assert(ioapic->length == 12);
 
          Debug::verbose("I/O APIC: Length: %zu, I/O Apic Id: %u, I/O Apic Address: %p, GSI Base: %u\n",
                 (size_t)ioapic->length,
@@ -192,7 +195,7 @@ static void readMadt(uintptr_t madtAddress, size_t size)
                 (void*)ioapic->ioApicAddress,
                 ioapic->gsiBase);
 
-         assert(ioapic->length == 12);
+         new IoApic(ioapic->ioApicAddress, ioapic->ioApicId);
       }
       else if (controller->type == MadtInterruptController::Override)
       {
@@ -235,8 +238,6 @@ static void readMadt(uintptr_t madtAddress, size_t size)
    }
 
    Debug::verbose("\n");
-
-   Memory::unmapRegion((uintptr_t)madt, (uintptr_t)madt + size);
 }
 
 void
@@ -287,7 +288,12 @@ Acpi::printAllDescriptors()
       if (ds.signature[0] == 'A' && ds.signature[1] == 'P' &&
           ds.signature[2] == 'I' && ds.signature[3] == 'C')
       {
-         readMadt(entries[i], ds.length);
+         Madt* madt = (Madt*)Memory::mapRegion(entries[i], ds.length + sizeof(Madt));
+
+         printf("mapped to %p\n", (void*)madt);
+         readMadt(madt, ds.length);
+
+         Memory::unmapRegion((uintptr_t)madt, ds.length + sizeof(Madt));
       }
    }
 }

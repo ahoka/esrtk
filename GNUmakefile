@@ -63,6 +63,7 @@ endif
 CXXFLAGS+=	-std=c++11
 
 CPPFLAGS+=	-I$(BUILD_ROOT)/Include
+CPPFLAGS+=	-I$(BUILD_ROOT)/Include/Kernel
 CPPFLAGS+=	-I$(BUILD_ROOT)/CInclude
 CPPFLAGS+=	-I$(BUILD_ROOT)/CxxInclude
 CPPFLAGS+=	-I$(BUILD_ROOT)/Templates

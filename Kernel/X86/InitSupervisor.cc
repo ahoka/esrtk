@@ -3,7 +3,7 @@
 #include <Modules.hh>
 #include <Thread.hh>
 
-#include <X86/Apic.hh>
+//#include <X86/LocalApic.hh>
 #include <X86/PageDirectory.hh>
 #include <X86/Idt.hh>
 #include <X86/Gdt.hh>

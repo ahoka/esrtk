@@ -1,4 +1,4 @@
-#include <X86/Apic.hh>
+#include <X86/LocalApic.hh>
 
 #include <Debug.hh>
 #include <Memory.hh>
@@ -9,46 +9,55 @@
 
 #include <cstdio>
 
-Apic apic;
-
-Apic::Apic()
+LocalApic::LocalApic(uintptr_t physicalAddress)
+   : physicalAddressM(physicalAddress)
 {
-   printf("Initializing APIC.\n");
    init();
+
+   idM = (read32(0x20) >> 24) & 0xf;
+
+   printf("Local APIC at %p, Id: %u\n", (void*)physicalAddressM, idM);
+}
+
+LocalApic::LocalApic(uintptr_t physicalAddress, uint32_t id)
+   : physicalAddressM(physicalAddress),
+     idM(id)
+{
+   printf("Local APIC at %p, Id: %u\n", (void*)physicalAddressM, idM);
 }
 
 uint32_t
-Apic::read32(uint32_t offset)
+LocalApic::read32(uint32_t offset)
 {
-   return *(volatile uint32_t *)(apicAddress + offset);
+   return *(volatile uint32_t *)(apicAddressM + offset);
 }
 
 uint64_t
-Apic::read64(uint32_t offset)
+LocalApic::read64(uint32_t offset)
 {
    uint32_t a, b;
 
-   a = *(volatile uint32_t *)(apicAddress + offset);
-   b = *(volatile uint32_t *)(apicAddress + offset + 4);
+   a = *(volatile uint32_t *)(apicAddressM + offset);
+   b = *(volatile uint32_t *)(apicAddressM + offset + 4);
 
    return (uint64_t )a | ((uint64_t )b << 32);
 }
 
 void
-Apic::write32(uint32_t offset, uint32_t value)
+LocalApic::write32(uint32_t offset, uint32_t value)
 {
-   *(volatile uint32_t *)(apicAddress + offset) = value;
+   *(volatile uint32_t *)(apicAddressM + offset) = value;
 }
 
 void
-Apic::write64(uint32_t offset, uint64_t value)
+LocalApic::write64(uint32_t offset, uint64_t value)
 {
-   *(volatile uint32_t *)(apicAddress + offset) = value;
-   *(volatile uint32_t *)(apicAddress + offset + 4) = value >> 32;
+   *(volatile uint32_t *)(apicAddressM + offset) = value;
+   *(volatile uint32_t *)(apicAddressM + offset + 4) = value >> 32;
 }
 
 int
-Apic::probe()
+LocalApic::probe()
 {
    cpuid_t id;
 
@@ -63,7 +72,7 @@ Apic::probe()
 }
 
 void
-Apic::init()
+LocalApic::init()
 {
    cpuid_t id;
 
@@ -76,32 +85,32 @@ Apic::init()
    else
    {
       printf("APIC: not found\n");
-      enabled = false;
+      enabledM = false;
       return;
    }
 
    uint64_t msr = x86_rdmsr(IA32_APIC_BASE);
    
-   apicAddress = msr & IA32_APIC_BASE_ADDRESS_MASK;
+   apicAddressM = msr & IA32_APIC_BASE_ADDRESS_MASK;
 
    if (msr & IA32_APIC_BASE_BSP)
    {
-      flags |= ApicIsBsp;
+      flagsM |= ApicIsBsp;
    }
    if (msr & IA32_APIC_BASE_EN)
    {
-      flags |= ApicIsEnabled;
+      flagsM |= ApicIsEnabled;
    }
 
-   printf("APIC: base address: 0x%x\n", apicAddress);
+   printf("APIC: base address: 0x%x\n", apicAddressM);
 
-   apicAddress = Memory::mapRegion(apicAddress, 4096u, Memory::MapUncacheable);
-   KASSERT(apicAddress != 0);
+   apicAddressM = Memory::mapRegion(apicAddressM, 4096u, Memory::MapUncacheable);
+   KASSERT(apicAddressM != 0);
 
    printf("APIC: CPU type: %s\n",
-          (flags & ApicIsBsp) ? "BSP" : "APU");
+          (flagsM & ApicIsBsp) ? "BSP" : "APU");
    printf("APIC: state: %s\n",
-          (flags & ApicIsEnabled) ? "enabled" : "disabled");
+          (flagsM & ApicIsEnabled) ? "enabledM" : "disabled");
    printf("APIC: LAPIC Id: %u\n", getLocalApicId());
 
    uint64_t version = read32(LocalApicVersion);
@@ -130,24 +139,24 @@ Apic::init()
    printf("APIC: Spurious Vector: %u\n", siv & SpuriousVectorMask);
    write32(SpuriousInterruptVector, siv | ApicSoftwareEnable | ApicFocusDisabled);
 
-   enabled = true;
+   enabledM = true;
 
    // EOI
    write32(Eoi, 0x00);
 }
 
 void
-Apic::endOfInterrupt()
+LocalApic::endOfInterrupt()
 {
    // non specific now
-   if (enabled)
+   if (enabledM)
    {
       write32(Eoi, 0x00);
    }
 }
 
 int
-Apic::initOtherProcessors(uintptr_t vector)
+LocalApic::initOtherProcessors(uintptr_t vector)
 {
    assert(vector < 0x100000);
 
@@ -155,21 +164,21 @@ Apic::initOtherProcessors(uintptr_t vector)
 }
 
 void
-Apic::printInformation()
+LocalApic::printInformation()
 {
 }
 
 uint32_t
-Apic::getLocalApicId()
+LocalApic::getLocalApicId()
 {
-   uint32_t apicId = apic.read32(0x20);
+   uint32_t apicId = read32(0x20);
 
    // XXX
    return (apicId >> 24) & 0xf;
 }
 
 uint32_t
-Apic::createLocalVectorTable(Lvt::Mask mask,
+LocalApic::createLocalVectorTable(Lvt::Mask mask,
                              Lvt::TriggerMode triggerMode,
                              Lvt::PinPolarity polarity,
                              Lvt::DeliveryMode deliveryMode,
@@ -188,7 +197,7 @@ Apic::createLocalVectorTable(Lvt::Mask mask,
 
 // ISA-like
 uint32_t
-Apic::createLocalVectorTable(Lvt::DeliveryMode deliveryMode,
+LocalApic::createLocalVectorTable(Lvt::DeliveryMode deliveryMode,
                              uint8_t vector)
 {
    return createLocalVectorTable(Lvt::NotMasked, Lvt::Edge, Lvt::ActiveHigh,
@@ -197,7 +206,7 @@ Apic::createLocalVectorTable(Lvt::DeliveryMode deliveryMode,
 
 
 void
-Apic::printLocalVectorTable(uint32_t lvt)
+LocalApic::printLocalVectorTable(uint32_t lvt)
 {
    uint8_t mask = (lvt >> 15) & 0x1u;
 

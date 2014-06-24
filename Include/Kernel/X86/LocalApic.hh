@@ -1,12 +1,13 @@
-#ifndef APIC_HH
-#define APIC_HH
+#ifndef LOCALAPIC_HH
+#define LOCALAPIC_HH
 
 #include <stdint.h>
 
-class Apic
+class LocalApic
 {
 public:
-   Apic();
+   LocalApic(uintptr_t physicalAddress);
+   LocalApic(uintptr_t physicalAddress, uint32_t id);
 
    void printInformation();
    int probe();
@@ -164,12 +165,13 @@ private:
 
    void init();
 
-   uint32_t apicAddress;
-   uint32_t flags;
+   uintptr_t apicAddressM;
+   uintptr_t physicalAddressM;
 
-   bool enabled;
+   uint32_t idM;
+   uint32_t flagsM;
+
+   bool enabledM;
 };
-
-extern Apic apic;
 
 #endif
