@@ -281,9 +281,12 @@ uintptr_t Memory::mapAnonymousRegion(size_t size, int flags)
 //
 uintptr_t Memory::mapRegion(uintptr_t paddr, size_t size, int flags)
 {
-   std::size_t rsize = roundTo<uintptr_t>(size, PageSize);
+   uintptr_t firstPage = roundDown(paddr, PageSize);
+   uintptr_t lastPage = roundTo(paddr + size, PageSize);
+   size_t rsize = lastPage - firstPage;
 
    D(printf("Memory::mapRegion: %p-%p\n", (void*)paddr, (void*)(paddr + size)));
+   D(printf("Memory::mapRegion: mapping: %p-%p (%zu)\n", (void*)firstPage, (void*)lastPage, rsize));
 
    spinlock_softirq_enter(&memoryMapLock);
 
@@ -292,7 +295,6 @@ uintptr_t Memory::mapRegion(uintptr_t paddr, size_t size, int flags)
 
    spinlock_softirq_exit(&memoryMapLock);
 
-   uintptr_t firstPage = roundDown(paddr, PageSize);
    uintptr_t offset = paddr - firstPage;
 
    if (vaddr <= (uintptr_t)&__end_kernel)
@@ -302,9 +304,7 @@ uintptr_t Memory::mapRegion(uintptr_t paddr, size_t size, int flags)
       Debug::panic("Memory::mapRegion: Kernel map namespace exhausted.");
    }
 
-   for (uintptr_t page = firstPage;
-	page < firstPage + rsize;
-	page += PageSize, vaddr += PageSize)
+   for (uintptr_t page = firstPage; page != lastPage; page += PageSize, vaddr += PageSize)
    {
       bool success = mapPage(vaddr, page, flags);
       if (!success)
