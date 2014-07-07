@@ -130,11 +130,6 @@ LocalApic::init()
    printf("LINT1: 0x%x\n", lint1);
    printLocalVectorTable(lint1);
 
-//   write32(LvtLint0, createLocalVectorTable(DeliveryModeExtInt, 0));
-
-   // XXX this should come from acpi
-   write32(LvtLint1, createLocalVectorTable(Lvt::DeliveryModeNmi, 0));
-
    uint32_t siv = read32(SpuriousInterruptVector);
    printf("APIC: Spurious Vector: %u\n", siv & SpuriousVectorMask);
    write32(SpuriousInterruptVector, siv | ApicSoftwareEnable | ApicFocusDisabled);
@@ -144,6 +139,17 @@ LocalApic::init()
    // EOI
    write32(Eoi, 0x00);
 }
+
+#if 0
+void
+LocalApic::setLocalInt(int pin)
+{
+//   write32(LvtLint0, createLocalVectorTable(DeliveryModeExtInt, 0));
+   
+   // XXX this should come from acpi
+   write32(LvtLint1, createLocalVectorTable(Lvt::DeliveryModeNmi, 0));
+}
+#endif
 
 void
 LocalApic::endOfInterrupt()
