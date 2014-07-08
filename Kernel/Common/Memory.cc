@@ -244,7 +244,7 @@ Memory::mapAnonymousPage(uintptr_t phys, int flags)
 //
 uintptr_t Memory::mapAnonymousRegion(size_t size, int flags)
 {
-   std::size_t rsize = roundTo<uintptr_t>(size, PageSize);
+   size_t rsize = roundTo<uintptr_t>(size, PageSize);
 
    spinlock_softirq_enter(&memoryMapLock);
 
@@ -253,7 +253,6 @@ uintptr_t Memory::mapAnonymousRegion(size_t size, int flags)
 
    spinlock_softirq_exit(&memoryMapLock);
 
-
    if (vaddr <= (uintptr_t)&__end_kernel)
 //   if (vaddr <= heapEnd)
    {
@@ -261,11 +260,11 @@ uintptr_t Memory::mapAnonymousRegion(size_t size, int flags)
       Debug::panic("Memory::mapAnonymousRegion: Kernel map name space exhausted.");
    }
 
-   for (std::size_t i = 0; i < rsize / PageSize; i++, vaddr += PageSize)
+   for (size_t page = 0; page < rsize; page += PageSize)
    {
       uintptr_t emptyPage = getPage();
       KASSERT(emptyPage != 0);
-      bool success = mapPage(vaddr, emptyPage, flags);
+      bool success = mapPage(vaddr + page, emptyPage, flags);
       if (!success)
       {
          Debug::panic("mapRegion unsuccesful.");
@@ -274,7 +273,7 @@ uintptr_t Memory::mapAnonymousRegion(size_t size, int flags)
       }
    }
 
-   return mapEnd + rsize;
+   return vaddr;
 }
 
 // anonymous mapping of a memory region
@@ -321,12 +320,10 @@ uintptr_t Memory::mapRegion(uintptr_t paddr, size_t size, int flags)
 bool
 Memory::unmapRegion(uintptr_t paddr, std::size_t size)
 {
-   std::size_t rsize = roundTo<uintptr_t>(size, PageSize);
    uintptr_t firstPage = roundDown(paddr, PageSize);
+   uintptr_t lastPage = roundTo(paddr + size, PageSize);
 
-   for (uintptr_t page = firstPage;
-	page < firstPage + rsize;
-	page += PageSize)
+   for (uintptr_t page = firstPage; page != lastPage; page += PageSize)
    {
       bool success = unmapPage(page);
       if (!success)
