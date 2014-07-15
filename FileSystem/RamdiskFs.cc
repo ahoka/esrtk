@@ -30,3 +30,9 @@ RamdiskFs::stat(const char* /*path*/, Stats& stat)
 
    return ErrorCode::Ok;
 }
+
+FileSystem::ErrorCode
+RamdiskFs::root(Node**)
+{
+   return ErrorCode::NoEntity;
+}

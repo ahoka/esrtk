@@ -11,6 +11,7 @@ class RamdiskFs : public Vfs::FileSystem
    ErrorCode mount(const char* path);
    ErrorCode umount(const char* path);
    ErrorCode stat(const char* path, Vfs::Stats&);
+   ErrorCode root(Vfs::Node**);
 };
 
 #endif
