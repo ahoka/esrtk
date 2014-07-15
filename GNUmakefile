@@ -1,4 +1,4 @@
-# Makefile for kernel
+# Makefile for ESRTK
 #
 
 BUILD_ROOT := $(dir $(lastword $(MAKEFILE_LIST)))
