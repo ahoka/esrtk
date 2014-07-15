@@ -3,10 +3,10 @@
 
 #ifdef __i386__
 
-#ifdef CROSS_COMPILER
-typedef long unsigned int size_t;
-#else
+#ifdef __clang__
 typedef unsigned int size_t;
+#else
+typedef long unsigned int size_t;
 #endif
 
 #else
