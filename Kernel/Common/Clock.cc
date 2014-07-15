@@ -4,6 +4,7 @@
 #include <ClockProvider.hh>
 
 #include <cstdio>
+#include <cassert>
 
 ClockProvider* Clock::clocks = 0;
 ClockProvider* Clock::activeClock = 0;
@@ -45,6 +46,8 @@ Clock::probeAndInit()
 
       c = c->nextClock;
    }
+
+   assert(best != 0);
 
    best->startClock();
    activeClock = best;

@@ -5,6 +5,7 @@
 #include <Time.hh>
 
 #include <cstdio>
+#include <cassert>
 
 SystemTimer* SystemTimer::timers = 0;
 
@@ -47,6 +48,8 @@ SystemTimer::probeAndInit()
 
       t = t->nextTimer;
    }
+
+   assert(best != 0);
 
    best->startTimer();
 }
