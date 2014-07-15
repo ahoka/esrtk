@@ -174,4 +174,7 @@ monitor: kernel.elf
 run-grub: kernel.img
 	$(QEMU) -fda kernel.img
 
+scan:
+	scan-build --use-c++=$(CROSS)g++ --use-cc=$(CROSS)gcc ${MAKE}
+
 -include $(CCFILES:.cc=.cc.d) $(SFILES:.S=.S.d) $(CFILES:.c=.c.d)
