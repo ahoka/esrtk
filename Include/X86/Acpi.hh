@@ -220,11 +220,11 @@ public:
    const char* name() const;
 
 private:
-   Rsdp* findRsdp();
+   Rsdp* findRsdp(Rsdp*);
    Rsdp* findRsdpSignature(char*, char*);
    void printAllDescriptors();
 
-   Rsdp* rsdpM;
+   Rsdp rsdpM;
 };
 
 #endif

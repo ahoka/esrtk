@@ -21,7 +21,9 @@ Acpi acpi;
 int
 Acpi::probe()
 {
-   if (findRsdp() != 0)
+   Rsdp copy;
+
+   if (findRsdp(&copy) != 0)
    {
       return 100;
    }
@@ -32,8 +34,12 @@ Acpi::probe()
 bool
 Acpi::init()
 {
-   rsdpM = findRsdp();
-   assert(rsdpM != 0);
+   Rsdp* rsdp = findRsdp(&rsdpM);
+   
+   if (rsdp == 0)
+   {
+      return false;
+   }
 
    printAllDescriptors();
 
@@ -53,9 +59,9 @@ Acpi::name() const
 }
 
 Rsdp*
-Acpi::findRsdp()
+Acpi::findRsdp(Rsdp* rsdpCopy)
 {
-   Rsdp rsdpCopy;
+   assert(rsdpCopy != 0);
 
    uintptr_t ebdaAddress = Ebda::getEbda();
 
@@ -72,8 +78,8 @@ Acpi::findRsdp()
       if (rsdp != 0)
       {
          Debug::info("RSDP found in EBDA at %p\n", (void*)((uintptr_t)rsdp - (uintptr_t)mem + 0x0e0000u));
-         memcpy(&rsdpCopy, rsdp, sizeof(Rsdp));
-         rsdp = &rsdpCopy;
+         memcpy(rsdpCopy, rsdp, sizeof(Rsdp));
+         rsdp = rsdpCopy;
       }
 
       Memory::unmapRegion((uintptr_t)mem, 0x20000);
@@ -81,8 +87,8 @@ Acpi::findRsdp()
    else
    {
       Debug::info("RSDP found in ROM at %p\n", (void*)((uintptr_t)rsdp - (uintptr_t)ebda + ebdaAddress));
-      memcpy(&rsdpCopy, rsdp, sizeof(Rsdp));
-      rsdp = &rsdpCopy;
+      memcpy(rsdpCopy, rsdp, sizeof(Rsdp));
+      rsdp = rsdpCopy;
    }
 
    Memory::unmapRegion((uintptr_t)ebda, 0x400);
@@ -245,14 +251,14 @@ Acpi::printAllDescriptors()
 {
    uint32_t entries[256];
 
-   assert(rsdpM != 0);
+//   assert(rsdpM != 0);
 
-   rsdpM->print();
+   rsdpM.print();
 
    Rsdt rsdt;
 
    Memory::readPhysicalMemory(static_cast<void*>(&rsdt),
-                              reinterpret_cast<const void*>(rsdpM->rsdtAddress),
+                              reinterpret_cast<const void*>(rsdpM.rsdtAddress),
                               sizeof(rsdt));
 
    Debug::verbose("\n");
@@ -273,7 +279,7 @@ Acpi::printAllDescriptors()
    }
 
    Memory::readPhysicalMemory(static_cast<void*>(entries),
-                              reinterpret_cast<const void*>(rsdpM->rsdtAddress + sizeof (DescriptionHeader)),
+                              reinterpret_cast<const void*>(rsdpM.rsdtAddress + sizeof (DescriptionHeader)),
                               sizeof (entries));
 
    DescriptionHeader ds;
