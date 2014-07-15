@@ -20,7 +20,6 @@ FIND:=		"C:\MinGW\msys\1.0\bin\find.exe"
 endif
 
 CROSS=		i686-elf-
-COPTS+=		-DCROSS_COMPILER=1
 
 AS=		$(CROSS)as
 LD=		$(CROSS)ld
