@@ -1,16 +1,18 @@
 #include <Debug.hh>
 
-#include <FileSystem/Vfs.hh>
-#include <FileSystem/VfsStats.hh>
+#include <FileSystem/FileSystem.hh>
+#include <FileSystem/Stats.hh>
 
-DoublyLinkedList<Vfs> Vfs::list;
+using namespace Vfs;
 
-Vfs::Vfs()
+DoublyLinkedList<FileSystem> FileSystem::list;
+
+FileSystem::FileSystem()
 {
    list.insertLast(this);
 }
 
-Vfs::~Vfs()
+FileSystem::~FileSystem()
 {
    KASSERT(false);
 
@@ -23,7 +25,7 @@ Vfs::~Vfs()
 //    }
 }
 
-Vfs::ErrorCode Vfs::mount(const char* path)
+FileSystem::ErrorCode FileSystem::mount(const char* path)
 {
    ErrorCode error;
 
@@ -38,12 +40,12 @@ Vfs::ErrorCode Vfs::mount(const char* path)
    return ErrorCode::UnknownFsType;
 }
 
-Vfs::ErrorCode Vfs::umount()
+FileSystem::ErrorCode FileSystem::umount()
 {
    return ErrorCode::Ok;
 }
 
-Vfs::ErrorCode Vfs::stat(VfsStats& stat)
+FileSystem::ErrorCode FileSystem::stat(Stats& stat)
 {
    stat.fileSystemId = 0;
    stat.blockSize = 512;
@@ -54,3 +56,7 @@ Vfs::ErrorCode Vfs::stat(VfsStats& stat)
    return ErrorCode::Ok;
 }
 
+FileSystem::ErrorCode FileSystem::root(Node**)
+{
+   return ErrorCode::NoEntity;
+}
