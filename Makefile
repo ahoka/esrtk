@@ -98,10 +98,12 @@ SRC!=		(cd ${BUILD_ROOT} && find ${SRCDIR} \( -name '*.c' -or -name '*.cc' -or -
 DIR!=		(cd ${BUILD_ROOT} && find ${SRCDIR} \( -name '*.c' -or -name '*.cc' -or -name '*.S' \) -printf '%h\n' | sort -u)
 
 OFILES=		${SRC:C/\.(cc|c|S)$/.o/}
+DFILES=		${SRC:C/\.(cc|c|S)$/.d/}
 
 .PATH:		${DIR:S/^/${BUILD_ROOT}\//}
 
 #HIDE=	@
+.SUFFIXES:	.c .cc .S .d
 
 all:	MultiLoader.o kernel.elf kernel.img
 
@@ -120,7 +122,7 @@ buildinfo:
 	@echo Src: ${SRC}
 	@echo Dir: ${DIR}
 	@echo o-files: ${OFILES}
-#	@echo d-files: ${DFILES}
+	@echo d-files: ${DFILES}
 
 cppcheck:
 	cppcheck -q -i ${INCDIRS} ${SRCDIR}
@@ -137,19 +139,21 @@ cppcheck:
 # 	@echo Compiling $<
 # 	${HIDE} ${CPP} ${CPPFLAGS} -DASSEMBLER $*.S | ${AS} ${ASFLAGS} -o $*.o
 
-# .cc.d:
-# 	@echo Generating dependencies for $<
-# 	${HIDE} ${CPP} ${CPPFLAGS} -MM -MT $*.o -MF $<.d $<
+.cc.d:
+	@echo Generating dependencies for $<
+	${HIDE} ${CPP} ${CPPFLAGS} -MM -MT $*.o -MF ${.TARGET} ${.IMPSRC}
 
-# .c.d:
-# 	@echo Generating dependencies for $<
-# 	${HIDE} ${CPP} ${CPPFLAGS} -MM -MT $*.o -MF $<.d $<
+.c.d:
+	@echo Generating dependencies for $<
+	${HIDE} ${CPP} ${CPPFLAGS} -MM -MT $*.o -MF ${.TARGET} ${.IMPSRC}
 
-# .S.d:
-# 	@echo Generating dependencies for $<
-# 	${HIDE} ${CPP} ${CPPFLAGS} -MM -MT $*.o -MF $<.d $<
+.S.d:
+	@echo Generating dependencies for $<
+	${HIDE} ${CPP} ${CPPFLAGS} -MM -MT $*.o -MF ${.TARGET} ${.IMPSRC}
 
-#depend: ${DFILES}
+.NOPATH: .depend
+.depend: ${DFILES}
+	cat ${DFILES} > ${BUILD_ROOT}/.depend
 
 kernel.elf: MultiLoader.o ${OFILES}
 	@echo Linking kernel executable
@@ -189,5 +193,3 @@ run-grub: kernel.img
 
 scan:
 	scan-build --use-c++=${CROSS}g++ --use-cc=${CROSS}gcc ${MAKE}
-
-.sinclude "${CCFILES:.cc=.cc.d} ${SFILES:.S=.S.d} ${CFILES:.c=.c.d}"
