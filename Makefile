@@ -153,7 +153,7 @@ cppcheck:
 
 .NOPATH: .depend
 .depend: ${DFILES}
-	cat ${DFILES} > ${BUILD_ROOT}/.depend
+	@cat ${DFILES} > ${BUILD_ROOT}/.depend
 
 kernel.elf: MultiLoader.o ${OFILES}
 	@echo Linking kernel executable
@@ -165,7 +165,7 @@ kernel.img: kernel.elf
 	env BUILD_ROOT=${BUILD_ROOT:Q}/ ${BUILD_ROOT}/mkimage.sh kernel.elf kernel.img
 
 clean:
-	@-rm ${.OBJDIR}/*.o kernel.elf kernel.img > /dev/null 2>&1 || true
+	@-rm ${.OBJDIR}/*.o kernel.elf kernel.img .depend > /dev/null 2>&1 || true
 
 run-isa: kernel.elf
 	${QEMU} -cpu pentium2 -M isapc -net none -kernel kernel.elf -boot order=c -serial stdio -d cpu_reset
