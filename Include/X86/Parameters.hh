@@ -1,7 +1,7 @@
 #ifndef X86_PARAMETERS_HH
 #define X86_PARAMETERS_HH
 
-#ifdef ASSEMBLER
+#ifdef __ASSEMBLER__
 #  define U(x) x
 #else
 #  define U(x) x##u

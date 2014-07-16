@@ -7,7 +7,7 @@
 # error Unsupported architecture!
 #endif
 
-#ifndef ASSEMBLER
+#ifndef __ASSEMBLER__
 
 enum SystemConstants
 {
