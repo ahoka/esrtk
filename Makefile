@@ -14,14 +14,7 @@ FIND:=		find
 TOOLCHAIN?=	gcc
 #TOOLCHAIN=	clang
 
-BUILD_HOST!=	uname -o
-.if ${BUILD_HOST} != Windows
 BUILD_HOST!=	uname
-.endif
-
-.if ${BUILD_HOST} == Windows
-FIND:=		"C:\MinGW\msys\1.0\bin\find.exe"
-.endif
 
 CROSS=		i686-elf-
 
@@ -86,16 +79,10 @@ CXXFLAGS+=	${CPPFLAGS}
 SRCDIR=		Supervisor CLibrary CxxLibrary Drivers Kernel FileSystem Hal Loader
 TESTDIR=	Test
 
-#.for pattern in '*.cc' '*.c' '*.S'
-#CCFILES!=	(cd ${BUILD_ROOT} && ${FIND} ${SRCDIR} -name '*.cc' -printf '%f\n')
-#CFILES!=	(cd ${BUILD_ROOT} && ${FIND} ${SRCDIR} -name '*.c' -printf '%f\n')
-#SFILES!=	(cd ${BUILD_ROOT} && ${FIND} ${SRCDIR} -name '*.S' -printf '%f\n')
-
 TCCFILES:=	${FIND} ${TESTDIR} -name '*.cc'
 
-#SRC=		${CCFILES} ${CFILES} ${SFILES}
-SRC!=		(cd ${BUILD_ROOT} && find ${SRCDIR} \( -name '*.c' -or -name '*.cc' -or -name '*.S' \) -printf '%f\n')
-DIR!=		(cd ${BUILD_ROOT} && find ${SRCDIR} \( -name '*.c' -or -name '*.cc' -or -name '*.S' \) -printf '%h\n' | sort -u)
+SRC!=		(cd ${BUILD_ROOT} && find ${SRCDIR} \( -name '*.c' -or -name '*.cc' -or -name '*.S' \) -exec basename {} \;)
+DIR!=		(cd ${BUILD_ROOT} && find ${SRCDIR} \( -name '*.c' -or -name '*.cc' -or -name '*.S' \) -exec dirname {} \; | sort -u)
 
 OFILES=		${SRC:C/\.(cc|c|S)$/.o/}
 DFILES=		${SRC:C/\.(cc|c|S)$/.d/}
@@ -140,16 +127,15 @@ cppcheck:
 # 	${HIDE} ${CPP} ${CPPFLAGS} -DASSEMBLER $*.S | ${AS} ${ASFLAGS} -o $*.o
 
 .cc.d:
-	@echo Generating dependencies for $<
 	${HIDE} ${CPP} ${CPPFLAGS} -MM -MT $*.o -MF ${.TARGET} ${.IMPSRC}
 
 .c.d:
-	@echo Generating dependencies for $<
 	${HIDE} ${CPP} ${CPPFLAGS} -MM -MT $*.o -MF ${.TARGET} ${.IMPSRC}
 
 .S.d:
-	@echo Generating dependencies for $<
 	${HIDE} ${CPP} ${CPPFLAGS} -MM -MT $*.o -MF ${.TARGET} ${.IMPSRC}
+
+depend: .depend
 
 .NOPATH: .depend
 .depend: ${DFILES}
