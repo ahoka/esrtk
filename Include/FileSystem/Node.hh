@@ -3,6 +3,8 @@
 
 // represent a file node (vnode)
 
+#include <cstddef>
+
 class Node
 {
 public:
