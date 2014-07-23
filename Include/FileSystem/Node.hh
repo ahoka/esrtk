@@ -4,22 +4,47 @@
 // represent a file node (vnode)
 
 #include <cstddef>
+#include <cstdint>
 
-class Node
+namespace Vfs
 {
-public:
-   Node();
-   virtual ~Node();
+   enum class Type
+   {
+      File,
+      Directory
+   };
 
-   virtual int open(int flags);
-   virtual int close();
-   virtual int read(void *, size_t);
-   virtual int write(const void*, size_t);
-   virtual int remove();
+   class Node
+   {
+   public:
+      Node();
+      virtual ~Node();
 
-private:
-   Node& operator=(const Node&) = delete;
-   Node(const Node&) = delete;
+      virtual Type getType();
+
+      // File
+      virtual int open(int flags);
+      virtual int close();
+      virtual int read(void *, size_t);
+      virtual int write(const void*, size_t);
+      virtual int sync();
+
+      // Directory
+      virtual int createFile(Node**, const char*);
+      virtual int removeFile();
+      virtual int createDirectory(Node**, const char*);
+      virtual int removeDirectory();
+      virtual int createDevice(Node**, const char*);
+      virtual int removeDevice();
+      virtual int lookup(Node**, const char*);
+
+      // Device
+      virtual int control(uint32_t, void *);
+
+   private:
+      Node& operator=(const Node&) = delete;
+      Node(const Node&) = delete;
+   };
 };
 
 #endif
