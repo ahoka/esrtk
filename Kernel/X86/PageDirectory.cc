@@ -77,6 +77,8 @@ namespace
    {
       return p - KernelVirtualBase;
    }
+
+   uint32_t* kernelPageDirectory = 0;
 };
 
 void
@@ -125,6 +127,8 @@ PageDirectory::init()
    //
    void (*initp)(uint32_t) = (void (*)(uint32_t))vtophys((void*)&x86_init_paging);
    initp(vtophys((uint32_t )pageDirectory));
+
+   kernelPageDirectory = pageDirectory;
 
    // unmap identity mapped region
    //
@@ -440,17 +444,19 @@ PageDirectory::getPhysicalPage(uint32_t vAddress)
 uintptr_t
 PageDirectory::createPageDirectory()
 {
-   uint32_t directory = Memory::getPage();
+   uint32_t directoryPhys = Memory::getPage();
+   uint32_t* pageDirectory = (uint32_t *)Memory::mapAnonymousPage(directoryPhys, 0);
 
-   mapPage(SecondaryPageDirectoryBase, directory);
-
+   memset(reinterpret_cast<void*>(pageDirectory), 0, PageSize);
+   pageDirectory[1023] = (uint32_t ) | Present;
+   
    /// XXX copy kernel address space
    // for (uintptr_t address = KernelVirtualBase;
    //  	address < SecondaryPageTableBase; address += ???)
    // {
    // }
 
-   unmapPage(SecondaryPageDirectoryBase);
+   Memory::unmapPage(directory);
 
    return directory;
 }

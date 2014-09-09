@@ -58,7 +58,6 @@ Memory::copyMemoryMap()
    KASSERT(foundUsableMemory);
 }
 
-
 bool
 Memory::handlePageFault(uintptr_t /*address*/, InterruptFrame* /*frame*/)
 {
