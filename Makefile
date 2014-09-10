@@ -92,7 +92,7 @@ DFILES=		${SRC:C/\.(cc|c|S)$/.d/}
 #HIDE=	@
 .SUFFIXES:	.c .cc .S .d
 
-all:	MultiLoader.o kernel.elf kernel.img
+all:	MultiLoader.o kernel.elf kernel.img TAGS
 
 MultiLoader.o: MultiLoader.S
 
@@ -177,5 +177,5 @@ monitor: kernel.elf
 run-grub: kernel.img
 	${QEMU} -fda kernel.img
 
-scan:
-	scan-build --use-c++=${CROSS}g++ --use-cc=${CROSS}gcc ${MAKE}
+TAGS: ${SRC}
+	${HIDE} ctags -e -R ${BUILD_ROOT}
