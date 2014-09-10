@@ -1,7 +1,7 @@
 #ifndef SUPERVISOR_H
 #define	SUPERVISOR_H
 
-#include <Supervisor/Thread.hh>
+#include <Kernel/Thread.hh>
 
 class Supervisor
 {

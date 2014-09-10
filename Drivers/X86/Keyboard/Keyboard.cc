@@ -11,7 +11,7 @@
 #include <Time.hh>
 #include <Power.hh>
 #include <MemoryManager.hh>
-#include <Supervisor/Thread.hh>
+#include <Kernel/Thread.hh>
 
 Keyboard::Keyboard()
 {

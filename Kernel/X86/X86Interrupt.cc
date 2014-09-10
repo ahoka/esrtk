@@ -8,7 +8,7 @@
 #include <Debug.hh>
 #include <StackTrace.hh>
 #include <Supervisor/Scheduler.hh>
-#include <Supervisor/Thread.hh>
+#include <Kernel/Thread.hh>
 
 extern IdtPointer idtPointer;
 

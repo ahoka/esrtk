@@ -3,7 +3,7 @@
 #include <X86/ThreadContext.hh>
 #include <X86/Processor.hh>
 
-#include <Supervisor/Thread.hh>
+#include <Kernel/Thread.hh>
 #include <Parameters.hh>
 
 #include <cstdint>

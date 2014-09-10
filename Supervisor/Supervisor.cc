@@ -1,5 +1,5 @@
 #include <Supervisor/Supervisor.hh>
-#include <Supervisor/Thread.hh>
+#include <Kernel/Thread.hh>
 
 #include <Platform.hh>
 #include <Debug.hh>
