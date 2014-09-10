@@ -1,5 +1,5 @@
-#include <Scheduler.hh>
-#include <Thread.hh>
+#include <Supervisor/Scheduler.hh>
+#include <Supervisor/Thread.hh>
 
 #include <cstdio>
 

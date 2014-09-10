@@ -1,7 +1,7 @@
 #include <Memory.hh>
-#include <Supervisor.hh>
+#include <Supervisor/Supervisor.hh>
 #include <Modules.hh>
-#include <Thread.hh>
+#include <Supervisor/Thread.hh>
 
 //#include <X86/LocalApic.hh>
 #include <X86/PageDirectory.hh>

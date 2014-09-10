@@ -1,10 +1,11 @@
-#include <Parameters.hh>
-#include <Scheduler.hh>
-#include <Debug.hh>
+#include <Supervisor/Scheduler.hh>
+#include <Supervisor/Thread.hh>
 
-#include <Thread.hh>
-#include <cstdio>
+#include <Parameters.hh>
+#include <Debug.hh>
 #include <Hal.hh>
+
+#include <cstdio>
 
 unsigned long Thread::nextThreadId = 1;
 

@@ -1,10 +1,10 @@
-#include <Supervisor.hh>
+#include <Supervisor/Supervisor.hh>
+#include <Supervisor/Thread.hh>
 
 #include <Platform.hh>
 #include <Debug.hh>
 #include <Power.hh>
 #include <Mutex.hh>
-#include <Thread.hh>
 
 #include <cstdio>
 

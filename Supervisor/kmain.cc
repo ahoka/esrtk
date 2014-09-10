@@ -1,5 +1,5 @@
 #include <MemoryManager.hh>
-#include <Supervisor.hh>
+#include <Supervisor/Supervisor.hh>
 #include <CompilerSupport.hh>
 #include <Power.hh>
 #include <cstdio>
