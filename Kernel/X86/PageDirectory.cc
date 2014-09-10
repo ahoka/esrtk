@@ -444,20 +444,24 @@ PageDirectory::getPhysicalPage(uint32_t vAddress)
 uintptr_t
 PageDirectory::createPageDirectory()
 {
-   uint32_t directoryPhys = Memory::getPage();
-   uint32_t* pageDirectory = (uint32_t *)Memory::mapAnonymousPage(directoryPhys, 0);
+   uint32_t physicalPage = Memory::getPage();
+   uint32_t* pageDirectory = (uint32_t *)Memory::mapAnonymousPage(physicalPage, 0);
 
    memset(reinterpret_cast<void*>(pageDirectory), 0, PageSize);
-   pageDirectory[1023] = (uint32_t ) | Present;
-   
-   /// XXX copy kernel address space
-   // for (uintptr_t address = KernelVirtualBase;
-   //  	address < SecondaryPageTableBase; address += ???)
-   // {
-   // }
+   pageDirectory[1023] = physicalPage | Present;
 
-   Memory::unmapPage(directory);
+   // Copy kernel mappings from Kernel PD, so we have uniform
+   // access to kernel memory from all processes
+   //
+   // Note: the 'upper' 256 entries correspond to the higher half
+   // reserved for kernel, last entry is the recursive pd entry.
+   //
+   for (int i = 767; i < 1023; i++)
+   {
+      pageDirectory[i] = kernelPageDirectory[i];
+   }
 
-   return directory;
+   Memory::unmapPage((uintptr_t )pageDirectory);
+
+   return physicalPage;
 }
-
