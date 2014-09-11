@@ -22,15 +22,3 @@ void operator delete[](void* p)
 {
    MemoryManager::get().deallocate(p);
 }
-
-extern "C" void *
-malloc(size_t size)
-{
-   return MemoryManager::get().allocate(size);
-}
-
-extern "C" void
-free(void* data)
-{
-   MemoryManager::get().deallocate(data);
-}

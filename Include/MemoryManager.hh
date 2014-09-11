@@ -22,6 +22,8 @@ public:
 
    void* allocate(std::size_t size);
    void deallocate(void *data);
+   void* reallocate(void* data, std::size_t size);
+
    void printStatistics();
 
    static MemoryManager& get();

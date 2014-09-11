@@ -144,6 +144,32 @@ MemoryManager::deallocate(void *data)
    segment->updateChecksum();
 }
 
+void*
+MemoryManager::reallocate(void* data, std::size_t size)
+{
+   Segment* segment = headerOf(data);
+   auto oldSize = segment->getSize();
+
+   if (size == 0)
+   {
+      deallocate(data);
+
+      return 0;
+   }
+   else
+   {
+      void* newData = allocate(size);
+
+      if (data != 0)
+      {
+         memcpy(newData, data, oldSize);
+         deallocate(data);
+      }
+
+      return newData;
+   }
+}
+
 void
 MemoryManager::printStatistics()
 {
