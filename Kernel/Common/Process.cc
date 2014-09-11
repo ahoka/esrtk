@@ -4,6 +4,7 @@
 using namespace Kernel;
 
 Process::Process()
+   : pageDirectoryM(0)
 {
 }
 
