@@ -91,3 +91,12 @@ Thread::dump()
 {
    printf("thread: %p %lu %p %u\n", this, id, (void *)kernelStack, state);
 }
+
+Thread*
+Thread::create()
+{
+   Thread* thread = new Thread();
+   thread->init();
+
+   return thread;
+}

@@ -19,6 +19,8 @@ public:
    static void printAll();
    static void main [[noreturn]] ();
 
+   static Thread* create();
+
    enum State
    {
       New,
