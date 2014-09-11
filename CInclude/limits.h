@@ -86,4 +86,7 @@
 #define FLT_MIN		1.17549435E-38F
 #endif
 
+/* esrtk: only for compat */
+#define PATH_MAX        1024
+
 #endif /* _i386_LIMITS_H_ */

@@ -62,9 +62,12 @@ CPPFLAGS+=	-I${BUILD_ROOT}/Include/Kernel
 CPPFLAGS+=	-I${BUILD_ROOT}/CInclude
 CPPFLAGS+=	-I${BUILD_ROOT}/CxxInclude
 CPPFLAGS+=	-I${BUILD_ROOT}/Templates
+CPPFLAGS+=	-I${BUILD_ROOT}/CxxInclude/ustl
 
 # XXX unify with the above through transformation
-INCDIRS=	${BUILD_ROOT}/Include ${BUILD_ROOT}/CInclude ${BUILD_ROOT}/CxxInclude ${BUILD_ROOT}/Templates
+INCDIRS=	${BUILD_ROOT}/Include ${BUILD_ROOT}/CInclude \
+		${BUILD_ROOT}/CxxInclude ${BUILD_ROOT}/Templates \
+		${BUILD_ROOT}/CxxInclude/ustl
 
 # XXX these should be only provided for Standard
 #
@@ -72,6 +75,8 @@ CPPFLAGS+=	-I${BUILD_ROOT}/BsdCompat
 CPPFLAGS+=	-DHAVE_NBTOOL_CONFIG_H=0
 
 CPPFLAGS+=	-DHAVE_STRLCAT=0 -DHAVE_STRSEP=0 -DHAVE_STRLCPY=0 -D__ELF__
+
+CPPFLAGS+=	-D__esrtk__
 
 CFLAGS+=	${CPPFLAGS}
 CXXFLAGS+=	${CPPFLAGS}

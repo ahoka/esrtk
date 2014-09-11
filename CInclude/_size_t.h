@@ -3,11 +3,8 @@
 
 #ifdef __i386__
 
-#ifdef __clang__
-typedef unsigned int size_t;
-#else
 typedef long unsigned int size_t;
-#endif
+typedef long int ssize_t;
 
 #else
 #  error unuspported architecture
