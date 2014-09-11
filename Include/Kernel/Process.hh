@@ -17,7 +17,7 @@ namespace Kernel
    private:
       uint32_t pageDirectoryM;
 
-      ustl::list<Thread*> threadM;
+      ustl::list<Thread*> threadsM;
    };
 };
 
