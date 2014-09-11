@@ -10,4 +10,6 @@ typedef unsigned int u_int;
 typedef unsigned char u_char;
 typedef unsigned long u_long;
 
+typedef long off_t;
+
 #endif
