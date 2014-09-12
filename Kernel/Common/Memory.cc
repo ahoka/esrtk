@@ -186,9 +186,9 @@ Memory::createKernelStack(uintptr_t& top)
 
    printf("Creating new kernel stack: %p-%p (%u)\n", (void* )top, (void* )(bottom), PageSize);
 
-   uintptr_t newStack = Hal::initKernelStack(top);
+//   uintptr_t newStack = Hal::initKernelStack(top, &Kernel::Thread::main, );
 
-   top = newStack;
+//   top = newStack;
 
    return true;
 }

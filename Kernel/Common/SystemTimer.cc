@@ -27,7 +27,7 @@ SystemTimer::tick()
    KASSERT(getFrequency() <= 500);
    Time::increment(1000 / getFrequency());
 
-   Scheduler::schedule();
+   Kernel::Scheduler::schedule();
 }
 
 void

@@ -18,7 +18,7 @@ public:
    static void restoreLocalInterrupts(InterruptFlags& flags);
 
 // not really hal...
-   static uintptr_t initKernelStack(uintptr_t stack);
+//   static uintptr_t initKernelStack(uintptr_t stack, uintptr_t main, uintptr_t arg);
 };
 
 #endif

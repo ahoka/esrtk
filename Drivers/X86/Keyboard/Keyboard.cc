@@ -104,7 +104,7 @@ Keyboard::handleInterrupt()
             break;
          case Scancodes::F4:
             putchar('\n');
-            Thread::printAll();
+            Kernel::Thread::printAll();
             break;
          case Scancodes::F9:
             Power::reboot();

@@ -1,24 +1,20 @@
 #ifndef SCHEDULER_HH
 #define SCHEDULER_HH
 
-class Thread;
-
-class Scheduler
+namespace Kernel
 {
-public:
-   static void insert(Thread* t);
-   static void schedule();
+   class Thread;
 
-   static Thread* getCurrentThread();
-   static void setCurrentThread(Thread* thread);
+   namespace Scheduler
+   {
+      void init();
 
-private:
-   Scheduler() = delete;
-   ~Scheduler() = delete;
+      void insert(Thread* t);
+      void schedule();
 
-   static Thread* threads;
-   static Thread* nextToRun;
-   static Thread* currentThread;
+      Thread* getCurrentThread();
+      void setCurrentThread(Thread* thread);
+   };
 };
 
 #endif

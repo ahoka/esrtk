@@ -8,12 +8,15 @@
 
 #include <cstdint>
 
+using namespace Kernel;
+
 uintptr_t
-Hal::initKernelStack(uintptr_t top)
+ThreadContext::initStack(uintptr_t top, uintptr_t main, uintptr_t arg)
 {
    uintptr_t stack = top - sizeof(InterruptFrame);
    InterruptFrame* context = (InterruptFrame*)stack;
 
+   context->arg = arg;
    context->gs = KernelDataSegment;
    context->fs = KernelDataSegment;
    context->es = KernelDataSegment;
@@ -27,7 +30,7 @@ Hal::initKernelStack(uintptr_t top)
    context->eax = 0x0;
    context->interrupt = 0;
    context->error = 0;
-   context->eip = reinterpret_cast<uint32_t>(&Thread::main); // XXX make this configurable
+   context->eip = static_cast<uint32_t>(main);
    context->cs = KernelCodeSegment;
    context->eflags = Flags::Reserved | Flags::InterruptEnable;
    context->esp = stack;

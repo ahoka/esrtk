@@ -10,6 +10,8 @@
 #include <Supervisor/Scheduler.hh>
 #include <Kernel/Thread.hh>
 
+using namespace Kernel;
+
 extern IdtPointer idtPointer;
 
 // Idt descriptors

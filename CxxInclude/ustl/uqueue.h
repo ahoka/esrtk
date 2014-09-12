@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include <ustl/uvector.h>
+
 namespace ustl {
 
 /// \class queue uqueue.h ustl.h

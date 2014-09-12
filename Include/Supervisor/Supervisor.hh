@@ -12,8 +12,6 @@ private:
    Supervisor();
    virtual ~Supervisor();
    Supervisor(const Supervisor& orig);
-
-   static Thread thread0;
 };
 
 extern "C" void supervisor_init();

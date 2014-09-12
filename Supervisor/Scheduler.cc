@@ -3,11 +3,22 @@
 
 #include <cstdio>
 
-static Thread thread0;
+namespace Kernel
+{
+   Thread thread0;
 
-Thread* Scheduler::threads = 0;
-Thread* Scheduler::currentThread = 0;
-Thread* Scheduler::nextToRun = 0;
+   Thread* threads = 0;
+   Thread* currentThread = 0;
+   Thread* nextToRun = 0;
+};
+
+using namespace Kernel;
+
+void
+Scheduler::init()
+{
+   thread0.init(0, StackStart);
+}
 
 void
 Scheduler::setCurrentThread(Thread* thread)

@@ -24,6 +24,8 @@ struct InterruptFrame
    uint32_t eflags;
    uint32_t esp;
    uint32_t ss;
+   // argument to main
+   uint32_t arg;
 
    void print()
    {
@@ -36,5 +38,10 @@ struct InterruptFrame
       printf("interrupt id: %u error code: 0x%0x flags: 0x%0x\n", interrupt, error, eflags);
    }
 } __attribute__((packed));
+
+namespace ThreadContext
+{
+   uintptr_t initStack(uintptr_t top, uintptr_t main, uintptr_t arg);
+};
 
 #endif
