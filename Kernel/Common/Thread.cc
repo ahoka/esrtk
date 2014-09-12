@@ -9,8 +9,6 @@
 
 unsigned long Thread::nextThreadId = 1;
 
-// for creating thread0
-//
 Thread::Thread()
    : id(-1ul),
      kernelStack(0),
@@ -28,13 +26,14 @@ Thread::Thread(unsigned long Id)
 {
 }
 
+// used when creating thread 0
 bool
 Thread::init(unsigned long threadId, uintptr_t stack)
 {
    id = threadId;
    kernelStack = stack;
 
-   Debug::verbose("Initializing thread: %lu %p...\n", threadId, (void*)stack);
+   Debug::verbose("Initializing idle thread: %lu %p...\n", threadId, (void*)stack);
 
    Scheduler::insert(this);
 
