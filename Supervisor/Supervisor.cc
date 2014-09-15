@@ -7,6 +7,9 @@
 #include <Mutex.hh>
 
 #include <cstdio>
+#include <cstdlib>
+
+#include <X86/Processor.hh>
 
 #define TEST
 
@@ -51,6 +54,15 @@ Supervisor::run()
    t1.init();
    t2.init();
    t3.init();
+
+   unsigned int seed = (unsigned int)rdtsc();
+   printf("seeding prng: 0x%x\n", seed);
+   srand(seed);
+
+   printf("rand: %d\n", rand());
+   printf("rand: %d\n", rand());
+   printf("rand: %d\n", rand());
+   printf("rand: %d\n", rand());
 
 //   lock.exit();
 
