@@ -14,6 +14,9 @@ void free(void *ptr);
 void *realloc (void* ptr, size_t size);
 
 int rand(void);
+void srand(unsigned int);
+
+int abs(int);
 
 _CXX_END
 
