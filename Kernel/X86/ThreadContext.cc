@@ -10,13 +10,27 @@
 
 using namespace Kernel;
 
+struct CallFrame
+{
+   uint32_t rip;
+   uint32_t arg;
+} __attribute__((packed));
+
 uintptr_t
 ThreadContext::initStack(uintptr_t top, uintptr_t main, uintptr_t arg)
 {
-   uintptr_t stack = top - sizeof(InterruptFrame);
+   uintptr_t stack = top - sizeof(InterruptFrame) - sizeof(CallFrame);
+
+   // create fake call frame for thread main to pass args
+   //
+   CallFrame* frame = reinterpret_cast<CallFrame*>(top - sizeof(CallFrame));
+   frame->arg = arg;
+   frame->rip = 0;
+
+   printf("Args is at: %p\n", &frame->arg);
+
    InterruptFrame* context = (InterruptFrame*)stack;
 
-   context->arg = arg;
    context->gs = KernelDataSegment;
    context->fs = KernelDataSegment;
    context->es = KernelDataSegment;
@@ -33,8 +47,8 @@ ThreadContext::initStack(uintptr_t top, uintptr_t main, uintptr_t arg)
    context->eip = static_cast<uint32_t>(main);
    context->cs = KernelCodeSegment;
    context->eflags = Flags::Reserved | Flags::InterruptEnable;
-   context->esp = stack;
-   context->ss = KernelDataSegment;
+//   context->esp = stack;
+//   context->ss = KernelDataSegment;
 
    return stack;
 }
