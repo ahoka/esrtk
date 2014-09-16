@@ -35,10 +35,14 @@ x86_isr_page_fault(InterruptFrame* frame)
    if (nestingFlag == 1)
    {
       Debug::panic("Nested page fault");
-   } else if (nestingFlag == 2) {
+   }
+   else if (nestingFlag == 2)
+   {
       printf("Nested page fault, panic failed!\n");
       Power::reboot();
-   } else if (nestingFlag > 2) {
+   }
+   else if (nestingFlag > 2)
+   {
       Power::reboot();
    }
 

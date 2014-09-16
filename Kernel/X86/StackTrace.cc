@@ -11,19 +11,26 @@ StackTrace::printStackTrace(void* data)
 
    printf("Stack trace:\n");
 
-   while (ebp != 0)
+   if (ebp == 0)
    {
-      printf("epb: %p\n", ebp);
-      reg_t ip = *(ebp + 1);
-
-      printf("  0x%lx\n", ip);
-
-      if (ip == 0)
+      printf("Not available.\n");
+   }
+   else
+   {
+      while (ebp != 0)
       {
-         break;
-      }
+         printf("epb: %p\n", ebp);
+         reg_t ip = *(ebp + 1);
 
-      ebp = reinterpret_cast<reg_t*>(*ebp);
+         printf("  0x%lx\n", ip);
+
+         if (ip == 0)
+         {
+            break;
+         }
+
+         ebp = reinterpret_cast<reg_t*>(*ebp);
+      }
    }
 }
 

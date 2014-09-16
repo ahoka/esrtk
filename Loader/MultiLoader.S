@@ -91,14 +91,14 @@ hiloader:
         popfl
 
         call copy_multiboot_structure
-	call supervisor_init
+	call kmain
 
 	// set up the real kernel stack now that we have paging
 	//movl $StackStart, %eax
         movl $thread_zero_stack, %eax
 	movl %eax, %esp
 
-	call kmain
+       	call supervisor_init
 
 	cli
 hang:

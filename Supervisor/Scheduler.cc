@@ -25,9 +25,9 @@ Scheduler::init()
 {
    readyListM = new ThreadQueue();
    thread0.init(0, StackStart);
-   printf("push\n");
+
+   setCurrentThread(&thread0);
    readyListM->push(&thread0);
-   printf("push-\n");
 }
 
 void
@@ -45,7 +45,6 @@ Scheduler::getCurrentThread()
 void
 Scheduler::insert(Thread* t)
 {
-   printf("ins\n");
    // XXX
    // if (threads == 0)
    // {
@@ -55,8 +54,6 @@ Scheduler::insert(Thread* t)
 //   t->next = threads;
 //   threads = t;
    readyListM->push(t);
-
-   printf("ins-\n");
 }
 
 void
@@ -69,7 +66,6 @@ Scheduler::schedule()
 
 //   KASSERT(threads != 0);
 
-   printf("sch\n");
    currentThread = readyListM->front();
    readyListM->pop();
 

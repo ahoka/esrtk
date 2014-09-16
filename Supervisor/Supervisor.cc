@@ -1,5 +1,8 @@
 #include <Supervisor/Supervisor.hh>
 #include <Kernel/Thread.hh>
+#include <Supervisor/Supervisor.hh>
+#include <CompilerSupport.hh>
+#include <Supervisor/Scheduler.hh>
 
 #include <Platform.hh>
 #include <Debug.hh>
@@ -17,6 +20,19 @@ extern "C" void
 supervisor_init()
 {
    Supervisor::init();
+}
+
+void
+Supervisor::init()
+{
+   printf("Supervisor starting");
+
+   Kernel::Scheduler::init();
+
+   // Call C++ constructors
+   __cxaimpl_call_constructors();
+
+   Supervisor::run();
 }
 
 void

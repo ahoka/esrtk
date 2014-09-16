@@ -19,7 +19,7 @@ struct CallFrame
 uintptr_t
 ThreadContext::initStack(uintptr_t top, uintptr_t main, uintptr_t arg)
 {
-   uintptr_t stack = top - sizeof(InterruptFrame) - sizeof(CallFrame);
+   uintptr_t stack = top - sizeof(InterruptFrame) + 8 - sizeof(CallFrame);
 
    // create fake call frame for thread main to pass args
    //
@@ -47,8 +47,6 @@ ThreadContext::initStack(uintptr_t top, uintptr_t main, uintptr_t arg)
    context->eip = static_cast<uint32_t>(main);
    context->cs = KernelCodeSegment;
    context->eflags = Flags::Reserved | Flags::InterruptEnable;
-//   context->esp = stack;
-//   context->ss = KernelDataSegment;
 
    return stack;
 }
