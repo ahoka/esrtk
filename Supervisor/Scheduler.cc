@@ -24,6 +24,8 @@ void
 Scheduler::init()
 {
    readyListM = new ThreadQueue();
+   idleListM = new ThreadQueue();
+
    thread0.init(0, StackStart);
 
    setCurrentThread(&thread0);
