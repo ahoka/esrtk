@@ -1,6 +1,8 @@
 #include <Memory.hh>
 #include <Multiboot.hh>
 
+#include <X86/PageDirectory.hh>
+
 #include <cstring>
 
 using Multiboot::MultibootStructure;
@@ -102,4 +104,22 @@ Memory::handlePageFault(uintptr_t /*address*/, InterruptFrame* /*frame*/)
 #endif
 
    return false;
+}
+
+bool
+Memory::mapPage(uintptr_t virt, uintptr_t phys, int flags)
+{
+   return PageDirectory::mapPage(virt, phys, flags);
+}
+
+bool
+Memory::unmapPage(uintptr_t virt)
+{
+   return PageDirectory::unmapPage(virt);
+}
+
+uintptr_t
+Memory::getPhysicalAddress(uintptr_t virt)
+{
+   return PageDirectory::getPhysicalPage(virt);
 }

@@ -461,7 +461,7 @@ PageDirectory::createPageDirectory()
       pageDirectory[i] = kernelPageDirectory[i];
    }
 
-   Memory::unmapPage((uintptr_t )pageDirectory);
+   unmapPage((uintptr_t)pageDirectory);
 
    return physicalPage;
 }

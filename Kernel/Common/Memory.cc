@@ -194,23 +194,6 @@ Memory::createKernelStack(uintptr_t& top)
 }
 #endif
 
-bool
-Memory::mapPage(uintptr_t address, uintptr_t phys, int flags)
-{
-   bool success = Hal::mapPage(address, phys, flags);
-
-   return success;
-}
-
-bool
-Memory::unmapPage(uintptr_t page)
-{
-   bool success = Hal::unmapPage(page);
-   // TODO we need to know where to mark the vaddr free!
-
-   return success;
-}
-
 // anonymous mapping of a physical page
 //
 uintptr_t

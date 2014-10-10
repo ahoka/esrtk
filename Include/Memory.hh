@@ -54,6 +54,8 @@ namespace Memory
    bool unmapRegion(uintptr_t paddr, size_t size);
    uintptr_t mapAnonymousRegion(size_t size, int flags = 0);
 
+   uintptr_t getPhysicalAddress(uintptr_t virt);
+
    void* readPhysicalMemory(void* destination, const void* source, size_t size);
 
    bool createKernelStack(uintptr_t& start);
