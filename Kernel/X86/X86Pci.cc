@@ -25,23 +25,19 @@ public:
 uint8_t
 Pci::readConfigurationRegister8(uint8_t bus, uint8_t device, uint8_t function, uint8_t offset)
 {
-   uint32_t tag = X86Pci::makeTag(bus, device, function) | (offset & 0xfc);
+   uint32_t value = readConfigurationRegister32(bus, device, function, offset);
    int suboff = (offset & 0x03) * 8;
 
-   outl(X86Pci::PCI_CONFIG_ADDRESS, tag);
-
-   return (uint8_t )(inl(X86Pci::PCI_CONFIG_DATA) >> suboff);
+   return (uint8_t )(value >> suboff);
 }
 
 uint16_t
 Pci::readConfigurationRegister16(uint8_t bus, uint8_t device, uint8_t function, uint8_t offset)
 {
-   uint32_t tag = X86Pci::makeTag(bus, device, function) | (offset & 0xfc);
+   uint32_t value = readConfigurationRegister32(bus, device, function, offset);
    int suboff = ((offset & 0x02) >> 1) * 16;
 
-   outl(X86Pci::PCI_CONFIG_ADDRESS, tag);
-
-   return (uint16_t )(inl(X86Pci::PCI_CONFIG_DATA) >> suboff);
+   return (uint16_t )(value >> suboff);
 }
 
 // 31         |  30 - 24 | 23 - 16    | 15 - 11       | 10 - 8          | 7 - 2           | 1 - 0
@@ -55,6 +51,43 @@ Pci::readConfigurationRegister32(uint8_t bus, uint8_t device, uint8_t function, 
    outl(X86Pci::PCI_CONFIG_ADDRESS, tag);
 
    return inl(X86Pci::PCI_CONFIG_DATA);
+}
+
+void
+Pci::writeConfigurationRegister8(uint8_t bus, uint8_t device, uint8_t function, uint8_t offset, uint8_t val)
+{
+   uint32_t value = readConfigurationRegister32(bus, device, function, offset);
+   int suboff = (offset & 0x03) * 8;
+
+   value &= (0xff >> suboff);
+   value |= (val >> suboff);
+
+   return writeConfigurationRegister32(bus, device, function, offset & (~0x03), value);
+}
+
+void
+Pci::writeConfigurationRegister16(uint8_t bus, uint8_t device, uint8_t function, uint8_t offset, uint16_t val)
+{
+   uint32_t value = readConfigurationRegister32(bus, device, function, offset);
+   int suboff = ((offset & 0x02) >> 1) * 16;
+
+   value &= (0xffff >> suboff);
+   value |= (val >> suboff);
+
+   return writeConfigurationRegister32(bus, device, function, offset & (~0x03), value);
+}
+
+// 31         |  30 - 24 | 23 - 16    | 15 - 11       | 10 - 8          | 7 - 2           | 1 - 0
+// Enable Bit | Reserved | Bus Number | Device Number | Function Number | Register Number | 00
+
+void
+Pci::writeConfigurationRegister32(uint8_t bus, uint8_t device, uint8_t function, uint8_t offset, uint32_t val)
+{
+   uint32_t tag = X86Pci::makeTag(bus, device, function) | (offset & 0xfc);
+
+   outl(X86Pci::PCI_CONFIG_ADDRESS, tag);
+
+   return outl(X86Pci::PCI_CONFIG_DATA, val);
 }
 
 void

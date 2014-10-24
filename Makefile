@@ -165,7 +165,7 @@ run-pc: kernel.elf
 	${QEMU} -M pc -net none -kernel kernel.elf -boot order=c -serial stdio -d cpu_reset
 
 run: kernel.elf
-	${QEMU} -M q35 -net none -kernel kernel.elf -boot order=c -serial stdio -d cpu_reset 2>&1 | tee run.log
+	${QEMU} -M q35 -watchdog i6300esb -net none -kernel kernel.elf -boot order=c -serial stdio -d cpu_reset 2>&1 | tee run.log
 
 run-smp: kernel.elf
 	${QEMU} -M q35 -smp 2 -net none -kernel kernel.elf -boot order=c -serial stdio -d cpu_reset 2>&1 | tee run.log

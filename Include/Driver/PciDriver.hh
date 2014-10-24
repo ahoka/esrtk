@@ -1,6 +1,8 @@
 #ifndef PCIDRIVER_HH
 #define PCIDRIVER_HH
 
+#include <Pci.hh>
+
 #include <cstdint>
 // TODO common-ish interface with root drivers?
 
@@ -24,7 +26,8 @@ private:
 
    PciDriver* next;
 
-   friend class Pci;
+   friend void Pci::registerDriver(PciDriver* driver);
+   friend bool Pci::probeAndAttach(uint8_t bus, uint8_t device, uint8_t function);
 };
 
 #endif

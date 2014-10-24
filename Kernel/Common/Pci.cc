@@ -2,18 +2,18 @@
 #include <Driver/PciDriver.hh>
 #include <cstdio>
 
-PciDriver* Pci::driversM = 0;
+static PciDriver* pciDrivers = 0;
 
 uint16_t
 Pci::getVendorId(uint8_t bus, uint8_t device, uint8_t function)
 {
-   return readConfigurationRegister16(bus, device, function, CONFIG_REGISTER_VENDORID);
+   return readConfigurationRegister16(bus, device, function, Config::VendorId);
 }
 
 uint16_t
 Pci::getDeviceId(uint8_t bus, uint8_t device, uint8_t function)
 {
-   return readConfigurationRegister16(bus, device, function, CONFIG_REGISTER_DEVICEID);
+   return readConfigurationRegister16(bus, device, function, Config::DeviceId);
 }
 
 const char*
@@ -94,15 +94,15 @@ void
 Pci::registerDriver(PciDriver* driver)
 {
    printf("DriverManager: registering driver %p\n", driver);
-   
-   driver->next = driversM;
-   driversM = driver;
+
+   driver->next = pciDrivers;
+   pciDrivers = driver;
 }
 
 bool
 Pci::probeAndAttach(uint8_t bus, uint8_t device, uint8_t function)
 {
-   PciDriver* driver = driversM;
+   PciDriver* driver = pciDrivers;
    while (driver != 0)
    {
       // TODO attach 'best'
