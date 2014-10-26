@@ -67,7 +67,7 @@ Pci::listDevices()
 }
 
 void
-Pci::probeDevices()
+Pci::enumerate()
 {
    for (int bus = 0; bus < 256; bus++)
    {
@@ -82,7 +82,8 @@ Pci::probeDevices()
                uint8_t deviceClass = readConfigurationRegister8((uint8_t )bus, (uint8_t )dev, (uint8_t )fun, 8);
                if (!probeAndAttach(bus, dev, fun))
                {
-                  printf("Unkown device: %x:%x:%x %s: 0x%0hx:0x%0hx\n", bus, dev, fun, getClassName(deviceClass), vid, did);
+                  printf("pci%x:%x:%x: Unknown %s: 0x%0hx:0x%0hx\n",
+                         bus, dev, fun, getClassName(deviceClass), vid, did);
                }
 	    }
 	 }
@@ -108,7 +109,7 @@ Pci::probeAndAttach(uint8_t bus, uint8_t device, uint8_t function)
       // TODO attach 'best'
       if (driver->probe(bus, device, function) > 0)
       {
-         printf("Initalizing driver %s\n", driver->name());
+         printf("pci%x:%x:%x: Initializing driver %s\n", bus, device, function, driver->name());
          driver->init(bus, device, function);
 
          return true;

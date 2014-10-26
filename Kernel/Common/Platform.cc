@@ -21,5 +21,6 @@ Platform::init()
    Clock::probeAndInit();
    Pci::init();
    DriverManager::probeAndInit();
+   Pci::enumerate();
    Modules::handleModules();
 }

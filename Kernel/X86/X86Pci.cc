@@ -107,6 +107,4 @@ Pci::init()
    {
       printf("PCI init OK.\n");
    }
-
-   probeDevices();
 }

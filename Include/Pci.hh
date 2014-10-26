@@ -11,7 +11,7 @@ namespace Pci
    void listDevices();
    bool probeAndAttach(uint8_t bus, uint8_t device, uint8_t function);
    void registerDriver(PciDriver* driver);
-   void probeDevices();
+   void enumerate();
 
    uint8_t readConfigurationRegister8(uint8_t bus, uint8_t device, uint8_t function, uint8_t offset);
    uint16_t readConfigurationRegister16(uint8_t bus, uint8_t device, uint8_t function, uint8_t offset);
@@ -33,7 +33,13 @@ namespace Pci
          VendorId = 0x00,
          DeviceId = 0x02,
          Status = 0x04,
-         Command = 0x06
+         Command = 0x06,
+         Bar0 = 0x10,
+         Bar1 = 0x14,
+         Bar2 = 0x18,
+         Bar3 = 0x1c,
+         Bar4 = 0x20,
+         Bar5 = 0x24
       };
    };
 };
