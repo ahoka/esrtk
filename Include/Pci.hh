@@ -39,7 +39,9 @@ namespace Pci
          Bar2 = 0x18,
          Bar3 = 0x1c,
          Bar4 = 0x20,
-         Bar5 = 0x24
+         Bar5 = 0x24,
+         InterruptPin = 0x3e,
+         InterruptLine = 0x3f
       };
    };
 };

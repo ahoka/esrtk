@@ -47,26 +47,49 @@ bool
 WatchdogPciDriver::init(uint8_t bus, uint8_t device, uint8_t function)
 {
    uint32_t bar0 = Pci::readConfigurationRegister32(bus, device, function, Pci::Config::Bar0);
+
+   uint8_t interruptPin = Pci::readConfigurationRegister32(bus, device, function, Pci::Config::InterruptPin);
+   uint8_t interruptLine = Pci::readConfigurationRegister32(bus, device, function, Pci::Config::InterruptLine);
+
+   const char* pins[] = {
+      "None",
+      "INTA#",
+      "INTB#",
+      "INTC#",
+      "INTD#",
+   };
+
    Pci::writeConfigurationRegister32(bus, device, function, Pci::Config::Bar0, 0xffffffff);
    uint32_t barSize = Pci::readConfigurationRegister32(bus, device, function, Pci::Config::Bar0);
+
+   const char* type;
    if (barSize & 0x1)
    {
       // io
       barSize &= ~0x1;
       barSize = ~barSize + 1;
+      type = "IO";
    }
    else
    {
       // mmio
       barSize &= ~0x7;
       barSize = ~barSize + 1;
-
+      type = "MMIO";
    }
+
+   if (interruptPin == 0)
+   {
+      driverInfo("bar0: %s 0x%x-0x%x (%lu)\n", type, bar0, bar0 + barSize, barSize);
+   }
+   else
+   {
+      driverInfo("bar0: %s 0x%x-0x%x (%lu), IRQ%lu (%s)\n", type, bar0, bar0 + barSize, barSize, interruptLine, pins[interruptPin]);
+   }
+
    Pci::writeConfigurationRegister32(bus, device, function, Pci::Config::Bar0, bar0);
 
    KASSERT(bar0 == Pci::readConfigurationRegister32(bus, device, function, Pci::Config::Bar0));
-
-   driverInfo("bar0: 0x%x, %lu\n", bar0, barSize);
 
    return true;
 }
