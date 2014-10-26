@@ -1,5 +1,6 @@
 #include <Pci.hh>
 #include <Driver/PciDriver.hh>
+#include <Debug.hh>
 
 #include <cstdint>
 
@@ -62,6 +63,8 @@ WatchdogPciDriver::init(uint8_t bus, uint8_t device, uint8_t function)
 
    }
    Pci::writeConfigurationRegister32(bus, device, function, Pci::Config::Bar0, bar0);
+
+   KASSERT(bar0 == Pci::readConfigurationRegister32(bus, device, function, Pci::Config::Bar0));
 
    driverInfo("bar0: 0x%x, %lu\n", bar0, barSize);
 
