@@ -1,6 +1,7 @@
 #include <Pci.hh>
 #include <Driver/PciDriver.hh>
 #include <Debug.hh>
+#include <Memory.hh>
 
 #include <cstdint>
 
@@ -14,6 +15,23 @@ public:
    bool init(uint8_t bus, uint8_t device, uint8_t function);
    bool finalize();
    const char* name() const;
+
+private:
+   enum ConfigurationSpace
+   {
+      WdtConfiguration = 0x60,
+      WdtLockRegister = 0x68
+   };
+
+   enum BarRegisters
+   {
+      PreloadValue1 = 0,
+      PreloadValue2 = 1,
+      GeneralInterruptStatus = 2,
+      ReloadRegister = 3
+   };
+
+   uint32_t* registersM;
 };
 
 // register
@@ -91,12 +109,36 @@ WatchdogPciDriver::init(uint8_t bus, uint8_t device, uint8_t function)
 
    KASSERT(bar0 == Pci::readConfigurationRegister32(bus, device, function, Pci::Config::Bar0));
 
+   registersM = (uint32_t*)Memory::mapAnonymousPage(bar0 & ~0x7, Memory::MapUncacheable);
+
+   driverInfo("Registers mapped to %p\n", registersM);
+
+   registersM[ReloadRegister] = 0x80;
+   registersM[ReloadRegister] = 0x86;
+
+   registersM[PreloadValue1] = 0xffffffff;
+
+   registersM[ReloadRegister] = 0x80;
+   registersM[ReloadRegister] = 0x86;
+
+   registersM[PreloadValue2] = 0xffffffff;
+
+   registersM[ReloadRegister] = 0x80;
+   registersM[ReloadRegister] = 0x86;
+
+   registersM[WdtLockRegister] = 1 << 1;
+
+   driverInfo("Watchdog armed!\n");
+
    return true;
 }
 
 bool
 WatchdogPciDriver::finalize()
 {
+   Memory::unmapPage((uintptr_t)registersM);
+   registersM = 0;
+
    return true;
 }
 
