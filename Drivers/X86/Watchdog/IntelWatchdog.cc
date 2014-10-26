@@ -15,6 +15,9 @@ public:
    const char* name() const;
 };
 
+// register
+static WatchdogPciDriver driver;
+
 WatchdogPciDriver::WatchdogPciDriver()
 {
 }
@@ -43,8 +46,24 @@ bool
 WatchdogPciDriver::init(uint8_t bus, uint8_t device, uint8_t function)
 {
    uint32_t bar0 = Pci::readConfigurationRegister32(bus, device, function, Pci::Config::Bar0);
+   Pci::writeConfigurationRegister32(bus, device, function, Pci::Config::Bar0, 0xffffffff);
+   uint32_t barSize = Pci::readConfigurationRegister32(bus, device, function, Pci::Config::Bar0);
+   if (barSize & 0x1)
+   {
+      // io
+      barSize &= ~0x1;
+      barSize = ~barSize + 1;
+   }
+   else
+   {
+      // mmio
+      barSize &= ~0x7;
+      barSize = ~barSize + 1;
 
-   driverInfo("bar0: 0x%x\n", bar0);
+   }
+   Pci::writeConfigurationRegister32(bus, device, function, Pci::Config::Bar0, bar0);
+
+   driverInfo("bar0: 0x%x, %lu\n", bar0, barSize);
 
    return true;
 }
@@ -60,7 +79,3 @@ WatchdogPciDriver::name() const
 {
    return "i6300esb";
 }
-
-
-static WatchdogPciDriver driver;
-
