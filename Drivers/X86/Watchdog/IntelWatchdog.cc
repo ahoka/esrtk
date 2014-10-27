@@ -1,5 +1,7 @@
 #include <Pci.hh>
 #include <Driver/PciDriver.hh>
+
+#include <Interrupt.hh>
 #include <Debug.hh>
 #include <Memory.hh>
 
@@ -25,13 +27,73 @@ private:
 
    enum BarRegisters
    {
-      PreloadValue1 = 0,
-      PreloadValue2 = 1,
-      GeneralInterruptStatus = 2,
-      ReloadRegister = 3
+      PreloadValue1 = 0x00,
+      PreloadValue2 = 0x04,
+      GeneralInterruptStatus = 0x08,
+      ReloadRegister = 0x0c
    };
 
-   uint32_t* registersM;
+   uintptr_t mmioM;
+   size_t mmioSizeM;
+
+   uint32_t read32(unsigned int offset)
+   {
+      return *(volatile uint32_t*)(mmioM + offset);
+   }
+
+   void write32(unsigned int offset, uint32_t value)
+   {
+      *(volatile uint32_t*)(mmioM + offset) = value;
+      __sync_synchronize();
+   }
+
+   uint16_t read16(unsigned int offset)
+   {
+      return *(volatile uint16_t*)(mmioM + offset);
+   }
+
+   void write16(unsigned int offset, uint16_t value)
+   {
+      *(volatile uint16_t*)(mmioM + offset) = value;
+      __sync_synchronize();
+   }
+
+   uint8_t read8(unsigned int offset)
+   {
+      return *(volatile uint8_t*)(mmioM + offset);
+   }
+
+   void write8(unsigned int offset, uint8_t value)
+   {
+      *(volatile uint8_t*)(mmioM + offset) = value;
+      __sync_synchronize();
+   }
+
+   void unlock()
+   {
+      write8(ReloadRegister, 0x80);
+      write8(ReloadRegister, 0x86);
+   }
+
+   class WatchdogInterruptHandler : public InterruptHandler
+   {
+   private:
+      WatchdogPciDriver* driverM;
+
+   public:
+      WatchdogInterruptHandler(WatchdogPciDriver* driver)
+         : driverM(driver)
+      {
+      }
+
+      void handleInterrupt()
+      {
+         if (driverM->read8(GeneralInterruptStatus) & 0x01)
+         {
+            driverM->driverInfo("Watchdog timer expired!\n");
+         }
+      }
+   };
 };
 
 // register
@@ -102,31 +164,46 @@ WatchdogPciDriver::init(uint8_t bus, uint8_t device, uint8_t function)
    }
    else
    {
-      driverInfo("bar0: %s 0x%x-0x%x (%lu), IRQ%lu (%s)\n", type, bar0, bar0 + barSize, barSize, interruptLine, pins[interruptPin]);
+      driverInfo("bar0: %s 0x%x-0x%x (%lu), IRQ%lu (%s)\n", type, (bar0 & ~0x7), (bar0 & ~0x7) + barSize, barSize, interruptLine, pins[interruptPin]);
    }
 
    Pci::writeConfigurationRegister32(bus, device, function, Pci::Config::Bar0, bar0);
 
    KASSERT(bar0 == Pci::readConfigurationRegister32(bus, device, function, Pci::Config::Bar0));
 
-   registersM = (uint32_t*)Memory::mapAnonymousPage(bar0 & ~0x7, Memory::MapUncacheable);
+   mmioM = Memory::mapRegion(bar0 & ~0x7, barSize, Memory::MapUncacheable);
 
-   driverInfo("Registers mapped to %p\n", registersM);
+   driverInfo("Registers mapped to %p\n", mmioM);
 
-   registersM[ReloadRegister] = 0x80;
-   registersM[ReloadRegister] = 0x86;
+   bool success = Interrupt::registerHandler(10, new WatchdogInterruptHandler(this));
+   if (!success)
+   {
+      driverInfo("Registering interrupt handler failed!\n");
+   }
 
-   registersM[PreloadValue1] = 0xffffffff;
+   driverInfo("Default values: PRE1: %u, PRE2: %u\n", read32(PreloadValue1), read32(PreloadValue2));
 
-   registersM[ReloadRegister] = 0x80;
-   registersM[ReloadRegister] = 0x86;
+   uint8_t lockRegister = Pci::readConfigurationRegister8(bus, device, function, WdtLockRegister);
+   driverInfo("Lock register: 0x%x\n", lockRegister);
 
-   registersM[PreloadValue2] = 0xffffffff;
+   uint16_t configRegister = Pci::readConfigurationRegister16(bus, device, function, WdtConfiguration);
+   driverInfo("Configuration register: 0x%x\n", configRegister);
 
-   registersM[ReloadRegister] = 0x80;
-   registersM[ReloadRegister] = 0x86;
+   driverInfo("Interrupt status: 0x%x\n", read8(GeneralInterruptStatus));
+   driverInfo("Reload register: 0x%x\n", read16(ReloadRegister));
 
-   registersM[WdtLockRegister] = 1 << 1;
+   unlock();
+   write32(PreloadValue1, 5000);
+
+   unlock();
+   write32(PreloadValue2, 5000);
+
+   unlock();
+   write16(ReloadRegister, 1 << 8);
+
+   driverInfo("New values: PRE1: %u, PRE2: %u\n", read32(PreloadValue1), read32(PreloadValue2));
+
+   Pci::writeConfigurationRegister8(bus, device, function, WdtLockRegister, 1 << 1);
 
    driverInfo("Watchdog armed!\n");
 
@@ -136,8 +213,8 @@ WatchdogPciDriver::init(uint8_t bus, uint8_t device, uint8_t function)
 bool
 WatchdogPciDriver::finalize()
 {
-   Memory::unmapPage((uintptr_t)registersM);
-   registersM = 0;
+   Memory::unmapRegion(mmioM, 16);
+   mmioM = 0;
 
    return true;
 }
