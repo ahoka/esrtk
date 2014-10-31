@@ -1,5 +1,6 @@
 #include <Supervisor/Scheduler.hh>
 #include <Kernel/Thread.hh>
+#include <Kernel/Watchdog.hh>
 
 #include <cstdio>
 
@@ -75,4 +76,6 @@ Scheduler::schedule()
    readyListM->push(currentThread);
 //   currentThread = nextToRun;
 //   nextToRun = nextToRun->next;
+
+   Watchdog::kick();
 }

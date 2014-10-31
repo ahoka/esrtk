@@ -16,6 +16,7 @@ typedef struct spinlock_softirq
 } spinlock_softirq_t;
 
 #define SPINLOCK_STATIC_INITIALIZER 0
+#define SPINLOCK_SOFTIRQ_STATIC_INITIALIZER { 0, 0 }
 
 long spinlock_enter(spinlock_t* lock);
 long spinlock_exit(spinlock_t* lock);

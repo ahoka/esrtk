@@ -109,6 +109,14 @@ Keyboard::handleInterrupt()
          case Scancodes::F9:
             Power::reboot();
             //break;
+         case Scancodes::F8:
+            printf("Simulating a dead-lock!\n");
+            for (;;)
+            {
+               asm volatile("cli");
+            }
+            break;
+
          default:
             printf("0x%hhx", scanCode);
       }

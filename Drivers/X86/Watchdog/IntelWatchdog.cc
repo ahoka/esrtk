@@ -5,9 +5,11 @@
 #include <Debug.hh>
 #include <Memory.hh>
 
+#include <WatchdogDevice.hh>
+
 #include <cstdint>
 
-class WatchdogPciDriver : public PciDriver
+class WatchdogPciDriver : public PciDriver, private WatchdogDevice
 {
 public:
    WatchdogPciDriver();
@@ -17,6 +19,8 @@ public:
    bool init(uint8_t bus, uint8_t device, uint8_t function);
    bool finalize();
    const char* name() const;
+
+   void kick();
 
 private:
    enum ConfigurationSpace
@@ -203,16 +207,25 @@ WatchdogPciDriver::init(uint8_t bus, uint8_t device, uint8_t function)
 
    driverInfo("New values: PRE1: %u, PRE2: %u\n", read32(PreloadValue1), read32(PreloadValue2));
 
-   Pci::writeConfigurationRegister8(bus, device, function, WdtLockRegister, 1 << 1);
+   Pci::writeConfigurationRegister8(bus, device, function, WdtLockRegister, 0x3);
 
+   registerWatchdog();
    driverInfo("Watchdog armed!\n");
 
    return true;
 }
 
+void
+WatchdogPciDriver::kick()
+{
+   unlock();
+   write16(ReloadRegister, 1 << 8);
+}
+
 bool
 WatchdogPciDriver::finalize()
 {
+   unregisterWatchdog();
    Memory::unmapRegion(mmioM, 16);
    mmioM = 0;
 
