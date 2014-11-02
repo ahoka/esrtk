@@ -370,7 +370,7 @@ void*
 Memory::readPhysicalMemory(void* destination, const void* source, std::size_t size)
 {
    uintptr_t mapFirst = roundDown(uintptr_t(source), PageSize);
-   uintptr_t mapLast = roundTo(uintptr_t(source), PageSize);
+   uintptr_t mapLast = roundTo(uintptr_t(source) + size, PageSize);
 
    uintptr_t mapped = mapRegion(mapFirst, mapLast - mapFirst);
 
