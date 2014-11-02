@@ -24,6 +24,8 @@ SIZE=		${CROSS}size
 
 QEMU=		qemu-system-i386
 
+QEMU_ARGS=	-M q35 -watchdog i6300esb -device rtl8139 -boot order=c -serial stdio -d cpu_reset
+
 LDFLAGS=	-melf_i386
 
 ASFLAGS+=	--32 -g
@@ -163,26 +165,11 @@ kernel.img: kernel.elf
 clean:
 	@-rm ${.OBJDIR}/*.o kernel.elf kernel.img .depend > /dev/null 2>&1 || true
 
-run-isa: kernel.elf
-	${QEMU} -cpu pentium2 -M isapc -net none -kernel kernel.elf -boot order=c -serial stdio -d cpu_reset
-
-run-pc: kernel.elf
-	${QEMU} -M pc -net none -kernel kernel.elf -boot order=c -serial stdio -d cpu_reset
-
 run: kernel.elf
-	${QEMU} -M q35 -watchdog i6300esb -net none -kernel kernel.elf -boot order=c -serial stdio -d cpu_reset 2>&1 | tee run.log
+	${QEMU} ${QEMU_ARGS} -kernel kernel.elf 2>&1 | tee run.log
 
 run-smp: kernel.elf
-	${QEMU} -M q35 -smp 2 -net none -kernel kernel.elf -boot order=c -serial stdio -d cpu_reset 2>&1 | tee run.log
-
-run-debug: kernel.elf
-	${QEMU} -M q35 -net none -kernel kernel.elf -boot order=c -serial stdio -s -S 2>&1 | tee run.log
-
-serial: kernel.elf
-	${QEMU} -net none -kernel kernel.elf -boot order=c -serial stdio -d cpu_reset -nographic
-
-monitor: kernel.elf
-	${QEMU} -net none -kernel kernel.elf -boot order=c -monitor stdio
+	${QEMU} ${QEMU_ARGS} -smp 4 -kernel kernel.elf 2>&1 | tee run.log
 
 run-grub: kernel.img
 	${QEMU} -fda kernel.img
