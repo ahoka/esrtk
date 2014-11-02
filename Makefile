@@ -51,8 +51,12 @@ COPTS+=		-Wno-c++98-compat-pedantic \
 CC=		${CROSS}gcc
 CXX=		${CROSS}g++
 CPP=		${CROSS}gcc -m32 -nostdinc -E
-GCC_VERSION:=	${shell ${CC} -dumpversion}
-#COPTS+=	-fdiagnostics-color=always
+GCC_VERSION!=	${CC} -dumpversion
+
+.if ${GCC_VERSION} == "4.9.1"
+COPTS+=		-fdiagnostics-color=always
+.endif
+
 .endif
 
 CXXFLAGS+=	-std=c++11
