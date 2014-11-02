@@ -31,6 +31,7 @@ ASFLAGS+=	--32 -g
 COPTS+=		-O2 -march=i686 -m32 -g3 \
 		-Wall -Wextra -Werror \
 		-nostdlib -nostdinc -fno-builtin \
+		-fno-omit-frame-pointer \
 		-fno-stack-protector
 
 CFLAGS=		-std=c99 ${COPTS}
