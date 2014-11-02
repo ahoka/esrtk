@@ -18,7 +18,7 @@ public:
    virtual const char* name() const = 0;
 
 protected:
-   int driverInfo(const char*, ...);
+   int driverInfo(const char*, ...) __attribute__((__format__ (__printf__, 2, 3)));
    
 private:
    PciDriver(const PciDriver&) = delete;

@@ -164,11 +164,11 @@ WatchdogPciDriver::init(uint8_t bus, uint8_t device, uint8_t function)
 
    if (interruptPin == 0)
    {
-      driverInfo("bar0: %s 0x%x-0x%x (%lu)\n", type, bar0, bar0 + barSize, barSize);
+      driverInfo("bar0: %s 0x%x-0x%x (%u)\n", type, bar0, bar0 + barSize, barSize);
    }
    else
    {
-      driverInfo("bar0: %s 0x%x-0x%x (%lu), IRQ%lu (%s)\n", type, (bar0 & ~0x7), (bar0 & ~0x7) + barSize, barSize, interruptLine, pins[interruptPin]);
+      driverInfo("bar0: %s 0x%x-0x%x (%u), IRQ%u (%s)\n", type, (bar0 & ~0x7), (bar0 & ~0x7) + barSize, barSize, interruptLine, pins[interruptPin]);
    }
 
    Pci::writeConfigurationRegister32(bus, device, function, Pci::Config::Bar0, bar0);
@@ -177,7 +177,7 @@ WatchdogPciDriver::init(uint8_t bus, uint8_t device, uint8_t function)
 
    mmioM = Memory::mapRegion(bar0 & ~0x7, barSize, Memory::MapUncacheable);
 
-   driverInfo("Registers mapped to %p\n", mmioM);
+   driverInfo("Registers mapped to %p\n", (void*)mmioM);
 
    bool success = Interrupt::registerHandler(10, new WatchdogInterruptHandler(this));
    if (!success)

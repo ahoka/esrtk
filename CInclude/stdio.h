@@ -14,7 +14,7 @@ extern "C"
 int putchar(int);
 int puts(const char *);
 
-__attribute__((__format__ (__printf__, 1, 2))) int printf(const char* , ...);
+int printf(const char* , ...) __attribute__((__format__ (__printf__, 1, 2)));
 int vprintf(const char* , va_list);
 int vsnprintf(char *str, size_t size, const char *format, va_list ap);
 

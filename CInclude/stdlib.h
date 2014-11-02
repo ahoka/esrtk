@@ -9,9 +9,9 @@ _CXX_BEGIN
 
 void abort(void) __attribute__((noreturn));
 
-void *malloc(size_t size);
+void *malloc(size_t size) __attribute__((alloc_size(1)));
 void free(void *ptr);
-void *realloc (void* ptr, size_t size);
+void *realloc (void* ptr, size_t size) __attribute__((alloc_size(2)));
 
 int rand(void);
 void srand(unsigned int);
