@@ -73,8 +73,6 @@ Pci::getDeviceInfo(PciDevice pciDevice)
    uint8_t interruptPin = pciDevice.readConfigurationRegister8(Pci::Config::InterruptPin);
    uint8_t interruptLine = pciDevice.readConfigurationRegister8(Pci::Config::InterruptLine);
 
-   printf("int: %u %u\n", interruptPin, interruptLine);
-
    const char* pins[] = {
       "None",
       "INTA#",

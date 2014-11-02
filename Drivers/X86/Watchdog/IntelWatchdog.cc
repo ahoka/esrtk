@@ -132,8 +132,8 @@ WatchdogPciDriver::init(uint8_t bus, uint8_t device, uint8_t function)
 {
    uint32_t bar0 = Pci::readConfigurationRegister32(bus, device, function, Pci::Config::Bar0);
 
-   uint8_t interruptPin = Pci::readConfigurationRegister32(bus, device, function, Pci::Config::InterruptPin);
-   uint8_t interruptLine = Pci::readConfigurationRegister32(bus, device, function, Pci::Config::InterruptLine);
+   uint8_t interruptPin = Pci::readConfigurationRegister8(bus, device, function, Pci::Config::InterruptPin);
+   uint8_t interruptLine = Pci::readConfigurationRegister8(bus, device, function, Pci::Config::InterruptLine);
 
    const char* pins[] = {
       "None",

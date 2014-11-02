@@ -55,16 +55,16 @@ namespace Pci
       {
          VendorId = 0x00,
          DeviceId = 0x02,
-         Status = 0x04,
-         Command = 0x06,
+         Status = 0x06,
+         Command = 0x04,
          Bar0 = 0x10,
          Bar1 = 0x14,
          Bar2 = 0x18,
          Bar3 = 0x1c,
          Bar4 = 0x20,
          Bar5 = 0x24,
-         InterruptPin = 0x3e,
-         InterruptLine = 0x3f
+         InterruptPin = 0x3d,
+         InterruptLine = 0x3c
       };
    };
 };

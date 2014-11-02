@@ -25,7 +25,7 @@ public:
 uint8_t
 Pci::readConfigurationRegister8(uint8_t bus, uint8_t device, uint8_t function, uint8_t offset)
 {
-   uint32_t value = readConfigurationRegister32(bus, device, function, offset);
+   uint32_t value = readConfigurationRegister32(bus, device, function, offset & ~0x3);
    int suboff = (offset & 0x03) * 8;
 
    return (uint8_t )(value >> suboff);
@@ -34,7 +34,9 @@ Pci::readConfigurationRegister8(uint8_t bus, uint8_t device, uint8_t function, u
 uint16_t
 Pci::readConfigurationRegister16(uint8_t bus, uint8_t device, uint8_t function, uint8_t offset)
 {
-   uint32_t value = readConfigurationRegister32(bus, device, function, offset);
+   KASSERT((offset & 0x1) == 0);
+
+   uint32_t value = readConfigurationRegister32(bus, device, function, offset & ~0x3);
    int suboff = ((offset & 0x02) >> 1) * 16;
 
    return (uint16_t )(value >> suboff);
@@ -46,7 +48,9 @@ Pci::readConfigurationRegister16(uint8_t bus, uint8_t device, uint8_t function, 
 uint32_t
 Pci::readConfigurationRegister32(uint8_t bus, uint8_t device, uint8_t function, uint8_t offset)
 {
-   uint32_t tag = X86Pci::makeTag(bus, device, function) | (offset & 0xfc);
+   KASSERT((offset & 0x3) == 0);
+
+   uint32_t tag = X86Pci::makeTag(bus, device, function) | offset;
 
    outl(X86Pci::PCI_CONFIG_ADDRESS, tag);
 
@@ -68,6 +72,8 @@ Pci::writeConfigurationRegister8(uint8_t bus, uint8_t device, uint8_t function, 
 void
 Pci::writeConfigurationRegister16(uint8_t bus, uint8_t device, uint8_t function, uint8_t offset, uint16_t val)
 {
+   KASSERT((offset & 0x1) == 0);
+
    uint32_t value = readConfigurationRegister32(bus, device, function, offset);
    int suboff = ((offset & 0x02) >> 1) * 16;
 
@@ -83,6 +89,8 @@ Pci::writeConfigurationRegister16(uint8_t bus, uint8_t device, uint8_t function,
 void
 Pci::writeConfigurationRegister32(uint8_t bus, uint8_t device, uint8_t function, uint8_t offset, uint32_t val)
 {
+   KASSERT((offset & 0x3) == 0);
+
    uint32_t tag = X86Pci::makeTag(bus, device, function) | (offset & 0xfc);
 
    outl(X86Pci::PCI_CONFIG_ADDRESS, tag);
