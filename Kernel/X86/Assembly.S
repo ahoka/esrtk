@@ -29,7 +29,13 @@ FUNCTION(x86_rdmsr)
 	rdmsr
 	ret
 END(x86_rdmsr)
-	
+
+FUNCTION(x86_rdpmc)
+	movl 4(%esp), %ecx
+	rdpmc
+	ret
+END(x86_rdpmc)
+
 // wrmsr(in u32 address, in u32 eax, in u32 edx)
 //FUNCTION(x86_wrmsr)
 //	movl 4(%esp), %ecx

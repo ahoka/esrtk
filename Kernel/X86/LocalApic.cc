@@ -110,7 +110,7 @@ LocalApic::init()
    printf("APIC: CPU type: %s\n",
           (flagsM & ApicIsBsp) ? "BSP" : "APU");
    printf("APIC: state: %s\n",
-          (flagsM & ApicIsEnabled) ? "enabledM" : "disabled");
+          (flagsM & ApicIsEnabled) ? "enabled" : "disabled");
    printf("APIC: LAPIC Id: %u\n", getLocalApicId());
 
    uint64_t version = read32(LocalApicVersion);
@@ -122,6 +122,9 @@ LocalApic::init()
    // outb(0x22, 0x70);
    // outb(0x23, 0x1);
 
+   auto tpr = read32(0x80);
+   printf("TPR: 0x%x\n", tpr);
+
    auto lint0 = read32(LvtLint0);
    printf("LINT0: 0x%x\n", lint0);
    printLocalVectorTable(lint0);
@@ -130,9 +133,26 @@ LocalApic::init()
    printf("LINT1: 0x%x\n", lint1);
    printLocalVectorTable(lint1);
 
+   auto perfmon = read32(LvtPerfMon);
+   printf("PMON: 0x%x\n", perfmon);
+   printLocalVectorTable(perfmon);
+
+   // enable perfmon interrupt as nmi
+   perfmon = createLocalVectorTable(Lvt::NotMasked, Lvt::DeliveryModeNmi, 0);
+   write32(LvtPerfMon, perfmon);
+
+   perfmon = read32(LvtPerfMon);
+   printf("PMON: 0x%x\n", perfmon);
+   printLocalVectorTable(perfmon);
+
    uint32_t siv = read32(SpuriousInterruptVector);
    printf("APIC: Spurious Vector: %u\n", siv & SpuriousVectorMask);
-   write32(SpuriousInterruptVector, siv | ApicSoftwareEnable | ApicFocusDisabled);
+   printf("APIC: Spurious Vector Register: 0x%x\n", siv);
+
+   siv = 255 | ApicSoftwareEnable | ApicFocusDisabled;
+   write32(SpuriousInterruptVector, siv);
+   siv = read32(SpuriousInterruptVector);
+   printf("APIC: Spurious Vector Register: 0x%x\n", siv);
 
    enabledM = true;
 
@@ -192,10 +212,24 @@ LocalApic::createLocalVectorTable(Lvt::Mask mask,
 {
    uint32_t lvt = 0;
 
-   lvt |= (mask & 0x1u) << 15;
+   lvt |= (mask & 0x1u) << 16;
    lvt |= (triggerMode & 0x1u) << 14;
-   lvt |= (polarity & 0x1u) << 12;
-   lvt |= (deliveryMode & 0x7u) << 7;
+   lvt |= (polarity & 0x1u) << 13;
+   lvt |= (deliveryMode & 0x7u) << 8;
+   lvt |= vector;
+
+   return lvt;
+}
+
+uint32_t
+LocalApic::createLocalVectorTable(Lvt::Mask mask,
+                                  Lvt::DeliveryMode deliveryMode,
+                                  uint8_t vector)
+{
+   uint32_t lvt = 0;
+
+   lvt |= (mask & 0x1u) << 16;
+   lvt |= (deliveryMode & 0x7u) << 8;
    lvt |= vector;
 
    return lvt;
@@ -210,15 +244,14 @@ LocalApic::createLocalVectorTable(Lvt::DeliveryMode deliveryMode,
                                  deliveryMode, vector);
 }
 
-
 void
 LocalApic::printLocalVectorTable(uint32_t lvt)
 {
-   uint8_t mask = (lvt >> 15) & 0x1u;
+   uint8_t mask = (lvt >> 16) & 0x1u;
 
-   uint8_t triggerMode = (lvt >> 14) & 0x1u;
-   uint8_t polarity = (lvt >> 12) & 0x1u;
-   uint8_t deliveryMode = (lvt >> 7) & 0x7u;
+   uint8_t triggerMode = (lvt >> 15) & 0x1u;
+   uint8_t polarity = (lvt >> 13) & 0x1u;
+   uint8_t deliveryMode = (lvt >> 8) & 0x7u;
    uint8_t vector = lvt & 0xff;
 
    printf("LVT: Vector: %u, Deliv: %u, Pol: %u, TMode: %u, Masked: %u\n",

@@ -37,6 +37,7 @@ public:
       LvtCmci = 0x02f0,
       InterruptCommandLow = 0x0300,
       InterruptCommandHigh = 0x0310,
+      LvtPerfMon = 0x0340,
       LvtLint0 = 0x0350,
       LvtLint1 = 0x0360,
       LvtError = 0x0370
@@ -155,6 +156,10 @@ private:
    uint32_t createLocalVectorTable(Lvt::Mask mask,
                                    Lvt::TriggerMode triggerMode,
                                    Lvt::PinPolarity polarity,
+                                   Lvt::DeliveryMode deliveryMode,
+                                   uint8_t vector);
+
+   uint32_t createLocalVectorTable(Lvt::Mask mask,
                                    Lvt::DeliveryMode deliveryMode,
                                    uint8_t vector);
 

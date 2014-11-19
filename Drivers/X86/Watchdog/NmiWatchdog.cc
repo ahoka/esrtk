@@ -3,6 +3,7 @@
 
 class NmiWatchdog : public Driver
 {
+public:
    NmiWatchdog();
    virtual ~NmiWatchdog();
 
@@ -11,6 +12,8 @@ class NmiWatchdog : public Driver
    virtual bool finalize();
    virtual const char* name() const;
 };
+
+NmiWatchdog nmiWatchdog;
 
 NmiWatchdog::NmiWatchdog()
 {
@@ -31,8 +34,15 @@ NmiWatchdog::init()
 {
    driverInfo("NmiWatchdog::init\n");
 
-//   x86_wrmsr(0x186, 0x53003CUL);
-//   x86_wrmsr(0x0c1, 0xffffffff80000000UL);
+   x86_wrmsr(0x186, 0x53003CUL);
+   x86_wrmsr(0x0c1, 0xffffffff80000000UL);
+
+   for (int i = 0; i < 3; i++)
+   {
+//      uint64_t pmc = x86_rdpmc(0);
+      uint64_t pmc = x86_rdmsr(0x0c1);
+      driverInfo("PMC: %llu\n", pmc);
+   }
 
    return true;
 }

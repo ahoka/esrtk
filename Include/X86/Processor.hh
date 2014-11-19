@@ -51,6 +51,7 @@ extern "C" void x86_sti();
 
 extern "C" void x86_wrmsr(uint32_t address, uint64_t value);
 extern "C" uint64_t x86_rdmsr(uint32_t address);
+extern "C" uint64_t x86_rdpmc(uint32_t counter);
 
 extern "C" uint64_t rdtsc();
 
