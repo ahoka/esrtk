@@ -28,6 +28,8 @@ kmain()
 
    SerialConsole::init();
 
+   printf("Kernel main starting...\n");
+
    initInterrupts();
 
    Memory::copyMemoryMap();
@@ -36,4 +38,6 @@ kmain()
    PageDirectory::init();
    Memory::init();
    MemoryManager::init();
+
+   printf("Memory management initialized...\n");
 }
