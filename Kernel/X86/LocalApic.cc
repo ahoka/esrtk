@@ -97,9 +97,14 @@ LocalApic::init()
    {
       flagsM |= ApicIsBsp;
    }
+
    if (msr & IA32_APIC_BASE_EN)
    {
       flagsM |= ApicIsEnabled;
+   }
+   else
+   {
+      Debug::panic("APIC is disabled\n");
    }
 
    printf("APIC: base address: 0x%lx\n", apicAddressM);
@@ -124,6 +129,7 @@ LocalApic::init()
 
    auto tpr = read32(0x80);
    printf("TPR: 0x%x\n", tpr);
+   write32(0x80, 0);
 
    auto lint0 = read32(LvtLint0);
    printf("LINT0: 0x%x\n", lint0);
