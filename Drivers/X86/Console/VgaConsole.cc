@@ -9,7 +9,7 @@ static VgaConsole vgaConsole;
 VgaConsole::VgaConsole()
    : vram_(0),
      lock(),
-     backgroundColor(BrightBlue),
+     backgroundColor(Blue),
      foregroundColor(White)
 {
    // TODO: MAP AS WC!
