@@ -28,7 +28,7 @@ QEMU_ARGS=	-m 64M -M q35 -watchdog i6300esb -device rtl8139 -boot order=c -seria
 
 LDFLAGS=	-melf_i386
 
-ASFLAGS+=	--32 -g
+AFLAGS+=	-g
 
 COPTS+=		-O2 -march=i686 -m32 -g3 \
 		-Wall -Wextra -Werror \
