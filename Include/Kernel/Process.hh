@@ -4,7 +4,6 @@
 #include <Kernel/Thread.hh>
 
 #include <cstdint>
-#include <ustl/ulist.h>
 
 namespace Kernel
 {
@@ -17,7 +16,7 @@ namespace Kernel
    private:
       uint32_t pageDirectoryM;
 
-      ustl::list<Thread*> threadsM;
+//      ustl::list<Thread*> threadsM;
    };
 };
 

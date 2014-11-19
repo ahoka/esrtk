@@ -69,12 +69,10 @@ CPPFLAGS+=	-I${BUILD_ROOT}/Include/Kernel
 CPPFLAGS+=	-I${BUILD_ROOT}/CInclude
 CPPFLAGS+=	-I${BUILD_ROOT}/CxxInclude
 CPPFLAGS+=	-I${BUILD_ROOT}/Templates
-CPPFLAGS+=	-I${BUILD_ROOT}/CxxInclude/ustl
 
 # XXX unify with the above through transformation
 INCDIRS=	${BUILD_ROOT}/Include ${BUILD_ROOT}/CInclude \
-		${BUILD_ROOT}/CxxInclude ${BUILD_ROOT}/Templates \
-		${BUILD_ROOT}/CxxInclude/ustl
+		${BUILD_ROOT}/CxxInclude ${BUILD_ROOT}/Templates
 
 # XXX these should be only provided for Standard
 #

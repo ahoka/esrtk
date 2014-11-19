@@ -4,15 +4,19 @@
 
 #include <cstdio>
 
-#include <ustl/uqueue.h>
+#include <DoublyLinkedList.hh>
 
 namespace Kernel
 {
    Thread thread0;
 
-   using ThreadQueue = ustl::queue<Thread*>;
-   ThreadQueue* idleListM;
-   ThreadQueue* readyListM;
+//   using ThreadQueue = DoublyLinkedList<Thread>;
+   Thread* idleListHeadM;
+   Thread* idleListTailM;
+   Thread* readyListHeadM;
+   Thread* readyListTailM;
+//   ThreadQueue* idleListM;
+//   ThreadQueue* readyListM;
 
 //   Thread* threads = 0;
    Thread* currentThread = 0;
@@ -24,13 +28,17 @@ using namespace Kernel;
 void
 Scheduler::init()
 {
-   readyListM = new ThreadQueue();
-   idleListM = new ThreadQueue();
+   // readyListM = new ThreadQueue();
+   // idleListM = new ThreadQueue();
 
    thread0.init(0, StackStart);
 
    setCurrentThread(&thread0);
-   readyListM->push(&thread0);
+
+   readyListHeadM = &thread0;
+   readyListTailM = &thread0;
+
+//   idleListM = 0;
 }
 
 void
@@ -56,7 +64,23 @@ Scheduler::insert(Thread* t)
 
 //   t->next = threads;
 //   threads = t;
-   readyListM->push(t);
+
+   if (readyListTailM == 0)
+   {
+      assert(readyListHeadM == 0);
+      assert(t->nextM == 0);
+
+      readyListTailM = t;
+      readyListHeadM = t;
+   }
+   else
+   {
+      Thread* oldTail = readyListTailM;
+      readyListTailM = t;
+
+      oldTail->nextM = t;
+//      t->prevM(oldTail);
+   }
 }
 
 void
@@ -69,11 +93,15 @@ Scheduler::schedule()
 
 //   KASSERT(threads != 0);
 
-   currentThread = readyListM->front();
-   readyListM->pop();
+   // currentThread = readyListHeadM;
+   // readyListHeadM = readyListHeadM->nextM;
+   // if (readyListHeadM == 0)
+   // {
+   //    readyListTailM = 0;
+   // }
 
-   // XXX no idle yet, just rr threads
-   readyListM->push(currentThread);
+   // // XXX no idle yet, just rr threads
+   // readyListM->push(currentThread);
 //   currentThread = nextToRun;
 //   nextToRun = nextToRun->next;
 

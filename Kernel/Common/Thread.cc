@@ -16,7 +16,7 @@ Thread::Thread()
    : id(-1ul),
      kernelStack(0),
      stateM(Idle),
-     next(0)
+     nextM(0)
 {
    Debug::verbose("Creating thread...\n");
 }
@@ -25,7 +25,7 @@ Thread::Thread(unsigned long Id)
    : id(Id),
      kernelStack(0),
      stateM(Idle),
-     next(0)
+     nextM(0)
 {
 }
 
@@ -72,9 +72,9 @@ Thread::init()
 }
 
 bool
-Thread::addJob(Job job)
+Thread::addJob(Job /*job*/)
 {
-   jobsM.push(job);
+//   jobsM.push(job);
 
    return true;
 }
@@ -98,12 +98,16 @@ Thread::main(Thread* thread)
       if (thread->stateM == Ready)
       {
          thread->stateM = Running;
-         while (!thread->jobsM.empty())
-         {
-            Job job = thread->jobsM.front();
-            thread->jobsM.pop();
+         // while (!thread->jobsM.empty())
+         // {
+         //    Job job = thread->jobsM.front();
+         //    thread->jobsM.pop();
 
-            job.execute();
+         //    job.execute();
+         // }
+         while (true) // XXX
+         {
+            asm volatile("pause");
          }
       }
       else if (thread->stateM == Agony)

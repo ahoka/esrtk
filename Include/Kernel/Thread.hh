@@ -4,7 +4,7 @@
 #include <Memory.hh>
 #include <Kernel/Job.hh>
 
-#include <ustl/uqueue.h>
+#include <DoublyLinkedList.hh>
 #include <cstdint>
 
 namespace Kernel
@@ -37,16 +37,15 @@ namespace Kernel
          Dead
       };
    
-   public:
       unsigned long id;
 //   uintptr_t userStack;
       uintptr_t kernelStack;
       State stateM;
 
-      Thread* next;
+      Thread* nextM;
 
    private:
-      ustl::queue<Job> jobsM;
+//      DoublyLinkedList<Job> jobsM;
 
       static unsigned long nextThreadId;
    };
