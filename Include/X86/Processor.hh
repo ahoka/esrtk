@@ -24,6 +24,28 @@ enum Flags
    Overflow		= (1 << 11)
 };
 
+// performance counters
+namespace PerfEvtSel
+{
+   enum
+   {
+      EventSelectShift = 0,
+      EventSelectMask = 0x0f,
+      UnitMaskShift = 8,
+      UnitMaskMask = 0x0f,
+      CounterMaskShift = 24,
+      CounterMaskMask = 0x0f,
+
+      UserMode = (1 << 16),
+      OperatingSystemMode = (1 << 17),
+      EdgeDetect = (1 << 18),
+      PinControl = (1 << 19),
+      InterruptEnable = (1 << 20),
+      EnableCounters = (1 << 22),
+      InverCounterMask = (1 << 23)
+   };
+};
+
 extern "C" void x86_cli();
 extern "C" void x86_sti();
 
