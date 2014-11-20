@@ -1,6 +1,0 @@
-#ifndef CASSERT__
-#define CASSERT__
-
-#include <assert.h>
-
-#endif
