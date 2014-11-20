@@ -1,5 +1,5 @@
 // -*- C++ -*-
-//===-------------------------- cassert -----------------------------------===//
+//===-------------------------- ctgmath -----------------------------------===//
 //
 //                     The LLVM Compiler Infrastructure
 //
@@ -8,18 +8,22 @@
 //
 //===----------------------------------------------------------------------===//
 
+#ifndef _LIBCPP_CTGMATH
+#define _LIBCPP_CTGMATH
+
 /*
-    cassert synopsis
+    ctgmath synopsis
 
-Macros:
-
-    assert
+#include <ccomplex>
+#include <cmath>
 
 */
 
-#include <__config>
-#include <assert.h>
+#include <ccomplex>
+#include <cmath>
 
 #if !defined(_LIBCPP_HAS_NO_PRAGMA_SYSTEM_HEADER)
 #pragma GCC system_header
 #endif
+
+#endif  // _LIBCPP_CTGMATH

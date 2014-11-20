@@ -1,5 +1,5 @@
 // -*- C++ -*-
-//===-------------------------- cassert -----------------------------------===//
+//===--------------------------- cstdbool ---------------------------------===//
 //
 //                     The LLVM Compiler Infrastructure
 //
@@ -8,18 +8,25 @@
 //
 //===----------------------------------------------------------------------===//
 
+#ifndef _LIBCPP_CSTDBOOL
+#define _LIBCPP_CSTDBOOL
+
 /*
-    cassert synopsis
+    cstdbool synopsis
 
 Macros:
 
-    assert
+    __bool_true_false_are_defined
 
 */
 
 #include <__config>
-#include <assert.h>
 
 #if !defined(_LIBCPP_HAS_NO_PRAGMA_SYSTEM_HEADER)
 #pragma GCC system_header
 #endif
+
+#undef __bool_true_false_are_defined
+#define __bool_true_false_are_defined 1
+
+#endif  // _LIBCPP_CSTDBOOL

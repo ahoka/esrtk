@@ -1,5 +1,5 @@
 // -*- C++ -*-
-//===-------------------------- cassert -----------------------------------===//
+//===--------------------------- ccomplex ---------------------------------===//
 //
 //                     The LLVM Compiler Infrastructure
 //
@@ -8,18 +8,22 @@
 //
 //===----------------------------------------------------------------------===//
 
+#ifndef _LIBCPP_CCOMPLEX
+#define _LIBCPP_CCOMPLEX
+
 /*
-    cassert synopsis
+    ccomplex synopsis
 
-Macros:
-
-    assert
+#include <complex>
 
 */
 
-#include <__config>
-#include <assert.h>
+#include <complex>
 
 #if !defined(_LIBCPP_HAS_NO_PRAGMA_SYSTEM_HEADER)
 #pragma GCC system_header
 #endif
+
+// hh 080623 Created
+
+#endif  // _LIBCPP_CCOMPLEX

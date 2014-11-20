@@ -1,5 +1,5 @@
 // -*- C++ -*-
-//===-------------------------- cassert -----------------------------------===//
+//===-------------------------- tgmath.h ----------------------------------===//
 //
 //                     The LLVM Compiler Infrastructure
 //
@@ -8,18 +8,22 @@
 //
 //===----------------------------------------------------------------------===//
 
+#ifndef _LIBCPP_TGMATH_H
+#define _LIBCPP_TGMATH_H
+
 /*
-    cassert synopsis
+    tgmath.h synopsis
 
-Macros:
-
-    assert
+#include <complex.h>
+#include <math.h>
 
 */
 
-#include <__config>
-#include <assert.h>
+#include <complex.h>
+#include <math.h>
 
 #if !defined(_LIBCPP_HAS_NO_PRAGMA_SYSTEM_HEADER)
 #pragma GCC system_header
 #endif
+
+#endif  // _LIBCPP_TGMATH_H

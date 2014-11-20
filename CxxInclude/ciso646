@@ -1,5 +1,5 @@
 // -*- C++ -*-
-//===-------------------------- cassert -----------------------------------===//
+//===--------------------------- ciso646 ----------------------------------===//
 //
 //                     The LLVM Compiler Infrastructure
 //
@@ -8,18 +8,18 @@
 //
 //===----------------------------------------------------------------------===//
 
+#ifndef _LIBCPP_CISO646
+#define _LIBCPP_CISO646
+
 /*
-    cassert synopsis
-
-Macros:
-
-    assert
+    ciso646 synopsis
 
 */
 
 #include <__config>
-#include <assert.h>
 
 #if !defined(_LIBCPP_HAS_NO_PRAGMA_SYSTEM_HEADER)
 #pragma GCC system_header
 #endif
+
+#endif  // _LIBCPP_CISO646

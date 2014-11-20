@@ -1,5 +1,4 @@
-// -*- C++ -*-
-//===-------------------------- cassert -----------------------------------===//
+//===----------------------------------------------------------------------===//
 //
 //                     The LLVM Compiler Infrastructure
 //
@@ -8,18 +7,8 @@
 //
 //===----------------------------------------------------------------------===//
 
-/*
-    cassert synopsis
-
-Macros:
-
-    assert
-
-*/
-
-#include <__config>
-#include <assert.h>
-
-#if !defined(_LIBCPP_HAS_NO_PRAGMA_SYSTEM_HEADER)
-#pragma GCC system_header
-#endif
+#define atof sun_atof
+#define strtod sun_strtod
+#include_next "floatingpoint.h"
+#undef atof
+#undef strtod
