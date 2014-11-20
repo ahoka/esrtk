@@ -1,8 +1,7 @@
-/*	$NetBSD: bcopy.c,v 1.9 2009/03/18 12:25:06 tsutsui Exp $	*/
-
+/*	$OpenBSD: bcopy.c,v 1.5 2005/08/08 08:05:37 espie Exp $ */
 /*-
- * Copyright (c) 1990, 1993
- *	The Regents of the University of California.  All rights reserved.
+ * Copyright (c) 1990 The Regents of the University of California.
+ * All rights reserved.
  *
  * This code is derived from software contributed to Berkeley by
  * Chris Torek.
@@ -32,32 +31,8 @@
  * SUCH DAMAGE.
  */
 
-#include <sys/cdefs.h>
-#if defined(LIBC_SCCS) && !defined(lint)
-#if 0
-static char sccsid[] = "@(#)bcopy.c	8.1 (Berkeley) 6/4/93";
-#else
-__RCSID("$NetBSD: bcopy.c,v 1.9 2009/03/18 12:25:06 tsutsui Exp $");
-#endif
-#endif /* LIBC_SCCS and not lint */
-
-#if !defined(_KERNEL) && !defined(_STANDALONE)
-#include <assert.h>
 #include <string.h>
-#else
-#include <lib/libkern/libkern.h>
-#if !defined(MEMCOPY) && defined(_STANDALONE)
-#include <lib/libsa/stand.h>
-#endif
-#endif
 
-#ifdef _FORTIFY_SOURCE
-#undef bcopy
-#undef memcpy
-#undef memmove
-#endif
-
-#ifndef __OPTIMIZE_SIZE__
 /*
  * sizeof(word) MUST BE A POWER OF TWO
  * SO THAT wmask BELOW IS ALL ONES
@@ -72,26 +47,22 @@ typedef	long word;		/* "word" used for optimal copy speed */
  * This is the routine that actually implements
  * (the portable versions of) bcopy, memcpy, and memmove.
  */
-#if defined(MEMCOPY)
+#ifdef MEMCOPY
 void *
 memcpy(void *dst0, const void *src0, size_t length)
-#elif defined(MEMMOVE)
+#else
+#ifdef MEMMOVE
 void *
 memmove(void *dst0, const void *src0, size_t length)
 #else
 void
 bcopy(const void *src0, void *dst0, size_t length)
 #endif
+#endif
 {
 	char *dst = dst0;
 	const char *src = src0;
 	size_t t;
-	unsigned long u;
-
-#if !defined(_KERNEL)
-	_DIAGASSERT(dst0 != 0);
-	_DIAGASSERT(src0 != 0);
-#endif
 
 	if (length == 0 || dst == src)		/* nothing to do */
 		goto done;
@@ -106,16 +77,16 @@ bcopy(const void *src0, void *dst0, size_t length)
 		/*
 		 * Copy forward.
 		 */
-		u = (unsigned long)src;	/* only need low bits */
-		if ((u | (unsigned long)dst) & wmask) {
+		t = (long)src;	/* only need low bits */
+		if ((t | (long)dst) & wmask) {
 			/*
 			 * Try to align operands.  This cannot be done
 			 * unless the low bits match.
 			 */
-			if ((u ^ (unsigned long)dst) & wmask || length < wsize)
+			if ((t ^ (long)dst) & wmask || length < wsize)
 				t = length;
 			else
-				t = wsize - (size_t)(u & wmask);
+				t = wsize - (t & wmask);
 			length -= t;
 			TLOOP1(*dst++ = *src++);
 		}
@@ -123,7 +94,7 @@ bcopy(const void *src0, void *dst0, size_t length)
 		 * Copy whole words, then mop up any trailing bytes.
 		 */
 		t = length / wsize;
-		TLOOP(*(word *)(void *)dst = *(const word *)(const void *)src; src += wsize; dst += wsize);
+		TLOOP(*(word *)dst = *(word *)src; src += wsize; dst += wsize);
 		t = length & wmask;
 		TLOOP(*dst++ = *src++);
 	} else {
@@ -134,19 +105,17 @@ bcopy(const void *src0, void *dst0, size_t length)
 		 */
 		src += length;
 		dst += length;
-		_DIAGASSERT((unsigned long)dst >= (unsigned long)dst0);
-		_DIAGASSERT((unsigned long)src >= (unsigned long)src0);
-		u = (unsigned long)src;
-		if ((u | (unsigned long)dst) & wmask) {
-			if ((u ^ (unsigned long)dst) & wmask || length <= wsize)
+		t = (long)src;
+		if ((t | (long)dst) & wmask) {
+			if ((t ^ (long)dst) & wmask || length <= wsize)
 				t = length;
 			else
-				t = (size_t)(u & wmask);
+				t &= wmask;
 			length -= t;
 			TLOOP1(*--dst = *--src);
 		}
 		t = length / wsize;
-		TLOOP(src -= wsize; dst -= wsize; *(word *)(void *)dst = *(const word *)(const void *)src);
+		TLOOP(src -= wsize; dst -= wsize; *(word *)dst = *(word *)src);
 		t = length & wmask;
 		TLOOP(*--dst = *--src);
 	}
@@ -157,54 +126,3 @@ done:
 	return;
 #endif
 }
-#else /* __OPTIMIZE_SIZE__ */
-#if defined(MEMCOPY)
-/*
- * This is designed to be small, not fast.
- */
-void *
-memcpy(void *s1, const void *s2, size_t n)
-{
-	const char *f = s2;
-	char *t = s1;
-
-	while (n-- > 0)
-		*t++ = *f++;
-	return s1;
-}
-#elif defined(MEMMOVE)
-/*
- * This is designed to be small, not fast.
- */
-void *
-memmove(void *s1, const void *s2, size_t n)
-{
-	const char *f = s2;
-	char *t = s1;
-
-	if (f < t) {
-		f += n;
-		t += n;
-		while (n-- > 0)
-			*--t = *--f;
-	} else {
-		while (n-- > 0)
-			*t++ = *f++;
-	}
-	return s1;
-}
-#else
-/*
- * This is designed to be small, not fast.
- */
-void
-bcopy(const void *s2, void *s1, size_t n)
-{
-	const char *f = s2;
-	char *t = s1;
-
-	while (n-- > 0)
-		*t++ = *f++;
-}
-#endif
-#endif /* __OPTIMIZE_SIZE__ */

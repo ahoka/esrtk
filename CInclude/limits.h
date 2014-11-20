@@ -1,4 +1,5 @@
-/*	$NetBSD: limits.h,v 1.17 2003/08/07 16:27:59 agc Exp $	*/
+/*	$OpenBSD: limits.h,v 1.18 2013/03/01 21:16:34 guenther Exp $	*/
+/*	$NetBSD: limits.h,v 1.7 1994/10/26 00:56:00 cgd Exp $	*/
 
 /*
  * Copyright (c) 1988 The Regents of the University of California.
@@ -28,65 +29,89 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- *	@(#)limits.h	7.2 (Berkeley) 6/28/90
+ *	@(#)limits.h	5.9 (Berkeley) 4/3/91
  */
 
-#ifndef	_I386_LIMITS_H_
-#define	_I386_LIMITS_H_
+#ifndef _LIMITS_H_
+#define	_LIMITS_H_
 
-#define	CHAR_BIT	8		/* number of bits in a char */
-#define	MB_LEN_MAX	32		/* no multibyte characters */
+#include <sys/cdefs.h>
 
-#define	SCHAR_MAX	0x7f		/* max value for a signed char */
-#define SCHAR_MIN	(-0x7f-1)	/* min value for a signed char */
+#if __POSIX_VISIBLE
+#define	_POSIX_ARG_MAX		4096
+#define	_POSIX_CHILD_MAX	25
+#define	_POSIX_LINK_MAX		8
+#define	_POSIX_MAX_CANON	255
+#define	_POSIX_MAX_INPUT	255
+#define	_POSIX_NAME_MAX		14
+#define	_POSIX_PATH_MAX		256
+#define _POSIX_PIPE_BUF		512
+#define	_POSIX_RE_DUP_MAX	255
+#define	_POSIX_SEM_NSEMS_MAX	256
+#define	_POSIX_SEM_VALUE_MAX	32767
+#define _POSIX_SSIZE_MAX	32767
+#define _POSIX_STREAM_MAX	8
+#define _POSIX_SYMLINK_MAX	255
+#define _POSIX_SYMLOOP_MAX	8
+#define	_POSIX_THREAD_DESTRUCTOR_ITERATIONS	4
+#define	_POSIX_THREAD_KEYS_MAX			128
+#define	_POSIX_THREAD_THREADS_MAX		4
 
-#define	UCHAR_MAX	0xffU		/* max value for an unsigned char */
-#define	CHAR_MAX	0x7f		/* max value for a char */
-#define	CHAR_MIN	(-0x7f-1)	/* min value for a char */
-
-#define	USHRT_MAX	0xffffU		/* max value for an unsigned short */
-#define	SHRT_MAX	0x7fff		/* max value for a short */
-#define SHRT_MIN        (-0x7fff-1)     /* min value for a short */
-
-#define	UINT_MAX	0xffffffffU	/* max value for an unsigned int */
-#define	INT_MAX		0x7fffffff	/* max value for an int */
-#define	INT_MIN		(-0x7fffffff-1)	/* min value for an int */
-
-#define	ULONG_MAX	0xffffffffUL	/* max value for an unsigned long */
-#define	LONG_MAX	0x7fffffffL	/* max value for a long */
-#define	LONG_MIN	(-0x7fffffffL-1)	/* min value for a long */
-
-#if defined(_POSIX_C_SOURCE) || defined(_XOPEN_SOURCE)
-#define	SSIZE_MAX	INT_MAX		/* max value for a ssize_t */
-
-#if defined(_ISOC99_SOURCE) || (__STDC_VERSION__ - 0) >= 199901
-#define	ULLONG_MAX	0xffffffffffffffffULL	/* max unsigned long long */
-#define	LLONG_MAX	0x7fffffffffffffffLL	/* max signed long long */
-#define	LLONG_MIN	(-0x7fffffffffffffffLL-1) /* min signed long long */
+#if __POSIX_VISIBLE >= 200112
+#define	_POSIX_CLOCKRES_MIN	20000000
+#define	_POSIX_NGROUPS_MAX	8
+#define	_POSIX_OPEN_MAX		20
+#define	_POSIX_TZNAME_MAX	6
+#else
+#define	_POSIX_NGROUPS_MAX	0
+#define	_POSIX_OPEN_MAX		16
+#define	_POSIX_TZNAME_MAX	3
 #endif
 
-#define	SIZE_T_MAX	UINT_MAX	/* max value for a size_t */
+#define	_POSIX2_BC_BASE_MAX		99
+#define	_POSIX2_BC_DIM_MAX		2048
+#define	_POSIX2_BC_SCALE_MAX		99
+#define	_POSIX2_BC_STRING_MAX		1000
+#define	_POSIX2_COLL_WEIGHTS_MAX	2
+#define	_POSIX2_EXPR_NEST_MAX		32
+#define	_POSIX2_LINE_MAX		2048
+#define	_POSIX2_RE_DUP_MAX		_POSIX_RE_DUP_MAX
+#define	_POSIX2_CHARCLASS_NAME_MAX	14
 
-#define	UQUAD_MAX	0xffffffffffffffffULL		/* max unsigned quad */
-#define	QUAD_MAX	0x7fffffffffffffffLL		/* max signed quad */
-#define	QUAD_MIN	(-0x7fffffffffffffffLL-1)	/* min signed quad */
+#if __POSIX_VISIBLE >= 200112
+#define _POSIX_HOST_NAME_MAX	255
+#define _POSIX_LOGIN_NAME_MAX	9	/* includes trailing NUL */
+#define _POSIX_TTY_NAME_MAX	9	/* includes trailing NUL */
+#endif /* __POSIX_VISIBLE >= 200112 */
+#endif /* __POSIX_VISIBLE */
 
-#endif /* _POSIX_C_SOURCE || _XOPEN_SOURCE || _NETBSD_SOURCE */
-
-#if defined(_XOPEN_SOURCE)
-#define LONG_BIT	32
-#define WORD_BIT	32
-
-#define DBL_DIG		15
-#define DBL_MAX		1.7976931348623157E+308
-#define DBL_MIN		2.2250738585072014E-308
-
-#define FLT_DIG		6
-#define FLT_MAX		3.40282347E+38F
-#define FLT_MIN		1.17549435E-38F
+#if __XPG_VISIBLE || __POSIX_VISIBLE >= 200809
+#define NL_ARGMAX		9
+#define NL_LANGMAX		14
+#define NL_MSGMAX		32767
+#define NL_SETMAX		255
+#define NL_TEXTMAX		255
 #endif
 
-/* esrtk: only for compat */
-#define PATH_MAX        1024
+#if __XPG_VISIBLE
+# if __XPG_VISIBLE < 600
+#  define PASS_MAX		128	/* _PASSWORD_LEN from <pwd.h> */
+#  define TMP_MAX		308915776
+# endif
 
-#endif /* _i386_LIMITS_H_ */
+# if __XPG_VISIBLE < 700
+#  define NL_NMAX		1
+# endif
+
+#define	_XOPEN_IOV_MAX		16
+#define	_XOPEN_NAME_MAX		255
+#define	_XOPEN_PATH_MAX		1024
+#endif /* __XPG_VISIBLE */
+
+#include <sys/limits.h>
+
+#if __POSIX_VISIBLE
+#include <sys/syslimits.h>
+#endif
+
+#endif /* !_LIMITS_H_ */

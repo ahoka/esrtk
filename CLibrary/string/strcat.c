@@ -1,8 +1,8 @@
-/*	$NetBSD: strcat.c,v 1.2 2007/06/04 18:19:27 christos Exp $	*/
+/*	$OpenBSD: strcat.c,v 1.9 2014/06/10 04:17:37 deraadt Exp $	*/
 
 /*
- * Copyright (c) 1988, 1993
- *	The Regents of the University of California.  All rights reserved.
+ * Copyright (c) 1988 Regents of the University of California.
+ * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,37 +29,19 @@
  * SUCH DAMAGE.
  */
 
-#include <sys/cdefs.h>
-#if defined(LIBC_SCCS) && !defined(lint)
-#if 0
-static char sccsid[] = "@(#)strcat.c	8.1 (Berkeley) 6/4/93";
-#else
-__RCSID("$NetBSD: strcat.c,v 1.2 2007/06/04 18:19:27 christos Exp $");
-#endif
-#endif /* LIBC_SCCS and not lint */
-
-#if !defined(_KERNEL) && !defined(_STANDALONE)
-#include <assert.h>
 #include <string.h>
-#else
-#include <lib/libkern/libkern.h>
-#endif
 
-#ifdef _FORTIFY_SOURCE
-#undef strcat
+#if defined(APIWARN)
+__warn_references(strcat,
+    "warning: strcat() is almost always misused, please use strlcat()");
 #endif
 
 char *
 strcat(char *s, const char *append)
 {
-	char	*t = s;
+	char *save = s;
 
-	_DIAGASSERT(t != NULL);
-	_DIAGASSERT(append != NULL);
-
-	for (; *t; ++t)
-		;
-	while ((*t++ = *append++) != '\0')
-		;
-	return (s);
+	for (; *s; ++s);
+	while ((*s++ = *append++) != '\0');
+	return(save);
 }

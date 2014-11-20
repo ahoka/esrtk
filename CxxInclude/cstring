@@ -71,13 +71,15 @@ using ::memcpy;
 using ::memmove;
 using ::strcpy;
 using ::strncpy;
+using ::strlcpy;
 using ::strcat;
 using ::strncat;
+using ::strlcat;
 using ::memcmp;
 using ::strcmp;
 using ::strncmp;
 using ::strcoll;
-using ::strxfrm;
+//using ::strxfrm;
 
 using ::memchr;
 

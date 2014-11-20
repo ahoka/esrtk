@@ -1,4 +1,4 @@
-/*	$NetBSD: strlen.c,v 1.2 2007/06/04 18:19:27 christos Exp $	*/
+/*	$OpenBSD: strlen.c,v 1.8 2014/06/10 04:17:37 deraadt Exp $	*/
 
 /*-
  * Copyright (c) 1990, 1993
@@ -29,30 +29,15 @@
  * SUCH DAMAGE.
  */
 
-#include <sys/cdefs.h>
-#if defined(LIBC_SCCS) && !defined(lint)
-#if 0
-static char sccsid[] = "@(#)strlen.c	8.1 (Berkeley) 6/4/93";
-#else
-__RCSID("$NetBSD: strlen.c,v 1.2 2007/06/04 18:19:27 christos Exp $");
-#endif
-#endif /* LIBC_SCCS and not lint */
-
-#if !defined(_KERNEL) && !defined(_STANDALONE)
-#include <assert.h>
 #include <string.h>
-#else
-#include <lib/libkern/libkern.h>
-#endif
 
 size_t
 strlen(const char *str)
 {
 	const char *s;
 
-	_DIAGASSERT(str != NULL);
-
 	for (s = str; *s; ++s)
-		continue;
-	return (size_t )(s - str);
+		;
+	return (s - str);
 }
+

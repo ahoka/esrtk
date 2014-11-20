@@ -30,7 +30,7 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- *	$OpenBSD: quad.h,v 1.7 2009/11/07 23:09:35 jsg Exp $
+ *	$OpenBSD: quad.h,v 1.8 2014/06/10 04:17:37 deraadt Exp $
  */
 
 /*
@@ -49,37 +49,8 @@
  * with 48-bit ints.
  */
 
-#ifndef QUAD_H
-#define QUAD_H
-
-//#include <sys/types.h>
-/* #if !defined(_KERNEL) && !defined(_STANDALONE) */
-/* #include <limits.h> */
-/* #else */
-/* #include <sys/limits.h> */
-/* #endif */
-
-typedef long long quad_t;
-typedef unsigned long long u_quad_t;
-typedef unsigned int u_int;
-
-/* #define INT_BIT 32 */
-/* #define CHAR_BIT 8 */
-/* #define UINT_MAX  0xffffffff */
-/* #define UQUAD_MAX 0xffffffffffffffff  */
-/* #define INT_MIN  0xffffffff */
-/* #define QUAD_MAX 0xffffffffffffffff  */
-
-#ifndef _XOPEN_SOURCE
-#define _XOPEN_SOURCE
-#endif
+#include <sys/types.h>
 #include <limits.h>
-
-/*
- * Define the order of 32-bit words in 64-bit words.
- */
-#define _QUAD_HIGHWORD 1
-#define _QUAD_LOWWORD 0
 
 /*
  * Depending on the desired operation, we view a `long long' (aka quad_t) in
@@ -148,5 +119,3 @@ int __ucmpdi2(u_quad_t, u_quad_t);
 u_quad_t __udivdi3(u_quad_t, u_quad_t );
 u_quad_t __umoddi3(u_quad_t, u_quad_t );
 quad_t __xordi3(quad_t, quad_t);
-
-#endif

@@ -1,12 +1,21 @@
-/*	$NetBSD: cdefs.h,v 1.9 2012/01/20 14:08:06 joerg Exp $	*/
+/*	$OpenBSD: cdefs.h,v 1.10 2013/03/28 17:30:45 martynas Exp $	*/
+
+/*
+ * Written by J.T. Conklin <jtc@wimsey.com> 01/17/95.
+ * Public domain.
+ */
 
 #ifndef	_I386_CDEFS_H_
 #define	_I386_CDEFS_H_
 
-#if defined(_STANDALONE)
-#define	__compactcall	__attribute__((__regparm__(3)))
-#endif
+#define __strong_alias(alias,sym)			\
+	__asm__(".global " __STRING(alias) " ; "	\
+	    __STRING(alias) " = " __STRING(sym))
+#define __weak_alias(alias,sym)				\
+	__asm__(".weak " __STRING(alias) " ; "		\
+	    __STRING(alias) " = " __STRING(sym))
+#define __warn_references(sym,msg)			\
+	__asm__(".section .gnu.warning." __STRING(sym)	\
+	    " ; .ascii \"" msg "\" ; .text")
 
-#define __ALIGNBYTES	(sizeof(int) - 1)
-
-#endif /* !_I386_CDEFS_H_ */
+#endif /* !_MACHINE_CDEFS_H_ */

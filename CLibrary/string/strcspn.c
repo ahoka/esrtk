@@ -1,8 +1,10 @@
-/*	$NetBSD: strncasecmp.c,v 1.2 2007/06/04 18:19:27 christos Exp $	*/
-
-/*
- * Copyright (c) 1987, 1993
- *	The Regents of the University of California.  All rights reserved.
+/*	$OpenBSD: strcspn.c,v 1.5 2005/08/08 08:05:37 espie Exp $ */
+/*-
+ * Copyright (c) 1990 The Regents of the University of California.
+ * All rights reserved.
+ *
+ * This code is derived from software contributed to Berkeley by
+ * Chris Torek.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -29,46 +31,28 @@
  * SUCH DAMAGE.
  */
 
-#include <sys/cdefs.h>
-#if defined(LIBC_SCCS) && !defined(lint)
-#if 0
-static char sccsid[] = "@(#)strcasecmp.c	8.1 (Berkeley) 6/4/93";
-#else
-__RCSID("$NetBSD: strncasecmp.c,v 1.2 2007/06/04 18:19:27 christos Exp $");
-#endif
-#endif /* LIBC_SCCS and not lint */
-
-#if !defined(_KERNEL) && !defined(_STANDALONE)
-#include "namespace.h"
-#include <assert.h>
-#include <ctype.h>
 #include <string.h>
-#ifdef __weak_alias
-__weak_alias(strcasecmp,_strcasecmp)
-__weak_alias(strncasecmp,_strncasecmp)
-#endif
-#else
-#include <lib/libkern/libkern.h>
-#include <machine/limits.h>
-#endif 
 
-int
-strncasecmp(const char *s1, const char *s2, size_t n)
+/*
+ * Span the complement of string s2.
+ */
+size_t
+strcspn(const char *s1, const char *s2)
 {
+	const char *p, *spanp;
+	char c, sc;
 
-	_DIAGASSERT(s1 != NULL);
-	_DIAGASSERT(s2 != NULL);
-
-	if (n != 0) {
-		const unsigned char *us1 = (const unsigned char *)s1,
-				*us2 = (const unsigned char *)s2;
-
+	/*
+	 * Stop as soon as we find any character from s2.  Note that there
+	 * must be a NUL in s2; it suffices to stop when we find that, too.
+	 */
+	for (p = s1;;) {
+		c = *p++;
+		spanp = s2;
 		do {
-			if (tolower(*us1) != tolower(*us2++))
-				return (tolower(*us1) - tolower(*--us2));
-			if (*us1++ == '\0')
-				break;
-		} while (--n != 0);
+			if ((sc = *spanp++) == c)
+				return (p - 1 - s1);
+		} while (sc != 0);
 	}
-	return (0);
+	/* NOTREACHED */
 }

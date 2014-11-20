@@ -32,8 +32,8 @@
  *	@(#)ansi.h	8.2 (Berkeley) 1/4/94
  */
 
-#ifndef _MACHINE__TYPES_H_
-#define _MACHINE__TYPES_H_
+#ifndef _I386__TYPES_H_
+#define _I386__TYPES_H_
 
 #if 0
 /*

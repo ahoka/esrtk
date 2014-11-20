@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-struct cpuid_t {
+struct cpuid {
    uint32_t eax;
    uint32_t ebx;
    uint32_t ecx;
@@ -55,7 +55,7 @@ extern "C" uint64_t x86_rdpmc(uint32_t counter);
 
 extern "C" uint64_t rdtsc();
 
-extern "C" void cpuid(uint32_t eax, cpuid_t* result);
+extern "C" void cpuid(uint32_t eax, cpuid* result);
 extern "C" uint32_t cpuid0(char* result);
 
 extern "C" uint32_t get_eflags();

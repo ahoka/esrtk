@@ -59,7 +59,7 @@ LocalApic::write64(uint32_t offset, uint64_t value)
 int
 LocalApic::probe()
 {
-   cpuid_t id;
+   struct cpuid id;
 
    // probe
    cpuid(1, &id);
@@ -74,7 +74,7 @@ LocalApic::probe()
 void
 LocalApic::init()
 {
-   cpuid_t id;
+   struct cpuid id;
 
    cpuid(0x1, &id);
 

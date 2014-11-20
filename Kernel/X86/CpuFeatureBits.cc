@@ -19,7 +19,7 @@
 void
 printCpuFeatures()
 {
-   cpuid_t id;
+   struct cpuid id;
 
    cpuid(1, &id);
 

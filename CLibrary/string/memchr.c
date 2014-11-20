@@ -1,8 +1,7 @@
-/*	$NetBSD: memchr.c,v 1.3 2008/01/08 21:57:06 martin Exp $	*/
-
+/*	$OpenBSD: memchr.c,v 1.7 2005/08/08 08:05:37 espie Exp $ */
 /*-
- * Copyright (c) 1990, 1993
- *	The Regents of the University of California.  All rights reserved.
+ * Copyright (c) 1990 The Regents of the University of California.
+ * All rights reserved.
  *
  * This code is derived from software contributed to Berkeley by
  * Chris Torek.
@@ -32,35 +31,18 @@
  * SUCH DAMAGE.
  */
 
-#include <sys/cdefs.h>
-#if defined(LIBC_SCCS) && !defined(lint)
-#if 0
-static char sccsid[] = "@(#)memchr.c	8.1 (Berkeley) 6/4/93";
-#else
-__RCSID("$NetBSD: memchr.c,v 1.3 2008/01/08 21:57:06 martin Exp $");
-#endif
-#endif /* LIBC_SCCS and not lint */
-
-#if !defined(_KERNEL) && !defined(_STANDALONE)
-#include <assert.h>
 #include <string.h>
-#else
-#include <lib/libkern/libkern.h>
-#endif
 
 void *
 memchr(const void *s, int c, size_t n)
 {
-	_DIAGASSERT(s != NULL);
-
 	if (n != 0) {
 		const unsigned char *p = s;
-		const unsigned char cmp = (const unsigned char )c;
 
 		do {
-			if (*p++ == cmp)
-				return __UNCONST(p - 1);
+			if (*p++ == (unsigned char)c)
+				return ((void *)(p - 1));
 		} while (--n != 0);
 	}
-	return NULL;
+	return (NULL);
 }

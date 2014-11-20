@@ -127,7 +127,7 @@ Tsc::probe()
 bool
 Tsc::startClock()
 {
-   cpuid_t id;
+   struct cpuid id;
 
    cpuid(0x80000007, &id);
    if (id.eax & (1 << 8))

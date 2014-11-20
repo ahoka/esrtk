@@ -13,7 +13,7 @@ public:
    VgaConsole();
    virtual ~VgaConsole();
 
-   int init();
+   void init();
 
    int getColumns();
    int getRows();
@@ -38,6 +38,7 @@ private:
 
    uint32_t vram_;
    Mutex lock;
+   bool isInitialized;
 
 //   backgroundColor(0x1f);
 //   foregroundColor(0xff);

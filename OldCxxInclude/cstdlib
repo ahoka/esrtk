@@ -1,0 +1,20 @@
+#ifndef CSTDLIB
+#define CSTDLIB
+
+#include <stdlib.h>
+
+namespace std
+{
+   using ::abort;
+
+   using ::malloc;
+   using ::free;
+   using ::realloc;
+
+   using ::rand;
+   using ::srand;
+
+   using ::abs;
+};
+
+#endif

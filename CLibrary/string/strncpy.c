@@ -1,8 +1,8 @@
-/*	$NetBSD: strncpy.c,v 1.3 2007/06/04 18:19:28 christos Exp $	*/
+/*	$OpenBSD: strncpy.c,v 1.7 2014/06/10 04:17:37 deraadt Exp $	*/
 
 /*-
- * Copyright (c) 1990, 1993
- *	The Regents of the University of California.  All rights reserved.
+ * Copyright (c) 1990 The Regents of the University of California.
+ * All rights reserved.
  *
  * This code is derived from software contributed to Berkeley by
  * Chris Torek.
@@ -32,25 +32,7 @@
  * SUCH DAMAGE.
  */
 
-#include <sys/cdefs.h>
-#if defined(LIBC_SCCS) && !defined(lint)
-#if 0
-static char sccsid[] = "@(#)strncpy.c	8.1 (Berkeley) 6/4/93";
-#else
-__RCSID("$NetBSD: strncpy.c,v 1.3 2007/06/04 18:19:28 christos Exp $");
-#endif
-#endif /* LIBC_SCCS and not lint */
-
-#if !defined(_KERNEL) && !defined(_STANDALONE)
-#include <assert.h>
 #include <string.h>
-#else
-#include <lib/libkern/libkern.h>
-#endif
-
-#ifdef _FORTIFY_SOURCE
-#undef strncpy
-#endif
 
 /*
  * Copy src to dst, truncating or null-padding to always copy n bytes.
@@ -59,10 +41,6 @@ __RCSID("$NetBSD: strncpy.c,v 1.3 2007/06/04 18:19:28 christos Exp $");
 char *
 strncpy(char *dst, const char *src, size_t n)
 {
-
-	_DIAGASSERT(dst != NULL);
-	_DIAGASSERT(src != NULL);
-
 	if (n != 0) {
 		char *d = dst;
 		const char *s = src;

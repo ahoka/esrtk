@@ -1,4 +1,4 @@
-/*	$NetBSD: strsep.c,v 1.3 2007/06/04 18:19:28 christos Exp $	*/
+/*	$OpenBSD: strsep.c,v 1.7 2014/02/05 20:42:32 stsp Exp $	*/
 
 /*-
  * Copyright (c) 1990, 1993
@@ -29,31 +29,8 @@
  * SUCH DAMAGE.
  */
 
-#include <sys/cdefs.h>
-#if defined(LIBC_SCCS) && !defined(lint)
-#if 0
-static char sccsid[] = "@(#)strsep.c	8.1 (Berkeley) 6/4/93";
-#else
-__RCSID("$NetBSD: strsep.c,v 1.3 2007/06/04 18:19:28 christos Exp $");
-#endif
-#endif /* LIBC_SCCS and not lint */
-
-#if !defined(_KERNEL) && !defined(_STANDALONE)
-#include "namespace.h"
-
-#include <assert.h>
 #include <string.h>
 
-#ifdef __weak_alias
-__weak_alias(strsep,_strsep)
-#endif
-
-#else
-#include <sys/param.h>
-#include <lib/libkern/libkern.h>
-#endif /* !_KERNEL && !_STANDALONE */
-
-#if !HAVE_STRSEP
 /*
  * Get next token from string *stringp, where tokens are possibly-empty
  * strings separated by characters from delim.  
@@ -73,9 +50,6 @@ strsep(char **stringp, const char *delim)
 	int c, sc;
 	char *tok;
 
-	_DIAGASSERT(stringp != NULL);
-	_DIAGASSERT(delim != NULL);
-
 	if ((s = *stringp) == NULL)
 		return (NULL);
 	for (tok = s;;) {
@@ -94,4 +68,3 @@ strsep(char **stringp, const char *delim)
 	}
 	/* NOTREACHED */
 }
-#endif
