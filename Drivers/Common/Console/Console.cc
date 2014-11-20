@@ -3,30 +3,33 @@
 #include <stdarg.h>
 #include <cstdio>
 
-Console* Console::consoleList = 0;
-
 Console::Console()
-   : next(0),
-     currentRow(0),
-     currentColumn(0)
+   : currentRow(0),
+     currentColumn(0),
+     isEnabledM(false)
 {
-   init();
-
-   next = consoleList;
-   consoleList = this;
 }
 
 Console::~Console()
 {
 }
 
-int
-Console::init()
+void
+Console::enable()
 {
-   currentRow = 0;
-   currentColumn = 0;
+   isEnabledM = true;
+}
 
-   return 0;
+void
+Console::disable()
+{
+   isEnabledM = false;
+}
+
+bool
+Console::isEnabled() const
+{
+   return isEnabledM;
 }
 
 int

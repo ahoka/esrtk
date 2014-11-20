@@ -2,6 +2,16 @@
 #define STDIOSUPPORT_HH
 
 #ifdef __cplusplus
+class Console;
+
+namespace KernelStdio
+{
+   void registerConsole(Console *);
+   void unregisterConsole(Console *);
+};
+#endif
+
+#ifdef __cplusplus
 extern "C"
 {
 #endif

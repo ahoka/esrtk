@@ -12,11 +12,16 @@ VgaConsole::VgaConsole()
      backgroundColor(Blue),
      foregroundColor(White)
 {
+}
+
+void
+VgaConsole::init()
+{
    // TODO: MAP AS WC!
    vram_ = Memory::mapAnonymousPage(0xb8000u);
    KASSERT(vram_ != 0);
 
-   clearScreen();
+   clearScreen();   
 }
 
 VgaConsole::~VgaConsole()
@@ -110,7 +115,7 @@ VgaConsole::scrollScreen()
 void
 VgaConsole::setCursor(int row, int column)
 {
-//   lock.enter();
+   lock.enter();
 
    uint16_t cursorIndex = (uint16_t )(row * getColumns() + column);
 
@@ -120,5 +125,5 @@ VgaConsole::setCursor(int row, int column)
    outb(VgaIndexPort, VgaCursorHigh);
    outb(VgaDataPort, (cursorIndex >> 8) & 0xff);
 
-//   lock.exit();
+   lock.exit();
 }

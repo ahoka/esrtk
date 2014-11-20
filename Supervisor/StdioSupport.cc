@@ -4,6 +4,47 @@
 #include <X86/SerialConsole.hh>
 #include <StdioSupport.hh>
 
+#include <functional>
+
+namespace
+{
+   struct ConsoleList
+   {
+      Console* consoleM;
+      ConsoleList* nextM;
+      ConsoleList* prevM;
+   };
+
+   ConsoleList consoleList = { 0, &consoleList, &consoleList };
+
+   void foreachConsole(std::function<void(Console*)> fun)
+   {
+      ConsoleList* c = consoleList.nextM;
+      while (c != &consoleList)
+      {
+         fun(c->consoleM);
+      }
+   }
+};
+
+void
+KernelStdio::registerConsole(Console* console)
+{
+   ConsoleList* item = new ConsoleList();
+   item->consoleM = console;
+
+   item->prevM = consoleList.prevM;
+   consoleList.prevM->nextM = item;
+
+   item->nextM = &consoleList;
+   consoleList.prevM = item;
+}
+
+void
+KernelStdio::unregisterConsole(Console *)
+{
+}
+
 int
 system_putchar(int ch)
 {
@@ -16,12 +57,13 @@ system_putchar(int ch)
    if (!nested)
    {
       nested = true;
-      Console* con = Console::consoleList;
-      while (con != 0)
-      {
-	 con->putChar((char)ch);
-	 con = con->next;
-      }
+      foreachConsole([ch](Console* con) { con->putChar((char)ch); });
+      // Console* con = Console::consoleList;
+      // while (con != 0)
+      // {
+      //    con->putChar((char)ch);
+      //    con = con->next;
+      // }
       nested = false;
    }
 
@@ -39,12 +81,7 @@ system_puts(const char* string)
    if (!nested)
    {
       nested = true;
-      Console* con = Console::consoleList;
-      while (con != 0)
-      {
-	 con->putString(string);
-	 con = con->next;
-      }
+      foreachConsole([string](Console* con) { con->putString(string); });
       nested = false;
    }
 
