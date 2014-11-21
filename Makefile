@@ -103,7 +103,7 @@ DFILES=		${SRC:C/\.(cc|c|S)$/.d/}
 #HIDE=	@
 .SUFFIXES:	.c .cc .S .d
 
-all:	MultiLoader.o kernel.elf kernel.img
+all:	MultiLoader.o kernel.elf
 
 MultiLoader.o: MultiLoader.S
 
