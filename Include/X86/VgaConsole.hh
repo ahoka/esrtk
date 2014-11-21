@@ -3,7 +3,9 @@
 
 #include <Mutex.hh>
 #include <Driver/Console.hh>
-#include <stdint.h>
+
+#include <cstddef>
+#include <cstdint>
 
 typedef uint16_t VgaCharacter;
 
@@ -28,16 +30,12 @@ private:
    VgaConsole& operator=(const VgaConsole& orig) = delete;
 
    int putCharUnlocked(int ch, int row, int column);
-   VgaCharacter asciiToVga(uint8_t c);
+   VgaCharacter asciiToVga(uint8_t c) const;
 
-   VgaCharacter*
-   vram()
-   {
-      return (VgaCharacter* )vram_;
-   }
+   size_t vramSizeM;
+   volatile VgaCharacter* vramM;
 
-   uint32_t vram_;
-   Mutex lock;
+   mutable Mutex lock;
    bool isInitialized;
 
 //   backgroundColor(0x1f);
@@ -81,6 +79,12 @@ private:
    {
       VgaCursorHigh = 14,
       VgaCursorLow = 15
+   };
+
+   enum
+   {
+      VgaColumns = 80,
+      VgaRows = 25
    };
 };
 

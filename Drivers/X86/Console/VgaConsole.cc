@@ -7,38 +7,40 @@
 static VgaConsole vgaConsole;
 
 VgaConsole::VgaConsole()
-   : vram_(0),
+   : vramSizeM(VgaColumns * VgaRows * sizeof(VgaCharacter)),
+     vramM(0),
      lock(),
      backgroundColor(Blue),
      foregroundColor(White)
 {
    // TODO: MAP AS WC!
-   vram_ = Memory::mapAnonymousPage(0xb8000u);
-   KASSERT(vram_ != 0);
+   vramM = reinterpret_cast<VgaCharacter*>(Memory::mapRegion(0xb8000u, vramSizeM, Memory::MapUncacheable));
+   KASSERT(vramM != 0);
 
    clearScreen();
 }
 
 VgaConsole::~VgaConsole()
 {
+   Memory::unmapRegion(reinterpret_cast<uintptr_t>(vramM), vramSizeM);
 }
 
 int
 VgaConsole::getColumns()
 {
-   return 80;
+   return VgaColumns;
 }
 
 int
 VgaConsole::getRows()
 {
-   return 25;
+   return VgaRows;
 }
 
 VgaCharacter
-VgaConsole::asciiToVga(uint8_t c)
+VgaConsole::asciiToVga(uint8_t c) const
 {
-   return (uint16_t )(c | (backgroundColor << 4 | foregroundColor) << 8);
+   return (uint16_t)(c | (backgroundColor << 4 | foregroundColor) << 8);
 }
 
 int
@@ -50,7 +52,7 @@ VgaConsole::putCharUnlocked(int ch, int row, int column)
       return 0;
    }
 
-   vram()[row * getColumns() + column] = asciiToVga(ch);
+   vramM[row * getColumns() + column] = asciiToVga(ch);
 
    return 1;
 }
@@ -66,16 +68,12 @@ VgaConsole::putChar(int ch, int row, int column)
 
    int result = putCharUnlocked(ch, row, column);
 
-//   lock.exit();
-
    return result;
 }
 
 void
 VgaConsole::clearScreen()
 {
-//   lock.enter();
-
    for (int column = 0; column < getColumns(); column++)
    {
       for (int row = 0; row < getRows(); row++)
@@ -85,28 +83,26 @@ VgaConsole::clearScreen()
    }
 
    setCursor(0, 0);
-
-//   lock.exit();
 }
 
 void
 VgaConsole::scrollScreen()
 {
-//   lock.enter();
+   lock.enter();
 
    for (int i = 0; i < getRows() * (getColumns() - 1); i++)
    {
-      vram()[i] = vram()[i + getColumns()];
+      vramM[i] = vramM[i + getColumns()];
    }
    
    for (int i = (getRows() - 1) * getColumns();
 	i < getRows() * getColumns();
 	i++)
    {
-      vram()[i] = asciiToVga(' ');
+      vramM[i] = asciiToVga(' ');
    }
 
-//   lock.exit();
+   lock.exit();
 }
 
 void
