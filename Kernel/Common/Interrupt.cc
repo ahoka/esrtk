@@ -55,7 +55,15 @@ DefaultInterruptHandler::executeAllHandlers()
 // Every interrupt has a default item, so we dont have to use a null value
 // and have statistics easily
 //
-DefaultInterruptHandler Interrupt::interruptHandlers[MaxInterrupts];
+InterruptHandler*
+Interrupt::getInterruptHandler(unsigned int interrupt)
+{
+   static DefaultInterruptHandler interruptHandlers[MaxInterrupts];
+
+   KASSERT(interrupt < MaxInterrupts);
+
+   return &interruptHandlers[interrupt];
+}
 
 void
 Interrupt::appendHandler(InterruptHandler* h, InterruptHandler* handler)
@@ -96,7 +104,7 @@ Interrupt::registerHandler(irq_t irq, InterruptHandler* handler)
       return false;
    }
 
-   appendHandler(&interruptHandlers[irq], handler);
+   appendHandler(getInterruptHandler(irq), handler);
 
    return true;
 }
@@ -109,7 +117,7 @@ Interrupt::deregisterHandler(irq_t irq, InterruptHandler* handler)
       return false;
    }
 
-   removeHandler(&interruptHandlers[irq], handler);
+   removeHandler(getInterruptHandler(irq), handler);
 
    return false;
 }
@@ -141,7 +149,7 @@ Interrupt::printStatistics()
 {
    for (int i = 0; i < MaxInterrupts; i++)
    {
-      printf("IRQ%d:\t%llu\n", i, (unsigned long long )interruptHandlers[i].getCounter());
+      printf("IRQ%d:\t%llu\n", i, (unsigned long long)static_cast<DefaultInterruptHandler*>(getInterruptHandler(i))->getCounter());
    }
 }
 
@@ -150,7 +158,7 @@ Interrupt::handleInterrupt(irq_t irq)
 {
    KASSERT(irq < MaxInterrupts);
 
-   interruptHandlers[irq].executeAllHandlers();
+   static_cast<DefaultInterruptHandler*>(getInterruptHandler(irq))->executeAllHandlers();
    
    KASSERT(controller != 0);
    controller->endOfInterrupt(irq);

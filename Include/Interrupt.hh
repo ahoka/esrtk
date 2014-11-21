@@ -65,9 +65,9 @@ private:
    {
       MaxInterrupts = 16
    };
-   static DefaultInterruptHandler interruptHandlers[MaxInterrupts];
-
    static InterruptController* controller;
+
+   static InterruptHandler* getInterruptHandler(unsigned int interrupt);
 
    friend class InterruptController;
 };
