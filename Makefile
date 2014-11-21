@@ -155,6 +155,10 @@ depend: .depend
 .depend: ${DFILES}
 	@cat ${DFILES} > ${BUILD_ROOT}/.depend
 
+.PHONY: autobuild
+autobuild: clean .WAIT kernel.elf
+	$(CROSS)strip kernel.elf
+
 kernel.elf: MultiLoader.o ${OFILES}
 	@echo Linking kernel executable
 	${HIDE} ${LD} ${LDFLAGS} -T ${BUILD_ROOT}/Kernel/${PLATFORM}/linker.ld -o ${.TARGET} ${.ALLSRC}
@@ -165,7 +169,7 @@ kernel.img: kernel.elf
 	env BUILD_ROOT=${BUILD_ROOT:Q}/ ${BUILD_ROOT}/mkimage.sh kernel.elf kernel.img
 
 clean:
-	@-rm ${.OBJDIR}/*.o kernel.elf kernel.img .depend > /dev/null 2>&1 || true
+	@-rm *.o *.d kernel.elf kernel.img .depend > /dev/null 2>&1 || true
 
 run: kernel.elf
 	${QEMU} ${QEMU_ARGS} -kernel kernel.elf 2>&1 | tee run.log
