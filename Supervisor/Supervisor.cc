@@ -25,7 +25,7 @@ supervisor_init()
 void
 Supervisor::init()
 {
-   printf("Supervisor starting");
+   printf("Supervisor starting\n");
 
    Kernel::Scheduler::init();
 
