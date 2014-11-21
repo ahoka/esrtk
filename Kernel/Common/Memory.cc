@@ -227,6 +227,8 @@ Memory::mapAnonymousPage(uintptr_t phys, int flags)
 //
 uintptr_t Memory::mapAnonymousRegion(size_t size, int flags)
 {
+   KASSERT(size != 0);
+
    size_t rsize = roundTo<uintptr_t>(size, PageSize);
 
    spinlock_softirq_enter(&memoryMapLock);
@@ -263,6 +265,8 @@ uintptr_t Memory::mapAnonymousRegion(size_t size, int flags)
 //
 uintptr_t Memory::mapRegion(uintptr_t paddr, size_t size, int flags)
 {
+   KASSERT(size != 0);
+
    uintptr_t firstPage = roundDown(paddr, PageSize);
    uintptr_t lastPage = roundTo(paddr + size, PageSize);
    size_t rsize = lastPage - firstPage;
@@ -303,6 +307,8 @@ uintptr_t Memory::mapRegion(uintptr_t paddr, size_t size, int flags)
 bool
 Memory::unmapRegion(uintptr_t paddr, std::size_t size)
 {
+   KASSERT(size != 0);
+
    uintptr_t firstPage = roundDown(paddr, PageSize);
    uintptr_t lastPage = roundTo(paddr + size, PageSize);
 
@@ -369,6 +375,8 @@ Memory::putPage(uintptr_t address)
 void*
 Memory::readPhysicalMemory(void* destination, const void* source, std::size_t size)
 {
+   KASSERT(size != 0);
+
    uintptr_t mapFirst = roundDown(uintptr_t(source), PageSize);
    uintptr_t mapLast = roundTo(uintptr_t(source) + size, PageSize);
 
