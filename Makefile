@@ -77,7 +77,7 @@ INCDIRS=	${BUILD_ROOT}/Include ${BUILD_ROOT}/CInclude \
 # XXX these should be only provided for Standard
 #
 CPPFLAGS+=	-I${BUILD_ROOT}/BsdCompat
-CPPFLAGS+=	-DHAVE_NBTOOL_CONFIG_H=0
+CPPFLAGS+=	-DHAVE_NBTOOL_CONFIG_H=0 -DLIBCXXABI_BAREMETAL=1
 
 CPPFLAGS+=	-DHAVE_STRLCAT=0 -DHAVE_STRSEP=0 -DHAVE_STRLCPY=0 -D__ELF__
 
@@ -87,16 +87,16 @@ CPPFLAGS+=	-D_BSD_SOURCE
 CFLAGS+=	${CPPFLAGS}
 CXXFLAGS+=	${CPPFLAGS}
 
-SRCDIR=		Supervisor CLibrary CxxLibrary Drivers Kernel FileSystem Hal Loader
+SRCDIR=		Supervisor CLibrary CxxLibrary CxxAbi Drivers Kernel FileSystem Hal Loader
 TESTDIR=	Test
 
 TCCFILES:=	${FIND} ${TESTDIR} -name '*.cc'
 
-SRC!=		(cd ${BUILD_ROOT} && find ${SRCDIR} \( -name '*.c' -or -name '*.cc' -or -name '*.S' \) -exec basename {} \;)
-DIR!=		(cd ${BUILD_ROOT} && find ${SRCDIR} \( -name '*.c' -or -name '*.cc' -or -name '*.S' \) -exec dirname {} \; | sort -u)
+SRC!=		(cd ${BUILD_ROOT} && find ${SRCDIR} \( -name '*.c' -or -name '*.cc' -or -name '*.cpp' -or -name '*.S' \) -exec basename {} \;)
+DIR!=		(cd ${BUILD_ROOT} && find ${SRCDIR} \( -name '*.c' -or -name '*.cc' -or -name '*.cpp' -or -name '*.S' \) -exec dirname {} \; | sort -u)
 
-OFILES=		${SRC:C/\.(cc|c|S)$/.o/}
-DFILES=		${SRC:C/\.(cc|c|S)$/.d/}
+OFILES=		${SRC:C/\.(cc|cpp|c|S)$/.o/}
+DFILES=		${SRC:C/\.(cc|cpp|c|S)$/.d/}
 
 .PATH:		${DIR:S/^/${BUILD_ROOT}\//}
 
@@ -136,6 +136,9 @@ cppcheck:
 # .S.o:
 # 	@echo Compiling $<
 # 	${HIDE} ${CPP} ${CPPFLAGS} -DASSEMBLER $*.S | ${AS} ${ASFLAGS} -o $*.o
+
+.cpp.d:
+	${HIDE} ${CPP} ${CPPFLAGS} -MM -MT $*.o -MF ${.TARGET} ${.IMPSRC}
 
 .cc.d:
 	${HIDE} ${CPP} ${CPPFLAGS} -MM -MT $*.o -MF ${.TARGET} ${.IMPSRC}
