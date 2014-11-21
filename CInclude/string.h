@@ -43,15 +43,7 @@
 typedef	__size_t	size_t;
 #endif
 
-#ifndef	NULL
-#ifdef 	__GNUG__
-#define	NULL	__null
-#elif defined(__cplusplus)
-#define	NULL	0L
-#else
-#define	NULL	((void *)0)
-#endif
-#endif
+#include <_null.h>
 
 __BEGIN_DECLS
 void	*memchr(const void *, int, size_t);
