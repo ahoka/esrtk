@@ -1,19 +1,15 @@
-#ifndef __MUTEX_HH__
-#define __MUTEX_HH__
-
-#include <spinlock.h>
+#ifndef MUTEX_HH
+#define MUTEX_HH
 
 class Mutex
 {
 public:
-   Mutex();
+   Mutex() = default;
+   virtual ~Mutex() = default;
 
-   void enter();
-   bool tryEnter();
-   void exit();
-
-private:
-   spinlock_t lock;
+   virtual void enter() = 0;
+   virtual bool tryEnter() = 0;
+   virtual void exit() = 0;
 };
 
 #endif

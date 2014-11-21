@@ -1,7 +1,7 @@
 #ifndef VGACONSOLE_H
 #define	VGACONSOLE_H
 
-#include <Mutex.hh>
+#include <SoftMutex.hh>
 #include <Driver/Console.hh>
 
 #include <cstddef>
@@ -35,7 +35,7 @@ private:
    size_t vramSizeM;
    volatile VgaCharacter* vramM;
 
-   mutable Mutex lock;
+   mutable SoftMutex lock;
    bool isInitialized;
 
 //   backgroundColor(0x1f);
