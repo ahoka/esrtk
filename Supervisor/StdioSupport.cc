@@ -23,6 +23,7 @@ namespace
       while (c != &consoleList)
       {
          fun(c->consoleM);
+         c = c->nextM;
       }
    }
 };

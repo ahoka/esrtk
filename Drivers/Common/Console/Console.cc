@@ -1,4 +1,5 @@
 #include <Driver/Console.hh>
+#include <StdioSupport.hh>
 
 #include <stdarg.h>
 #include <cstdio>
@@ -8,6 +9,7 @@ Console::Console()
      currentColumn(0),
      isEnabledM(false)
 {
+   KernelStdio::registerConsole(this);
 }
 
 Console::~Console()

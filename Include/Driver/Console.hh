@@ -17,7 +17,6 @@ public:
    void disable();
 
 protected:
-   virtual void init() = 0;
    virtual int putChar(int ch, int row, int column) = 0;
    virtual void clearScreen() = 0;
    virtual void setCursor(int row, int column) = 0;
@@ -29,6 +28,8 @@ protected:
 private:
    Console(const Console&) = delete;
    Console& operator=(const Console&) = delete;
+
+   void init();
 
    static const int printfBufferSize = 128;
    int doVaPrint(va_list* ap, int type, int modifiers, int flags);

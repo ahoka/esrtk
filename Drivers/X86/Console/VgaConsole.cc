@@ -12,16 +12,11 @@ VgaConsole::VgaConsole()
      backgroundColor(Blue),
      foregroundColor(White)
 {
-}
-
-void
-VgaConsole::init()
-{
    // TODO: MAP AS WC!
    vram_ = Memory::mapAnonymousPage(0xb8000u);
    KASSERT(vram_ != 0);
 
-   clearScreen();   
+   clearScreen();
 }
 
 VgaConsole::~VgaConsole()
@@ -88,6 +83,8 @@ VgaConsole::clearScreen()
 	 putCharUnlocked(' ', row, column);
       }
    }
+
+   setCursor(0, 0);
 
 //   lock.exit();
 }
