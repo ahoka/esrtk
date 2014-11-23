@@ -1,4 +1,5 @@
 #include <X86/IoPort.hh>
+#include <StdioSupport.hh>
 
 #include <Debug.hh>
 #include <cstdio>
@@ -70,20 +71,20 @@ Keyboard::handleInterrupt()
 
    if (!code.isMeta)
    {
-      putchar(code.ascii);
+      console_feed(code.ascii);
    }
    else
    {
       switch (code.ascii)
       {
          case Scancodes::Enter:
-            putchar('\n');
+            console_feed('\n');
             break;
          case Scancodes::Space:
-            putchar(' ');
+            console_feed(' ');
             break;
          case Scancodes::Tab:
-            putchar('\t');
+            console_feed('\t');
             break;
          case Scancodes::F1:
             printf("Interrupt statistics:\n");

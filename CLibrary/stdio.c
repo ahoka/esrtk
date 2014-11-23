@@ -49,13 +49,19 @@ enum
 int
 putchar(int c)
 {
-   return system_putchar(c);
+   return console_putchar(c);
 }
 
 int
 puts(const char* string)
 {
-   return system_puts(string);
+   return console_puts(string);
+}
+
+int
+getchar()
+{
+   return console_getchar();
 }
 
 #define PRINTF_PUTCHAR(x) (putchar(x), retval++)

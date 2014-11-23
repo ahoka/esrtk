@@ -16,8 +16,12 @@ extern "C"
 {
 #endif
 
-int system_putchar(int);
-int system_puts(const char *);
+int console_putchar(int);
+int console_puts(const char *);
+
+int console_feed(int c);
+
+int console_getchar();
 
 #ifdef __cplusplus
 }

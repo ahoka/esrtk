@@ -6,7 +6,21 @@
 void
 Power::halt()
 {
+   asm volatile("hlt");
+}
+
+void
+Power::pause()
+{
+   asm volatile("pause");
+}
+
+void
+Power::shutdown()
+{
    printf("\nHalting CPU.\n");
+
+   asm volatile("cli");
 
    for (;;)
    {

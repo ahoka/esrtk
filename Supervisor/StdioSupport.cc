@@ -3,6 +3,7 @@
 // XXX
 #include <X86/SerialConsole.hh>
 #include <StdioSupport.hh>
+#include <Power.hh> // XXX
 
 #include <functional>
 
@@ -46,12 +47,46 @@ KernelStdio::unregisterConsole(Console *)
 {
 }
 
+namespace
+{
+   const size_t consoleBufferSize = 4096;
+   char consoleBuffer[consoleBufferSize] = { 0 };
+   size_t consoleBufferPosition = 0;
+};
+
 int
-system_putchar(int ch)
+console_feed(int c)
+{
+   if (consoleBufferPosition == consoleBufferSize)
+   {
+      printf("Console buffer overrun!\n");
+      return 0;
+   }
+   else
+   {
+      consoleBuffer[consoleBufferPosition++] = c;
+      return 1;
+   }
+}
+
+int
+console_getchar()
+{
+   // XXX sleep here!
+   while (consoleBufferPosition == 0)
+   {
+      Power::halt();
+   }
+
+   return consoleBuffer[--consoleBufferPosition];
+}
+
+int
+console_putchar(int ch)
 {
    static bool nested;
 
-   int rv = SerialConsole::putChar(ch);  
+   SerialConsole::putChar(ch);
 
    // disallow nested calls
    //
@@ -68,11 +103,11 @@ system_putchar(int ch)
       nested = false;
    }
 
-   return rv;
+   return ch;
 }
 
 int
-system_puts(const char* string)
+console_puts(const char* string)
 {
    static bool nested;
    int rv = 0;

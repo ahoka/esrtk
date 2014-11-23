@@ -84,5 +84,10 @@ Supervisor::run()
 
 #endif
 
-   Power::halt();
+   while (int c = getchar())
+   {
+      putchar(c);
+   }
+
+   Power::shutdown();
 }

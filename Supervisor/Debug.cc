@@ -32,7 +32,7 @@ Debug::panic(const char* message, ...)
 
    printf("\nYour adventure ends here.\n");
 
-   Power::halt();
+   Power::shutdown();
 }
 
 void

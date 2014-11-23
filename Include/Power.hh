@@ -1,16 +1,14 @@
 #ifndef POWER_H
 #define	POWER_H
 
-class Power
+namespace Power
 {
-public:
-   static void halt() __attribute__((noreturn));
-   static void reboot() __attribute__((noreturn));
+   void pause();
+   void halt();
 
-private:
-   Power() = delete;
-   Power(const Power&) = delete;
-   ~Power() = delete;
+   void shutdown() __attribute__((noreturn));
+
+   void reboot() __attribute__((noreturn));
 };
 
 #endif
