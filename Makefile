@@ -18,7 +18,7 @@ BUILD_HOST!=	uname
 
 CROSS=		i686-elf-
 
-AS=		${CROSS}as
+AS=		${CC}
 LD=		${CROSS}ld
 SIZE=		${CROSS}size
 
@@ -53,7 +53,7 @@ COPTS+=		-Wno-c++98-compat-pedantic \
 .else
 CC=		${CROSS}gcc
 CXX=		${CROSS}g++
-CPP=		${CROSS}gcc -m32 -nostdinc -E
+CPP=		${CROSS}cpp -m32 -nostdinc
 GCC_VERSION!=	${CC} -dumpversion
 
 .if ${GCC_VERSION} == "4.9.1"
@@ -101,7 +101,7 @@ DFILES=		${SRC:C/\.(cc|cpp|c|S)$/.d/}
 .PATH:		${DIR:S/^/${BUILD_ROOT}\//}
 
 #HIDE=	@
-.SUFFIXES:	.c .cc .S .d
+.SUFFIXES:	.c .cc .cpp .S .d .o
 
 all:	MultiLoader.o kernel.elf
 
@@ -125,17 +125,21 @@ buildinfo:
 cppcheck:
 	cppcheck -q -i ${INCDIRS} ${SRCDIR}
 
-# .cc.o:
-# 	@echo Compiling $<
-# 	${HIDE} ${CXX} ${CXXFLAGS} -c -o $*.o $*.cc
+.cc.o .cpp.o:
+	@echo Compiling $<
+	${HIDE} ${CXX} ${CXXFLAGS} ${CPPFLAGS} -c -o ${.TARGET} ${.IMPSRC}
 
-# .c.o:
-# 	@echo Compiling $<
-# 	${HIDE} ${CC} ${CFLAGS} -c -o $*.o $*.c
+.cpp.o:
+	@echo Compiling $<
+	${HIDE} ${CXX} ${CXXFLAGS} ${CPPFLAGS} -c -o ${.TARGET} ${.IMPSRC}
 
-# .S.o:
-# 	@echo Compiling $<
-# 	${HIDE} ${CPP} ${CPPFLAGS} -DASSEMBLER $*.S | ${AS} ${ASFLAGS} -o $*.o
+.c.o:
+	@echo Compiling $<
+	${HIDE} ${CC} ${CFLAGS} ${CPPFLAGS} -c -o ${.TARGET} ${.IMPSRC}
+
+.S.o:
+	@echo Compiling $<
+	${HIDE} ${CC} ${ASFLAGS} ${CPPFLAGS} -c -traditional-cpp -o ${.TARGET} ${.IMPSRC}
 
 .cpp.d:
 	${HIDE} ${CPP} ${CPPFLAGS} -MM -MT $*.o -MF ${.TARGET} ${.IMPSRC}
