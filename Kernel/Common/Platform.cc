@@ -1,6 +1,6 @@
 #include <SystemTimer.hh>
 #include <Driver/DriverManager.hh>
-#include <Pci.hh>
+#include <Kernel/Pci.hh>
 #include <Clock.hh>
 #include <Modules.hh>
 

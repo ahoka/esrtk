@@ -1,5 +1,5 @@
-#include <PciDevice.hh>
-#include <Pci.hh>
+#include <Kernel/PciDevice.hh>
+#include <Kernel/Pci.hh>
 
 PciDevice::PciDevice(uint8_t bus, uint8_t device, uint8_t function)
    : busM(bus),

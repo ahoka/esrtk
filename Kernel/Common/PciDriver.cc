@@ -1,5 +1,5 @@
 #include <Driver/PciDriver.hh>
-#include <Pci.hh>
+#include <Kernel/Pci.hh>
 #include <cstdio>
 
 PciDriver::PciDriver() : 

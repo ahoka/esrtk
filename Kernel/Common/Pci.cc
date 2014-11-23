@@ -1,4 +1,4 @@
-#include <Pci.hh>
+#include <Kernel/Pci.hh>
 #include <Driver/PciDriver.hh>
 #include <cstdio>
 

@@ -1,7 +1,7 @@
 #ifndef PCIDRIVER_HH
 #define PCIDRIVER_HH
 
-#include <Pci.hh>
+#include <Kernel/Pci.hh>
 
 #include <cstdint>
 // TODO common-ish interface with root drivers?

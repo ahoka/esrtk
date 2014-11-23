@@ -1,7 +1,7 @@
 #ifndef _PCI_H_
 #define _PCI_H_
 
-#include <PciDevice.hh>
+#include <Kernel/PciDevice.hh>
 
 #include <stdint.h>
 

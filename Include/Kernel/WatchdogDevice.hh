@@ -1,7 +1,7 @@
 #ifndef WATCHDOGDEVICE_HH
 #define WATCHDOGDEVICE_HH
 
-#include <Watchdog.hh>
+#include <Kernel/Watchdog.hh>
 
 class WatchdogDevice
 {

@@ -1,11 +1,11 @@
-#include <Pci.hh>
+#include <Kernel/Pci.hh>
 #include <Driver/PciDriver.hh>
 
 #include <Interrupt.hh>
 #include <Debug.hh>
 #include <Memory.hh>
 
-#include <WatchdogDevice.hh>
+#include <Kernel/WatchdogDevice.hh>
 
 #include <cstdint>
 
