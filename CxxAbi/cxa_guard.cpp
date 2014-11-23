@@ -22,10 +22,10 @@ namespace
 
 typedef uint64_t guard_type;
 
-bool is_initialized(guard_type* guard_object) {
-    char* initialized = (char*)guard_object;
-    return *initialized;
-}
+// bool is_initialized(guard_type* guard_object) {
+//     char* initialized = (char*)guard_object;
+//     return *initialized;
+// }
 
 void set_initialized(guard_type* guard_object) {
     char* initialized = (char*)guard_object;
