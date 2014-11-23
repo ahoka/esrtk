@@ -64,15 +64,11 @@ COPTS+=		-fdiagnostics-color=always
 
 CXXFLAGS+=	-std=c++11
 
-CPPFLAGS+=	-I${BUILD_ROOT}/Include
-CPPFLAGS+=	-I${BUILD_ROOT}/Include/Kernel
-CPPFLAGS+=	-I${BUILD_ROOT}/CInclude
-CPPFLAGS+=	-I${BUILD_ROOT}/CxxInclude
-CPPFLAGS+=	-I${BUILD_ROOT}/Templates
+INCDIRS=	Include CInclude CxxInclude Templates Include/Kernel
 
-# XXX unify with the above through transformation
-INCDIRS=	${BUILD_ROOT}/Include ${BUILD_ROOT}/CInclude \
-		${BUILD_ROOT}/CxxInclude ${BUILD_ROOT}/Templates
+INCPATHS=	${INCDIRS:S/^/${BUILD_ROOT}\//}
+
+CPPFLAGS+=	${INCPATHS:S/^/-I/}
 
 # XXX these should be only provided for Standard
 #
@@ -82,10 +78,7 @@ CPPFLAGS+=	-DHAVE_NBTOOL_CONFIG_H=0 -DLIBCXXABI_BAREMETAL=1
 CPPFLAGS+=	-DHAVE_STRLCAT=0 -DHAVE_STRSEP=0 -DHAVE_STRLCPY=0 -D__ELF__
 
 CPPFLAGS+=	-D__esrtk__
-CPPFLAGS+=	-D_BSD_SOURCE
-
-CFLAGS+=	${CPPFLAGS}
-CXXFLAGS+=	${CPPFLAGS}
+#CPPFLAGS+=	-D_BSD_SOURCE
 
 SRCDIR=		Supervisor CLibrary CxxLibrary CxxAbi Drivers Kernel FileSystem Hal Loader
 TESTDIR=	Test
@@ -123,7 +116,7 @@ buildinfo:
 	@echo d-files: ${DFILES}
 
 cppcheck:
-	cppcheck -q -i ${INCDIRS} ${SRCDIR}
+	cppcheck -q -i ${INCDIRS} ${SRCDIR:C/^/${BUILD_ROOT}\//}
 
 .cc.o .cpp.o:
 	@echo Compiling $<
