@@ -18,6 +18,7 @@ VgaConsole::VgaConsole()
    KASSERT(vramM != 0);
 
    clearScreen();
+   Console::enable();
 }
 
 VgaConsole::~VgaConsole()

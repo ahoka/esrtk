@@ -1,15 +1,15 @@
-#ifndef VGACONSOLE_H
-#define	VGACONSOLE_H
+#ifndef VGACONSOLE_HH
+#define	VGACONSOLE_HH
 
 #include <SoftMutex.hh>
-#include <Driver/Console.hh>
+#include <Driver/FrameBuffer.hh>
 
 #include <cstddef>
 #include <cstdint>
 
 typedef uint16_t VgaCharacter;
 
-class VgaConsole : public Console
+class VgaConsole : public FrameBuffer
 {
 public:
    VgaConsole();
@@ -88,4 +88,4 @@ private:
    };
 };
 
-#endif	/* VGACONSOLE_H */
+#endif

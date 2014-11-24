@@ -5,7 +5,7 @@
 #include <X86/PageDirectory.hh>
 #include <X86/Idt.hh>
 #include <X86/Gdt.hh>
-#include <X86/SerialConsole.hh>
+#include <X86/EarlySerial.hh>
 
 #include <MemoryManager.hh>
 #include <Power.hh>
@@ -26,7 +26,7 @@ kmain()
 
    x86_gdt_init();
 
-   SerialConsole::init();
+   EarlySerial::init();
 
    printf("Kernel main starting...\n");
 

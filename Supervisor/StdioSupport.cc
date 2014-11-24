@@ -1,7 +1,7 @@
 #include <Driver/Console.hh>
 
 // XXX
-#include <X86/SerialConsole.hh>
+#include <X86/EarlySerial.hh>
 #include <StdioSupport.hh>
 #include <Power.hh> // XXX
 
@@ -86,20 +86,21 @@ console_putchar(int ch)
 {
    static bool nested;
 
-   SerialConsole::putChar(ch);
-
    // disallow nested calls
    //
    if (!nested)
    {
       nested = true;
-      foreachConsole([ch](Console* con) { con->putChar((char)ch); });
-      // Console* con = Console::consoleList;
-      // while (con != 0)
-      // {
-      //    con->putChar((char)ch);
-      //    con = con->next;
-      // }
+
+      EarlySerial::putChar(ch);
+      foreachConsole([ch](Console* con)
+      {
+         if (con->isEnabled())
+         {
+            con->putChar((char)ch);
+         }
+      });
+
       nested = false;
    }
 
@@ -109,22 +110,11 @@ console_putchar(int ch)
 int
 console_puts(const char* string)
 {
-   static bool nested;
    int rv = 0;
-
-   // disallow nested calls
-   //
-   if (!nested)
-   {
-      nested = true;
-      foreachConsole([string](Console* con) { con->putString(string); });
-      nested = false;
-   }
 
    while (*string)
    {
-      SerialConsole::putChar(*string++);
-      rv++;
+      console_putchar(*string++);
    }
 
    return rv;
