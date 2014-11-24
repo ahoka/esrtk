@@ -98,10 +98,13 @@ SerialConsole::handleInterrupt()
       //
       char c = inb(Com0 + Data);
 
-      console_feed(c);
       if (c == '\r')
       {
          console_feed('\n');
+      }
+      else
+      {
+         console_feed(c);
       }
    }
 }
