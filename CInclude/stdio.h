@@ -54,7 +54,7 @@ int fputc(int c, FILE* stream);
 int fputs(const char* restrict s, FILE* restrict stream);
 int getc(FILE* stream);
 int getchar(void);
-char* gets(char* s);  // removed in C++14
+char* gets_s(char* s, size_t size);
 int putc(int c, FILE* stream);
 int putchar(int c);
 int puts(const char* s);

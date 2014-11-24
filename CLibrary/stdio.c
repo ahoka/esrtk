@@ -64,6 +64,29 @@ getchar()
    return console_getchar();
 }
 
+char *
+gets_s(char* str, size_t size)
+{
+   for (size_t i = 0; i < size - 1; i++)
+   {
+      str[i] = getchar();
+
+      if (str[i] == '\n')
+      {
+         str[i] = 0;
+         return str;
+      }
+   }
+
+   while (getchar() != '\n')
+   {
+      // discard
+   }
+
+   str[size] = 0;
+   return str;
+}
+
 #define PRINTF_PUTCHAR(x) (putchar(x), retval++)
 
 static printf_uint_t
