@@ -55,7 +55,10 @@ putchar(int c)
 int
 puts(const char* string)
 {
-   return console_puts(string);
+   int len = console_puts(string);
+   len += console_putchar('\n');
+
+   return len;
 }
 
 int
@@ -83,7 +86,7 @@ gets_s(char* str, size_t size)
       // discard
    }
 
-   str[size] = 0;
+   str[size - 1] = 0;
    return str;
 }
 

@@ -84,9 +84,15 @@ Supervisor::run()
 
 #endif
 
-   while (int c = getchar())
+   // while (int c = getchar())
+   // {
+   //    putchar(c);
+   // }
+
+   char buffer[8];
+   while (gets_s(buffer, sizeof(buffer)))
    {
-      putchar(c);
+      puts(buffer);
    }
 
    Power::shutdown();
