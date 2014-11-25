@@ -3,6 +3,7 @@
 #include <Supervisor/Supervisor.hh>
 #include <CompilerSupport.hh>
 #include <Supervisor/Scheduler.hh>
+#include <Supervisor/Monitor.hh>
 
 #include <Platform.hh>
 #include <Debug.hh>
@@ -89,11 +90,8 @@ Supervisor::run()
    //    putchar(c);
    // }
 
-   char buffer[8];
-   while (gets_s(buffer, sizeof(buffer)))
-   {
-      puts(buffer);
-   }
+   Monitor monitor;
+   monitor.enter();
 
    Power::shutdown();
 }

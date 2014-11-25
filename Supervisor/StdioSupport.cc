@@ -64,6 +64,9 @@ console_feed(int c)
    }
    else
    {
+      // local echo
+      console_putchar(c);
+
       consoleBuffer[consoleBufferPosition++] = c;
       return 1;
    }
