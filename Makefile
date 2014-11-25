@@ -19,26 +19,24 @@ BUILD_HOST!=	uname
 CROSS=		i686-elf-
 
 AS=		${CC}
-LD=		${CROSS}ld
+LD=		${CROSS}g++
 SIZE=		${CROSS}size
 
 QEMU=		qemu-system-i386
 
 QEMU_ARGS=	-m 64M -M q35 -watchdog i6300esb -device rtl8139 -boot order=c -serial stdio -d cpu_reset
 
-LDFLAGS=	-melf_i386
-
-AFLAGS+=	-g
-
-COPTS+=		-O2 -march=i686 -m32 -g3 \
+# XXX -flto
+COPTS+=		-O2 -march=i686 -g \
 		-Wall -Wextra -Werror \
 		-nostdlib -nostdinc -fno-builtin \
 		-fno-omit-frame-pointer \
 		-fno-stack-protector
 
+LDFLAGS=	${COPTS}
+AFLAGS+=	-g ${COPTS}
 CFLAGS=		-std=c11 ${COPTS}
-
-CXXFLAGS=	${COPTS} -fno-exceptions -fno-rtti
+CXXFLAGS=	-std=c++14 ${COPTS} -fno-exceptions -fno-rtti
 
 .if ${TOOLCHAIN} == clang
 CC=		${CROSS}clang
@@ -56,7 +54,7 @@ CXX=		${CROSS}g++
 CPP=		${CROSS}cpp -m32 -nostdinc
 GCC_VERSION!=	${CC} -dumpversion
 
-.if ${GCC_VERSION} == "4.9.1"
+.if ${GCC_VERSION:C/^4.9//} != ${GCC_VERSION}
 COPTS+=		-fdiagnostics-color=always
 .endif
 
