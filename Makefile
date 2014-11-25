@@ -36,7 +36,7 @@ COPTS+=		-O2 -march=i686 -m32 -g3 \
 		-fno-omit-frame-pointer \
 		-fno-stack-protector
 
-CFLAGS=		-std=c99 ${COPTS}
+CFLAGS=		-std=c11 ${COPTS}
 
 CXXFLAGS=	${COPTS} -fno-exceptions -fno-rtti
 
@@ -62,7 +62,7 @@ COPTS+=		-fdiagnostics-color=always
 
 .endif
 
-CXXFLAGS+=	-std=c++11
+CXXFLAGS+=	-std=c++14
 
 INCDIRS=	Include CInclude CxxInclude Templates Include/Kernel
 
