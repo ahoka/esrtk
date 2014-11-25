@@ -7,10 +7,49 @@
 #include <Interrupt.hh>
 
 #include <string>
+#include <list>
 #include <cstdio>
+#include <utility>
+
+using CommandPair = std::pair<MonitorCommand*, std::string>;
+
+MonitorCommand::MonitorCommand()
+{
+}
+
+MonitorCommand::~MonitorCommand()
+{
+}
+
+class InterruptCommand : public MonitorCommand
+{
+public:
+   void run(std::string)
+   {
+      printf("Interrupt statistics:\n");
+      Interrupt::printStatistics();
+   }
+};
+
+class UptimeCommand : public MonitorCommand
+{
+public:
+   void run(std::string)
+   {
+      uint64_t uptime = Time::getUptime();
+      printf("Uptime is: %lu.%lu\n",
+             (unsigned long )uptime / 1000,
+             (unsigned long )(uptime % 1000));
+   }
+};
 
 Monitor::Monitor()
 {
+   static InterruptCommand interruptCommand;
+   static UptimeCommand uptimeCommand;
+
+   Monitor::registerCommand(&interruptCommand, "interrupts");
+   Monitor::registerCommand(&interruptCommand, "uptime");
 }
 
 Monitor::~Monitor()
@@ -28,6 +67,19 @@ Monitor::getCommand()
    return command;
 }
 
+namespace
+{
+   std::list<CommandPair> commands;
+};
+
+void
+Monitor::registerCommand(MonitorCommand* command, std::string name)
+{
+   auto pair =  std::make_pair(command, name);
+
+   commands.push_back(pair);
+}
+
 void
 Monitor::enter()
 {
@@ -38,19 +90,26 @@ Monitor::enter()
    {
       std::string command = getCommand();
 
-      if (command == "interrupts")
+      if (command == "help")
       {
-         printf("Interrupt statistics:\n");
-         Interrupt::printStatistics();
+         printf("Available commands:\n");
+         for (auto& handler : commands)
+         {
+            printf(" %s\n", handler.second.c_str());
+         }
       }
-      else if (command == "time")
+      else
       {
-         uint64_t uptime = Time::getUptime();
-         printf("Uptime is: %lu.%lu\n",
-                (unsigned long )uptime / 1000,
-                (unsigned long )(uptime % 1000));
+         for (auto& handler : commands)
+         {
+            if (handler.second == command)
+            {
+               handler.first->run(command);
+            }
+         }
       }
-      else if (command == "memory")
+
+      if (command == "memory")
       {
          putchar('\n');
          MemoryManager::get().printStatistics();
