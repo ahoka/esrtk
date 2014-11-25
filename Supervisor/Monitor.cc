@@ -32,18 +32,6 @@ public:
    }
 };
 
-class UptimeCommand : public MonitorCommand
-{
-public:
-   void run(std::string)
-   {
-      uint64_t uptime = Time::getUptime();
-      printf("Uptime is: %lu.%lu\n",
-             (unsigned long )uptime / 1000,
-             (unsigned long )(uptime % 1000));
-   }
-};
-
 class LambdaCommand : public MonitorCommand
 {
 public:
@@ -66,16 +54,37 @@ private:
 
 Monitor::Monitor()
 {
-//   static InterruptCommand interruptCommand;
-   static UptimeCommand uptimeCommand;
-
-//   Monitor::registerCommand(&interruptCommand, "interrupts");
-   Monitor::registerCommand(&uptimeCommand, "uptime");
-
    static LambdaCommand interruptCommand([](std::string) {
          printf("Interrupt statistics:\n");
          Interrupt::printStatistics();
    }, "interrupts");
+
+   static LambdaCommand uptimeCommand([](std::string) {
+         uint64_t uptime = Time::getUptime();
+         printf("Uptime is: %lu.%lu\n",
+                (unsigned long )uptime / 1000,
+                (unsigned long )(uptime % 1000));
+   }, "uptime");
+
+   static LambdaCommand memoryCommand([](std::string) {
+         MemoryManager::get().printStatistics();
+   }, "memory");
+
+   static LambdaCommand threadsCommand([](std::string) {
+         Kernel::Thread::printAll();         
+   }, "threads");
+
+   static LambdaCommand rebootCommand([](std::string) {
+         Power::reboot();
+   }, "reboot");
+
+   static LambdaCommand deadlockCommand([](std::string) {
+         printf("Simulating a dead-lock!\n");
+         for (;;)
+         {
+            asm volatile("cli");
+         }
+   }, "deadlock");
 }
 
 Monitor::~Monitor()
@@ -124,6 +133,10 @@ Monitor::enter()
             printf(" %s\n", handler.second.c_str());
          }
       }
+      else if (command == "exit")
+      {
+         isRunning = false;
+      }
       else
       {
          for (auto& handler : commands)
@@ -133,33 +146,6 @@ Monitor::enter()
                handler.first->run(command);
             }
          }
-      }
-
-      if (command == "memory")
-      {
-         putchar('\n');
-         MemoryManager::get().printStatistics();
-      }
-      else if (command == "threads")
-      {
-         putchar('\n');
-         Kernel::Thread::printAll();
-      }
-      else if (command == "reboot")
-      {
-         Power::reboot();
-      }
-      else if (command == "deadlock")
-      {
-         printf("Simulating a dead-lock!\n");
-         for (;;)
-         {
-            asm volatile("cli");
-         }
-      }
-      else if (command == "exit")
-      {
-         isRunning = false;
       }
    }
 }
