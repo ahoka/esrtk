@@ -4,6 +4,7 @@
 #include <Power.hh>
 #include <MemoryManager.hh>
 #include <Kernel/Thread.hh>
+#include <Interrupt.hh>
 
 #include <string>
 #include <cstdio>
@@ -16,46 +17,64 @@ Monitor::~Monitor()
 {
 }
 
+std::string
+Monitor::getCommand()
+{
+   char buffer[128];
+
+   printf("=> ");
+   std::string command = gets_s(buffer, sizeof(buffer));
+
+   return command;
+}
+
 void
 Monitor::enter()
 {
-   char buffer[128];
-   while (gets_s(buffer, sizeof(buffer)))
-   {
-      std::string command = buffer;
+   printf("\nEntering ESRTK Monitor\n\n");
 
-      puts(buffer);
-#if 0
-      if (!strcmp()
+   bool isRunning = true;
+   while (isRunning)
+   {
+      std::string command = getCommand();
+
+      if (command == "interrupts")
+      {
          printf("Interrupt statistics:\n");
          Interrupt::printStatistics();
-         break;
-      case Scancodes::F2:
+      }
+      else if (command == "time")
       {
          uint64_t uptime = Time::getUptime();
          printf("Uptime is: %lu.%lu\n",
                 (unsigned long )uptime / 1000,
                 (unsigned long )(uptime % 1000));
-         break;
       }
-      case Scancodes::F3:
+      else if (command == "memory")
+      {
          putchar('\n');
          MemoryManager::get().printStatistics();
-         break;
-      case Scancodes::F4:
+      }
+      else if (command == "threads")
+      {
          putchar('\n');
          Kernel::Thread::printAll();
-         break;
-      case Scancodes::F9:
+      }
+      else if (command == "reboot")
+      {
          Power::reboot();
-//break;
-      case Scancodes::F8:
+      }
+      else if (command == "deadlock")
+      {
          printf("Simulating a dead-lock!\n");
          for (;;)
          {
             asm volatile("cli");
          }
-         break;
-#endif
+      }
+      else if (command == "exit")
+      {
+         isRunning = false;
+      }
    }
 }
