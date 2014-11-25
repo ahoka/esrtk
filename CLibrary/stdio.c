@@ -5,6 +5,10 @@
 #include <stddef.h>
 #include <stdbool.h>
 
+typedef int (*writer_t)(void *, int);
+
+static int __vprintf(writer_t writer, void *writer_arg, const char* format, va_list ap);
+
 #define HAS_LONGLONG
 
 #ifdef HAS_LONGLONG
@@ -46,51 +50,37 @@ enum
    PRINTF_TYPE_POINTER
 };
 
-int
-putchar(int c)
+struct snprintf_writer_arg
 {
-   return console_putchar(c);
+   char *swa_buffer;
+   size_t swa_size;
+   size_t swa_position;
+};
+
+int
+console_putchar_writer(void* arg __attribute__((unused)), int c)
+{
+   putchar(c);
+
+   return c;
 }
 
 int
-puts(const char* string)
+snprintf_writer(void* arg, int c)
 {
-   int len = console_puts(string);
-   len += console_putchar('\n');
+   struct snprintf_writer_arg* swa = (struct snprintf_writer_arg*)arg;
 
-   return len;
-}
-
-int
-getchar()
-{
-   return console_getchar();
-}
-
-char *
-gets_s(char* str, size_t size)
-{
-   for (size_t i = 0; i < size - 1; i++)
+   if (swa->swa_position > swa->swa_size - 1)
    {
-      str[i] = getchar();
-
-      if (str[i] == '\n')
-      {
-         str[i] = 0;
-         return str;
-      }
+      return EOF;
    }
 
-   while (getchar() != '\n')
-   {
-      // discard
-   }
+   swa->swa_buffer[swa->swa_position++] = (char)c;
 
-   str[size - 1] = 0;
-   return str;
+   return c;
 }
 
-#define PRINTF_PUTCHAR(x) (putchar(x), retval++)
+#define PRINTF_PUTCHAR(x) (writer(writer_arg, x), retval++)
 
 static printf_uint_t
 getUnsignedFromVa(va_list* ap, int modifiers)
@@ -155,7 +145,7 @@ getSignedFromVa(va_list* ap, int modifiers)
 }
 
 static int
-doVaPrint(va_list* ap, int type, int modifiers, int flags)
+doVaPrint(writer_t writer, void *writer_arg, va_list* ap, int type, int modifiers, int flags)
 {
    const char hexl[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
 		       'a', 'b', 'c', 'd', 'e', 'f' };
@@ -303,7 +293,11 @@ doVaPrint(va_list* ap, int type, int modifiers, int flags)
    else if (type == PRINTF_TYPE_STRING)
    {
       const char* str = va_arg(*ap, const char*);
-      retval += puts(str);
+      while (*str != 0)
+      {
+         PRINTF_PUTCHAR(*str);
+         ++str;
+      }
    }
    else if (type == PRINTF_TYPE_CHARACTER)
    {
@@ -325,23 +319,8 @@ doVaPrint(va_list* ap, int type, int modifiers, int flags)
    return retval;
 }
 
-int
-printf(const char* format, ...)
-{
-   int retval;
-   va_list ap;
-
-   va_start(ap, format);
-
-   retval = vprintf(format, ap);
-
-   va_end(ap);
-
-   return retval;
-}
-
-int
-vprintf(const char* format, va_list ap)
+static int
+__vprintf(writer_t writer, void *writer_arg, const char* format, va_list ap)
 {
    int retval = 0;
 
@@ -492,7 +471,7 @@ vprintf(const char* format, va_list ap)
 	    // do the actual conversion
 	    if (finished)
 	    {
-	       retval += doVaPrint(&ap, type, modifiers, flags);
+	       retval += doVaPrint(writer, writer_arg, &ap, type, modifiers, flags);
 	    }
 	 }
       }
@@ -506,28 +485,85 @@ vprintf(const char* format, va_list ap)
    return retval;
 }
 
+int
+vprintf(const char* format, va_list ap)
+{
+   return __vprintf(console_putchar_writer, 0, format, ap);
+}
 
-// int printf(const char* format, ...)
-// {
-//    va_list ap;
-//    int retval;
+int
+printf(const char* format, ...)
+{
+   int retval;
+   va_list ap;
+
+   va_start(ap, format);
+
+   retval = vprintf(format, ap);
+
+   va_end(ap);
+
+   return retval;
+}
+
+int
+snprintf(char *str, size_t size, const char *format, ...)
+{
+   va_list ap;
+   struct snprintf_writer_arg arg = { str, size, 0 };
+
+   va_start(ap, format);
+
+   int rv = __vprintf(snprintf_writer, (void*)&arg, format, ap);
    
-//    va_start(ap, format);
-   
-//    retval = System::console.vprintf(format, ap);
-   
-//    va_end(ap);
-   
-//    return retval;
-// }
+   va_end(ap);
 
-// int vprintf(const char* format, va_list ap)
-// {
-//    int retval;
+   // null terminate
+   arg.swa_buffer[arg.swa_position] = 0;
 
-//    retval = System::console.vprintf(format, ap);
+   return rv;
+}
 
-//    return retval;
-// }
+int
+putchar(int c)
+{
+   return console_putchar(c);
+}
 
+int
+puts(const char* string)
+{
+   int len = console_puts(string);
+   len += console_putchar('\n');
 
+   return len;
+}
+
+int
+getchar()
+{
+   return console_getchar();
+}
+
+char *
+gets_s(char* str, size_t size)
+{
+   for (size_t i = 0; i < size - 1; i++)
+   {
+      str[i] = getchar();
+
+      if (str[i] == '\n')
+      {
+         str[i] = 0;
+         return str;
+      }
+   }
+
+   while (getchar() != '\n')
+   {
+      // discard
+   }
+
+   str[size - 1] = 0;
+   return str;
+}

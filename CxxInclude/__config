@@ -704,4 +704,9 @@ extern "C" void __sanitizer_annotate_contiguous_container(
 #  define _LIBCPP_WEAK __attribute__((__weak__))
 #endif
 
+#ifdef __esrtk__
+#define _LIBCPP_NO_WSTRING
+#define _LIBCPP_NO_FLOAT
+#endif
+
 #endif  // _LIBCPP_CONFIG
