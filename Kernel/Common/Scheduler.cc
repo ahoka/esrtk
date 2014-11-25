@@ -1,4 +1,4 @@
-#include <Supervisor/Scheduler.hh>
+#include <Kernel/Scheduler.hh>
 #include <Kernel/Thread.hh>
 #include <Kernel/Watchdog.hh>
 

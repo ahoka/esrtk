@@ -1,8 +1,7 @@
 #include <Supervisor/Supervisor.hh>
 #include <Kernel/Thread.hh>
-#include <Supervisor/Supervisor.hh>
 #include <CompilerSupport.hh>
-#include <Supervisor/Scheduler.hh>
+#include <Kernel/Scheduler.hh>
 #include <Supervisor/Monitor.hh>
 
 #include <Platform.hh>

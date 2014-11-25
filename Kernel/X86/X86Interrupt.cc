@@ -7,7 +7,7 @@
 #include <Power.hh>
 #include <Debug.hh>
 #include <StackTrace.hh>
-#include <Supervisor/Scheduler.hh>
+#include <Kernel/Scheduler.hh>
 #include <Kernel/Thread.hh>
 
 using namespace Kernel;

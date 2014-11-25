@@ -1,6 +1,6 @@
 #include <SystemTimer.hh>
 
-#include <Supervisor/Scheduler.hh>
+#include <Kernel/Scheduler.hh>
 
 #include <Time.hh>
 #include <Debug.hh>
