@@ -10,6 +10,7 @@
 #include <list>
 #include <cstdio>
 #include <utility>
+#include <functional>
 
 using CommandPair = std::pair<MonitorCommand*, std::string>;
 
@@ -43,13 +44,38 @@ public:
    }
 };
 
+class LambdaCommand : public MonitorCommand
+{
+public:
+   using CommandFunction = std::function<void(std::string)>;
+
+   LambdaCommand(CommandFunction lambda, std::string command)
+      : lambdaM(lambda)
+   {
+      Monitor::registerCommand(this, command);
+   }
+
+   void run(std::string args)
+   {
+      lambdaM(args);
+   }
+
+private:
+   CommandFunction lambdaM;
+};
+
 Monitor::Monitor()
 {
-   static InterruptCommand interruptCommand;
+//   static InterruptCommand interruptCommand;
    static UptimeCommand uptimeCommand;
 
-   Monitor::registerCommand(&interruptCommand, "interrupts");
-   Monitor::registerCommand(&interruptCommand, "uptime");
+//   Monitor::registerCommand(&interruptCommand, "interrupts");
+   Monitor::registerCommand(&uptimeCommand, "uptime");
+
+   static LambdaCommand interruptCommand([](std::string) {
+         printf("Interrupt statistics:\n");
+         Interrupt::printStatistics();
+   }, "interrupts");
 }
 
 Monitor::~Monitor()
