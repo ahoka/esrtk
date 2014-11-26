@@ -60,8 +60,6 @@ COPTS+=		-fdiagnostics-color=always
 
 .endif
 
-CXXFLAGS+=	-std=c++14
-
 INCDIRS=	Include CInclude CxxInclude Templates Include/Kernel
 
 INCPATHS=	${INCDIRS:S/^/${BUILD_ROOT}\//}
