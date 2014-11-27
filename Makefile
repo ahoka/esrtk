@@ -112,7 +112,7 @@ buildinfo:
 	@echo d-files: ${DFILES}
 
 cppcheck:
-	cppcheck -q -i ${INCDIRS} ${SRCDIR:C/^/${BUILD_ROOT}\//}
+	cppcheck --inline-suppr --template=gcc -q -i ${INCDIRS} ${SRCDIR:C/^/${BUILD_ROOT}\//}
 
 .cc.o .cpp.o:
 	@echo Compiling $<
