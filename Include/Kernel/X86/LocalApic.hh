@@ -41,7 +41,10 @@ public:
       LvtPerfMon = 0x0340,
       LvtLint0 = 0x0350,
       LvtLint1 = 0x0360,
-      LvtError = 0x0370
+      LvtError = 0x0370,
+      InitialCount = 0x0380,
+      CurrentCount = 0x0390,
+      DivideConfig = 0x03e0
    };
 
    enum
@@ -183,6 +186,10 @@ private:
                                    uint8_t vector);
 
    uint32_t createLocalVectorTable(Lvt::DeliveryMode deliveryMode,
+                                   uint8_t vector);
+
+   uint32_t createLocalVectorTable(Lvt::TimerMode mode,
+                                   Lvt::Mask mask,
                                    uint8_t vector);
 
    void printLocalVectorTable(uint32_t lvt);

@@ -166,7 +166,11 @@ LocalApic::init()
    write32(Eoi, 0x00);
 
    // timer
+   write32(DivideConfig, 0b1011);
+   uint32_t timerLvt = createLocalVectorTable(Lvt::Periodic, Lvt::NotMasked, 60);
+   write32(LvtTimer, timerLvt);
    
+   write32(InitialCount, 0xffffffff);
 }
 
 #if 0
@@ -231,14 +235,28 @@ LocalApic::createLocalVectorTable(Lvt::Mask mask,
 }
 
 uint32_t
+LocalApic::createLocalVectorTable(Lvt::TimerMode mode,
+                                  Lvt::Mask mask,
+                                  uint8_t vector)
+{
+   uint32_t lvt = 0;
+
+   lvt |= (mode & 0x3u) << Lvt::TimerModeShift;
+   lvt |= (mask & 0x1u) << Lvt::MaskShift;
+   lvt |= vector;
+
+   return lvt;
+}
+
+uint32_t
 LocalApic::createLocalVectorTable(Lvt::Mask mask,
                                   Lvt::DeliveryMode deliveryMode,
                                   uint8_t vector)
 {
    uint32_t lvt = 0;
 
-   lvt |= (mask & 0x1u) << 16;
-   lvt |= (deliveryMode & 0x7u) << 8;
+   lvt |= (mask & 0x1u) << Lvt::MaskShift;
+   lvt |= (deliveryMode & 0x7u) << Lvt::DeliveryModeShift;
    lvt |= vector;
 
    return lvt;
