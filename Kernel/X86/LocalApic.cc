@@ -164,6 +164,9 @@ LocalApic::init()
 
    // EOI
    write32(Eoi, 0x00);
+
+   // timer
+   
 }
 
 #if 0
@@ -218,10 +221,10 @@ LocalApic::createLocalVectorTable(Lvt::Mask mask,
 {
    uint32_t lvt = 0;
 
-   lvt |= (mask & 0x1u) << 16;
-   lvt |= (triggerMode & 0x1u) << 14;
-   lvt |= (polarity & 0x1u) << 13;
-   lvt |= (deliveryMode & 0x7u) << 8;
+   lvt |= (mask & 0x1u) << Lvt::MaskShift;
+   lvt |= (triggerMode & 0x1u) << Lvt::TriggerModeShift;
+   lvt |= (polarity & 0x1u) << Lvt::PolarityShift;
+   lvt |= (deliveryMode & 0x7u) << Lvt::DeliveryModeShift;
    lvt |= vector;
 
    return lvt;

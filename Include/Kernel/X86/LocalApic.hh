@@ -37,6 +37,7 @@ public:
       LvtCmci = 0x02f0,
       InterruptCommandLow = 0x0300,
       InterruptCommandHigh = 0x0310,
+      LvtTimer = 0x0320,
       LvtPerfMon = 0x0340,
       LvtLint0 = 0x0350,
       LvtLint1 = 0x0360,
@@ -83,6 +84,24 @@ public:
       {
          ActiveHigh = 0,
          ActiveLow = 1
+      };
+
+      enum TimerMode
+      {
+         OneShot = 0,
+         Periodic = 1,
+         TscDeadline = 2
+      };
+
+      enum Shift
+      {
+         DeliveryModeShift = 8,
+         DeliveryStatusShift = 12,
+         PolarityShift = 13,
+         RemoteIrrShift = 14,
+         TriggerModeShift = 15,
+         MaskShift = 16,
+         TimerModeShift = 17
       };
    };
 
