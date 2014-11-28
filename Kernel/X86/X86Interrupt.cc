@@ -131,6 +131,12 @@ x86_isr_default_handler(InterruptFrame* frame)
 InterruptFrame*
 x86_isr_dispatcher(InterruptFrame* frame)
 {
+   if (frame->interrupt == 255)
+   {
+      // spurious
+      return frame;
+   }
+
    KASSERT(Interrupt::getInterruptLevel() > 0);
 
    if (frame->interrupt == 32)

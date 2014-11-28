@@ -7,6 +7,8 @@
 #include <X86/CpuRegisters.hh>
 #include <X86/IoPort.hh>
 
+#include <X86/Pit.hh>
+
 #include <cstdio>
 
 LocalApic::LocalApic(uintptr_t physicalAddress)
@@ -167,10 +169,25 @@ LocalApic::init()
 
    // timer
    write32(DivideConfig, 0b1011);
-   uint32_t timerLvt = createLocalVectorTable(Lvt::Periodic, Lvt::NotMasked, 60);
+   uint32_t timerLvt = createLocalVectorTable(Lvt::OneShot, Lvt::Masked, 255);
    write32(LvtTimer, timerLvt);
    
-   write32(InitialCount, 0xffffffff);
+   printf("Calibrating LAPIC timer\n");
+
+   uint64_t sum = 0;
+   for (int i = 0; i < 10; i++)
+   {
+      write32(InitialCount, 0xffffffff);
+
+      Pit::msleep(100);
+
+      uint32_t current = read32(CurrentCount);
+      sum += 0xffffffff - current;
+   }
+
+   printf("100 ms is %llu\n", sum / 10);
+
+   write32(InitialCount, 0);
 }
 
 #if 0
