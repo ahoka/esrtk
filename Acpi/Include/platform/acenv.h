@@ -285,6 +285,9 @@
 #elif defined(__HAIKU__)
 #include "achaiku.h"
 
+#elif defined(__esrtk__)
+#include "acesrtk.h"
+
 #else
 
 /* Unknown environment */

@@ -28,10 +28,13 @@ QEMU_ARGS=	-m 64M -M q35 -watchdog i6300esb -device rtl8139 -boot order=c -seria
 
 # XXX -flto
 COPTS+=		-O2 -march=i686 -g \
-		-Wall -Wextra -Werror \
+		-Wall -Wextra \
 		-nostdlib -nostdinc -fno-builtin \
 		-fno-omit-frame-pointer \
 		-fno-stack-protector
+
+# XXX ACPICA
+#COPTS+=		-Werror
 
 LDFLAGS=	${COPTS}
 AFLAGS+=	-g ${COPTS}
