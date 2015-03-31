@@ -6,6 +6,8 @@
 
 #include <Platform.hh>
 
+#include <AcpiCa.hh>
+
 void
 Platform::init()
 {
@@ -16,9 +18,11 @@ Platform::init()
    printf("CPU Vendor ID: %s\n", id);
 #endif
 //   Acpi::printAllDescriptors();
+   AcpiInitializeSubsystem();
 
    SystemTimer::probeAndInit();
    Clock::probeAndInit();
+   
    Pci::init();
    DriverManager::probeAndInit();
    Pci::enumerate();
