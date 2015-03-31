@@ -60,7 +60,7 @@ COPTS+=		-fdiagnostics-color=always
 
 .endif
 
-INCDIRS=	Include CInclude CxxInclude Templates Include/Kernel
+INCDIRS=	Include CInclude CxxInclude Templates Include/Kernel Acpi/Include
 
 INCPATHS=	${INCDIRS:S/^/${BUILD_ROOT}\//}
 
@@ -76,7 +76,7 @@ CPPFLAGS+=	-DHAVE_STRLCAT=0 -DHAVE_STRSEP=0 -DHAVE_STRLCPY=0 -D__ELF__
 CPPFLAGS+=	-D__esrtk__
 #CPPFLAGS+=	-D_BSD_SOURCE
 
-SRCDIR=		Supervisor CLibrary CxxLibrary CxxAbi Drivers Kernel FileSystem Hal Loader
+SRCDIR=		Supervisor CLibrary CxxLibrary CxxAbi Drivers Kernel FileSystem Hal Loader Acpi/Source
 TESTDIR=	Test
 
 TCCFILES:=	${FIND} ${TESTDIR} -name '*.cc'
