@@ -2,17 +2,24 @@
 
 set -e
 
-GCC_VERSION=4.9.2
-BINUTILS_VERSION=2.24
+#GCC_VERSION=4.9.2
+GCC_VERSION=5-20150329
+BINUTILS_VERSION=2.25
 MPFR_VERSION=3.1.2
 GMP_VERSION=6.0.0
-MPC_VERSION=1.0.2
+MPC_VERSION=1.0.3
 ICONV_VERSION=1.14
 
 TARGET=i686-elf
 PREFIX=/opt/${TARGET}
 
 ROOTDIR=${PWD}
+
+CORES=$(nproc)
+if [ -z "$CORES" ]
+then
+    CORES=1
+fi
 
 export PATH=${PREFIX}/bin:${PATH}
 
@@ -25,7 +32,8 @@ download()
 
     if [ ! -e gcc-${GCC_VERSION}.tar.bz2 ]
     then
-        wget https://ftp.gnu.org/gnu/gcc/gcc-4.9.2/gcc-${GCC_VERSION}.tar.bz2
+	wget ftp://gcc.gnu.org/pub/gcc/snapshots/LATEST-5/gcc-${GCC_VERSION}.tar.bz2
+#        wget https://ftp.gnu.org/gnu/gcc/gcc-4.9.2/gcc-${GCC_VERSION}.tar.bz2
     fi
 
     if [ ! -e mpfr-${MPFR_VERSION}.tar.bz2 ]
@@ -78,7 +86,7 @@ extract()
 
     if [ ! -e libiconv-${ICONV_VERSION} ]
     then
-        tar xvf libiconv-${ICONV_VERSION}.tar.gz
+        tar xzf libiconv-${ICONV_VERSION}.tar.gz
     fi
 
     ln -fs ${ROOTDIR}/mpfr-${MPFR_VERSION} gcc-${GCC_VERSION}/mpfr
@@ -94,7 +102,7 @@ build_binutils()
     mkdir ${ROOTDIR}/binutils
     cd ${ROOTDIR}/binutils
     ${ROOTDIR}/binutils-${BINUTILS_VERSION}/configure --prefix=${PREFIX} --target=${TARGET} --with-sysroot --disable-nls --disable-werror
-    make
+    make -j "$CORES"
 }
 
 build_gcc()
@@ -104,8 +112,8 @@ build_gcc()
     mkdir ${ROOTDIR}/gcc
     cd ${ROOTDIR}/gcc
     ${ROOTDIR}/gcc-${GCC_VERSION}/configure --prefix=${PREFIX} --target=${TARGET} --disable-nls --enable-languages=c,c++ --without-headers --disable-werror
-    make all-gcc
-    make all-target-libgcc
+    make -j "$CORES" all-gcc
+    make -j "$CORES" all-target-libgcc
 }
 
 install_binutils()
