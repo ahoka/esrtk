@@ -2,8 +2,7 @@
 
 set -e
 
-#GCC_VERSION=4.9.2
-GCC_VERSION=5-20150329
+GCC_VERSION=5.1.0
 BINUTILS_VERSION=2.25
 MPFR_VERSION=3.1.2
 GMP_VERSION=6.0.0
@@ -32,8 +31,8 @@ download()
 
     if [ ! -e gcc-${GCC_VERSION}.tar.bz2 ]
     then
-	wget ftp://gcc.gnu.org/pub/gcc/snapshots/LATEST-5/gcc-${GCC_VERSION}.tar.bz2
-#        wget https://ftp.gnu.org/gnu/gcc/gcc-4.9.2/gcc-${GCC_VERSION}.tar.bz2
+#	wget ftp://gcc.gnu.org/pub/gcc/snapshots/LATEST-5/gcc-${GCC_VERSION}.tar.bz2
+        wget https://ftp.gnu.org/gnu/gcc/gcc-${GCC_VERSION}/gcc-${GCC_VERSION}.tar.bz2
     fi
 
     if [ ! -e mpfr-${MPFR_VERSION}.tar.bz2 ]
