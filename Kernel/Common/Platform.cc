@@ -18,7 +18,17 @@ Platform::init()
    printf("CPU Vendor ID: %s\n", id);
 #endif
 //   Acpi::printAllDescriptors();
-   AcpiInitializeSubsystem();
+   ACPI_STATUS status;
+   status = AcpiInitializeSubsystem();
+   if (ACPI_FAILURE(status))
+   {
+//      Debug::error("Error: AcpiInitializeSubsystem\n");
+   }
+   
+   AcpiInitializeTables(NULL, 0, true);
+   // AcpiLoadTables();
+   //AcpiEnableSubsystem(ACPI_FULL_INITIALIZATION);
+   //AcpiInitializeObjects(ACPI_FULL_INITIALIZATION);
 
    SystemTimer::probeAndInit();
    Clock::probeAndInit();
