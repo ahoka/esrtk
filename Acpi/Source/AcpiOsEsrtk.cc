@@ -1,11 +1,5 @@
 /******************************************************************************
  *
- * Module Name: osunixxf - UNIX OSL interfaces
- *
- *****************************************************************************/
-
-/******************************************************************************
- *
  * 1. Copyright Notice
  *
  * Some or all of this work - Copyright (c) 1999 - 2015, Intel Corp.
@@ -113,11 +107,6 @@
  *
  *****************************************************************************/
 
-/*
- * These interfaces are required in order to compile the ASL compiler and the
- * various ACPICA tools under Linux or other Unix-like system.
- */
-
 extern "C"
 {
 #include "acpi.h"
@@ -127,99 +116,12 @@ extern "C"
 #include "acdebug.h"
 }
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdarg.h>
-#include <unistd.h>
-#include <sys/time.h>
-#include <errno.h>
+#include <Debug.hh>
+
+#include <cstdio>
 
 #define _COMPONENT          ACPI_OS_SERVICES
         ACPI_MODULE_NAME    ("osesrtkxf")
-
-/* Upcalls to AcpiExec */
-
-void
-AeTableOverride (
-    ACPI_TABLE_HEADER       *ExistingTable,
-    ACPI_TABLE_HEADER       **NewTable);
-
-typedef void* (*PTHREAD_CALLBACK) (void *);
-
-/* Buffer used by AcpiOsVprintf */
-
-#define ACPI_VPRINTF_BUFFER_SIZE    512
-#define _ASCII_NEWLINE              '\n'
-
-/* Terminal support for AcpiExec only */
-
-#ifdef ACPI_EXEC_APP
-
-ACPI_STATUS
-AcpiUtReadLine (
-    char                    *Buffer,
-    UINT32                  BufferLength,
-    UINT32                  *BytesRead);
-
-static void
-OsEnterLineEditMode (
-    void);
-
-static void
-OsExitLineEditMode (
-    void);
-
-
-/******************************************************************************
- *
- * FUNCTION:    OsEnterLineEditMode, OsExitLineEditMode
- *
- * PARAMETERS:  None
- *
- * RETURN:      None
- *
- * DESCRIPTION: Enter/Exit the raw character input mode for the terminal.
- *
- * Interactive line-editing support for the AML debugger. Used with the
- * common/acgetline module.
- *
- * readline() is not used because of non-portability. It is not available
- * on all systems, and if it is, often the package must be manually installed.
- *
- * Therefore, we use the POSIX tcgetattr/tcsetattr and do the minimal line
- * editing that we need in AcpiOsGetLine.
- *
- * If the POSIX tcgetattr/tcsetattr interfaces are unavailable, these
- * calls will also work:
- *     For OsEnterLineEditMode: system ("stty cbreak -echo")
- *     For OsExitLineEditMode:  system ("stty cooked echo")
- *
- *****************************************************************************/
-
-static void
-OsEnterLineEditMode (
-    void)
-{
-  assert(false && "Not implemented");
-}
-
-
-static void
-OsExitLineEditMode (
-    void)
-{
-  assert(false && "Not implemented");
-}
-
-
-#else
-
-/* These functions are not needed for other ACPICA utilities */
-
-#define OsEnterLineEditMode()
-#define OsExitLineEditMode()
-#endif
-
 
 /******************************************************************************
  *
@@ -234,17 +136,19 @@ OsExitLineEditMode (
  *****************************************************************************/
 
 ACPI_STATUS
-AcpiOsInitialize (
-    void)
+AcpiOsInitialize(void)
 {
-    return (AE_OK);
+   Debug::info("OSL: AcpiOsInitialize\n");
+   
+   return (AE_OK);
 }
 
 ACPI_STATUS
-AcpiOsTerminate (
-    void)
+AcpiOsTerminate(void)
 {
-    return (AE_OK);
+   Debug::info("OSL: AcpiOsTerminate\n");
+   
+   return (AE_OK);
 }
 
 
@@ -262,11 +166,10 @@ AcpiOsTerminate (
  *****************************************************************************/
 
 ACPI_PHYSICAL_ADDRESS
-AcpiOsGetRootPointer (
-    void)
+AcpiOsGetRootPointer(void)
 {
-
-    return (0);
+   Debug::info("OSL: AcpiOsGetRootPointer\n");
+   return (0);
 }
 #endif
 
@@ -286,18 +189,17 @@ AcpiOsGetRootPointer (
  *****************************************************************************/
 
 ACPI_STATUS
-AcpiOsPredefinedOverride (
-    const ACPI_PREDEFINED_NAMES *InitVal,
-    ACPI_STRING                 *NewVal)
+AcpiOsPredefinedOverride(const ACPI_PREDEFINED_NAMES *InitVal, ACPI_STRING *NewVal)
 {
-
-    if (!InitVal || !NewVal)
-    {
-        return (AE_BAD_PARAMETER);
-    }
-
-    *NewVal = NULL;
-    return (AE_OK);
+   Debug::info("OSL: AcpiOsPredefinedOverride\n");
+      
+   if (!InitVal || !NewVal)
+   {
+      return (AE_BAD_PARAMETER);
+   }
+   
+   *NewVal = NULL;
+   return (AE_OK);
 }
 
 
@@ -317,25 +219,24 @@ AcpiOsPredefinedOverride (
  *****************************************************************************/
 
 ACPI_STATUS
-AcpiOsTableOverride (
-    ACPI_TABLE_HEADER       *ExistingTable,
-    ACPI_TABLE_HEADER       **NewTable)
+AcpiOsTableOverride(ACPI_TABLE_HEADER *ExistingTable, ACPI_TABLE_HEADER **NewTable)
 {
+   Debug::info("OSL: AcpiOsTableOverride\n");
 
-    if (!ExistingTable || !NewTable)
-    {
-        return (AE_BAD_PARAMETER);
-    }
+   if (!ExistingTable || !NewTable)
+   {
+      return (AE_BAD_PARAMETER);
+   }
 
-    *NewTable = NULL;
+   *NewTable = NULL;
 
 #ifdef ACPI_EXEC_APP
 
-    AeTableOverride (ExistingTable, NewTable);
-    return (AE_OK);
+   AeTableOverride (ExistingTable, NewTable);
+   return (AE_OK);
 #else
 
-    return (AE_NO_ACPI_TABLES);
+   return (AE_NO_ACPI_TABLES);
 #endif
 }
 
@@ -435,72 +336,6 @@ AcpiOsVprintf (
   vprintf(Fmt, Args);
 }
 
-
-#ifndef ACPI_EXEC_APP
-/******************************************************************************
- *
- * FUNCTION:    AcpiOsGetLine
- *
- * PARAMETERS:  Buffer              - Where to return the command line
- *              BufferLength        - Maximum length of Buffer
- *              BytesRead           - Where the actual byte count is returned
- *
- * RETURN:      Status and actual bytes read
- *
- * DESCRIPTION: Get the next input line from the terminal. NOTE: For the
- *              AcpiExec utility, we use the acgetline module instead to
- *              provide line-editing and history support.
- *
- *****************************************************************************/
-
-ACPI_STATUS
-AcpiOsGetLine (
-    char                    *Buffer,
-    UINT32                  BufferLength,
-    UINT32                  *BytesRead)
-{
-    int                     InputChar;
-    UINT32                  EndOfLine;
-
-
-    /* Standard AcpiOsGetLine for all utilities except AcpiExec */
-
-    for (EndOfLine = 0; ; EndOfLine++)
-    {
-        if (EndOfLine >= BufferLength)
-        {
-            return (AE_BUFFER_OVERFLOW);
-        }
-
-        if ((InputChar = getchar ()) == EOF)
-        {
-            return (AE_ERROR);
-        }
-
-        if (!InputChar || InputChar == _ASCII_NEWLINE)
-        {
-            break;
-        }
-
-        Buffer[EndOfLine] = (char) InputChar;
-    }
-
-    /* Null terminate the buffer */
-
-    Buffer[EndOfLine] = 0;
-
-    /* Return the number of bytes in the string */
-
-    if (BytesRead)
-    {
-        *BytesRead = EndOfLine;
-    }
-
-    return (AE_OK);
-}
-#endif
-
-
 #ifndef ACPI_USE_NATIVE_MEMORY_MAPPING
 /******************************************************************************
  *
@@ -516,12 +351,11 @@ AcpiOsGetLine (
  *****************************************************************************/
 
 void *
-AcpiOsMapMemory (
-    ACPI_PHYSICAL_ADDRESS   where,
-    ACPI_SIZE               length)
+AcpiOsMapMemory(ACPI_PHYSICAL_ADDRESS where, ACPI_SIZE length)
 {
+   Debug::info("OSL: AcpiOsMapMemory\n");
 
-    return (ACPI_TO_POINTER ((ACPI_SIZE) where));
+   return (ACPI_TO_POINTER ((ACPI_SIZE) where));
 }
 
 
@@ -540,12 +374,9 @@ AcpiOsMapMemory (
  *****************************************************************************/
 
 void
-AcpiOsUnmapMemory (
-    void                    *where,
-    ACPI_SIZE               length)
+AcpiOsUnmapMemory(void *where, ACPI_SIZE length)
 {
-
-    return;
+   Debug::info("OSL: AcpiOsUnmapMemory\n");
 }
 #endif
 
@@ -563,14 +394,11 @@ AcpiOsUnmapMemory (
  *****************************************************************************/
 
 void *
-AcpiOsAllocate (
-    ACPI_SIZE               size)
+AcpiOsAllocate(ACPI_SIZE size)
 {
-    void                    *Mem;
+   Debug::info("OSL: AcpiOsAllocate\n");
 
-
-    Mem = (void *) malloc ((size_t) size);
-    return (Mem);
+   return malloc((size_t) size);
 }
 
 
@@ -591,11 +419,9 @@ void *
 AcpiOsAllocateZeroed (
     ACPI_SIZE               size)
 {
-    void                    *Mem;
+   Debug::info("OSL: AcpiOsAllocateZeroed\n");
 
-
-    Mem = (void *) calloc (1, (size_t) size);
-    return (Mem);
+   return calloc(1, (size_t) size);
 }
 #endif
 
@@ -613,11 +439,10 @@ AcpiOsAllocateZeroed (
  *****************************************************************************/
 
 void
-AcpiOsFree (
-    void                    *mem)
+AcpiOsFree(void* mem)
 {
-
-    free (mem);
+   Debug::info("OSL: AcpiOsAllocate\n");
+   free(mem);
 }
 
 
