@@ -4,11 +4,14 @@
 #include <Debug.hh>
 #include <cstdio>
 #include <cstdint>
+#include <cctype>
 
 #include "Keyboard.hh"
 #include "Scancodes.hh"
 
 Keyboard::Keyboard()
+   : shiftPressed(false),
+     controlPressed(false)
 {
    Debug::info("Keyboard::Keyboard()\n");
 }
@@ -53,18 +56,35 @@ Keyboard::name() const
 void
 Keyboard::handleInterrupt()
 {
+   // check if buffer is ready
+   uint8_t status = inb(0x64);
+   if ((status & 0x1) == 0) {
+      return;
+   }
+   
    uint8_t scanCode = inb(0x60);
 
    // ignore break
-   if (scanCode >= 0x80)
+   bool isBreak = false;
+   if (scanCode & 0x80)
    {
-      return;
+      isBreak = true;
+      scanCode ^= 0x80;
    }
 
    Scancodes::Codes code = Scancodes::codes[scanCode];
 
-   if (!code.isMeta)
+   if (code.type == Scancodes::Regular && isBreak)
    {
+      return;
+   }
+
+   if (code.type == Scancodes::Regular)
+   {
+      if (shiftPressed)
+      {
+         code.ascii = toupper(code.ascii);
+      }
       console_feed(code.ascii);
    }
    else
@@ -79,6 +99,13 @@ Keyboard::handleInterrupt()
             break;
          case Scancodes::Tab:
             console_feed('\t');
+            break;
+         case Scancodes::LeftShift:
+         case Scancodes::RightShift:
+            shiftPressed = !isBreak;
+            break;
+         case Scancodes::Control:
+            controlPressed = !isBreak;
             break;
 
          default:

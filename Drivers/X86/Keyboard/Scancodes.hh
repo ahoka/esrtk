@@ -1,11 +1,17 @@
 class Scancodes
 {
 public:
+   enum CodeType
+   {
+      Regular,
+      Special,
+   };
+
    struct Codes
    {
       uint8_t code;
       int ascii;
-      bool isMeta;
+      CodeType type;
    };
 
    enum Special

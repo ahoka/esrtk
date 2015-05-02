@@ -14,4 +14,8 @@ public:
 
    // this should be interruptHandler()
    void handleInterrupt();
+
+private:
+   bool shiftPressed;
+   bool controlPressed;
 };
