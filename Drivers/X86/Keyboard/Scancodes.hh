@@ -11,6 +11,7 @@ public:
    {
       uint8_t code;
       int ascii;
+      int altascii;
       CodeType type;
    };
 

@@ -83,9 +83,12 @@ Keyboard::handleInterrupt()
    {
       if (shiftPressed)
       {
-         code.ascii = toupper(code.ascii);
+         console_feed(code.altascii);
       }
-      console_feed(code.ascii);
+      else
+      {
+         console_feed(code.ascii);
+      }
    }
    else
    {
