@@ -112,6 +112,35 @@ complete(const char* part)
    }
 }
 
+void
+expand(char* part)
+{
+   const char* expanded = 0;
+   unsigned int count = 0;
+   
+   for (const auto& c : commands)
+   {
+      size_t partlen = strlen(part);
+      const char* cmd = c.second.c_str();
+
+      if (strlen(cmd) >= partlen &&
+          strncmp(part, cmd, partlen) == 0)
+      {
+         count++;
+         if (expanded == 0)
+         {
+            expanded = cmd;
+         }
+      }
+   }
+
+   if (count == 1 && expanded != 0)
+   {
+      // XXX array bounds is not checked
+      strcpy(part, expanded);
+   }
+}
+
 std::string
 Monitor::getCommand()
 {
@@ -129,6 +158,12 @@ Monitor::getCommand()
          putchar('\n');
          complete(buffer);
          printf("=> %s", buffer);
+      }
+      if (c == '\t')
+      {
+         buffer[i] = 0;
+         expand(buffer);
+         printf("%s", buffer + i);
       }
       else if (c == '\n')
       {
