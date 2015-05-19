@@ -95,11 +95,30 @@ std::string
 Monitor::getCommand()
 {
    char buffer[128];
+   size_t i = 0;
 
    printf("=> ");
-   std::string command = gets_s(buffer, sizeof(buffer));
 
-   return command;
+   while (i < sizeof(buffer) - 1)
+   {
+      int c = getchar();
+      if (c == '?')
+      {
+         buffer[i] = 0;
+         printf("\n<completion here>\n=> %s", buffer);
+      }
+      else if (c == '\n')
+      {
+         break;
+      }
+      else
+      {
+         buffer[i++] = c;
+      }
+   }
+   buffer[i] = 0;
+
+   return std::string(buffer);
 }
 
 namespace
