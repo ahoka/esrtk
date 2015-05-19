@@ -14,6 +14,11 @@
 
 using CommandPair = std::pair<MonitorCommand*, std::string>;
 
+namespace
+{
+   std::list<CommandPair> commands;
+};
+
 MonitorCommand::MonitorCommand()
 {
 }
@@ -91,6 +96,22 @@ Monitor::~Monitor()
 {
 }
 
+void
+complete(const char* part)
+{
+   for (const auto& c : commands)
+   {
+      size_t partlen = strlen(part);
+      const char* cmd = c.second.c_str();
+
+      if (strlen(cmd) >= partlen &&
+          strncmp(part, cmd, partlen) == 0)
+      {
+         printf("  %s\n", cmd);
+      }
+   }
+}
+
 std::string
 Monitor::getCommand()
 {
@@ -105,7 +126,9 @@ Monitor::getCommand()
       if (c == '?')
       {
          buffer[i] = 0;
-         printf("\n<completion here>\n=> %s", buffer);
+         putchar('\n');
+         complete(buffer);
+         printf("=> %s", buffer);
       }
       else if (c == '\n')
       {
@@ -120,11 +143,6 @@ Monitor::getCommand()
 
    return std::string(buffer);
 }
-
-namespace
-{
-   std::list<CommandPair> commands;
-};
 
 void
 Monitor::registerCommand(MonitorCommand* command, std::string name)
@@ -149,7 +167,7 @@ Monitor::enter()
          printf("Available commands:\n");
          for (auto& handler : commands)
          {
-            printf(" %s\n", handler.second.c_str());
+            printf("  %s\n", handler.second.c_str());
          }
       }
       else if (command == "exit")
