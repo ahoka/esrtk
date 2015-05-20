@@ -96,24 +96,8 @@ Monitor::~Monitor()
 {
 }
 
-void
-complete(const char* part)
-{
-   for (const auto& c : commands)
-   {
-      size_t partlen = strlen(part);
-      const char* cmd = c.second.c_str();
-
-      if (strlen(cmd) >= partlen &&
-          strncmp(part, cmd, partlen) == 0)
-      {
-         printf("  %s\n", cmd);
-      }
-   }
-}
-
-void
-expand(char* part)
+bool
+expand(char* part, size_t len)
 {
    const char* expanded = 0;
    unsigned int count = 0;
@@ -136,8 +120,26 @@ expand(char* part)
 
    if (count == 1 && expanded != 0)
    {
-      // XXX array bounds is not checked
-      strcpy(part, expanded);
+      snprintf(part, len, "%s", expanded);
+      return true;
+   }
+
+   return false;
+}
+
+void
+complete(const char* part)
+{
+   for (const auto& c : commands)
+   {
+      size_t partlen = strlen(part);
+      const char* cmd = c.second.c_str();
+
+      if (strlen(cmd) >= partlen &&
+          strncmp(part, cmd, partlen) == 0)
+      {
+         printf("  %s\n", cmd);
+      }
    }
 }
 
@@ -155,15 +157,18 @@ Monitor::getCommand()
       if (c == '?')
       {
          buffer[i] = 0;
-         putchar('\n');
-         complete(buffer);
-         printf("=> %s", buffer);
-      }
-      if (c == '\t')
-      {
-         buffer[i] = 0;
-         expand(buffer);
-         printf("%s", buffer + i);
+         if (expand(buffer, sizeof(buffer)))
+         {
+            printf("%s", buffer + i);
+            i = strlen(buffer);
+            continue;
+         }
+         else
+         {
+            putchar('\n');
+            complete(buffer);
+            printf("=> %s", buffer);
+         }
       }
       else if (c == '\n')
       {
@@ -174,9 +179,8 @@ Monitor::getCommand()
          buffer[i++] = c;
       }
    }
-   buffer[i] = 0;
 
-   return std::string(buffer);
+   return std::string(buffer, i);
 }
 
 void
