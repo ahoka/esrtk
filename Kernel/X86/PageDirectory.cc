@@ -48,8 +48,6 @@ namespace PageDirectory
 
    uint32_t* addressToPde(uint32_t address, uint32_t pageDirectoryBase);
    uint32_t* addressToPte(uint32_t address, uint32_t pageTableBase);
-
-   uintptr_t createPageDirectory();
 };
 
 namespace

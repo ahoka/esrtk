@@ -9,14 +9,16 @@
 
 namespace Kernel
 {
+   class Process;
+   
    class Thread
    {
    public:
       Thread();
-      Thread(unsigned long);
+//      Thread(unsigned long);
 
       bool init();
-      bool init(unsigned long threadId, uintptr_t stack);
+      bool init0(uintptr_t stack);
 
       bool addJob(Job job);
 
@@ -36,11 +38,21 @@ namespace Kernel
          Agony,
          Dead
       };
+
+      enum Type
+      {
+         UserThread,
+         KernelThread,
+         InterruptThread
+      };
    
       unsigned long id;
 //   uintptr_t userStack;
       uintptr_t kernelStack;
       State stateM;
+      Type typeM;
+
+      Process* processM;
 
       Thread* nextM;
 

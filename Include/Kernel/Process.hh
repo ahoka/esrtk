@@ -2,7 +2,7 @@
 #define PROCESS_HH
 
 #include <Kernel/Thread.hh>
-
+#include <list>
 #include <cstdint>
 
 namespace Kernel
@@ -16,7 +16,7 @@ namespace Kernel
    private:
       uint32_t pageDirectoryM;
 
-//      ustl::list<Thread*> threadsM;
+      std::list<Thread*> threadsM;
    };
 };
 

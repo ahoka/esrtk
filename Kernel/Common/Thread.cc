@@ -21,22 +21,22 @@ Thread::Thread()
    Debug::verbose("Creating thread...\n");
 }
 
-Thread::Thread(unsigned long Id)
-   : id(Id),
-     kernelStack(0),
-     stateM(Idle),
-     nextM(0)
-{
-}
+// Thread::Thread(unsigned long Id)
+//    : id(Id),
+//      kernelStack(0),
+//      stateM(Idle),
+//      nextM(0)
+// {
+// }
 
 // used when creating thread 0
 bool
-Thread::init(unsigned long threadId, uintptr_t stack)
+Thread::init0(uintptr_t stack)
 {
-   id = threadId;
+   id = 0;
    kernelStack = stack;
 
-   Debug::verbose("Initializing idle thread: %lu %p...\n", threadId, (void*)stack);
+   Debug::verbose("Initializing idle thread (thread0): %p...\n", (void*)stack);
 
    Scheduler::insert(this);
 

@@ -22,7 +22,7 @@ Scheduler::init()
 {
    static Thread thread0;
 
-   thread0.init(0, StackStart);
+   thread0.init0(StackStart);
 
    setCurrentThread(&thread0);
 

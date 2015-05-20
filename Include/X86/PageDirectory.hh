@@ -21,6 +21,8 @@ namespace PageDirectory
 
    uintptr_t getPageTableEntry(uint32_t vAddress);
    uintptr_t getPhysicalPage(uint32_t vAddress);
+
+   uintptr_t createPageDirectory();
 };
 
 #endif
