@@ -8,19 +8,11 @@
 
 namespace Kernel
 {
-   Thread thread0;
-
-//   using ThreadQueue = DoublyLinkedList<Thread>;
    Thread* idleListHeadM;
    Thread* idleListTailM;
    Thread* readyListHeadM;
    Thread* readyListTailM;
-//   ThreadQueue* idleListM;
-//   ThreadQueue* readyListM;
-
-//   Thread* threads = 0;
    Thread* currentThread = 0;
-//   Thread* nextToRun = 0;
 };
 
 using namespace Kernel;
@@ -28,8 +20,7 @@ using namespace Kernel;
 void
 Scheduler::init()
 {
-   // readyListM = new ThreadQueue();
-   // idleListM = new ThreadQueue();
+   static Thread thread0;
 
    thread0.init(0, StackStart);
 
@@ -38,7 +29,8 @@ Scheduler::init()
    readyListHeadM = &thread0;
    readyListTailM = &thread0;
 
-//   idleListM = 0;
+   idleListHeadM = 0;
+   idleListTailM = 0;
 }
 
 void
@@ -86,24 +78,22 @@ Scheduler::insert(Thread* t)
 void
 Scheduler::schedule()
 {
-   // if (nextToRun == 0)
-   // {
-   //    nextToRun = threads;
-   // }
+   Thread* lastRunning = getCurrentThread();
+   
+   if (readyListTailM)
+   {
+      readyListTailM->nextM = lastRunning;
+   }
+   
+   readyListTailM = lastRunning;
+   
+   Thread* next = readyListHeadM;
 
-//   KASSERT(threads != 0);
+   KASSERT(next != 0);
 
-   // currentThread = readyListHeadM;
-   // readyListHeadM = readyListHeadM->nextM;
-   // if (readyListHeadM == 0)
-   // {
-   //    readyListTailM = 0;
-   // }
+   readyListHeadM = readyListHeadM->nextM;
 
-   // // XXX no idle yet, just rr threads
-   // readyListM->push(currentThread);
-//   currentThread = nextToRun;
-//   nextToRun = nextToRun->next;
+   setCurrentThread(next);
 
    Watchdog::kick();
 }
