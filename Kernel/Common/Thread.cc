@@ -4,12 +4,13 @@
 
 #include <Parameters.hh>
 #include <Debug.hh>
-#include <Hal.hh>
+#include <spinlock.h>
 
 #include <cstdio>
 
 using namespace Kernel;
 
+static spinlock_softirq_t threadLock = SPINLOCK_SOFTIRQ_STATIC_INITIALIZER;
 unsigned long Thread::nextThreadId = 1;
 
 Thread::Thread()
@@ -48,9 +49,7 @@ Thread::init()
 {
    Debug::verbose("Initializing thread %p...\n", this);
 
-   InterruptFlags flags;
-   Hal::saveLocalInterrupts(flags);
-   Hal::disableLocalInterrupts();
+   spinlock_softirq_enter(&threadLock);
 
    KASSERT(nextThreadId != 0);
    id = nextThreadId++;
@@ -59,7 +58,8 @@ Thread::init()
    kernelStack = ThreadContext::initStack(kernelStack,
                                           reinterpret_cast<uintptr_t>(&Thread::main),
                                           reinterpret_cast<uintptr_t>(this));
-   Hal::restoreLocalInterrupts(flags);
+
+   spinlock_softirq_exit(&threadLock);
    KASSERT(success);
 
    Debug::verbose("Thread's new stack is %p\n", (void*)kernelStack);
