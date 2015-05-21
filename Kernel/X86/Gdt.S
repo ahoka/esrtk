@@ -25,6 +25,11 @@ gdt:
 // user data
 .long 0x0000ffff
 .long 0x00cff200
+
+// TSS
+tss:
+.long 0x00000000
+.long 0x00000000
 egdt:
 
 gdtr:
@@ -47,4 +52,16 @@ END(x86_gdt_init)
 
 FUNCTION(x86_gdt_get)
         sgdt (%eax)
+        ret
 END(x86_gdt_get)
+
+FUNCTION(x86_tss_get)
+        movl $tss, %eax
+        ret
+END(x86_tss_get)
+
+FUNCTION(x86_tss_load)
+        movw $(tss - gdt), %ax
+        ltr %ax
+        ret
+END(x86_tss_load)

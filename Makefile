@@ -24,7 +24,7 @@ SIZE=		${CROSS}size
 
 QEMU=		qemu-system-i386
 
-QEMU_ARGS=	-m 64M -M q35 -watchdog i6300esb -device rtl8139 -boot order=c -serial stdio -d cpu_reset
+QEMU_ARGS=	-m 64M -M q35 -watchdog i6300esb -device rtl8139 -boot order=c -serial stdio -d cpu_reset -no-reboot
 
 # XXX -flto
 COPTS+=		-O2 -march=i686 -g \

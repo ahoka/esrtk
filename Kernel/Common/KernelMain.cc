@@ -30,6 +30,12 @@ kmain()
 
    printf("Kernel main starting...\n");
 
+   printf("Loading TSS\n");
+   uint32_t tss = x86_tss_get();
+   printf("TSS: 0x%x\n", tss);
+
+//   x86_tss_load();
+
    initInterrupts();
 
    Memory::copyMemoryMap();
