@@ -28,8 +28,8 @@ namespace
 unsigned long Thread::nextThreadId = 1;
 
 Thread::Thread()
-   : id(-1ul),
-     kernelStack(0),
+   : idM(-1ul),
+     kernelStackM(0),
      stateM(Idle),
      nextM(0)
 {
@@ -48,8 +48,8 @@ Thread::Thread()
 bool
 Thread::init0(uintptr_t stack)
 {
-   id = 0;
-   kernelStack = stack;
+   idM = 0;
+   kernelStackM = stack;
 
    Debug::verbose("Initializing idle thread (thread0): %p...\n", (void*)stack);
 
@@ -67,17 +67,17 @@ Thread::init()
    spinlock_softirq_enter(&threadLock);
 
    KASSERT(nextThreadId != 0);
-   id = nextThreadId++;
+   idM = nextThreadId++;
 
-   bool success = Memory::createKernelStack(kernelStack);
-   kernelStack = ThreadContext::initStack(kernelStack,
-                                          reinterpret_cast<uintptr_t>(&Thread::main),
-                                          reinterpret_cast<uintptr_t>(this));
+   bool success = Memory::createKernelStack(kernelStackM);
+   kernelStackM = ThreadContext::initStack(kernelStackM,
+                                           reinterpret_cast<uintptr_t>(&Thread::main),
+                                           reinterpret_cast<uintptr_t>(this));
 
    spinlock_softirq_exit(&threadLock);
    KASSERT(success);
 
-   Debug::verbose("Thread's new stack is %p\n", (void*)kernelStack);
+   Debug::verbose("Thread's new stack is %p\n", (void*)kernelStackM);
    if (success)
    {
       Scheduler::insert(this);
@@ -100,7 +100,7 @@ Thread::printAll()
 {
    for (auto& t : getThreadList())
    {
-      printf("%p (%lu) - %p\n", t, t->getId(), (void*)t->kernelStack);
+      printf("%p (%lu) - %p\n", t, t->getId(), (void*)t->kernelStackM);
    }
 }
 
@@ -144,7 +144,7 @@ Thread::main(Thread* thread)
 void
 Thread::dump()
 {
-   printf("thread: %p %lu %p %u\n", this, id, (void *)kernelStack, stateM);
+   printf("thread: %p %lu %p %u\n", this, idM, (void *)kernelStackM, stateM);
 }
 
 Thread*
@@ -159,5 +159,29 @@ Thread::create()
 unsigned long
 Thread::getId() const
 {
-   return id;
+   return idM;
+}
+
+void
+Thread::setName(const char* name)
+{
+   nameM = std::string(name);
+}
+
+std::string
+Thread::getName() const
+{
+   return nameM;
+}
+
+uintptr_t
+Thread::getKernelStack() const
+{
+   return kernelStackM;
+}
+
+void
+Thread::setKernelStack(uintptr_t stack)
+{
+   kernelStackM = stack;
 }

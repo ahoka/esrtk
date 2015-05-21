@@ -142,7 +142,7 @@ x86_isr_dispatcher(InterruptFrame* frame)
    if (frame->interrupt == 32)
    {
       Thread* currentThread = Scheduler::getCurrentThread();
-      currentThread->kernelStack = (uintptr_t )frame;
+      currentThread->setKernelStack((uintptr_t )frame);
    }
 
    // TODO: make a list of handlers and register them there to be run from dispatcher
@@ -172,7 +172,7 @@ x86_isr_dispatcher(InterruptFrame* frame)
    if (frame->interrupt == 32)
    {
       Thread* currentThread = Scheduler::getCurrentThread();
-      InterruptFrame* newFrame = (InterruptFrame* )currentThread->kernelStack;
+      InterruptFrame* newFrame = (InterruptFrame* )currentThread->getKernelStack();
 
       KASSERT(newFrame != 0);
 

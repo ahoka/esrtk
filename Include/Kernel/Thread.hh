@@ -4,7 +4,9 @@
 #include <Memory.hh>
 #include <Kernel/Job.hh>
 
-#include <DoublyLinkedList.hh>
+#include <Kernel/Scheduler.hh>
+
+#include <string>
 #include <cstdint>
 
 namespace Kernel
@@ -19,16 +21,19 @@ namespace Kernel
 
       bool init();
       bool init0(uintptr_t stack);
-
       bool addJob(Job job);
-
       void dump();
+
+      void setName(const char*);
+      std::string getName() const;
+
+      void setKernelStack(uintptr_t);
+      uintptr_t getKernelStack() const;
 
       unsigned long getId() const;
 
       static void printAll();
       static void main [[noreturn]] (Thread* thread);
-
       static Thread* create();
 
       enum State
@@ -47,21 +52,21 @@ namespace Kernel
          KernelThread,
          InterruptThread
       };
-   
-      unsigned long id;
+
+   private:   
+      unsigned long idM;
 //   uintptr_t userStack;
-      uintptr_t kernelStack;
+      uintptr_t kernelStackM;
       State stateM;
       Type typeM;
-
       Process* processM;
-
       Thread* nextM;
-
-   private:
-//      DoublyLinkedList<Job> jobsM;
+      std::string nameM;
 
       static unsigned long nextThreadId;
+
+      friend void ::Kernel::Scheduler::insert(Thread* t);
+      friend void ::Kernel::Scheduler::schedule();
    };
 };
 
