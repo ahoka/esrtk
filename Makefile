@@ -63,11 +63,13 @@ COPTS+=		-fdiagnostics-color=always
 
 .endif
 
-INCDIRS=	Include CInclude CxxInclude Templates Include/Kernel Acpi/Include
+INCDIRS=	Include CInclude CxxInclude Templates Include/Kernel
 
 INCPATHS=	${INCDIRS:S/^/${BUILD_ROOT}\//}
 
-CPPFLAGS+=	${INCPATHS:S/^/-I/}
+# ACPI headers are included as system headers to supress 3pp warnings
+#
+CPPFLAGS+=	${INCPATHS:S/^/-I/} -isystem${BUILD_ROOT}/Acpi/Include
 
 # XXX these should be only provided for Standard
 #
