@@ -24,6 +24,8 @@ namespace Kernel
 
       void dump();
 
+      unsigned long getId() const;
+
       static void printAll();
       static void main [[noreturn]] (Thread* thread);
 

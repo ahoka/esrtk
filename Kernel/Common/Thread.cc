@@ -6,11 +6,25 @@
 #include <Debug.hh>
 #include <spinlock.h>
 
+#include <list>
+
 #include <cstdio>
 
 using namespace Kernel;
 
-static spinlock_softirq_t threadLock = SPINLOCK_SOFTIRQ_STATIC_INITIALIZER;
+namespace
+{
+   spinlock_softirq_t threadLock = SPINLOCK_SOFTIRQ_STATIC_INITIALIZER;
+
+   std::list<Thread*>&
+   getThreadList()
+   {
+      static std::list<Thread*> threadList;
+
+      return threadList;
+   }
+};
+
 unsigned long Thread::nextThreadId = 1;
 
 Thread::Thread()
@@ -40,6 +54,7 @@ Thread::init0(uintptr_t stack)
    Debug::verbose("Initializing idle thread (thread0): %p...\n", (void*)stack);
 
    Scheduler::insert(this);
+   getThreadList().push_back(this);
 
    return true;
 }
@@ -66,6 +81,7 @@ Thread::init()
    if (success)
    {
       Scheduler::insert(this);
+      getThreadList().push_back(this);
    }
 
    return success;
@@ -82,10 +98,10 @@ Thread::addJob(Job /*job*/)
 void
 Thread::printAll()
 {
-   // for (auto& t : list)
-   // {
-   //    Debug::verbose("%lu - %p\n", t.id, (void*)t.kernelStack);
-   // }
+   for (auto& t : getThreadList())
+   {
+      printf("%p (%lu) - %p\n", t, t->getId(), (void*)t->kernelStack);
+   }
 }
 
 void
@@ -138,4 +154,10 @@ Thread::create()
    thread->init();
 
    return thread;
+}
+
+unsigned long
+Thread::getId() const
+{
+   return id;
 }

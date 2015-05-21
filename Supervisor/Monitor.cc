@@ -5,6 +5,7 @@
 #include <MemoryManager.hh>
 #include <Kernel/Thread.hh>
 #include <Interrupt.hh>
+#include <Scheduler.hh>
 
 #include <string>
 #include <list>

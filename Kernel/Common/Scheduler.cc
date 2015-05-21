@@ -4,18 +4,20 @@
 
 #include <cstdio>
 
-#include <DoublyLinkedList.hh>
+#include <spinlock.h>
 
 namespace Kernel
 {
-   Thread* idleListHeadM;
-   Thread* idleListTailM;
-   Thread* readyListHeadM;
-   Thread* readyListTailM;
+   Thread* idleListHeadM = 0;
+   Thread* idleListTailM = 0;
+   Thread* readyListHeadM = 0;
+   Thread* readyListTailM = 0;
    Thread* currentThread = 0;
 };
 
 using namespace Kernel;
+
+static spinlock_softirq_t schedulerLock = SPINLOCK_SOFTIRQ_STATIC_INITIALIZER;
 
 void
 Scheduler::init()
@@ -57,6 +59,8 @@ Scheduler::insert(Thread* t)
 //   t->next = threads;
 //   threads = t;
 
+   spinlock_softirq_enter(&schedulerLock);
+
    if (readyListTailM == 0)
    {
       assert(readyListHeadM == 0);
@@ -73,11 +77,15 @@ Scheduler::insert(Thread* t)
       oldTail->nextM = t;
 //      t->prevM(oldTail);
    }
+
+   spinlock_softirq_exit(&schedulerLock);
 }
 
 void
 Scheduler::schedule()
 {
+   spinlock_softirq_enter(&schedulerLock);
+   
    Thread* lastRunning = getCurrentThread();
    
    if (readyListTailM)
@@ -94,6 +102,8 @@ Scheduler::schedule()
    readyListHeadM = readyListHeadM->nextM;
 
    setCurrentThread(next);
+
+   spinlock_softirq_exit(&schedulerLock);
 
    Watchdog::kick();
 }

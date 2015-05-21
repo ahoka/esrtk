@@ -14,6 +14,8 @@ namespace Kernel
 
       Thread* getCurrentThread();
       void setCurrentThread(Thread* thread);
+
+      void printAll();
    };
 };
 
