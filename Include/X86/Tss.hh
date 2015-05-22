@@ -61,28 +61,9 @@ struct x86_tss
    uint16_t iomap;
 } __attribute__((packed));
 
-void
-x86_tssd_init(struct x86_tss_descriptor* d, struct x86_tss* tss)
-{
-   uint32_t size = sizeof(struct x86_tss);
-   uint32_t base = (uint32_t)tss;
-
-   d->limit_low = size & 0xffff;
-   d->base_address_low = base & 0xffff;
-   d->base_address_mid = (base >> 16) & 0xff;
-   d->type = 0b1001;
-   d->zero_0 = 0;
-   d->privilege_level = 0;
-   d->present = 1;
-   d->limit_high = (size >> 16) & 0xf;
-   d->available = 0;
-   d->zero_1 = 0;
-   d->zero_2 = 0;
-   d->granuality = 0;
-   d->base_high = (base >> 24) & 0xff;
-}
-
+extern "C" void x86_tssd_init(struct x86_tss_descriptor* d, struct x86_tss* tss);
 extern "C" void x86_tssd_update();
 extern "C" struct x86_tss_descriptor* x86_tssd_get();
+extern "C" void x86_tss_set_kstack(uint32_t esp);
 
 #endif

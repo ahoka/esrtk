@@ -14,8 +14,6 @@
 
 extern unsigned int magic;
 
-static x86_tss tss;
-
 extern "C" void
 kmain()
 {
@@ -33,12 +31,6 @@ kmain()
 
    printf("Kernel main starting...\n");
 
-   printf("Loading TSS: %p\n", &tss);
-
-   printf("Updating TSS Descriptor\n");
-   auto tssd = x86_tssd_get();
-   x86_tssd_init(tssd, &tss);
-   x86_tssd_update();
 
    initInterrupts();
 
