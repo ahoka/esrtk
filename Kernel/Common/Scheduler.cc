@@ -79,7 +79,7 @@ Scheduler::schedule()
    {
       readyListTailM->nextM = lastRunning;
    }
-      readyListTailM = lastRunning;
+   readyListTailM = lastRunning;
    
    Thread* next = readyListHeadM;
    KASSERT(next != 0);
