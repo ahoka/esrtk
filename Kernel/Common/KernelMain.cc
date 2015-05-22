@@ -5,6 +5,7 @@
 #include <X86/PageDirectory.hh>
 #include <X86/Idt.hh>
 #include <X86/Gdt.hh>
+#include <X86/Tss.hh>
 #include <X86/EarlySerial.hh>
 
 #include <MemoryManager.hh>
@@ -12,6 +13,8 @@
 #include <cstdio>
 
 extern unsigned int magic;
+
+static x86_tss tss;
 
 extern "C" void
 kmain()
@@ -30,11 +33,12 @@ kmain()
 
    printf("Kernel main starting...\n");
 
-   printf("Loading TSS\n");
-   uint32_t tss = x86_tss_get();
-   printf("TSS: 0x%x\n", tss);
+   printf("Loading TSS: %p\n", &tss);
 
-//   x86_tss_load();
+   printf("Updating TSS Descriptor\n");
+   auto tssd = x86_tssd_get();
+   x86_tssd_init(tssd, &tss);
+   x86_tssd_update();
 
    initInterrupts();
 

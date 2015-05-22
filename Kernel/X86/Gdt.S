@@ -55,13 +55,13 @@ FUNCTION(x86_gdt_get)
         ret
 END(x86_gdt_get)
 
-FUNCTION(x86_tss_get)
+FUNCTION(x86_tssd_get)
         movl $tss, %eax
         ret
-END(x86_tss_get)
+END(x86_tssd_get)
 
-FUNCTION(x86_tss_load)
+FUNCTION(x86_tssd_update)
         movw $(tss - gdt), %ax
         ltr %ax
         ret
-END(x86_tss_load)
+END(x86_tssd_update)
