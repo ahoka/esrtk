@@ -6,16 +6,13 @@
 
 #include <spinlock.h>
 
-namespace Kernel
-{
-   Thread* idleListHeadM = 0;
-   Thread* idleListTailM = 0;
-   Thread* readyListHeadM = 0;
-   Thread* readyListTailM = 0;
-   Thread* currentThread = 0;
-};
-
 using namespace Kernel;
+
+Thread* idleListHeadM = 0;
+Thread* idleListTailM = 0;
+Thread* readyListHeadM = 0;
+Thread* readyListTailM = 0;
+Thread* currentThread = 0;
 
 static spinlock_softirq_t schedulerLock = SPINLOCK_SOFTIRQ_STATIC_INITIALIZER;
 
@@ -50,15 +47,6 @@ Scheduler::getCurrentThread()
 void
 Scheduler::insert(Thread* t)
 {
-   // XXX
-   // if (threads == 0)
-   // {
-   //    setCurrentThread(t);
-   // }
-
-//   t->next = threads;
-//   threads = t;
-
    spinlock_softirq_enter(&schedulerLock);
 
    if (readyListTailM == 0)
@@ -75,7 +63,6 @@ Scheduler::insert(Thread* t)
       readyListTailM = t;
 
       oldTail->nextM = t;
-//      t->prevM(oldTail);
    }
 
    spinlock_softirq_exit(&schedulerLock);
@@ -92,15 +79,12 @@ Scheduler::schedule()
    {
       readyListTailM->nextM = lastRunning;
    }
-   
-   readyListTailM = lastRunning;
+      readyListTailM = lastRunning;
    
    Thread* next = readyListHeadM;
-
    KASSERT(next != 0);
 
    readyListHeadM = readyListHeadM->nextM;
-
    setCurrentThread(next);
 
    spinlock_softirq_exit(&schedulerLock);
