@@ -13,7 +13,7 @@ public:
       allocated(false),
       checksum(0)
    {
-      Debug::verbose("Segment(%p)\n", this);
+//      Debug::verbose("Segment(%p)\n", this);
 //      updateChecksum();
 //      dump();
    }
