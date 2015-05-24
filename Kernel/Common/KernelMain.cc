@@ -7,6 +7,7 @@
 #include <X86/Gdt.hh>
 #include <X86/Tss.hh>
 #include <X86/EarlySerial.hh>
+#include <Kernel/ProcessContext.hh>
 
 #include <MemoryManager.hh>
 #include <Power.hh>
@@ -25,7 +26,7 @@ kmain()
       Power::halt();
    }
 
-   x86_gdt_init();
+   Kernel::ProcessContext::init();
 
    EarlySerial::init();
 

@@ -64,6 +64,8 @@ struct x86_tss
 extern "C" void x86_tssd_init(struct x86_tss_descriptor* d, struct x86_tss* tss);
 extern "C" void x86_tssd_update();
 extern "C" struct x86_tss_descriptor* x86_tssd_get();
+
+extern "C" void x86_tss_init();
 extern "C" void x86_tss_set_kstack(uint32_t esp);
 
 #endif
