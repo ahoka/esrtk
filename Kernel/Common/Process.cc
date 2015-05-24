@@ -9,7 +9,7 @@ Process::Process()
 {
    printf("Process: PD: %p\n", (void*)pageDirectoryM);
 
-   Thread* thread = new Thread;
+   Thread* thread = Thread::createKernelThread();
    threadsM.push_back(thread);
    thread->init();
 }

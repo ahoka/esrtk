@@ -25,6 +25,8 @@
 
 #define KernelCodeSegment 0x08
 #define KernelDataSegment 0x10
+#define UserCodeSegment 0x18
+#define UserDataSegment 0x20
 
 #define KernelVirtualBase U(0xc0000000)
 #define KernelLoadAddress U(0x100000)

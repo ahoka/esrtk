@@ -16,7 +16,14 @@ namespace Kernel
    class Thread
    {
    public:
-      Thread();
+      enum Type
+      {
+         UserThread,
+         KernelThread,
+         InterruptThread
+      };
+      
+      Thread(Type);
 //      Thread(unsigned long);
 
       bool init();
@@ -34,7 +41,7 @@ namespace Kernel
 
       static void printAll();
       static void main [[noreturn]] (Thread* thread);
-      static Thread* create();
+      static Thread* createKernelThread();
 
       enum State
       {
@@ -44,13 +51,6 @@ namespace Kernel
          Running,
          Agony,
          Dead
-      };
-
-      enum Type
-      {
-         UserThread,
-         KernelThread,
-         InterruptThread
       };
 
    private:   

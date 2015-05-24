@@ -19,7 +19,7 @@ static spinlock_softirq_t schedulerLock = SPINLOCK_SOFTIRQ_STATIC_INITIALIZER;
 void
 Scheduler::init()
 {
-   static Thread thread0;
+   static Thread thread0(Kernel::Thread::KernelThread);
 
    thread0.init0(StackStart);
 

@@ -17,7 +17,7 @@ struct CallFrame
 } __attribute__((packed));
 
 uintptr_t
-ThreadContext::initStack(uintptr_t top, uintptr_t main, uintptr_t arg)
+ThreadContext::initStack(uintptr_t top, uintptr_t main, uintptr_t arg, Thread::Type type)
 {
    uintptr_t stack = top - sizeof(InterruptFrame) + 8 - sizeof(CallFrame);
 
@@ -29,12 +29,25 @@ ThreadContext::initStack(uintptr_t top, uintptr_t main, uintptr_t arg)
 
    printf("Args is at: %p\n", &frame->arg);
 
+   uint16_t codeSegment;
+   uint16_t dataSegment;
+   if (type == Kernel::Thread::KernelThread)
+   {
+      codeSegment = KernelCodeSegment;
+      dataSegment = KernelDataSegment;
+   }
+   else
+   {
+      codeSegment = UserCodeSegment;
+      dataSegment = UserDataSegment;
+   }
+
    InterruptFrame* context = (InterruptFrame*)stack;
 
-   context->gs = KernelDataSegment;
-   context->fs = KernelDataSegment;
-   context->es = KernelDataSegment;
-   context->ds = KernelDataSegment;
+   context->gs = dataSegment;
+   context->fs = dataSegment;
+   context->es = dataSegment;
+   context->ds = dataSegment;
    context->edi = 0x0;
    context->esi = 0x0;
    context->ebp = 0x0;
@@ -45,8 +58,14 @@ ThreadContext::initStack(uintptr_t top, uintptr_t main, uintptr_t arg)
    context->interrupt = 0;
    context->error = 0;
    context->eip = static_cast<uint32_t>(main);
-   context->cs = KernelCodeSegment;
+   context->cs = codeSegment;
    context->eflags = Flags::Reserved | Flags::InterruptEnable;
 
    return stack;
+}
+
+uintptr_t
+ThreadContext::initStack(uintptr_t top, uintptr_t main, uintptr_t arg)
+{
+   return initStack(top, main, arg, Thread::KernelThread);
 }

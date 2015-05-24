@@ -27,22 +27,16 @@ namespace
 
 unsigned long Thread::nextThreadId = 1;
 
-Thread::Thread()
+Thread::Thread(Thread::Type type)
    : idM(-1ul),
      kernelStackM(0),
      stateM(Idle),
+     typeM(type),
+     processM(0),
      nextM(0)
 {
    Debug::verbose("Creating thread...\n");
 }
-
-// Thread::Thread(unsigned long Id)
-//    : id(Id),
-//      kernelStack(0),
-//      stateM(Idle),
-//      nextM(0)
-// {
-// }
 
 // used when creating thread 0
 bool
@@ -148,10 +142,9 @@ Thread::dump()
 }
 
 Thread*
-Thread::create()
+Thread::createKernelThread()
 {
-   Thread* thread = new Thread();
-   thread->init();
+   Thread* thread = new Thread(Type::KernelThread);
 
    return thread;
 }

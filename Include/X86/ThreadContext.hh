@@ -4,6 +4,8 @@
 #include <cstdio>
 #include <cstdint>
 
+#include <Kernel/Thread.hh>
+
 struct InterruptFrame
 {
    uint32_t gs;
@@ -40,6 +42,7 @@ struct InterruptFrame
 namespace ThreadContext
 {
    uintptr_t initStack(uintptr_t top, uintptr_t main, uintptr_t arg);
+   uintptr_t initStack(uintptr_t top, uintptr_t main, uintptr_t arg, Kernel::Thread::Type type);
 };
 
 #endif
