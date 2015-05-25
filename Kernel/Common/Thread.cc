@@ -150,9 +150,10 @@ Thread::createKernelThread()
 }
 
 Thread*
-Thread::createUserThread()
+Thread::createUserThread(Process* process)
 {
    Thread* thread = new Thread(Type::UserThread);
+   thread->processM = process;
 
    return thread;
 }

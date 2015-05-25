@@ -44,9 +44,9 @@ namespace Kernel
       unsigned long getId() const;
 
       static void printAll();
-      static void main [[noreturn]] (Thread* thread);
+      static void main [[noreturn]] (Thread*);
       static Thread* createKernelThread();
-      static Thread* createUserThread();
+      static Thread* createUserThread(Process*);
 
       enum State
       {
