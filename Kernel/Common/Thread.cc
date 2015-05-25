@@ -64,19 +64,21 @@ Thread::init()
    idM = nextThreadId++;
 
    bool success = Memory::createKernelStack(kernelStackM);
+   if (!success)
+   {
+      spinlock_softirq_exit(&threadLock);
+      return false;
+   }
+   
    kernelStackM = ThreadContext::initStack(kernelStackM,
                                            reinterpret_cast<uintptr_t>(&Thread::main),
                                            reinterpret_cast<uintptr_t>(this));
 
    spinlock_softirq_exit(&threadLock);
-   KASSERT(success);
 
    Debug::verbose("Thread's new stack is %p\n", (void*)kernelStackM);
-   if (success)
-   {
-      Scheduler::insert(this);
-      getThreadList().push_back(this);
-   }
+   Scheduler::insert(this);
+   getThreadList().push_back(this);
 
    return success;
 }
