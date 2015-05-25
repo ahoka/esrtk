@@ -30,7 +30,7 @@ unsigned long Thread::nextThreadId = 1;
 Thread::Thread(Thread::Type type)
    : idM(-1ul),
      kernelStackM(0),
-     stateM(Idle),
+     stateM(New),
      typeM(type),
      processM(0),
      nextM(0)
@@ -104,6 +104,18 @@ void
 Thread::main(Thread* thread)
 {
    Debug::verbose("Thread main called on %p (%p)!\n", thread, &thread);
+
+   // Initialize user stack
+   if (thread->typeM == UserThread)
+   {
+      // XXX hardcoded tramp address
+      thread->userStackM = ThreadContext::initStack(UserStackStart,
+                                                    0x10000000,
+                                                    reinterpret_cast<uintptr_t>(thread),
+                                                    UserThread);
+   }
+
+   thread->stateM = Ready;
 
    for (;;)
    {
