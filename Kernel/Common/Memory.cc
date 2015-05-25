@@ -22,8 +22,8 @@
 
 namespace
 {
-   uintptr_t heapEnd = HeapStart;
-   uintptr_t stackEnd = StackStart;
+   uintptr_t heapEnd = KernelHeapStart;
+   uintptr_t stackEnd = KernelStackStart;
    uintptr_t mapEnd = MapStart;
 
    MemorySegment memoryMap[MemoryMapMax];
@@ -119,9 +119,10 @@ Memory::init()
    }
 
    uintptr_t start = stackEnd;
-   printf("Creating initial kernel stack: %p-%p (%u)\n", (void* )start, (void* )(start - StackSize), StackSize);
+   printf("Creating initial kernel stack: %p-%p (%u)\n",
+          (void* )start, (void* )(start - KernelStackSize), KernelStackSize);
 
-   for (uintptr_t stackAddress = (start - StackSize);
+   for (uintptr_t stackAddress = (start - KernelStackSize);
 	stackAddress < start;
 	stackAddress += PageSize)
    {
@@ -133,7 +134,7 @@ Memory::init()
    }
 
    // add one unmapped page as guard
-   stackEnd = start - StackSize - PageSize;
+   stackEnd = start - KernelStackSize - PageSize;
 
 //   KASSERT(success);
 
@@ -154,9 +155,10 @@ Memory::createKernelStack(uintptr_t& start)
 {
    start = stackEnd;
 
-   printf("Creating new kernel stack: %p-%p (%u)\n", (void* )start, (void* )(start - StackSize), StackSize);
+   printf("Creating new kernel stack: %p-%p (%u)\n", (void* )start,
+          (void* )(start - KernelStackSize), KernelStackSize);
 
-   for (uintptr_t stackAddress = (start - StackSize);
+   for (uintptr_t stackAddress = (start - KernelStackSize);
 	stackAddress < start;
 	stackAddress += PageSize)
    {

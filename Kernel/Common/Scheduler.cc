@@ -40,7 +40,7 @@ Scheduler::init()
    static Thread thread0(Kernel::Thread::KernelThread);
 //   static Process process0;
 
-   thread0.init0(StackStart);
+   thread0.init0(KernelStackStart);
 
    setCurrentThread(&thread0);
 

@@ -40,14 +40,16 @@
 #define SecondaryPageTableBase U(0xff800000)
 #define SecondaryPageDirectoryBase U(0xffbffc0)
 
-#define StackStart SecondaryPageTableBase
-#define HeapStart U(0xc0501000)
+#define KernelStackStart SecondaryPageTableBase
+#define KernelStackSize U(0x10000)
+#define KernelHeapStart U(0xc0501000)
 
 #define UserStackStart U(0xbffffffc)
 #define UserHeapStart U(0x40000000)
 
-#define StackSize U(0x10000)
-#define MapStart (StackStart - StackSize)
+#define CodeStart U(0x10000000)
+
+#define MapStart (KernelStackStart - KernelStackSize)
 
 #define InitialStackSize U(0x2000)
 
