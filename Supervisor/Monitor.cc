@@ -18,6 +18,7 @@ using CommandPair = std::pair<MonitorCommand*, std::string>;
 namespace
 {
    std::list<CommandPair> commands;
+   const char* prompt = ">";
 };
 
 MonitorCommand::MonitorCommand()
@@ -150,7 +151,7 @@ Monitor::getCommand()
    char buffer[128];
    size_t i = 0;
 
-   printf("=> ");
+   printf("%s ", prompt);
 
    while (i < sizeof(buffer) - 1)
    {
@@ -168,7 +169,7 @@ Monitor::getCommand()
          {
             putchar('\n');
             complete(buffer);
-            printf("=> %s", buffer);
+            printf("%s %s", prompt, buffer);
          }
       }
       else if (c == '\n')
