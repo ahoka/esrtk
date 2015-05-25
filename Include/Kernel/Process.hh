@@ -7,6 +7,8 @@
 
 namespace Kernel
 {
+   class ProcessContext;
+   
    class Process final
    {
    public:
@@ -14,6 +16,7 @@ namespace Kernel
       ~Process();
 
    private:
+      ProcessContext* contextM;
       std::list<Thread*> threadsM;
    };
 };

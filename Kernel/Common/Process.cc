@@ -1,10 +1,11 @@
 #include <Kernel/Process.hh>
 #include <Kernel/Thread.hh>
-#include <X86/PageDirectory.hh>
+#include <Kernel/ProcessContext.hh>
 
 using namespace Kernel;
 
 Process::Process()
+   : contextM(new ProcessContext)
 {
    Thread* thread = Thread::createUserThread();
    threadsM.push_back(thread);
@@ -13,4 +14,6 @@ Process::Process()
 
 Process::~Process()
 {
+   // XXX delete threads
+   delete contextM;
 }
