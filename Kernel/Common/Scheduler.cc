@@ -19,7 +19,7 @@ static spinlock_softirq_t schedulerLock = SPINLOCK_SOFTIRQ_STATIC_INITIALIZER;
 
 namespace
 {
-   Process* currentProcess;
+   Process* currentProcess = 0;
 };
 
 void
@@ -38,7 +38,7 @@ void
 Scheduler::init()
 {
    static Thread thread0(Kernel::Thread::KernelThread);
-   static Process process0;
+//   static Process process0;
 
    thread0.init0(StackStart);
 
