@@ -3,15 +3,34 @@
 #include <X86/Gdt.hh>
 #include <X86/Tss.hh>
 
+#include <X86/PageDirectory.hh>
+#include <X86/Processor.hh>
+
+#include <Debug.hh>
+
+using namespace Kernel;
+
 void
-Kernel::ProcessContext::init()
+ProcessContext::init()
 {
    x86_gdt_init();
    x86_tss_init();
 }
 
 void
-Kernel::ProcessContext::setKernelStack(uintptr_t stack)
+ProcessContext::setKernelStack(uintptr_t stack)
 {
    x86_tss_set_kstack(stack);
+}
+
+ProcessContext::ProcessContext()
+   : pageDirectoryM(PageDirectory::createPageDirectory())
+{
+   Debug::info("Creating ProcessContext: PD: %p\n", (void*)pageDirectoryM);
+}
+
+void
+ProcessContext::switchContext()
+{
+   set_cr3(pageDirectoryM);
 }

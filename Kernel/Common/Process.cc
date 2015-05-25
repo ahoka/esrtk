@@ -5,11 +5,8 @@
 using namespace Kernel;
 
 Process::Process()
-   : pageDirectoryM(PageDirectory::createPageDirectory())
 {
-   printf("Process: PD: %p\n", (void*)pageDirectoryM);
-
-   Thread* thread = Thread::createKernelThread();
+   Thread* thread = Thread::createUserThread();
    threadsM.push_back(thread);
    thread->init();
 }

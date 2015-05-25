@@ -149,6 +149,14 @@ Thread::createKernelThread()
    return thread;
 }
 
+Thread*
+Thread::createUserThread()
+{
+   Thread* thread = new Thread(Type::UserThread);
+
+   return thread;
+}
+
 unsigned long
 Thread::getId() const
 {
@@ -177,4 +185,22 @@ void
 Thread::setKernelStack(uintptr_t stack)
 {
    kernelStackM = stack;
+}
+
+uintptr_t
+Thread::getUserStack() const
+{
+   return userStackM;
+}
+
+void
+Thread::setUserStack(uintptr_t stack)
+{
+   userStackM = stack;
+}
+
+Process*
+Thread::getProcess() const
+{
+   return processM;
 }

@@ -24,7 +24,6 @@ namespace Kernel
       };
       
       Thread(Type);
-//      Thread(unsigned long);
 
       bool init();
       bool init0(uintptr_t stack);
@@ -37,11 +36,17 @@ namespace Kernel
       void setKernelStack(uintptr_t);
       uintptr_t getKernelStack() const;
 
+      void setUserStack(uintptr_t);
+      uintptr_t getUserStack() const;
+
+      Process* getProcess() const;
+
       unsigned long getId() const;
 
       static void printAll();
       static void main [[noreturn]] (Thread* thread);
       static Thread* createKernelThread();
+      static Thread* createUserThread();
 
       enum State
       {
@@ -55,7 +60,7 @@ namespace Kernel
 
    private:   
       unsigned long idM;
-//   uintptr_t userStack;
+      uintptr_t userStackM;
       uintptr_t kernelStackM;
       State stateM;
       Type typeM;

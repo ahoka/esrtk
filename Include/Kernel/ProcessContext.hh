@@ -5,10 +5,17 @@
 
 namespace Kernel
 {
-   namespace ProcessContext
+   class ProcessContext
    {
-      void init();
-      void setKernelStack(uintptr_t stack);
+   public:
+      static void init();
+      static void setKernelStack(uintptr_t stack);
+
+      ProcessContext();
+      void switchContext();
+
+   private:
+      uintptr_t pageDirectoryM;
    };
 };
 

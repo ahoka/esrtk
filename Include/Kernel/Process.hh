@@ -14,8 +14,6 @@ namespace Kernel
       ~Process();
 
    private:
-      uint32_t pageDirectoryM;
-
       std::list<Thread*> threadsM;
    };
 };
