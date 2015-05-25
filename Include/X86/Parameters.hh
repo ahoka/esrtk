@@ -43,6 +43,9 @@
 #define StackStart SecondaryPageTableBase
 #define HeapStart U(0xc0501000)
 
+#define UserStackStart U(0xbffffffc)
+#define UserHeapStart U(0x40000000)
+
 #define StackSize U(0x10000)
 #define MapStart (StackStart - StackSize)
 

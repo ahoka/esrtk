@@ -7,13 +7,21 @@ using namespace Kernel;
 Process::Process()
    : contextM(new ProcessContext)
 {
-   Thread* thread = Thread::createUserThread(this);
-   threadsM.push_back(thread);
-   thread->init();
+//   Thread* thread = Thread::createUserThread(this);
+//   threadsM.push_back(thread);
+//   thread->init();
 }
 
 Process::~Process()
 {
    // XXX delete threads
    delete contextM;
+}
+
+bool
+Process::createThread()
+{
+   auto thread = Thread::createUserThread(this);
+   threadsM.push_back(thread);
+   return thread->init();   
 }

@@ -15,7 +15,9 @@ namespace Kernel
       Process();
       ~Process();
 
-   private:
+      bool createThread();
+
+     private:
       ProcessContext* contextM;
       std::list<Thread*> threadsM;
    };

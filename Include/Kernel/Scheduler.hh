@@ -4,6 +4,7 @@
 namespace Kernel
 {
    class Thread;
+   class Process;
 
    namespace Scheduler
    {
@@ -16,6 +17,9 @@ namespace Kernel
       void setCurrentThread(Thread* thread);
 
       void printAll();
+
+      Process* getCurrentProcess();
+      void setCurrentProcess(Process*);
    };
 };
 
