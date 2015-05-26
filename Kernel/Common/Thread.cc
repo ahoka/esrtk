@@ -73,10 +73,15 @@ Thread::init()
    kernelStackM = ThreadContext::initStack(kernelStackM,
                                            reinterpret_cast<uintptr_t>(&Thread::main),
                                            reinterpret_cast<uintptr_t>(this));
+   if (typeM == UserThread)
+   {
+      userStackM = UserStackStart;
+   }
 
    spinlock_softirq_exit(&threadLock);
 
-   Debug::verbose("Thread's new stack is %p\n", (void*)kernelStackM);
+   Debug::verbose("Thread's new kernel stack is %p\n", (void*)kernelStackM);
+   
    Scheduler::insert(this);
    getThreadList().push_back(this);
 
@@ -105,15 +110,6 @@ Thread::main(Thread* thread)
 {
    Debug::verbose("Thread main called on %p (%p)!\n", thread, &thread);
 
-   // Initialize user stack
-   if (thread->typeM == UserThread)
-   {
-      // XXX hardcoded tramp address
-      thread->userStackM = ThreadContext::initStack(UserStackStart,
-                                                    0x10000000,
-                                                    reinterpret_cast<uintptr_t>(thread),
-                                                    UserThread);
-   }
 
    thread->stateM = Ready;
 
