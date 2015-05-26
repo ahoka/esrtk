@@ -70,12 +70,18 @@ Thread::init()
       return false;
    }
    
-   kernelStackM = ThreadContext::initStack(kernelStackM,
-                                           reinterpret_cast<uintptr_t>(&Thread::main),
-                                           reinterpret_cast<uintptr_t>(this));
    if (typeM == UserThread)
    {
       userStackM = UserStackStart;
+      kernelStackM = ThreadContext::initStack(kernelStackM,
+                                              CodeStart,
+                                              0xdeadbabe);
+   }
+   else
+   {
+      kernelStackM = ThreadContext::initStack(kernelStackM,
+                                              reinterpret_cast<uintptr_t>(&Thread::main),
+                                              reinterpret_cast<uintptr_t>(this));
    }
 
    spinlock_softirq_exit(&threadLock);

@@ -1,5 +1,6 @@
 #include <Supervisor/Supervisor.hh>
 #include <Kernel/Thread.hh>
+#include <Kernel/Process.hh>
 #include <CompilerSupport.hh>
 #include <Kernel/Scheduler.hh>
 #include <Supervisor/Monitor.hh>
@@ -73,6 +74,9 @@ Supervisor::run()
    t1.init();
    t2.init();
    t3.init();
+
+   Kernel::Process p;
+   p.createThread();
 
    unsigned int seed = (unsigned int)rdtsc();
    printf("seeding prng: 0x%x\n", seed);
