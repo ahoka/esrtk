@@ -41,7 +41,7 @@ COPTS+=		-fdiagnostics-color=always
 CPPFLAGS+=	-D__esrtk__
 #CPPFLAGS+=	-D_BSD_SOURCE
 
-SRCDIR=		Runtime
+SRCDIR=		StandardLibrary
 
 SRC!=		(cd ${BUILD_ROOT} && find ${SRCDIR} \( -name '*.c' -or -name '*.cc' -or -name '*.cpp' -or -name '*.S' \) -exec basename {} \;)
 DIR!=		(cd ${BUILD_ROOT} && find ${SRCDIR} \( -name '*.c' -or -name '*.cc' -or -name '*.cpp' -or -name '*.S' \) -exec dirname {} \; | sort -u)
@@ -92,5 +92,5 @@ depend: .depend
 
 runtime.elf: ${OFILES}
 	@echo Linking kernel executable
-	${HIDE} ${LD} ${LDFLAGS} -T ${BUILD_ROOT}/Runtime/linker.ld -o ${.TARGET} ${.ALLSRC}
+	${HIDE} ${LD} ${LDFLAGS} -T ${BUILD_ROOT}/linker.ld -o ${.TARGET} ${.ALLSRC}
 	@${SIZE} $@

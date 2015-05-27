@@ -66,6 +66,8 @@ Scheduler::getCurrentThread()
 void
 Scheduler::insert(Thread* t)
 {
+   printf("Scheduler: inserting thread %lu\n", t->getId());
+
    spinlock_softirq_enter(&schedulerLock);
 
    if (readyListTailM == 0)
