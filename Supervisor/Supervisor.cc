@@ -67,13 +67,13 @@ Supervisor::run()
 //   lock.tryEnter();
 //   lock.enter();
 
-   Kernel::Thread t1(Kernel::Thread::KernelThread);
-   Kernel::Thread t2(Kernel::Thread::KernelThread);
-   Kernel::Thread t3(Kernel::Thread::KernelThread);
+   // Kernel::Thread t1(Kernel::Thread::KernelThread);
+   // Kernel::Thread t2(Kernel::Thread::KernelThread);
+   // Kernel::Thread t3(Kernel::Thread::KernelThread);
    
-   t1.init();
-   t2.init();
-   t3.init();
+   // t1.init();
+   // t2.init();
+   // t3.init();
 
    Kernel::Process p;
    p.createThread();
