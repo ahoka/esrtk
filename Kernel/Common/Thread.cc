@@ -91,16 +91,16 @@ Thread::init()
    if (typeM == UserThread)
    {
       userStackM = UserStackStart;
-      kernelStackM = ThreadContext::initStack(kernelStackM,
-                                              CodeStart,
-                                              0xdeadbabe);
+      kernelStackM = ThreadContext::initUserStack(kernelStackM,
+                                                  CodeStart,
+                                                  0xdeadbabe);
 //      memcpy((void*)CodeStart, "\xb8\xfa\x00\x00\x10\x00\xe0\xff", 8);
    }
    else
    {
-      kernelStackM = ThreadContext::initStack(kernelStackM,
-                                              reinterpret_cast<uintptr_t>(&Thread::main),
-                                              reinterpret_cast<uintptr_t>(this));
+      kernelStackM = ThreadContext::initKernelStack(kernelStackM,
+                                                    reinterpret_cast<uintptr_t>(&Thread::main),
+                                                    reinterpret_cast<uintptr_t>(this));
    }
 
    spinlock_softirq_exit(&threadLock);

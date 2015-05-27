@@ -9,6 +9,8 @@
 #include <StackTrace.hh>
 #include <Kernel/Scheduler.hh>
 #include <Kernel/Thread.hh>
+#include <Kernel/Process.hh>
+#include <Kernel/ProcessContext.hh>
 
 using namespace Kernel;
 
@@ -32,17 +34,9 @@ x86_isr_page_fault(InterruptFrame* frame)
 
    // protect the kernel from trying to handle nested page faults
    //
-   if (nestingFlag == 1)
+   if (nestingFlag > 0)
    {
       Debug::panic("Nested page fault");
-   }
-   else if (nestingFlag == 2)
-   {
-      printf("Nested page fault, panic failed!\n");
-      Power::reboot();
-   }
-   else if (nestingFlag > 2)
-   {
       Power::reboot();
    }
 
@@ -139,11 +133,15 @@ x86_isr_dispatcher(InterruptFrame* frame)
 
    KASSERT(Interrupt::getInterruptLevel() > 0);
 
-   if (frame->interrupt == 32)
-   {
-      Thread* currentThread = Scheduler::getCurrentThread();
-      currentThread->setKernelStack((uintptr_t )frame);
-   }
+   Thread* interruptedThread = Scheduler::getCurrentThread();
+   Process* interruptedProcess = interruptedThread->getProcess();
+   interruptedThread->setKernelStack((uintptr_t )frame);
+   interruptedThread->setReady();
+
+   // if (frame->interrupt == 32)
+   // {
+
+   // }
 
    // TODO: make a list of handlers and register them there to be run from dispatcher
    if (frame->interrupt == 13)
@@ -169,15 +167,31 @@ x86_isr_dispatcher(InterruptFrame* frame)
   exit:
    KASSERT(Interrupt::getInterruptLevel() > 0);
 
-   if (frame->interrupt == 32)
+   // if (frame->interrupt == 32)
+   // {
+   Thread* currentThread = Scheduler::getCurrentThread();
+   Process* currentProcess = currentThread->getProcess();
+   currentThread->setRunning();
+
+   if (currentProcess != 0)
    {
-      Thread* currentThread = Scheduler::getCurrentThread();
-      InterruptFrame* newFrame = (InterruptFrame* )currentThread->getKernelStack();
-
-      KASSERT(newFrame != 0);
-
-      frame = newFrame;
+      printf("New process scheduled! %p\n", currentProcess);
    }
+
+   if (currentProcess != interruptedProcess)
+   {
+      printf("switching processcontext: %p\n", currentProcess);
+      KASSERT(currentProcess != 0);
+      ProcessContext* newContext = currentProcess->getContext();
+      KASSERT(newContext != 0);
+      newContext->switchContext();
+   }
+   InterruptFrame* newFrame = (InterruptFrame* )currentThread->getKernelStack();
+
+   KASSERT(newFrame != 0);
+
+   frame = newFrame;
+//   }
 
    return frame;
 }

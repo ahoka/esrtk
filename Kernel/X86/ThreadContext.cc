@@ -17,7 +17,7 @@ struct CallFrame
 } __attribute__((packed));
 
 uintptr_t
-ThreadContext::initStack(uintptr_t top, uintptr_t main, uintptr_t arg, Thread::Type type)
+ThreadContext::initKernelStack(uintptr_t top, uintptr_t main, uintptr_t arg)
 {
    uintptr_t stack = top - sizeof(InterruptFrame) + 8 - sizeof(CallFrame);
 
@@ -27,45 +27,59 @@ ThreadContext::initStack(uintptr_t top, uintptr_t main, uintptr_t arg, Thread::T
    frame->arg = arg;
    frame->rip = 0;
 
-   printf("Args is at: %p\n", &frame->arg);
-
-   uint16_t codeSegment;
-   uint16_t dataSegment;
-   if (type == Kernel::Thread::KernelThread)
-   {
-      codeSegment = KernelCodeSegment;
-      dataSegment = KernelDataSegment;
-   }
-   else
-   {
-      codeSegment = UserCodeSegment;
-      dataSegment = UserDataSegment;
-   }
-
    InterruptFrame* context = (InterruptFrame*)stack;
 
-   context->gs = dataSegment;
-   context->fs = dataSegment;
-   context->es = dataSegment;
-   context->ds = dataSegment;
-   context->edi = 0x0;
-   context->esi = 0x0;
+   context->gs = KernelDataSegment;
+   context->fs = KernelDataSegment;
+   context->es = KernelDataSegment;
+   context->ds = KernelDataSegment;
+   context->edi = 0x11111111;
+   context->esi = 0x22222222;
    context->ebp = 0x0;
-   context->edx = 0x0;
-   context->ecx = 0x0;
-   context->ebx = 0x0;
-   context->eax = 0x0;
+   context->edx = 0xdddddddd;
+   context->ecx = 0xcccccccc;
+   context->ebx = 0xbbbbbbbb;
+   context->eax = 0xaaaaaaaa;
    context->interrupt = 0;
    context->error = 0;
    context->eip = static_cast<uint32_t>(main);
-   context->cs = codeSegment;
+   context->cs = KernelCodeSegment;
    context->eflags = Flags::Reserved | Flags::InterruptEnable;
 
    return stack;
 }
 
 uintptr_t
-ThreadContext::initStack(uintptr_t top, uintptr_t main, uintptr_t arg)
+ThreadContext::initUserStack(uintptr_t top, uintptr_t main, uintptr_t arg)
 {
-   return initStack(top, main, arg, Thread::KernelThread);
+   uintptr_t stack = top - sizeof(InterruptFrame) - sizeof(CallFrame);
+
+   // create fake call frame for thread main to pas args
+   //
+   CallFrame* frame = reinterpret_cast<CallFrame*>(top - sizeof(CallFrame));
+   frame->arg = arg;
+   frame->rip = 0;
+   
+   InterruptFrame* context = (InterruptFrame*)stack;
+
+   context->gs = UserDataSegment | 3;
+   context->fs = UserDataSegment | 3;
+   context->es = UserDataSegment | 3;
+   context->ds = UserDataSegment | 3;
+   context->edi = 0x11111111;
+   context->esi = 0x22222222;
+   context->ebp = 0x0;
+   context->edx = 0xdddddddd;
+   context->ecx = 0xcccccccc;
+   context->ebx = 0xbbbbbbbb;
+   context->eax = 0xaaaaaaaa;
+   context->interrupt = 0;
+   context->error = 0;
+   context->eip = static_cast<uint32_t>(main);
+   context->cs = UserCodeSegment | 3;
+   context->eflags = Flags::Reserved | Flags::InterruptEnable;
+   context->esp = UserStackStart | 3;
+   context->ss = UserDataSegment | 3;
+
+   return stack;
 }
