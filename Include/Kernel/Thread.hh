@@ -43,6 +43,9 @@ namespace Kernel
 
       unsigned long getId() const;
 
+      void setRunning();
+      void setReady();
+
       static void printAll();
       static void main [[noreturn]] (Thread*);
       static Thread* createKernelThread();
@@ -67,6 +70,9 @@ namespace Kernel
       Process* processM;
       Thread* nextM;
       std::string nameM;
+
+      // stats
+      unsigned long onCpuM;
 
       static unsigned long nextThreadId;
 

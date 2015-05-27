@@ -29,13 +29,22 @@ unsigned long Thread::nextThreadId = 1;
 
 Thread::Thread(Thread::Type type)
    : idM(-1ul),
+     userStackM(0),
      kernelStackM(0),
      stateM(New),
      typeM(type),
      processM(0),
-     nextM(0)
+     nextM(0),
+     onCpuM(0)
 {
-   Debug::verbose("Creating thread...\n");
+   if (type == Thread::Type::UserThread)
+   {
+      Debug::verbose("Creating user thread...\n");
+   }
+   else
+   {
+      Debug::verbose("Creating thread...\n");
+   }
 }
 
 // used when creating thread 0
@@ -50,13 +59,22 @@ Thread::init0(uintptr_t stack)
    Scheduler::insert(this);
    getThreadList().push_back(this);
 
+   nameM = "idle";
+
    return true;
 }
 
 bool
 Thread::init()
 {
-   Debug::verbose("Initializing thread %p...\n", this);
+   if (typeM == Thread::Type::UserThread)
+   {
+      Debug::verbose("Initializing user thread %p...\n", this);
+   }
+   else
+   {
+      Debug::verbose("Initializing thread %p...\n", this);
+   }
 
    spinlock_softirq_enter(&threadLock);
 
@@ -76,6 +94,7 @@ Thread::init()
       kernelStackM = ThreadContext::initStack(kernelStackM,
                                               CodeStart,
                                               0xdeadbabe);
+//      memcpy((void*)CodeStart, "\xb8\xfa\x00\x00\x10\x00\xe0\xff", 8);
    }
    else
    {
@@ -102,12 +121,37 @@ Thread::addJob(Job /*job*/)
    return true;
 }
 
+const char* threadType[] =
+{
+   "User",
+   "Kernel",
+   "Interrupt"
+};
+const char* threadState[] =
+{
+   "New",
+   "Idle",
+   "Ready",
+   "Running",
+   "Agony",
+   "Dead"
+};
+
+void
+Thread::dump()
+{
+   printf(" %lu\t%p\t%p\t%s\t%s\t%lu\n", idM, (void *)kernelStackM,
+          (void*)userStackM, threadState[stateM], threadType[typeM],
+          onCpuM);
+}
+
 void
 Thread::printAll()
 {
+   printf(" id\tkstack\t\tustack\t\tstate\ttype\toncpu\n");
    for (auto& t : getThreadList())
    {
-      printf("%p (%lu) - %p\n", t, t->getId(), (void*)t->kernelStackM);
+      t->dump();
    }
 }
 
@@ -115,7 +159,6 @@ void
 Thread::main(Thread* thread)
 {
    Debug::verbose("Thread main called on %p (%p)!\n", thread, &thread);
-
 
    thread->stateM = Ready;
 
@@ -149,12 +192,6 @@ Thread::main(Thread* thread)
 
       thread->stateM = Idle;
    }
-}
-
-void
-Thread::dump()
-{
-   printf("thread: %p %lu %p %u\n", this, idM, (void *)kernelStackM, stateM);
 }
 
 Thread*
@@ -220,4 +257,17 @@ Process*
 Thread::getProcess() const
 {
    return processM;
+}
+
+void
+Thread::setRunning()
+{
+   stateM = Running;
+   onCpuM++;
+}
+
+void
+Thread::setReady()
+{
+   stateM = Ready;
 }

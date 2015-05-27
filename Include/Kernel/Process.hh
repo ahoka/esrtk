@@ -16,6 +16,7 @@ namespace Kernel
       ~Process();
 
       bool createThread();
+      ProcessContext* getContext() const;
 
      private:
       ProcessContext* contextM;
