@@ -4,15 +4,12 @@
 #include <Kernel/Watchdog.hh>
 
 #include <cstdio>
+#include <list>
 
 #include <spinlock.h>
 
 using namespace Kernel;
 
-Thread* idleListHeadM = 0;
-Thread* idleListTailM = 0;
-Thread* readyListHeadM = 0;
-Thread* readyListTailM = 0;
 Thread* currentThread = 0;
 
 static spinlock_softirq_t schedulerLock = SPINLOCK_SOFTIRQ_STATIC_INITIALIZER;
@@ -20,6 +17,9 @@ static spinlock_softirq_t schedulerLock = SPINLOCK_SOFTIRQ_STATIC_INITIALIZER;
 namespace
 {
    Process* currentProcess = 0;
+
+   std::list<Thread*>* readyList;
+   std::list<Thread*>* idleList;
 };
 
 void
@@ -37,6 +37,12 @@ Scheduler::getCurrentProcess()
 void
 Scheduler::init()
 {
+   static std::list<Thread*> readyListInstance;
+   static std::list<Thread*> idleListInstance;
+
+   readyList = &readyListInstance;
+   idleList = &idleListInstance;
+   
    static Thread thread0(Kernel::Thread::KernelThread);
 //   static Process process0;
 
@@ -44,11 +50,7 @@ Scheduler::init()
 
    setCurrentThread(&thread0);
 
-   readyListHeadM = &thread0;
-   readyListTailM = &thread0;
-
-   idleListHeadM = 0;
-   idleListTailM = 0;
+   readyList->push_back(&thread0);
 }
 
 void
@@ -70,21 +72,7 @@ Scheduler::insert(Thread* t)
 
    spinlock_softirq_enter(&schedulerLock);
 
-   if (readyListTailM == 0)
-   {
-      assert(readyListHeadM == 0);
-      assert(t->nextM == 0);
-
-      readyListTailM = t;
-      readyListHeadM = t;
-   }
-   else
-   {
-      Thread* oldTail = readyListTailM;
-      readyListTailM = t;
-
-      oldTail->nextM = t;
-   }
+   readyList->push_back(t);
 
    spinlock_softirq_exit(&schedulerLock);
 }
@@ -93,19 +81,15 @@ void
 Scheduler::schedule()
 {
    spinlock_softirq_enter(&schedulerLock);
-   
-   Thread* lastRunning = getCurrentThread();
-   
-   if (readyListTailM)
-   {
-      readyListTailM->nextM = lastRunning;
-   }
-   readyListTailM = lastRunning;
-   
-   Thread* next = readyListHeadM;
-   KASSERT(next != 0);
 
-   readyListHeadM = readyListHeadM->nextM;
+   // move interrupted thread to end of ready list
+   Thread* lastRunning = getCurrentThread();
+   readyList->push_back(lastRunning);
+
+   // schedule the first thread in the ready list
+   Thread* next = readyList->front();
+   KASSERT(next != 0);
+   readyList->pop_front();
    setCurrentThread(next);
 
    spinlock_softirq_exit(&schedulerLock);
