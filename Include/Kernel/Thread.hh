@@ -33,6 +33,8 @@ namespace Kernel
       void setName(const char*);
       std::string getName() const;
 
+      Type getType() const;
+
       void setKernelStack(uintptr_t);
       uintptr_t getKernelStack() const;
 

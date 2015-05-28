@@ -253,6 +253,12 @@ Thread::setUserStack(uintptr_t stack)
    userStackM = stack;
 }
 
+Thread::Type
+Thread::getType() const
+{
+   return typeM;
+}
+
 Process*
 Thread::getProcess() const
 {
