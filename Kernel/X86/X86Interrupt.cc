@@ -138,11 +138,6 @@ x86_isr_dispatcher(InterruptFrame* frame)
    interruptedThread->setKernelStack((uintptr_t )frame);
    interruptedThread->setReady();
 
-   // if (frame->interrupt == 32)
-   // {
-
-   // }
-
    // TODO: make a list of handlers and register them there to be run from dispatcher
    if (frame->interrupt == 13)
    {
@@ -167,10 +162,13 @@ x86_isr_dispatcher(InterruptFrame* frame)
   exit:
    KASSERT(Interrupt::getInterruptLevel() > 0);
 
-   // if (frame->interrupt == 32)
-   // {
    Thread* currentThread = Scheduler::getCurrentThread();
    Process* currentProcess = currentThread->getProcess();
+   if (currentThread->getType() == Thread::UserThread)
+   {
+      ProcessContext::setKernelStack(currentThread->getKernelStack());
+   }
+
    currentThread->setRunning();
 
    if (currentProcess != 0)
@@ -191,7 +189,6 @@ x86_isr_dispatcher(InterruptFrame* frame)
    KASSERT(newFrame != 0);
 
    frame = newFrame;
-//   }
 
    return frame;
 }
