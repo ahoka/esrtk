@@ -9,6 +9,7 @@
 #include <Hal.hh>
 
 #include <X86/ThreadContext.hh>
+#include <X86/PageDirectory.hh>
 
 #include <cstring>
 
@@ -389,4 +390,68 @@ Memory::readPhysicalMemory(void* destination, const void* source, std::size_t si
    unmapRegion(mapped, mapLast - mapFirst);
 
    return destination;
+}
+
+bool
+Memory::handlePageFault(uintptr_t /*address*/, InterruptFrame* /*frame*/)
+{
+#ifdef HAS_HEAP
+   if (address >= HeapStart && address < heapEnd)
+   {
+      uintptr_t pageAddress = address & ~PageMask;
+#ifdef DEBUG
+      printf("Expanding kernel heap: %p initiated by access to %p\n",
+	     (void* )pageAddress, (void *)address);
+#endif
+      uintptr_t page = getPage();
+      KASSERT(page != 0);
+
+      bool rv = mapPage(pageAddress, page);
+      KASSERT(rv);
+
+      std::memset((void* )pageAddress, 0, PageSize);
+
+      return true;
+   }
+#endif
+
+#if 0
+   // this is an instant triple fault
+   if (address < StackStart &&
+       address >= (StackStart - StackSize) &&
+       (frame->esp + 32) > address)
+   {
+      uintptr_t pageAddress = address & ~PageMask;
+
+      printf("Expanding kernel stack: %p\n", (void* )pageAddress);
+
+      uintptr_t page = getPage();
+      KASSERT(page != 0);
+
+      bool rv = map(pageAddress, page);
+      KASSERT(rv);
+
+      return true;
+   }
+#endif
+
+   return false;
+}
+
+bool
+Memory::mapPage(uintptr_t virt, uintptr_t phys, int flags)
+{
+   return PageDirectory::mapPage(virt, phys, flags);
+}
+
+bool
+Memory::unmapPage(uintptr_t virt)
+{
+   return PageDirectory::unmapPage(virt);
+}
+
+uintptr_t
+Memory::getPhysicalAddress(uintptr_t virt)
+{
+   return PageDirectory::getPhysicalPage(virt);
 }
