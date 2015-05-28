@@ -14,13 +14,18 @@
 // 0xffffffff -- recursive page directory
 // ...
 // 0xffc00000 -- end of page directory mapping
-// 0xffbffc00 -- secondary page directory (for create process)
 // ...
-// 0xff800000 -- end of secondary pd, stack start
+// 0xffffeffc -- kernel stack start
 // ...
 // 0xc0501000 -- kernel heap start
 // ...
-// 0xc0000000
+// 0xc0000000 -- kernel start
+// ...
+// 0xbffffffc -- user stack start (grows down)
+// ...
+// 0x40000000 -- user heap start
+// ...
+// 0x10000000 -- user code start
 //
 
 #define KernelCodeSegment 0x08
@@ -37,10 +42,8 @@
 
 #define PageTableBase U(0xffc00000)
 #define PageDirectoryBase U(0xfffff000)
-#define SecondaryPageTableBase U(0xff800000)
-#define SecondaryPageDirectoryBase U(0xffbffc0)
 
-#define KernelStackStart SecondaryPageTableBase
+#define KernelStackStart U(0xffffeffc)
 #define KernelStackSize U(0x10000)
 #define KernelHeapStart U(0xc0501000)
 
@@ -48,6 +51,7 @@
 #define UserHeapStart U(0x40000000)
 
 #define CodeStart U(0x10000000)
+#define CodeSize U(0x400000)
 
 #define MapStart (KernelStackStart - KernelStackSize)
 
