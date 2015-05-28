@@ -24,7 +24,7 @@ namespace
 {
    uintptr_t heapEnd = KernelHeapStart;
    uintptr_t stackEnd = KernelStackStart;
-   uintptr_t mapEnd = KernelHeapStart;//MapStart;
+   uintptr_t mapEnd = MapStart;
 
    MemorySegment memoryMap[MemoryMapMax];
    unsigned int memoryMapCount = 0;
