@@ -13,6 +13,7 @@ namespace Kernel
    {
    public:
       Process();
+      explicit Process(uintptr_t);
       ~Process();
 
       bool createThread();

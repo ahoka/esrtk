@@ -79,6 +79,11 @@ namespace
    uint32_t* kernelPageDirectory = 0;
 };
 
+uintptr_t PageDirectory::getKernelPageDirectory()
+{
+   return (uintptr_t)kernelPageDirectory;
+}
+
 void
 PageDirectory::init()
 {

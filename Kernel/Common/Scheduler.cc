@@ -2,6 +2,7 @@
 #include <Kernel/Thread.hh>
 #include <Kernel/Process.hh>
 #include <Kernel/Watchdog.hh>
+#include <X86/PageDirectory.hh>
 
 #include <cstdio>
 #include <list>
@@ -35,25 +36,6 @@ Scheduler::getCurrentProcess()
 }
 
 void
-Scheduler::init()
-{
-   static std::list<Thread*> readyListInstance;
-   static std::list<Thread*> idleListInstance;
-
-   readyList = &readyListInstance;
-   idleList = &idleListInstance;
-   
-   static Thread thread0(Kernel::Thread::KernelThread);
-//   static Process process0;
-
-   thread0.init0(KernelStackStart);
-
-   setCurrentThread(&thread0);
-
-   readyList->push_back(&thread0);
-}
-
-void
 Scheduler::setCurrentThread(Thread* thread)
 {
    currentThread = thread;
@@ -63,6 +45,26 @@ Thread*
 Scheduler::getCurrentThread()
 {
    return currentThread;
+}
+
+void
+Scheduler::init()
+{
+   static std::list<Thread*> readyListInstance;
+   static std::list<Thread*> idleListInstance;
+
+   readyList = &readyListInstance;
+   idleList = &idleListInstance;
+   
+   static Thread thread0(Kernel::Thread::KernelThread);
+   static Process process0(PageDirectory::getKernelPageDirectory());
+
+   thread0.init0(KernelStackStart);
+
+   setCurrentThread(&thread0);
+   setCurrentProcess(&process0);
+
+   readyList->push_back(&thread0);
 }
 
 void

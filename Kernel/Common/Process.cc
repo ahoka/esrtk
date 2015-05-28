@@ -9,6 +9,11 @@ Process::Process()
 {
 }
 
+Process::Process(uintptr_t pd)
+   : contextM(new ProcessContext(pd))
+{
+}
+
 Process::~Process()
 {
    // XXX delete threads

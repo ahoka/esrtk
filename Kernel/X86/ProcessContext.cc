@@ -26,7 +26,13 @@ ProcessContext::setKernelStack(uintptr_t stack)
 ProcessContext::ProcessContext()
    : pageDirectoryM(PageDirectory::createPageDirectory())
 {
-   Debug::info("Creating ProcessContext: PD: %p\n", (void*)pageDirectoryM);
+   Debug::info("Creating ProcessContext: NEW PD: %p\n", (void*)pageDirectoryM);
+}
+
+ProcessContext::ProcessContext(uintptr_t pd)
+   : pageDirectoryM(pd)
+{
+   Debug::info("Creating ProcessContext: EXISTING PD: %p\n", (void*)pageDirectoryM);
 }
 
 void

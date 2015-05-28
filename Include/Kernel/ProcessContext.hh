@@ -12,6 +12,7 @@ namespace Kernel
       static void setKernelStack(uintptr_t stack);
 
       ProcessContext();
+      explicit ProcessContext(uintptr_t);
       void switchContext();
 
    private:
