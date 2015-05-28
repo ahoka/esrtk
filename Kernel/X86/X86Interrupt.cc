@@ -53,6 +53,14 @@ x86_isr_page_fault(InterruptFrame* frame)
       return;
    }
 
+   bool isUser = frame->error & (1 << 2);
+   if (isUser)
+   {
+      // XXX Kill process/thread here
+//      nestingFlag--;
+//      return;
+   }
+
    printf("\n");
    frame->print();
 
