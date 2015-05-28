@@ -13,7 +13,7 @@
 #include <cstring>
 #include <cstdio>
 
-//#define DEBUG
+#define DEBUG
 
 namespace PageDirectory
 {

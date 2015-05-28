@@ -43,7 +43,7 @@
 #define PageTableBase U(0xffc00000)
 #define PageDirectoryBase U(0xfffff000)
 
-#define KernelStackStart U(0xffffeffc)
+#define KernelStackStart PageDirectoryBase
 #define KernelStackSize U(0x10000)
 #define KernelHeapStart U(0xc0501000)
 
