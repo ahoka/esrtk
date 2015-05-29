@@ -19,7 +19,12 @@ namespace Kernel
       bool createThread();
       ProcessContext* getContext() const;
 
+      void dump();
+      
+      static void printAll();
+
      private:
+      unsigned long idM;
       ProcessContext* contextM;
       std::list<Thread*> threadsM;
    };

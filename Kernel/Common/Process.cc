@@ -4,9 +4,24 @@
 
 using namespace Kernel;
 
-Process::Process()
-   : contextM(new ProcessContext)
+namespace
 {
+   unsigned long nextId = 0;
+};
+
+std::list<Process*>&
+getProcessList()
+{
+   static std::list<Process*> processList;
+
+   return processList;
+}
+
+Process::Process()
+   : idM(nextId++),
+     contextM(new ProcessContext)
+{
+   getProcessList().push_back(this);
 }
 
 Process::Process(uintptr_t pd)
@@ -18,6 +33,21 @@ Process::~Process()
 {
    // XXX delete threads
    delete contextM;
+}
+
+void
+Process::dump()
+{
+   printf(" %lu\n", idM);
+}
+
+void
+Process::printAll()
+{
+   for (auto& p : getProcessList())
+   {
+      p->dump();
+   }
 }
 
 bool
