@@ -4,6 +4,7 @@
 #include <Power.hh>
 #include <MemoryManager.hh>
 #include <Kernel/Thread.hh>
+#include <Kernel/Process.hh>
 #include <Interrupt.hh>
 #include <Scheduler.hh>
 
@@ -80,6 +81,10 @@ Monitor::Monitor()
    static LambdaCommand threadsCommand([](std::string) {
          Kernel::Thread::printAll();         
    }, "threads");
+
+   static LambdaCommand processCommand([](std::string) {
+         Kernel::Process::printAll();         
+   }, "processes");
 
    static LambdaCommand rebootCommand([](std::string) {
          Power::reboot();
