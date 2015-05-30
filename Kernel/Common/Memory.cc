@@ -137,6 +137,15 @@ Memory::init()
    // add one unmapped page as guard
    stackEnd = start - KernelStackSize - PageSize;
 
+   printf("Creating code area: %p-%p\n", (void*)CodeStart, (void*)(CodeStart + CodeSize));
+   for (uintptr_t p = CodeStart; p < CodeStart + CodeSize; p += PageSize)
+   {
+      uintptr_t page = Memory::getPage();
+      KASSERT(page != 0);
+      bool rc = mapPage(p, page, Memory::MapUser);
+      KASSERT(rc);
+   }
+
 //   KASSERT(success);
 
 //    printf("Freeing initial kernel stack: %p-%p\n", (void* )(initial_stack - InitialStackSize), (void* )initial_stack);

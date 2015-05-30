@@ -359,6 +359,11 @@ PageDirectory::mapPage(uint32_t pageDirectoryBase, uint32_t pageTableBase,
       fl |= DontCache;
    }
 
+   if (flags & Flags::User)
+   {
+      fl |= User;
+   }
+
    if (flags & Flags::Lazy)
    {
       fl |= Lazy;

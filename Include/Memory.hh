@@ -35,7 +35,8 @@ namespace Memory
    enum Flags
    {
       MapLazy = (1 << 0),
-      MapUncacheable = (1 << 1)
+      MapUncacheable = (1 << 1),
+      MapUser = (1 << 2)
    };
 
    void init();
