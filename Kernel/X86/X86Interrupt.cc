@@ -11,6 +11,7 @@
 #include <Kernel/Thread.hh>
 #include <Kernel/Process.hh>
 #include <Kernel/ProcessContext.hh>
+#include <Kernel/SystemCall.hh>
 
 using namespace Kernel;
 
@@ -151,23 +152,23 @@ x86_isr_dispatcher(InterruptFrame* frame)
    {
       x86_isr_general_protection_fault(frame);
    }
-
-   if (frame->interrupt == 14)
+   else if (frame->interrupt == 14)
    {
       x86_isr_page_fault(frame);
-      goto exit;
    }
-
-   // XXX hardcoded hack
-   if (frame->interrupt >= 32 && frame->interrupt < 48)
+   else if (frame->interrupt == 128)
+   {
+      handleSystemCall(frame->eax, (void*)frame->esp);
+   }
+   else if (frame->interrupt >= 32 && frame->interrupt < 48)
    {
       Interrupt::handleInterrupt(frame->interrupt - 32);
-      goto exit;
+   }
+   else
+   {
+      x86_isr_default_handler(frame);
    }
 
-   x86_isr_default_handler(frame);
-
-  exit:
    KASSERT(Interrupt::getInterruptLevel() > 0);
 
    Thread* currentThread = Scheduler::getCurrentThread();
