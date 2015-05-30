@@ -146,6 +146,9 @@ Memory::init()
       KASSERT(rc);
    }
 
+   // XXX
+   memcpy((void*)CodeStart, "\xb8\xfa\x00\x00\x10\x00\xe0\xff", 8);
+
 //   KASSERT(success);
 
 //    printf("Freeing initial kernel stack: %p-%p\n", (void* )(initial_stack - InitialStackSize), (void* )initial_stack);

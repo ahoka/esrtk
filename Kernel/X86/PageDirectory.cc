@@ -469,6 +469,9 @@ PageDirectory::createPageDirectory()
       pageDirectory[i] = kernelPageDirectory[i];
    }
 
+   // Copy code area XXX
+   pageDirectory[64] = kernelPageDirectory[64];
+
    unmapPage((uintptr_t)pageDirectory);
 
    return physicalPage;
