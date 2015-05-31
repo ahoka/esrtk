@@ -216,6 +216,13 @@ x86_isr_init(int n, void (*handler)())
    
    // zero filled
    idtEntries[n].reserved = 0;
+
+   // XXX should be done properly
+   // mark 0x80 as user callable for syscalls
+   if (n == 0x80)
+   {
+      idtEntries[n].dpl = 3;
+   }
 }
 
 void
