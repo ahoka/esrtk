@@ -5,7 +5,7 @@
 
 namespace Kernel
 {
-   void handleSystemCall(unsigned int syscall, void* arg);
+   int handleSystemCall(unsigned int syscall, void* arg);
 };
 
 #endif

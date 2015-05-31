@@ -4,8 +4,10 @@
 
 using namespace Kernel;
 
-void
+int
 Kernel::handleSystemCall(unsigned int syscall, void* arg)
 {
    printf("syscall: %u: %p (%zu)\n", syscall, arg);
+
+   return 0;
 }

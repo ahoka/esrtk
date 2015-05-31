@@ -158,7 +158,8 @@ x86_isr_dispatcher(InterruptFrame* frame)
    }
    else if (frame->interrupt == 128)
    {
-      handleSystemCall(frame->eax, (void*)frame->esp);
+      int rv = handleSystemCall(frame->eax, (void*)frame->esp);
+      frame->eax = rv;
    }
    else if (frame->interrupt >= 32 && frame->interrupt < 48)
    {
