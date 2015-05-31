@@ -336,6 +336,11 @@ PageDirectory::mapPage(uint32_t pageDirectoryBase, uint32_t pageTableBase,
       std::memset((void *)newpte, 0, PageSize);
    }
 
+   if ((flags & Flags::User) && !(*pde & User))
+   {
+      *pde |= User;
+   }
+
    uint32_t* pte = addressToPte(vAddress, pageTableBase);
 #ifdef DEBUG
    printf("pte is at %p, content 0x%x\n", pte, *pte);
