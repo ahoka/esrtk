@@ -53,6 +53,7 @@ Thread::init0(uintptr_t stack)
 {
    idM = 0;
    kernelStackM = stack;
+   processM = Scheduler::getKernelProcess();
 
    Debug::verbose("Initializing idle thread (thread0): %p...\n", (void*)stack);
 
@@ -73,7 +74,7 @@ Thread::init()
    }
    else
    {
-      Debug::verbose("Initializing thread %p...\n", this);
+      Debug::verbose("Initializing kernel thread %p...\n", this);
    }
 
    spinlock_softirq_enter(&threadLock);
@@ -198,6 +199,8 @@ Thread*
 Thread::createKernelThread()
 {
    Thread* thread = new Thread(Type::KernelThread);
+   thread->processM = Scheduler::getKernelProcess();
+   thread->init();
 
    return thread;
 }
@@ -207,6 +210,7 @@ Thread::createUserThread(Process* process)
 {
    Thread* thread = new Thread(Type::UserThread);
    thread->processM = process;
+   thread->init();
 
    return thread;
 }

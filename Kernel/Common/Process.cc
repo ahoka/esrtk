@@ -50,14 +50,15 @@ Process::printAll()
    }
 }
 
-bool
+Thread*
 Process::createThread()
 {
    printf("Process::createThread\n");
 
    auto thread = Thread::createUserThread(this);
    threadsM.push_back(thread);
-   return thread->init();   
+
+   return thread;
 }
 
 ProcessContext*

@@ -22,11 +22,7 @@ namespace Kernel
          KernelThread,
          InterruptThread
       };
-      
-      Thread(Type);
 
-      bool init();
-      bool init0(uintptr_t stack);
       bool addJob(Job job);
       void dump();
 
@@ -63,7 +59,12 @@ namespace Kernel
          Dead
       };
 
-   private:   
+   private:
+      
+      Thread(Type);
+      bool init();
+      bool init0(uintptr_t stack);
+      
       unsigned long idM;
       uintptr_t userStackM;
       uintptr_t kernelStackM;
@@ -78,6 +79,7 @@ namespace Kernel
 
       static unsigned long nextThreadId;
 
+      friend void ::Kernel::Scheduler::init();
       friend void ::Kernel::Scheduler::insert(Thread* t);
       friend void ::Kernel::Scheduler::schedule();
    };

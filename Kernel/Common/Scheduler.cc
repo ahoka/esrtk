@@ -18,6 +18,7 @@ static spinlock_softirq_t schedulerLock = SPINLOCK_SOFTIRQ_STATIC_INITIALIZER;
 namespace
 {
    Process* currentProcess = 0;
+   Process* kernelProcess = 0;
 
    std::list<Thread*>* readyList;
    std::list<Thread*>* idleList;
@@ -47,6 +48,12 @@ Scheduler::getCurrentThread()
    return currentThread;
 }
 
+Process*
+Scheduler::getKernelProcess()
+{
+   return kernelProcess;
+}
+
 void
 Scheduler::init()
 {
@@ -55,9 +62,11 @@ Scheduler::init()
 
    readyList = &readyListInstance;
    idleList = &idleListInstance;
+
+   static Process process0(PageDirectory::getKernelPageDirectory());
+   kernelProcess = &process0;
    
    static Thread thread0(Kernel::Thread::KernelThread);
-   static Process process0(PageDirectory::getKernelPageDirectory());
 
    thread0.init0(KernelStackStart);
 

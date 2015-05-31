@@ -16,7 +16,7 @@ namespace Kernel
       explicit Process(uintptr_t);
       ~Process();
 
-      bool createThread();
+      Thread* createThread();
       ProcessContext* getContext() const;
 
       void dump();

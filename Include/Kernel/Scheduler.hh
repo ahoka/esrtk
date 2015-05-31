@@ -16,10 +16,12 @@ namespace Kernel
       Thread* getCurrentThread();
       void setCurrentThread(Thread* thread);
 
-      void printAll();
-
       Process* getCurrentProcess();
       void setCurrentProcess(Process*);
+
+      Process* getKernelProcess();
+      
+      void printAll();
    };
 };
 

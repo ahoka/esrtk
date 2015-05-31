@@ -181,11 +181,6 @@ x86_isr_dispatcher(InterruptFrame* frame)
 
    currentThread->setRunning();
 
-   if (currentProcess != 0)
-   {
-      printf("New process scheduled! %p\n", currentProcess);
-   }
-
    if (currentProcess != interruptedProcess)
    {
       printf("switching processcontext: %p\n", currentProcess);
