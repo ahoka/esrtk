@@ -54,14 +54,6 @@ x86_isr_page_fault(InterruptFrame* frame)
       return;
    }
 
-   bool isUser = frame->error & (1 << 2);
-   if (isUser)
-   {
-      // XXX Kill process/thread here
-//      nestingFlag--;
-//      return;
-   }
-
    printf("\n");
    frame->print();
 
@@ -73,6 +65,16 @@ x86_isr_page_fault(InterruptFrame* frame)
 	  frame->error);
 
    StackTrace::printStackTrace(reinterpret_cast<void*>(frame->ebp));
+
+      bool isUser = frame->error & (1 << 2);
+   if (isUser)
+   {
+      Process* p = Scheduler::getCurrentProcess();
+      delete p;
+      Scheduler::schedule(); // XXX
+      nestingFlag--;
+      return;
+   }
 
    x86_cli();
    Power::halt();

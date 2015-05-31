@@ -31,7 +31,13 @@ Process::Process(uintptr_t pd)
 
 Process::~Process()
 {
-   // XXX delete threads
+   printf("Deleting process %p...\n", this);
+   
+   for (auto& t : threadsM)
+   {
+      delete t;
+   }
+   
    delete contextM;
 }
 

@@ -89,6 +89,18 @@ Scheduler::insert(Thread* t)
 }
 
 void
+Scheduler::remove(Thread* t)
+{
+   printf("Scheduler: removing thread %lu\n", t->getId());
+
+   spinlock_softirq_enter(&schedulerLock);
+
+   readyList->remove(t);
+
+   spinlock_softirq_exit(&schedulerLock);
+}
+
+void
 Scheduler::schedule()
 {
    spinlock_softirq_enter(&schedulerLock);

@@ -47,6 +47,14 @@ Thread::Thread(Thread::Type type)
    }
 }
 
+Thread::~Thread()
+{
+   // XXX free stack space!
+   printf("Deleteing thread: %p...\n", this);
+   
+   Scheduler::remove(this);
+}
+
 // used when creating thread 0
 bool
 Thread::init0(uintptr_t stack)

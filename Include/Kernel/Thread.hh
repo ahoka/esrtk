@@ -23,6 +23,8 @@ namespace Kernel
          InterruptThread
       };
 
+      ~Thread();
+
       bool addJob(Job job);
       void dump();
 

@@ -11,6 +11,7 @@ namespace Kernel
       void init();
 
       void insert(Thread* t);
+      void remove(Thread* t);
       void schedule();
 
       Thread* getCurrentThread();
