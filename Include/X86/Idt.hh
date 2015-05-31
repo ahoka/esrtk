@@ -10,7 +10,10 @@ struct IdtEntry
    uint16_t baseLow;
    uint16_t selector;
    uint8_t reserved;
-   uint8_t flags;
+   uint8_t gateType : 4;
+   uint8_t storageSegment : 1;
+   uint8_t dpl : 2;
+   uint8_t present : 1;
    uint16_t baseHigh;
 } __attribute__((packed));
 

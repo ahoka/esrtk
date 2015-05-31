@@ -209,7 +209,10 @@ x86_isr_init(int n, void (*handler)())
    idtEntries[n].baseHigh = (uint16_t)(((uint32_t)(handler) >> 16) & 0xffff);
    
    idtEntries[n].selector = 0x08;
-   idtEntries[n].flags = 0x8e;
+   idtEntries[n].gateType = 0xe; // XXX InterruptGate
+   idtEntries[n].storageSegment = 0;
+   idtEntries[n].dpl = 0;
+   idtEntries[n].present = 1;
    
    // zero filled
    idtEntries[n].reserved = 0;
