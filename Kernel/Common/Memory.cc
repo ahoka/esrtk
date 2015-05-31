@@ -147,7 +147,9 @@ Memory::init()
    }
 
    // XXX
-   memcpy((void*)CodeStart, "\xb8\xfa\x00\x00\x10\x00\xe0\xff", 8);
+   // memcpy((void*)CodeStart, "\xb8\xfa\x00\x00\x10\x00\xe0\xff", 8);
+//   memset((void*)CodeStart, 90, 256);
+   memcpy((void*)CodeStart, "\x31\xc0\xcd\x80", 4);
 
 //   KASSERT(success);
 
