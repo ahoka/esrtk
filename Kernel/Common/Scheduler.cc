@@ -2,6 +2,7 @@
 #include <Kernel/Thread.hh>
 #include <Kernel/Process.hh>
 #include <Kernel/Watchdog.hh>
+#include <Kernel/ProcessContext.hh>
 #include <X86/PageDirectory.hh>
 
 #include <cstdio>
@@ -22,7 +23,15 @@ namespace
 
    std::list<Thread*>* readyList;
    std::list<Thread*>* idleList;
+
 };
+
+Thread*
+Scheduler::getIdleThread()
+{
+   static Thread thread0(Kernel::Thread::KernelThread);
+   return &thread0;
+}
 
 void
 Scheduler::setCurrentProcess(Process* process)
@@ -65,15 +74,16 @@ Scheduler::init()
 
    static Process process0(PageDirectory::getKernelPageDirectory());
    kernelProcess = &process0;
-   
-   static Thread thread0(Kernel::Thread::KernelThread);
 
-   thread0.init0(KernelStackStart);
+   Thread* thread0 = getIdleThread();
+   thread0->init0(KernelStackStart);
 
-   setCurrentThread(&thread0);
+   setCurrentThread(thread0);
    setCurrentProcess(&process0);
 
-   readyList->push_back(&thread0);
+   process0.getContext()->switchContext();
+
+   readyList->push_back(thread0);
 }
 
 void
@@ -97,6 +107,14 @@ Scheduler::remove(Thread* t)
 
    readyList->remove(t);
 
+   // XXX
+   if (t == getCurrentThread())
+   {
+      printf("Removing currently running thread: %p\n", t);
+      readyList->remove(getIdleThread());
+      setCurrentThread(getIdleThread());
+   }
+
    spinlock_softirq_exit(&schedulerLock);
 }
 
@@ -110,10 +128,12 @@ Scheduler::schedule()
    readyList->push_back(lastRunning);
 
    // schedule the first thread in the ready list
+   KASSERT(readyList->size() > 0);
    Thread* next = readyList->front();
    KASSERT(next != 0);
    readyList->pop_front();
    setCurrentThread(next);
+   setCurrentProcess(next->getProcess());
 
    spinlock_softirq_exit(&schedulerLock);
 

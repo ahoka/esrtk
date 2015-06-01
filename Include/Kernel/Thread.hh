@@ -81,9 +81,7 @@ namespace Kernel
 
       static unsigned long nextThreadId;
 
-      friend void ::Kernel::Scheduler::init();
-      friend void ::Kernel::Scheduler::insert(Thread* t);
-      friend void ::Kernel::Scheduler::schedule();
+      friend class ::Kernel::Scheduler;
    };
 };
 

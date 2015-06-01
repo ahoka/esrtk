@@ -6,23 +6,30 @@ namespace Kernel
    class Thread;
    class Process;
 
-   namespace Scheduler
+   class Scheduler
    {
-      void init();
+   public:
+      static void init();
 
-      void insert(Thread* t);
-      void remove(Thread* t);
-      void schedule();
+      static void insert(Thread* t);
+      static void remove(Thread* t);
+      static void schedule();
 
-      Thread* getCurrentThread();
-      void setCurrentThread(Thread* thread);
+      static Thread* getCurrentThread();
+      static void setCurrentThread(Thread* thread);
 
-      Process* getCurrentProcess();
-      void setCurrentProcess(Process*);
+      static Process* getCurrentProcess();
+      static void setCurrentProcess(Process*);
 
-      Process* getKernelProcess();
+      static Process* getKernelProcess();
+      static Thread* getIdleThread();
       
-      void printAll();
+      static void printAll();
+
+   private:
+      Scheduler() = delete;
+      ~Scheduler() = delete;
+      Scheduler(Scheduler&) = delete;
    };
 };
 

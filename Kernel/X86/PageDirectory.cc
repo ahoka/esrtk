@@ -81,7 +81,7 @@ namespace
 
 uintptr_t PageDirectory::getKernelPageDirectory()
 {
-   return (uintptr_t)kernelPageDirectory;
+   return (uintptr_t)(vtophys(kernelPageDirectory));
 }
 
 void

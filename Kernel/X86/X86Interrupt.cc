@@ -66,10 +66,12 @@ x86_isr_page_fault(InterruptFrame* frame)
 
    StackTrace::printStackTrace(reinterpret_cast<void*>(frame->ebp));
 
-      bool isUser = frame->error & (1 << 2);
+   bool isUser = frame->error & (1 << 2);
    if (isUser)
    {
       Process* p = Scheduler::getCurrentProcess();
+      KASSERT(p != Scheduler::getKernelProcess());
+      printf("Terminating process %p\n", p);
       delete p;
       Scheduler::schedule(); // XXX
       nestingFlag--;
@@ -146,6 +148,7 @@ x86_isr_dispatcher(InterruptFrame* frame)
 
    Thread* interruptedThread = Scheduler::getCurrentThread();
    Process* interruptedProcess = interruptedThread->getProcess();
+   KASSERT(interruptedProcess == Scheduler::getCurrentProcess());
    interruptedThread->setKernelStack((uintptr_t )frame);
    interruptedThread->setReady();
 
@@ -185,10 +188,10 @@ x86_isr_dispatcher(InterruptFrame* frame)
 
    if (currentProcess != interruptedProcess)
    {
-      printf("switching processcontext: %p\n", currentProcess);
       KASSERT(currentProcess != 0);
       ProcessContext* newContext = currentProcess->getContext();
       KASSERT(newContext != 0);
+      printf("switching processcontext: (%p) %p\n", currentProcess, newContext);
       newContext->switchContext();
    }
    InterruptFrame* newFrame = (InterruptFrame* )currentThread->getKernelStack();
