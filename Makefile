@@ -36,10 +36,10 @@ COPTS+=		-O2 -march=i686 -g \
 # XXX ACPICA
 #COPTS+=		-Werror
 
-LDFLAGS=	${COPTS}
-ASFLAGS+=	-g ${COPTS}
-CFLAGS=		-std=c11 ${COPTS}
-CXXFLAGS=	-std=c++14 ${COPTS} -fno-exceptions -fno-rtti
+LDFLAGS=	-flto ${COPTS}
+ASFLAGS+=	-flto -g ${COPTS}
+CFLAGS=		-std=c11 -flto ${COPTS}
+CXXFLAGS=	-std=c++14 -flto ${COPTS} -fno-exceptions -fno-rtti
 
 .if ${TOOLCHAIN} == clang
 CC=		${CROSS}clang

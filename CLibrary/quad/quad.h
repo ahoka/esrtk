@@ -116,6 +116,7 @@ quad_t __one_cmpldi2(quad_t);
 u_quad_t __qdivrem(u_quad_t, u_quad_t, u_quad_t *);
 quad_t __subdi3(quad_t, quad_t);
 int __ucmpdi2(u_quad_t, u_quad_t);
-u_quad_t __udivdi3(u_quad_t, u_quad_t );
-u_quad_t __umoddi3(u_quad_t, u_quad_t );
+/* XXXahoka: mark as "used" to avoid linking failure with gcc's lto */
+u_quad_t __udivdi3(u_quad_t, u_quad_t) __attribute__((used));
+u_quad_t __umoddi3(u_quad_t, u_quad_t) __attribute__((used));
 quad_t __xordi3(quad_t, quad_t);
