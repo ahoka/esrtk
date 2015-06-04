@@ -170,7 +170,7 @@ clean:
 	@-rm *.o *.d kernel.elf kernel.img .depend > /dev/null 2>&1 || true
 
 run: kernel.elf
-	${QEMU} ${QEMU_ARGS} -kernel kernel.elf -initrd runtime.elf,Tss.o 2>&1 | tee run.log
+	${QEMU} ${QEMU_ARGS} -kernel kernel.elf -initrd runtime.elf 2>&1 | tee run.log
 
 run-smp: kernel.elf
 	${QEMU} ${QEMU_ARGS} -smp 4 -kernel kernel.elf 2>&1 | tee run.log
