@@ -102,8 +102,6 @@ hiloader:
         movl $thread_zero_stack, %eax
 	movl %eax, %esp
 
-        call supervisor_init
-
 	cli
 hang:
 	hlt

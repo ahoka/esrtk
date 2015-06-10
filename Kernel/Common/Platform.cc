@@ -8,6 +8,8 @@
 
 #include <AcpiCa.hh>
 
+#include <cstdio>
+
 void
 Platform::init()
 {
@@ -37,4 +39,6 @@ Platform::init()
    DriverManager::probeAndInit();
    Pci::enumerate();
    Modules::handleModules();
+
+   printf("Platform init completed\n");
 }

@@ -21,17 +21,19 @@ Process::Process()
    : idM(nextId++),
      contextM(new ProcessContext)
 {
+   printf("Process creation: %p\n", this);
    getProcessList().push_back(this);
 }
 
 Process::Process(uintptr_t pd)
    : contextM(new ProcessContext(pd))
 {
+   printf("Process creation: %p (existing pd: %p)\n", this, (void*)pd);
 }
 
 Process::~Process()
 {
-   printf("Deleting process %p...\n", this);
+   printf("Process deletion: %p\n", this);
    
    for (auto& t : threadsM)
    {

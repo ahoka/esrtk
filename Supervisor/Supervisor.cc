@@ -5,7 +5,6 @@
 #include <Kernel/Scheduler.hh>
 #include <Supervisor/Monitor.hh>
 
-#include <Platform.hh>
 #include <Debug.hh>
 #include <Power.hh>
 #include <Mutex.hh>
@@ -28,11 +27,6 @@ Supervisor::init()
 {
    printf("Supervisor starting\n");
 
-   Kernel::Scheduler::init();
-
-   // Call C++ constructors
-   __cxaimpl_call_constructors();
-
    Supervisor::run();
 }
 
@@ -40,8 +34,6 @@ void
 Supervisor::run()
 {
    printf("Supervisor started\n");
-
-   Platform::init();
 
 #ifdef TEST
    // char* a = new char[256];

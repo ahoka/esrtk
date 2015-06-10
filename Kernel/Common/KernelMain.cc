@@ -1,5 +1,8 @@
 #include <Memory.hh>
 #include <Modules.hh>
+#include <Platform.hh>
+#include <CompilerSupport.hh>
+#include <Kernel/Scheduler.hh>
 
 //#include <X86/LocalApic.hh>
 #include <X86/PageDirectory.hh>
@@ -32,7 +35,6 @@ kmain()
 
    printf("Kernel main starting...\n");
 
-
    initInterrupts();
 
    Memory::copyMemoryMap();
@@ -43,4 +45,13 @@ kmain()
    MemoryManager::init();
 
    printf("Memory management initialized...\n");
+   
+   Kernel::Scheduler::init();
+
+   // Call C++ constructors
+   __cxaimpl_call_constructors();
+
+   Platform::init();
+
+   //XXX start supervisor thread
 }
