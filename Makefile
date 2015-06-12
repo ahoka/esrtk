@@ -81,7 +81,8 @@ CPPFLAGS+=	-DHAVE_STRLCAT=0 -DHAVE_STRSEP=0 -DHAVE_STRLCPY=0 -D__ELF__
 CPPFLAGS+=	-D__esrtk__
 #CPPFLAGS+=	-D_BSD_SOURCE
 
-SRCDIR=		Supervisor CLibrary CxxLibrary CxxAbi Drivers Kernel FileSystem Hal Loader Acpi/Source
+SRCDIR=		Supervisor CLibrary CxxLibrary CxxAbi Drivers Kernel ${PLATFORM} \
+		FileSystem Hal Loader Acpi/Source
 TESTDIR=	Test
 
 TCCFILES:=	${FIND} ${TESTDIR} -name '*.cc'
@@ -159,7 +160,7 @@ autobuild: clean .WAIT kernel.elf
 
 kernel.elf: MultiLoader.o ${OFILES}
 	@echo Linking kernel executable
-	${HIDE} ${LD} ${LDFLAGS} -T ${BUILD_ROOT}/Kernel/${PLATFORM}/linker.ld -o ${.TARGET} ${.ALLSRC}
+	${HIDE} ${LD} ${LDFLAGS} -T ${BUILD_ROOT}/${PLATFORM}/linker.ld -o ${.TARGET} ${.ALLSRC}
 	@${SIZE} $@
 
 kernel.img: kernel.elf
