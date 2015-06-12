@@ -1,18 +1,22 @@
-#ifndef __THREAD_HH__
-#define __THREAD_HH__
+#ifndef THREAD_HH
+#define THREAD_HH
 
-#include <Memory.hh>
+#include <Kernel/Job.hh>
+#include <Kernel/Scheduler.hh>
 #include <Kernel/Job.hh>
 
-#include <Kernel/Scheduler.hh>
+#include <Memory.hh>
+#include <SoftMutex.hh>
 
 #include <string>
+#include <list>
+
 #include <cstdint>
 
 namespace Kernel
 {
    class Process;
-   
+
    class Thread
    {
    public:
@@ -48,7 +52,10 @@ namespace Kernel
 
       static void printAll();
       static void main [[noreturn]] (Thread*);
+
       static Thread* createKernelThread();
+      static Thread* createKernelThread(const char*);
+
       static Thread* createUserThread(Process*);
 
       enum State
@@ -62,11 +69,11 @@ namespace Kernel
       };
 
    private:
-      
+
       Thread(Type);
       bool init();
       bool init0(uintptr_t stack);
-      
+
       unsigned long idM;
       uintptr_t userStackM;
       uintptr_t kernelStackM;
@@ -78,6 +85,9 @@ namespace Kernel
 
       // stats
       unsigned long onCpuM;
+
+      mutable SoftMutex lockM;
+      std::list<Job*> jobQueueM;
 
       static unsigned long nextThreadId;
 

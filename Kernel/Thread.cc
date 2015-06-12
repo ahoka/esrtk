@@ -51,7 +51,7 @@ Thread::~Thread()
 {
    // XXX free stack space!
    printf("Deleteing thread: %p...\n", this);
-   
+
    Scheduler::remove(this);
 }
 
@@ -96,7 +96,7 @@ Thread::init()
       spinlock_softirq_exit(&threadLock);
       return false;
    }
-   
+
    if (typeM == UserThread)
    {
       userStackM = UserStackStart;
@@ -115,7 +115,7 @@ Thread::init()
    spinlock_softirq_exit(&threadLock);
 
    Debug::verbose("Thread's new kernel stack is %p\n", (void*)kernelStackM);
-   
+
    Scheduler::insert(this);
    getThreadList().push_back(this);
 
@@ -204,11 +204,34 @@ Thread::main(Thread* thread)
 }
 
 Thread*
-Thread::createKernelThread()
+Thread::createKernelThread(const char* name)
 {
    Thread* thread = new Thread(Type::KernelThread);
    thread->processM = Scheduler::getKernelProcess();
+   thread->setName(name);
    thread->init();
+
+   printf("Kernel thread created: %s\n", name);
+
+   return thread;
+}
+
+Thread*
+Thread::createKernelThread()
+{
+   char threadName[32];
+
+   Thread* thread = new Thread(Type::KernelThread);
+   thread->processM = Scheduler::getKernelProcess();
+
+   thread->init();
+
+   // XXX should be done before init, but init gaves a thread an id
+   int len = snprintf(threadName, sizeof(threadName), "KernelThread-%lu", thread->getId());
+   KASSERT(len < (int)sizeof(threadName));
+   thread->setName(threadName);
+
+   printf("Kernel thread created: %s\n", threadName);
 
    return thread;
 }
