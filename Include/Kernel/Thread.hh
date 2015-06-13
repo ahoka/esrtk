@@ -1,7 +1,6 @@
 #ifndef THREAD_HH
 #define THREAD_HH
 
-#include <Kernel/Job.hh>
 #include <Kernel/Scheduler.hh>
 #include <Kernel/Job.hh>
 
@@ -9,7 +8,7 @@
 #include <SoftMutex.hh>
 
 #include <string>
-#include <list>
+#include <queue>
 
 #include <cstdint>
 
@@ -29,7 +28,7 @@ namespace Kernel
 
       ~Thread();
 
-      bool addJob(Job job);
+      bool addJob(const std::function<void()>&);
       void dump();
 
       void setName(const char*);
@@ -87,7 +86,7 @@ namespace Kernel
       unsigned long onCpuM;
 
       mutable SoftMutex lockM;
-      std::list<Job*> jobQueueM;
+      std::queue<Job> jobsM;
 
       static unsigned long nextThreadId;
 

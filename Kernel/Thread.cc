@@ -123,9 +123,9 @@ Thread::init()
 }
 
 bool
-Thread::addJob(Job /*job*/)
+Thread::addJob(const std::function<void()>& task)
 {
-//   jobsM.push(job);
+   jobsM.emplace(task);
 
    return true;
 }
@@ -167,7 +167,7 @@ Thread::printAll()
 void
 Thread::main(Thread* thread)
 {
-   Debug::verbose("Thread main called on %p (%p)!\n", thread, &thread);
+   printf("Thread main called on %p (%p)!\n", thread, &thread);
 
    thread->stateM = Ready;
 
@@ -176,16 +176,13 @@ Thread::main(Thread* thread)
       if (thread->stateM == Ready)
       {
          thread->stateM = Running;
-         // while (!thread->jobsM.empty())
-         // {
-         //    Job job = thread->jobsM.front();
-         //    thread->jobsM.pop();
-
-         //    job.execute();
-         // }
-         while (true) // XXX
+         while (!thread->jobsM.empty())
          {
-            asm volatile("pause");
+            printf("Running job\n");
+            Job job = thread->jobsM.back();
+            thread->jobsM.pop();
+
+            job.execute();
          }
       }
       else if (thread->stateM == Agony)

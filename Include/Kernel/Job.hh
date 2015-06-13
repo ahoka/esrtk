@@ -1,23 +1,21 @@
 #ifndef JOB_HH
 #define JOB_HH
 
+#include <functional>
+
 namespace Kernel
 {
    class Job
    {
    public:
-      using Function = void (*)(void*);
-
-      Job();
-      Job(Function f, void* arg);
-      Job(const Job& other);
+      Job(const std::function<void()>&);
+      Job(const Job&);
       ~Job();
 
       void execute();
 
    private:
-      Function functionM;
-      void* argM;
+      std::function<void()> functionM;
    };
 };
 
