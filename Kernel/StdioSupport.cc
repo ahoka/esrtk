@@ -112,12 +112,10 @@ console_putchar(int ch)
 int
 console_puts(const char* string)
 {
-   int rv = 0;
-
    while (*string)
    {
       console_putchar(*string++);
    }
 
-   return rv;
+   return 1;
 }
