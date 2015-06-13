@@ -51,7 +51,7 @@ namespace
 {
    const size_t consoleBufferSize = 4096;
    char consoleBuffer[consoleBufferSize] = { 0 };
-   size_t consoleBufferPosition = 0;
+   volatile size_t consoleBufferPosition = 0;
 };
 
 int
@@ -78,7 +78,6 @@ console_getchar()
    // XXX sleep here!
    while (consoleBufferPosition == 0)
    {
-      Power::halt();
    }
 
    return consoleBuffer[--consoleBufferPosition];
