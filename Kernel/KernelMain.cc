@@ -57,10 +57,8 @@ kmain()
    Supervisor::Supervisor::init();
 
    printf("Becoming idle thread...\n");
-   Power::halt();
-   printf("XXXXXXXX should not get here\n");
    for (;;)
    {
-      asm volatile("pause");
+      Power::halt();
    }
 }
