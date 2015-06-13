@@ -3,18 +3,22 @@
 
 #include <Kernel/Thread.hh>
 
+namespace Supervisor
+{
+
 class Supervisor
 {
 public:
    static void init();
-   static void run() __attribute__((noreturn));
+
+   Supervisor() = default;
+   ~Supervisor() = default;
+
 private:
-   Supervisor();
-   virtual ~Supervisor();
-   Supervisor(const Supervisor& orig);
+   void run();
+   Supervisor(const Supervisor& orig) = delete;
 };
 
-extern "C" void supervisor_init();
+}
 
 #endif	/* SUPERVISOR_H */
-

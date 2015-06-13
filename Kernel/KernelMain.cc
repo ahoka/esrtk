@@ -11,6 +11,7 @@
 #include <X86/Tss.hh>
 #include <X86/EarlySerial.hh>
 #include <Kernel/ProcessContext.hh>
+#include <Supervisor/Supervisor.hh>
 
 #include <MemoryManager.hh>
 #include <Power.hh>
@@ -45,7 +46,7 @@ kmain()
    MemoryManager::init();
 
    printf("Memory management initialized...\n");
-   
+
    Kernel::Scheduler::init();
 
    // Call C++ constructors
@@ -53,5 +54,13 @@ kmain()
 
    Platform::init();
 
-   //XXX start supervisor thread
+   Supervisor::Supervisor::init();
+
+   printf("Becoming idle thread...\n");
+   Power::halt();
+   printf("XXXXXXXX should not get here\n");
+   for (;;)
+   {
+      asm volatile("pause");
+   }
 }

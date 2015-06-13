@@ -4,30 +4,32 @@
 #include <CompilerSupport.hh>
 #include <Kernel/Scheduler.hh>
 #include <Supervisor/Monitor.hh>
+#include <X86/Processor.hh>
 
 #include <Debug.hh>
 #include <Power.hh>
 #include <Mutex.hh>
 
+#include <functional>
+
 #include <cstdio>
 #include <cstdlib>
 
-#include <X86/Processor.hh>
+//#define TEST
 
-#define TEST
-
-extern "C" void
-supervisor_init()
+namespace Supervisor
 {
-   Supervisor::init();
-}
 
 void
 Supervisor::init()
 {
-   printf("Supervisor starting\n");
+   printf("---> Supervisor starting\n");
 
-   Supervisor::run();
+   static Supervisor supervisor;
+   static Kernel::Thread* supervisorThread = Kernel::Thread::createKernelThread("Supervisor");
+
+   printf("---> Submitting job\n");
+   supervisorThread->addJob(std::bind(&Supervisor::run, &supervisor));
 }
 
 void
@@ -87,5 +89,7 @@ Supervisor::run()
    Monitor monitor;
    monitor.enter();
 
-   Power::shutdown();
+//   Power::shutdown();
+}
+
 }
