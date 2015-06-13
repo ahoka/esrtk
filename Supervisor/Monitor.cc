@@ -79,11 +79,11 @@ Monitor::Monitor()
    }, "memory");
 
    static LambdaCommand threadsCommand([](std::string) {
-         Kernel::Thread::printAll();         
+         Kernel::Thread::printAll();
    }, "threads");
 
    static LambdaCommand processCommand([](std::string) {
-         Kernel::Process::printAll();         
+         Kernel::Process::printAll();
    }, "processes");
 
    static LambdaCommand rebootCommand([](std::string) {
@@ -108,7 +108,7 @@ expand(char* part, size_t len)
 {
    const char* expanded = 0;
    unsigned int count = 0;
-   
+
    for (const auto& c : commands)
    {
       size_t partlen = strlen(part);
