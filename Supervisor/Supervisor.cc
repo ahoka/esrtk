@@ -81,11 +81,6 @@ Supervisor::run()
 
 #endif
 
-   // while (int c = getchar())
-   // {
-   //    putchar(c);
-   // }
-
    Monitor monitor;
    monitor.enter();
 
