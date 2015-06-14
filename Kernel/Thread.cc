@@ -149,15 +149,15 @@ const char* threadState[] =
 void
 Thread::dump()
 {
-   printf(" %lu\t%p\t%p\t%s\t%s\t%lu\n", idM, (void *)kernelStackM,
+   printf(" %lu\t%p\t%p\t%s\t%s\t%lu\t%s\n", idM, (void *)kernelStackM,
           (void*)userStackM, threadState[stateM], threadType[typeM],
-          onCpuM);
+          onCpuM, nameM.c_str());
 }
 
 void
 Thread::printAll()
 {
-   printf(" id\tkstack\t\tustack\t\tstate\ttype\toncpu\n");
+   printf(" id\tkstack\t\tustack\t\tstate\ttype\toncpu\tname\n");
    for (auto& t : getThreadList())
    {
       t->dump();
