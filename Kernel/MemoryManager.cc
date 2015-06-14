@@ -51,7 +51,7 @@ MemoryManager::allocateBackend(std::size_t size)
    std::size_t rsize = roundTo(size, PageSize);
 
    void* data;
-#if 1
+#if 0
    if (rsize == PageSize)
    {
       uintptr_t page = Memory::getPage();
@@ -64,8 +64,7 @@ MemoryManager::allocateBackend(std::size_t size)
       data = reinterpret_cast<void*>(Memory::mapAnonymousRegion(rsize));
    }
 #else
-   // XXX DEBUG WHY THIS CRASHES
-   void* data = reinterpret_cast<void*>(Memory::mapAnonymousRegion(rsize));
+   data = reinterpret_cast<void*>(Memory::mapAnonymousRegion(rsize));
 #endif
 
 #ifdef DEBUG
@@ -188,4 +187,3 @@ MemoryManager::printStatistics()
 
    printf("Free segments: %d\n", count);
 }
-
