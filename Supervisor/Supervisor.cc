@@ -15,7 +15,7 @@
 #include <cstdio>
 #include <cstdlib>
 
-//#define TEST
+#define TEST
 
 namespace Supervisor
 {
@@ -27,9 +27,11 @@ Supervisor::init()
 
    static Supervisor supervisor;
    static Kernel::Thread* supervisorThread = Kernel::Thread::createKernelThread("Supervisor");
-
-   printf("---> Submitting job\n");
    supervisorThread->addJob(std::bind(&Supervisor::run, &supervisor));
+
+   static Monitor monitor;
+   static Kernel::Thread* monitorThread = Kernel::Thread::createKernelThread("Monitor");
+   monitorThread->addJob(std::bind(&Monitor::enter, &monitor));
 }
 
 void
@@ -80,11 +82,6 @@ Supervisor::run()
 //   lock.exit();
 
 #endif
-
-   Monitor monitor;
-   monitor.enter();
-
-//   Power::shutdown();
 }
 
 }
