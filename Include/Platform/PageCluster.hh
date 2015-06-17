@@ -6,56 +6,61 @@
 class PageCluster
 {
 public:
-   enum
-   {
-      Free,
-      Anonymous,
-      KernelHeap,
-      KernelStack
-   };
-
+   // must be empty
    PageCluster()
    {
-      // must be empty
+   }
+
+   void init()
+   {
+      // this is our elephant in cairo :-)
+      headM.init();
+      headM.next = &headM;
+      headM.prev = &headM;
+      countM = 0;
    }
 
    void insert(PhysicalPage* page)
    {
-      assert(page != 0);
+      KASSERT(page != 0);
 
-      PhysicalPage* oldNext = head.next;
+      PhysicalPage* oldNext = headM.next;
 
-      assert(oldNext != 0);
+      KASSERT(oldNext != 0);
 
-      page->next = head.next;
-      head.next = page;
+      page->next = headM.next;
+      headM.next = page;
 
       oldNext->prev = page;
-      page->prev = &head;
+      page->prev = &headM;
+
+      ++countM;
    }
 
    void remove(PhysicalPage* page)
    {
-      assert(page != 0);
+      KASSERT(page != 0);
 
       PhysicalPage* oldPrev = page->prev;
       PhysicalPage* oldNext = page->next;
 
-      assert(oldPrev != 0);
-      assert(oldNext != 0);
+      KASSERT(oldPrev != 0);
+      KASSERT(oldNext != 0);
 
       oldPrev->next = oldNext;
       oldNext->prev = oldPrev;
+
+      --countM;
    }
 
    PhysicalPage* get()
    {
       PhysicalPage* page = 0;
 
-      if (head.next->getAddress() != PhysicalPage::Invalid)
+      if (headM.next->getAddress() != PhysicalPage::Invalid)
       {
-	 page = head.next;
-	 remove(head.next);
+	 page = headM.next;
+	 remove(headM.next);
       }
 
       return page;
@@ -63,7 +68,7 @@ public:
 
    PhysicalPage* find(uintptr_t address)
    {
-      for (PhysicalPage* page = head.next;
+      for (PhysicalPage* page = headM.next;
 	   page->getAddress() != PhysicalPage::Invalid;
 	   page = page->next)
       {
@@ -76,16 +81,14 @@ public:
       return 0;
    }
 
-   void init()
+   unsigned long count() const
    {
-      // this is our elephant in cairo :-)
-      head.init();
-      head.next = &head;
-      head.prev = &head;
+      return countM;
    }
 
 private:
-   PhysicalPage head;
+   PhysicalPage headM;
+   unsigned long countM;
 };
 
 #endif
