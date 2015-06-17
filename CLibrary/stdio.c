@@ -109,7 +109,7 @@ getUnsignedFromVa(va_list* ap, int modifiers)
       {
 	 n = va_arg(*ap, unsigned int);
       }
-      
+
       return n;
 }
 
@@ -140,7 +140,7 @@ getSignedFromVa(va_list* ap, int modifiers)
       {
 	 n = va_arg(*ap, int);
       }
-      
+
       return n;
 }
 
@@ -165,7 +165,7 @@ doVaPrint(writer_t writer, void *writer_arg, va_list* ap, int type, int modifier
       putchar('0');
       putchar('x');
       retval += 2;
-      
+
       for (unsigned int i = 0; i < sizeof(p) * 2; i++)
       {
 	 *bufp++ = hexl[p & 0x0f];
@@ -276,7 +276,7 @@ doVaPrint(writer_t writer, void *writer_arg, va_list* ap, int type, int modifier
    else if (type == PRINTF_TYPE_OCTAL)
    {
       printf_uint_t n = getUnsignedFromVa(ap, modifiers);
-      
+
       // XXX this will be incorrect when we have field width!
       if (flags & PRINTF_FLAGS_ALTERNATIVE && n != 0)
       {
@@ -485,6 +485,7 @@ __vprintf(writer_t writer, void *writer_arg, const char* format, va_list ap)
    return retval;
 }
 
+#if 0
 int
 vprintf(const char* format, va_list ap)
 {
@@ -515,7 +516,7 @@ snprintf(char *str, size_t size, const char *format, ...)
    va_start(ap, format);
 
    int rv = __vprintf(snprintf_writer, (void*)&arg, format, ap);
-   
+
    va_end(ap);
 
    // null terminate
@@ -523,6 +524,7 @@ snprintf(char *str, size_t size, const char *format, ...)
 
    return rv;
 }
+#endif
 
 int
 putchar(int c)
