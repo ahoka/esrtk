@@ -41,7 +41,7 @@ void
 Memory::addMemoryMapEntry(uintptr_t start, size_t length)
 {
    KASSERT(memoryMapCount < MemoryMapMax);
-   
+
    memoryMap[memoryMapCount].address = start;
    memoryMap[memoryMapCount].size = length;
    memoryMapCount++;
@@ -73,7 +73,7 @@ Memory::init()
 
    printf("Inserting bootstrap page to used pages cluster: %p\n", (void* )bootstrapPage->getAddress());
    usedPages.insert(bootstrapPage);
-   
+
    unsigned int freeStructures = PageSize / sizeof (PhysicalPage) - 1;
 
    KASSERT(freeStructures > 0);
@@ -352,6 +352,11 @@ Memory::getPage()
 
    spinlock_softirq_enter(&pagesLock);
 
+   if (freePages.count() == 0)
+   {
+      Debug::panic("Out of memory, free page cluster is empty");
+   }
+
    PhysicalPage* page = freePages.get();
    if (page != 0)
    {
@@ -468,4 +473,13 @@ uintptr_t
 Memory::getPhysicalAddress(uintptr_t virt)
 {
    return PageDirectory::getPhysicalPage(virt);
+}
+
+void
+Memory::info()
+{
+   printf("Memory information:\n");
+
+   printf("Free pages: %lu\n", freePages.count());
+   printf("Used pages: %lu\n", usedPages.count());
 }

@@ -60,6 +60,8 @@ namespace Memory
    void* readPhysicalMemory(void* destination, const void* source, size_t size);
 
    bool createKernelStack(uintptr_t& start);
+
+   void info();
 };
 
 #endif

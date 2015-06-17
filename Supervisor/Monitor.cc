@@ -7,6 +7,7 @@
 #include <Kernel/Process.hh>
 #include <Interrupt.hh>
 #include <Scheduler.hh>
+#include <Memory.hh>
 
 #include <string>
 #include <list>
@@ -74,9 +75,9 @@ Monitor::Monitor()
                 (unsigned long )(uptime % 1000));
    }, "uptime");
 
-   static LambdaCommand memoryCommand([](std::string) {
+   static LambdaCommand heapCommand([](std::string) {
          MemoryManager::get().printStatistics();
-   }, "memory");
+   }, "heap");
 
    static LambdaCommand threadsCommand([](std::string) {
          Kernel::Thread::printAll();
@@ -89,6 +90,10 @@ Monitor::Monitor()
    static LambdaCommand rebootCommand([](std::string) {
          Power::reboot();
    }, "reboot");
+
+   static LambdaCommand memoryCommand([](std::string) {
+         Memory::info();
+   }, "memory");
 
    static LambdaCommand deadlockCommand([](std::string) {
          printf("Simulating a dead-lock!\n");
