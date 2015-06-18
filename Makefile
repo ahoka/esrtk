@@ -22,6 +22,10 @@ build: ${MAKEOBJDIR}
 run: build
 	${SYSMAKECMD} run
 
+.PHONY: debug
+debug: build
+	${SYSMAKECMD} debug
+
 .PHONY: clean
 clean:
 	${SYSMAKECMD} clean

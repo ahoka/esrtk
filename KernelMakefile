@@ -157,6 +157,9 @@ run: kernel.elf
 	${QEMU} ${QEMU_ARGS} -kernel kernel.elf 2>&1 | tee run.log
 #	${QEMU} ${QEMU_ARGS} -kernel kernel.elf -initrd runtime.elf 2>&1 | tee run.log
 
+debug: kernel.elf
+	${QEMU} ${QEMU_ARGS} -s -S -kernel kernel.elf 2>&1 | tee run.log &
+
 run-smp: kernel.elf
 	${QEMU} ${QEMU_ARGS} -smp 4 -kernel kernel.elf 2>&1 | tee run.log
 
