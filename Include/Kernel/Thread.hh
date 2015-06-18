@@ -5,7 +5,7 @@
 #include <Kernel/Job.hh>
 
 #include <Memory.hh>
-#include <SoftMutex.hh>
+#include <Mutex.hh>
 
 #include <string>
 #include <queue>
@@ -85,7 +85,7 @@ namespace Kernel
       // stats
       unsigned long onCpuM;
 
-      mutable SoftMutex lockM;
+      mutable Mutex lockM;
       std::queue<Job> jobsM;
 
       static unsigned long nextThreadId;

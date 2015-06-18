@@ -20,10 +20,12 @@ spinlock_softirq_enter(spinlock_softirq_t* lock)
 extern "C" long
 spinlock_softirq_exit(spinlock_softirq_t* lock)
 {
+   long ret = spinlock_exit(&lock->lock);
+
    if (lock->flags & InterruptEnable)
    {
       x86_sti();
    }
 
-   return spinlock_exit(&lock->lock);
+   return ret;
 }
