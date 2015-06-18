@@ -106,6 +106,7 @@ Heap::allocate(std::size_t size)
 #ifdef DEBUG
 	 printf("Debug: allocating from freelist\n");
 #endif
+         spinlock_softirq_exit(&heapLock);
 	 return reinterpret_cast<void*>(s.getAddress());
       }
    }
@@ -153,6 +154,10 @@ Heap::deallocate(void *data)
    segment->updateChecksum();
 
    spinlock_softirq_exit(&heapLock);
+
+#ifdef DEBUG
+   printf("Debug: deallocated\n");
+#endif
 }
 
 void*
@@ -186,8 +191,6 @@ Heap::printStatistics()
 {
    printf("Allocator statistics:\n");
 
-//   for (auto s = freeList.getIterator(); s.hasNext; s = s.nextSegment)
-//   for (auto& s : freeList)
    auto count = freeList.count();
    printf("Free segments: %lu\n", count);
 }
