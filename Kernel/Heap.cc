@@ -2,20 +2,26 @@
 
 #include <Memory.hh>
 #include <Debug.hh>
+#include <spinlock.h>
 
 #include <cstdio>
 #include <cstring>
 
 using namespace Kernel;
 
-//#define DEBUG
+static spinlock_softirq_t heapLock = SPINLOCK_SOFTIRQ_STATIC_INITIALIZER;
 
-Heap* Heap::self = 0;
+#define DEBUG
 
 Heap::Heap()
    : freeList()
 {
    // empty!
+}
+
+Heap::~Heap()
+{
+   KASSERT(0);
 }
 
 void*
@@ -34,17 +40,13 @@ void
 Heap::init()
 {
    printf("Intializing Memory Manager\n");
-   void* object = allocateBackend(sizeof(Heap));
-
-   Heap::self = new (object) Heap();
-
-   printf("Memory Manager at %p\n", (void* )Heap::self);
 }
 
 Heap&
 Heap::get()
 {
-   return *self;
+   static Heap heap;
+   return heap;
 }
 
 void*
@@ -85,8 +87,11 @@ Heap::allocateBackend(std::size_t size)
 void*
 Heap::allocate(std::size_t size)
 {
-//   for (auto& s : freeList)
-//   for (Segment* s = freeList.nextSegment; s.getSize() != 0; s = s.nextSegment)
+   spinlock_softirq_enter(&heapLock);
+#ifdef DEBUG
+   printf("FreeList items: %lu\n", freeList.count());
+#endif
+
    auto iterator = freeList.getIterator();
    while (iterator.hasNext())
    {
@@ -95,7 +100,6 @@ Heap::allocate(std::size_t size)
       if (s.getSize() >= size)
       {
 	 printf("Found item with size: %zu\n", s.getSize());
-//	 freeList.remove(&s);
 	 iterator.remove();
 	 s.updateChecksum();
 	 s.markAllocated();
@@ -105,6 +109,8 @@ Heap::allocate(std::size_t size)
 	 return reinterpret_cast<void*>(s.getAddress());
       }
    }
+
+   spinlock_softirq_exit(&heapLock);
 
 #ifdef DEBUG
    printf("Debug: allocating from heap\n");
@@ -134,15 +140,19 @@ Heap::deallocate(void *data)
 #endif
 
    KASSERT(segment->isAllocated());
-   segment->markAllocated();
+   segment->markUnallocated();
 
 #ifdef DEBUG
    printf("Putting to freelist\n");
 #endif
 
+   spinlock_softirq_enter(&heapLock);
+
    freeList.add(segment);
 
    segment->updateChecksum();
+
+   spinlock_softirq_exit(&heapLock);
 }
 
 void*
@@ -178,14 +188,6 @@ Heap::printStatistics()
 
 //   for (auto s = freeList.getIterator(); s.hasNext; s = s.nextSegment)
 //   for (auto& s : freeList)
-   int count = 0;
-   auto iterator = freeList.getIterator();
-   while (iterator.hasNext())
-   {
-      auto s = iterator.getNext();
-      count++;
-      printf("Segment %p: size: %zu, address: %p\n", &s, s.getSize(), (void* )s.getAddress());
-   }
-
-   printf("Free segments: %d\n", count);
+   auto count = freeList.count();
+   printf("Free segments: %lu\n", count);
 }

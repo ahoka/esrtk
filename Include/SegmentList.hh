@@ -7,8 +7,9 @@ public:
    class Iterator
    {
    public:
-      Iterator(Segment* first)
-	 : next(first)
+      Iterator(SegmentList* list)
+	 : next(list->head.nextSegment),
+           segmentList(list)
       {
       }
 
@@ -39,15 +40,18 @@ public:
 	    
 	 oldPrev->nextSegment = oldNext;
 	 oldNext->prevSegment = oldPrev;
+
+         --segmentList->countM;
       }
 	 
    private:
       Segment *next;
+      SegmentList *segmentList;
    };
 
    SegmentList::Iterator getIterator()
    {
-      return SegmentList::Iterator(&head);
+      return SegmentList::Iterator(this);
    }
 
    void add(Segment* item)
@@ -60,10 +64,18 @@ public:
 
       prev->nextSegment = item;
       next->prevSegment = item;
+
+      ++countM;
+   }
+
+   unsigned long count()
+   {
+      return countM;
    }
 
 private:
    Segment head;
+   unsigned long countM;
 };
 
 #endif
