@@ -2,7 +2,7 @@
 
 #include <Time.hh>
 #include <Power.hh>
-#include <MemoryManager.hh>
+#include <Kernel/Heap.hh>
 #include <Kernel/Thread.hh>
 #include <Kernel/Process.hh>
 #include <Interrupt.hh>
@@ -76,7 +76,7 @@ Monitor::Monitor()
    }, "uptime");
 
    static LambdaCommand heapCommand([](std::string) {
-         MemoryManager::get().printStatistics();
+         Kernel::Heap::get().printStatistics();
    }, "heap");
 
    static LambdaCommand threadsCommand([](std::string) {

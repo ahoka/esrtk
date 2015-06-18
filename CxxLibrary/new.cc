@@ -1,34 +1,34 @@
-#include <MemoryManager.hh>
+#include <Kernel/Heap.hh>
 
 #include <cstddef>
 #include <new>
 
 void *operator new(std::size_t size)
 {
-   return MemoryManager::get().allocate(size);
+   return Kernel::Heap::get().allocate(size);
 }
  
 void *operator new[](std::size_t size)
 {
-   return MemoryManager::get().allocate(size);
+   return Kernel::Heap::get().allocate(size);
 }
  
 void operator delete(void* p)
 {
-   MemoryManager::get().deallocate(p);
+   Kernel::Heap::get().deallocate(p);
 }
  
 void operator delete[](void* p)
 {
-   MemoryManager::get().deallocate(p);
+   Kernel::Heap::get().deallocate(p);
 }
 
 void operator delete(void* p, std::size_t)
 {
-   MemoryManager::get().deallocate(p);
+   Kernel::Heap::get().deallocate(p);
 }
  
 void operator delete[](void* p, std::size_t)
 {
-   MemoryManager::get().deallocate(p);
+   Kernel::Heap::get().deallocate(p);
 }

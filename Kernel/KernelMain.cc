@@ -13,7 +13,7 @@
 #include <Kernel/ProcessContext.hh>
 #include <Supervisor/Supervisor.hh>
 
-#include <MemoryManager.hh>
+#include <Kernel/Heap.hh>
 #include <Power.hh>
 #include <cstdio>
 
@@ -43,7 +43,7 @@ kmain()
 
    PageDirectory::init();
    Memory::init();
-   MemoryManager::init();
+   Kernel::Heap::init();
 
    printf("Memory management initialized...\n");
 
