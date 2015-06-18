@@ -32,27 +32,27 @@ public:
       updateChecksum();
    }
 
-   std::size_t getSize()
+   std::size_t getSize() const
    {
       KASSERT(verifyChecksum());
 
       return size;
    }
 
-   uintptr_t getAddress()
+   uintptr_t getAddress() const
    {
       KASSERT(verifyChecksum());
 
       return (uintptr_t(this) + sizeof(*this));
    }
 
-   bool isAllocated()
+   bool isAllocated() const
    {
       KASSERT(verifyChecksum());
 
       return allocated;
    }
-      
+
    void markAllocated()
    {
       KASSERT(verifyChecksum());
@@ -118,14 +118,14 @@ public:
    void dump() const
    {
       Debug::info("segment:          %p\n"
-//		  "address:          %p\n"
+		  "address:          %p\n"
 		  "size:             %zu\n"
 		  "allocated:        %d\n"
 		  "checksum:         0x%x\n"
 		  "prev:	     %p\n"
 		  "next:	     %p\n",
 		  this,
-//		  (void*)getAddress(),
+		  (void*)getAddress(),
 		  size,
 		  allocated,
 		  checksum,

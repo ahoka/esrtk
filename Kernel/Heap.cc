@@ -89,7 +89,7 @@ Heap::allocate(std::size_t size)
 {
    spinlock_softirq_enter(&heapLock);
 #ifdef DEBUG
-   printf("FreeList items: %lu\n", freeList.count());
+   printf("Allocating %zu, FreeList items: %lu\n", size, freeList.count());
 #endif
 
    auto iterator = freeList.getIterator();
@@ -97,16 +97,20 @@ Heap::allocate(std::size_t size)
    {
       auto s = iterator.getNext();
 
+      s.dump();
+
       if (s.getSize() >= size)
       {
 	 printf("Found item with size: %zu\n", s.getSize());
 	 iterator.remove();
+         spinlock_softirq_exit(&heapLock);
+
 	 s.updateChecksum();
 	 s.markAllocated();
 #ifdef DEBUG
-	 printf("Debug: allocating from freelist\n");
+	 printf("Debug: allocating from freelist: %p\n", (void*)s.getAddress());
 #endif
-         spinlock_softirq_exit(&heapLock);
+         std::memset((void*)s.getAddress(), 0, s.getSize());
 	 return reinterpret_cast<void*>(s.getAddress());
       }
    }
@@ -137,7 +141,7 @@ Heap::deallocate(void *data)
    Segment* segment = headerOf(data);
 
 #ifdef DEBUG
-   printf("Debug: deallocating: %p (%p)\n", data, (void*)segment);
+   printf("Debug: deallocating: %p (%p)\n", (void*)segment, data);
 #endif
 
    KASSERT(segment->isAllocated());

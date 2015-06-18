@@ -26,7 +26,7 @@ public:
 
 	 next = next->nextSegment;
 
-	 return *next;
+	 return *item;
       }
 
       void remove()
@@ -37,13 +37,13 @@ public:
 
 	 Segment* oldNext = item->nextSegment;
 	 Segment* oldPrev = item->prevSegment;
-	    
+
 	 oldPrev->nextSegment = oldNext;
 	 oldNext->prevSegment = oldPrev;
 
          --segmentList->countM;
       }
-	 
+
    private:
       Segment *next;
       SegmentList *segmentList;
