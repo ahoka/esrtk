@@ -20,7 +20,7 @@ build: ${MAKEOBJDIR}
 
 .PHONY: run
 run: build
-	env HAS_BUILD_SH=1 MACHINE=i686 MAKEOBJDIR=$PWD/obj.${MACHINE} ${SYSMAKE} ${SYSMAKE_FLAGS} -f ${SYSMAKEFILE} run
+	${SYSMAKECMD} run
 
 .PHONY: clean
 clean:
