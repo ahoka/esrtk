@@ -25,3 +25,7 @@ run: build
 .PHONY: clean
 clean:
 	${SYSMAKECMD} clean
+
+.PHONY: autobuild
+autobuild:
+	${SYSMAKECMD} autobuild

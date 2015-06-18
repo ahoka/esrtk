@@ -43,6 +43,7 @@ LD=		${TOOLPREFIX}${CROSS}g++
 GCC_VERSION!=	${CC} -dumpversion
 
 SIZE=		${TOOLPREFIX}${CROSS}size
+STRIP=		${TOOLPREFIX}${CROSS}strip
 FIND=		find
 
 INCDIRS=	Include CInclude CxxInclude Templates Include/Kernel
@@ -138,11 +139,11 @@ depend: .depend
 
 .PHONY: autobuild
 autobuild: clean .WAIT kernel.elf
-	$(CROSS)strip kernel.elf
+	${STRIP} kernel.elf
 
 kernel.elf: MultiLoader.o ${OFILES}
 	@echo Linking kernel executable
-	${HIDE} ${LD} ${LDFLAGS} -T ${BUILD_ROOT}/${PLATFORM}/linker.ld -o ${.TARGET} ${.ALLSRC}
+	${HIDE} ${LD} ${LDFLAGS} -T ${BUILD_ROOT}/${PLATFORM}/linker.ld -o kernel.elf ${.ALLSRC}
 	@${SIZE} $@
 
 kernel.img: kernel.elf
