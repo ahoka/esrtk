@@ -33,9 +33,9 @@ public:
       TestItem n1 = 12;
       TestItem n2 = 23;
       TestItem n3 = 34;
-      
+
       SinglyLinkedList<TestItem> list;
-      
+
       list.insertFirst(&n1);
       list.insertFirst(&n2);
       list.insertFirst(&n3);
@@ -48,7 +48,7 @@ public:
       }
 
       SinglyLinkedList<TestItem> list2;
-      
+
       list2.insertLast(&n1);
       list2.insertLast(&n2);
       list2.insertLast(&n3);
@@ -61,13 +61,3 @@ public:
       }
    }
 };
-
-int
-main()
-{
-   SinglyLinkedListTest test;
-
-   test.test();
-
-   return 0;
-}

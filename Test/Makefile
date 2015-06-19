@@ -1,27 +1,27 @@
 # Test cases for templates
 
-all: DoublyLinkedListTest
-all: SinglyLinkedListTest
+all: testsuite
 
-CPP=c++ -E
-CPPFLAGS=-std=c++11 -I../Templates
+CPP=g++ -E
+CPPFLAGS=-I../Templates
 
-CXX=c++
-CXXFLAGS=-O2 -g3 $(CPPFLAGS)
+CXX=g++
+CXXFLAGS=-std=c++14 -O2 -g $(CPPFLAGS)
+
+SRC=	Catch.cc DoublyLinkedListTest.cc SinglyLinkedListTest.cc
+OBJ=	$(SRC:.cc=.cc.o)
+DEP=	$(SRC:.cc=.cc.d)
 
 %.cc.d: %.cc
-	$(CPP) $(CPPFLAGS) -MM -MT $*.o -MF $<.d $<
+	$(CPP) $(CPPFLAGS) -MM -MT $*.cc.o -MF $<.d $<
 
-%.o: %.cc
-	$(CXX) $(CXXFLAGS) -c -o $*.o $*.cc
+%.cc.o: %.cc
+	$(CXX) $(CXXFLAGS) -c -o $*.cc.o $*.cc
 
-DoublyLinkedListTest: DoublyLinkedListTest.o
-	$(CXX) $(CXXFLAGS) -o DoublyLinkedListTest $^
-
-SinglyLinkedListTest: SinglyLinkedListTest.o
-	$(CXX) $(CXXFLAGS) -o SinglyLinkedListTest $^
+testsuite: $(OBJ)
+	$(CXX) $(CXXFLAGS) -o testsuite $^
 
 clean:
-	-rm DoublyLinkedListTest SinglyLinkedListTest *.o
+	-rm testsuite $(OBJ) $(DEP)
 
--include DoublyLinkedListTest.cc.d SinglyLinkedListTest.cc.d
+-include $(DEP)

@@ -33,9 +33,9 @@ public:
       TestItem n1 = 12;
       TestItem n2 = 23;
       TestItem n3 = 34;
-      
+
       DoublyLinkedList<TestItem> list;
-      
+
       list.insertLast(&n1);
       list.insertLast(&n2);
       list.insertLast(&n3);
@@ -51,7 +51,7 @@ public:
       for (auto r = list.range(); !r.empty(); r.popBack())
       {
          TestItem& item = r.back();
-         std::cout << item << std::endl;         
+         std::cout << item << std::endl;
       }
 
       std::cout << "Iterating forward using iterator:" << std::endl;
@@ -61,13 +61,3 @@ public:
       }
    }
 };
-
-int
-main()
-{
-   DoublyLinkedListTest test;
-
-   test.test();
-
-   return 0;
-}
