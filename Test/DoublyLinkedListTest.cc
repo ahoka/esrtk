@@ -1,6 +1,7 @@
 #include <DoublyLinkedList.hh>
 #include <DoublyLinkedItem.hh>
-#include <iostream>
+
+#include "catch.hpp"
 
 class TestItem : public DoublyLinkedItem<TestItem>
 {
@@ -21,14 +22,18 @@ public:
       return number;
    }
 
-//private:
+   bool operator==(const TestItem& other)
+   {
+      return number == other.number;
+   }
+
+private:
    int number;
 };
 
-class DoublyLinkedListTest
+SCENARIO("Iterators", "DoublyLinkedListTest")
 {
-public:
-   void test()
+   GIVEN("We have three items in a list")
    {
       TestItem n1 = 12;
       TestItem n2 = 23;
@@ -40,24 +45,48 @@ public:
       list.insertLast(&n2);
       list.insertLast(&n3);
 
-      std::cout << "Iterating forward using range:" << std::endl;
-      for (auto r = list.range(); !r.empty(); r.popFront())
+      WHEN("We forward iterate the list")
       {
-         TestItem& item = r.front();
-         std::cout << item << std::endl;
+         auto r = list.range();
+
+         THEN("We get them in order")
+         {
+            REQUIRE(!r.empty());
+            REQUIRE(r.front().get() == n1);
+            r.popFront();
+
+            REQUIRE(!r.empty());
+            REQUIRE(r.front().get() == n2);
+            r.popFront();
+
+            REQUIRE(!r.empty());
+            REQUIRE(r.front().get() == n3);
+            r.popFront();
+
+            REQUIRE(r.empty());
+         }
       }
 
-      std::cout << "Iterating backward using range:" << std::endl;
-      for (auto r = list.range(); !r.empty(); r.popBack())
+      WHEN("We reverse iterate the list")
       {
-         TestItem& item = r.back();
-         std::cout << item << std::endl;
-      }
+         auto r = list.range();
 
-      std::cout << "Iterating forward using iterator:" << std::endl;
-      for (auto item : list)
-      {
-         std::cout << item << std::endl;
+         THEN("We get them in reverse order")
+         {
+            REQUIRE(!r.empty());
+            REQUIRE(r.back().get() == n3);
+            r.popBack();
+
+            REQUIRE(!r.empty());
+            REQUIRE(r.back().get() == n2);
+            r.popBack();
+
+            REQUIRE(!r.empty());
+            REQUIRE(r.back().get() == n1);
+            r.popBack();
+
+            REQUIRE(r.empty());
+         }
       }
    }
-};
+}
