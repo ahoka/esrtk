@@ -31,7 +31,7 @@ private:
    int number;
 };
 
-SCENARIO("Iterators", "DoublyLinkedListTest")
+SCENARIO("Iterators", "[DoublyLinkedList]")
 {
    GIVEN("We have three items in a list")
    {
