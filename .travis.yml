@@ -1,0 +1,13 @@
+language: cpp
+
+cache:
+  directories:
+    - i686-elf
+
+before_install:
+  - wget http://icarus.kodfodrasz.net/i686-elf.tar.xz
+  - tar xJf i686-elf.tar.xz
+
+script:
+  - make autobuild
+  - make test
