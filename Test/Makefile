@@ -24,4 +24,7 @@ testsuite: $(OBJ)
 clean:
 	-rm testsuite $(OBJ) $(DEP)
 
+check: testsuite
+	./testsuite
+
 -include $(DEP)
