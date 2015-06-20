@@ -6,7 +6,7 @@ CPP=g++ -E
 CPPFLAGS=-I../Templates
 
 CXX=g++
-CXXFLAGS=-std=c++14 -O2 -g $(CPPFLAGS)
+CXXFLAGS=-std=c++11 -O2 -g $(CPPFLAGS)
 
 SRC=	Catch.cc DoublyLinkedListTest.cc SinglyLinkedListTest.cc
 OBJ=	$(SRC:.cc=.cc.o)
