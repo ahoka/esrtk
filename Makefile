@@ -33,3 +33,7 @@ clean:
 .PHONY: autobuild
 autobuild:
 	${SYSMAKECMD} autobuild
+
+.PHONY: test
+test:
+	cd Test && make check
