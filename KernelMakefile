@@ -12,7 +12,7 @@ PLATFORM=	X86
 BUILD_HOST!=	uname
 
 CROSS=		${MACHINE}-elf-
-TOOLPREFIX=	/opt/${MACHINE}-elf/bin/
+#TOOLPREFIX?=	/opt/${MACHINE}-elf/bin/
 
 QEMU=		qemu-system-i386
 
