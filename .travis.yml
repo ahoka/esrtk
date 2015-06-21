@@ -15,4 +15,10 @@ script:
   - make test
 
 notifications:
-  irc: "irc.freenode.net#metrika"
+  irc:
+    channels:
+      - "irc.freenode.net#metrika"
+    template:
+      - "%{repository}#%{build_number} (%{author}: %{commit_message}): %{message}"
+      - "Change view : %{compare_url}"
+      - "Build details : %{build_url}"
