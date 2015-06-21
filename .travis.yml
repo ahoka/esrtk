@@ -7,9 +7,11 @@ cache:
     - i686-elf
 
 before_install:
+  - sudo add-apt-repository ppa:ubuntu-toolchain-r/test
   - sudo apt-get update -qq
-  - sudo apt-get install -y pmake
+  - sudo apt-get install pmake
   - sudo ln -s /usr/bin/pmake /usr/bin/bmake
+  - sudo apt-get install gcc-5 g++-5
   - wget -N 'https://onedrive.live.com/download?cid=C3ABD0BC4C0161ED&resid=C3ABD0BC4C0161ED%2115450&authkey=AEvNf51Lv0uc9aU' -O i686-elf.tar.xz
   - tar xJf i686-elf.tar.xz
   - export PATH=${PATH}:$PWD/i686-elf/bin
