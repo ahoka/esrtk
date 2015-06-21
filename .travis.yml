@@ -5,9 +5,12 @@ cache:
     - i686-elf
 
 before_install:
-  - wget http://icarus.kodfodrasz.net/i686-elf.tar.xz
+  - wget -N 'https://onedrive.live.com/download?cid=C3ABD0BC4C0161ED&resid=C3ABD0BC4C0161ED%2115450&authkey=AEvNf51Lv0uc9aU' -O i686-elf.tar.xz
   - tar xJf i686-elf.tar.xz
 
 script:
   - make autobuild
   - make test
+
+notifications:
+  irc: "irc.freenode.net#metrika"
