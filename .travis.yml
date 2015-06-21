@@ -1,13 +1,15 @@
 language: cpp
 
+sudo: required
+
 cache:
   directories:
     - i686-elf
 
 before_install:
-  - apt-get update -qq
-  - apt-get install -y pmake
-  - ln -s /usr/bin/pmake /usr/bin/bmake
+  - sudo apt-get update -qq
+  - sudo apt-get install -y pmake
+  - sudo ln -s /usr/bin/pmake /usr/bin/bmake
   - wget -N 'https://onedrive.live.com/download?cid=C3ABD0BC4C0161ED&resid=C3ABD0BC4C0161ED%2115450&authkey=AEvNf51Lv0uc9aU' -O i686-elf.tar.xz
   - tar xJf i686-elf.tar.xz
 
