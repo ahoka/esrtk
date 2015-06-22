@@ -2,11 +2,11 @@
 
 all: testsuite
 
-CPP=g++ -E
-CPPFLAGS=-I../Templates
-
-CXX=g++
+CXX?=g++
 CXXFLAGS=-std=c++11 -O2 -g $(CPPFLAGS)
+
+CPP=$(CXX) -E
+CPPFLAGS=-I../Templates
 
 SRC=	Catch.cc DoublyLinkedListTest.cc SinglyLinkedListTest.cc
 OBJ=	$(SRC:.cc=.cc.o)

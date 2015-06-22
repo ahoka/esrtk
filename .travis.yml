@@ -15,6 +15,8 @@ before_install:
   - wget -N 'https://onedrive.live.com/download?cid=C3ABD0BC4C0161ED&resid=C3ABD0BC4C0161ED%2115450&authkey=AEvNf51Lv0uc9aU' -O i686-elf.tar.xz
   - tar xJf i686-elf.tar.xz
   - export PATH=${PATH}:$PWD/i686-elf/bin
+  - export CXX=g++-5
+  - export CC=gcc-5
 
 script:
   - make autobuild
