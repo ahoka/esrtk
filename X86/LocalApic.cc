@@ -12,7 +12,11 @@
 #include <cstdio>
 
 LocalApic::LocalApic(uintptr_t physicalAddress)
-   : physicalAddressM(physicalAddress)
+   : apicAddressM(0),
+     physicalAddressM(physicalAddress),
+     idM(0),
+     flagsM(0),
+     enabledM(false)
 {
    init();
 
@@ -22,8 +26,11 @@ LocalApic::LocalApic(uintptr_t physicalAddress)
 }
 
 LocalApic::LocalApic(uintptr_t physicalAddress, uint32_t id)
-   : physicalAddressM(physicalAddress),
-     idM(id)
+   : apicAddressM(0),
+     physicalAddressM(physicalAddress),
+     idM(id),
+     flagsM(0),
+     enabledM(false)
 {
    printf("Local APIC at %p, Id: %u\n", (void*)physicalAddressM, idM);
 }
@@ -92,7 +99,7 @@ LocalApic::init()
    }
 
    uint64_t msr = x86_rdmsr(IA32_APIC_BASE);
-   
+
    apicAddressM = msr & IA32_APIC_BASE_ADDRESS_MASK;
 
    if (msr & IA32_APIC_BASE_BSP)
@@ -171,7 +178,7 @@ LocalApic::init()
    write32(DivideConfig, 0b1011);
    uint32_t timerLvt = createLocalVectorTable(Lvt::OneShot, Lvt::Masked, 255);
    write32(LvtTimer, timerLvt);
-   
+
    printf("Calibrating LAPIC timer\n");
 
    uint64_t sum = 0;
@@ -195,7 +202,7 @@ void
 LocalApic::setLocalInt(int pin)
 {
 //   write32(LvtLint0, createLocalVectorTable(DeliveryModeExtInt, 0));
-   
+
    // XXX this should come from acpi
    write32(LvtLint1, createLocalVectorTable(Lvt::DeliveryModeNmi, 0));
 }
