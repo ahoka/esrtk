@@ -6,7 +6,12 @@ using namespace Kernel;
 
 namespace
 {
-   unsigned long nextId = 0;
+   volatile unsigned long nextId = 0;
+
+   unsigned long getNextId()
+   {
+      return __sync_fetch_and_add(&nextId, 1);
+   }
 };
 
 std::list<Process*>&
@@ -18,7 +23,7 @@ getProcessList()
 }
 
 Process::Process()
-   : idM(nextId++),
+   : idM(getNextId()),
      contextM(new ProcessContext)
 {
    printf("Process creation: %p\n", this);
@@ -26,7 +31,8 @@ Process::Process()
 }
 
 Process::Process(uintptr_t pd)
-   : contextM(new ProcessContext(pd))
+   : idM(getNextId()),
+     contextM(new ProcessContext(pd))
 {
    printf("Process creation: %p (existing pd: %p)\n", this, (void*)pd);
 }
@@ -34,12 +40,12 @@ Process::Process(uintptr_t pd)
 Process::~Process()
 {
    printf("Process deletion: %p\n", this);
-   
+
    for (auto& t : threadsM)
    {
       delete t;
    }
-   
+
    delete contextM;
 }
 
