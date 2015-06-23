@@ -3,6 +3,9 @@
 
 #include <Debug.hh>
 
+#include <cstddef>
+#include <cstdint>
+
 class SegmentList;
 
 class Segment
@@ -15,9 +18,7 @@ public:
       allocated(false),
       checksum(0)
    {
-//      Debug::verbose("Segment(%p)\n", this);
-//      updateChecksum();
-//      dump();
+      updateChecksum();
    }
 
    void* operator new (std::size_t, void* storage)

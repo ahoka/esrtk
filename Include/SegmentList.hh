@@ -1,9 +1,16 @@
 #ifndef SEGMENTLIST_HH
 #define SEGMENTLIST_HH
 
+#include <Segment.hh>
+
 class SegmentList
 {
 public:
+   SegmentList()
+      : countM(0)
+   {
+   }
+
    class Iterator
    {
    public:

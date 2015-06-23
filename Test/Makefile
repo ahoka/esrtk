@@ -6,12 +6,12 @@ CXX?=g++
 CXXFLAGS=-std=c++11 -O2 -g $(CPPFLAGS)
 
 CPP=$(CXX) -E
-CPPFLAGS=-I../Templates -I../Include
+CPPFLAGS=-std=c++11 -I../Templates -I../Include
 
 MOCK=	Mock/Debug.cc
 
 SRC=	Catch.cc DoublyLinkedListTest.cc SinglyLinkedListTest.cc \
-	SegmentTest.cc $(MOCK)
+	SegmentTest.cc SegmentListTest.cc $(MOCK)
 
 OBJ=	$(SRC:.cc=.cc.o)
 DEP=	$(SRC:.cc=.cc.d)
