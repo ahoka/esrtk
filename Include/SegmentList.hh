@@ -22,14 +22,14 @@ public:
 
       bool hasNext()
       {
-	 return next->getSize() != 0;
+	 return next != &segmentList->head;
       }
 
       Segment& getNext()
       {
 	 Segment* item = next;
 
-	 KASSERT(item->getSize() != 0);
+	 KASSERT(item != &segmentList->head);
 
 	 next = next->nextSegment;
 
