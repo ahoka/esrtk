@@ -7,6 +7,9 @@ SCENARIO("Kernel heap allocator SegmentList", "[kernelheap]")
    GIVEN("A segment list")
    {
       SegmentList list;
+      Segment* s2 = new Segment();
+      Segment* s3 = new Segment();
+      Segment* s1 = new Segment();
 
       WHEN("The list is empty")
       {
@@ -28,12 +31,9 @@ SCENARIO("Kernel heap allocator SegmentList", "[kernelheap]")
 
       WHEN("An item is added")
       {
-         Segment* s1 = new Segment();
-         s1->setSize(1);
-
          list.add(s1);
 
-         AND_WHEN("Creating an iterator")
+         AND_WHEN("An iterator is created")
          {
             auto i = list.getIterator();
 
@@ -52,18 +52,49 @@ SCENARIO("Kernel heap allocator SegmentList", "[kernelheap]")
                }
             }
          }
+
+         AND_WHEN("An iterator is created")
+         {
+            auto i = list.getIterator();
+
+            THEN("The item count is one")
+            {
+               REQUIRE(list.count() == 1);
+
+               AND_WHEN("Calling remove on the iterator")
+               {
+                  i.remove();
+
+                  THEN("There is no next item")
+                  {
+                     REQUIRE(i.hasNext() == false);
+
+                     AND_THEN("The count is zero")
+                     {
+                        REQUIRE(list.count() == 0);
+                     }
+                  }
+               }
+            }
+         }
       }
 
-      WHEN("Three items are present")
+      WHEN("Three items are added to the list")
       {
-         Segment* s2 = new Segment();
-         Segment* s3 = new Segment();
-
-         s2->setSize(2);
-         s3->setSize(3);
-
+         list.add(s1);
          list.add(s2);
          list.add(s3);
+
+         AND_WHEN("An iterator is created")
+         {
+            auto i = list.getIterator();
+
+            THEN("The the items can be accessed in order")
+            {
+               REQUIRE(i.hasNext());
+               CHECK(&i.getNext() == s1);
+            }
+         }
       }
    }
 }
