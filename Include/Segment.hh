@@ -1,6 +1,8 @@
 #ifndef SEGMENT_HH
 #define SEGMENT_HH
 
+#include <Debug.hh>
+
 class SegmentList;
 
 class Segment
@@ -28,8 +30,6 @@ public:
       KASSERT(verifyChecksum());
 
       size = newSize;
-
-      updateChecksum();
    }
 
    std::size_t getSize() const
@@ -58,8 +58,6 @@ public:
       KASSERT(verifyChecksum());
 
       allocated = true;
-
-      updateChecksum();
    }
 
    void markUnallocated()
@@ -67,8 +65,6 @@ public:
       KASSERT(verifyChecksum());
 
       allocated = false;
-
-      updateChecksum();
    }
 
    void updateChecksum()
@@ -80,39 +76,23 @@ public:
       for (std::size_t i = 0; i < sizeof(*this); i++, p++)
       {
 	 sum ^= *p;
-//	 Debug::verbose("0x%x -> 0x%x\n", *p, sum);
       }
-
-//      Debug::verbose("Checksum updated: 0x%x\n", sum);
-//      dump();
 
       checksum = sum;
 
-      /// XXX debug
-      verifyChecksum();
+      KASSERT(verifyChecksum());
    }
 
    bool verifyChecksum() const
    {
-      return true;
       const uint8_t* p = (const uint8_t*)this;
       uint8_t sum = 0;
       for (std::size_t i = 0; i < sizeof(*this); i++, p++)
       {
 	 sum ^= *p;
-//	 Debug::verbose("0x%x -> 0x%x\n", *p, sum);
       }
 
-      if (sum != 0)
-      {
-//	 dump();
-	 Debug::panic("Allocator checksum error, possible memory corruption: 0x%x\n", sum);
-      }
-      else
-      {
-	 Debug::verbose("Checksum OK\n");
-	 return true;
-      }
+      return sum == 0;
    }
 
    void dump() const

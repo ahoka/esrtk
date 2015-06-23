@@ -9,3 +9,4 @@ pad
 *.log
 .depend
 nbproject
+testsuite
