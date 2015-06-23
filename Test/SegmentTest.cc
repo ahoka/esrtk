@@ -29,6 +29,11 @@ SCENARIO("Memory segment representation", "[kernelheap]")
             CHECK(segment->isAllocated() == false);
          }
 
+         THEN("The segment checksum is valid")
+         {
+            CHECK(segment->verifyChecksum() == true);
+         }
+
          AND_WHEN("Updating the checksum")
          {
             segment->updateChecksum();
