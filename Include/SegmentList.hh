@@ -38,9 +38,9 @@ public:
 
       void remove()
       {
-	 KASSERT(next->getSize() != 0);
-
 	 Segment* item = next->prevSegment;
+
+         KASSERT(item != &segmentList->head);
 
 	 Segment* oldNext = item->nextSegment;
 	 Segment* oldPrev = item->prevSegment;

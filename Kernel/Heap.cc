@@ -55,21 +55,7 @@ Heap::allocateBackend(std::size_t size)
    std::size_t rsize = roundTo(size, PageSize);
 
    void* data;
-#if 0
-   if (rsize == PageSize)
-   {
-      uintptr_t page = Memory::getPage();
-      KASSERT(page != 0);
-
-      data = reinterpret_cast<void*>(Memory::mapAnonymousPage(page));
-   }
-   else
-   {
-      data = reinterpret_cast<void*>(Memory::mapAnonymousRegion(rsize));
-   }
-#else
    data = reinterpret_cast<void*>(Memory::mapAnonymousRegion(rsize));
-#endif
 
 #ifdef DEBUG
    printf("Allocating from backend: %p\n", data);
@@ -127,6 +113,7 @@ Heap::allocate(std::size_t size)
 
    segment->setSize(rsize - sizeof(Segment));
    segment->markAllocated();
+   segment->updateChecksum();
 
 #ifdef DEBUG
    printf("Debug: allocated %p (%p)\n", (void*)segment, reinterpret_cast<void*>(segment->getAddress()));
@@ -154,7 +141,6 @@ Heap::deallocate(void *data)
    spinlock_softirq_enter(&heapLock);
 
    freeList.add(segment);
-
    segment->updateChecksum();
 
    spinlock_softirq_exit(&heapLock);

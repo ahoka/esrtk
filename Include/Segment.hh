@@ -33,43 +33,31 @@ public:
 
    void setSize(uintptr_t newSize)
    {
-      KASSERT(verifyChecksum());
-
       size = newSize;
    }
 
    std::size_t getSize() const
    {
-      KASSERT(verifyChecksum());
-
       return size;
    }
 
    uintptr_t getAddress() const
    {
-      KASSERT(verifyChecksum());
-
       return (uintptr_t(this) + sizeof(*this));
    }
 
    bool isAllocated() const
    {
-      KASSERT(verifyChecksum());
-
       return allocated;
    }
 
    void markAllocated()
    {
-      KASSERT(verifyChecksum());
-
       allocated = true;
    }
 
    void markUnallocated()
    {
-      KASSERT(verifyChecksum());
-
       allocated = false;
    }
 
@@ -85,8 +73,6 @@ public:
       }
 
       checksum = sum;
-
-      KASSERT(verifyChecksum());
    }
 
    bool verifyChecksum() const
