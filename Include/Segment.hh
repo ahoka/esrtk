@@ -21,9 +21,14 @@ public:
       updateChecksum();
    }
 
-   void* operator new (std::size_t, void* storage)
+   void* operator new(std::size_t, void* storage)
    {
       return storage;
+   }
+
+   void* operator new(std::size_t size)
+   {
+      return ::operator new(size);
    }
 
    void setSize(uintptr_t newSize)
