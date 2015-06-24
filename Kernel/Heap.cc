@@ -11,7 +11,7 @@ using namespace Kernel;
 
 static spinlock_softirq_t heapLock = SPINLOCK_SOFTIRQ_STATIC_INITIALIZER;
 
-#define DEBUG
+#undef DEBUG
 
 Heap::Heap()
    : freeList()
@@ -80,11 +80,11 @@ Heap::allocate(std::size_t size)
 
    for (auto s = freeList.begin(); s != freeList.end(); ++s)
    {
-      s->dump();
-
       if (s->getSize() >= size)
       {
+#ifdef DEBUG
 	 printf("Found item with size: %zu\n", s->getSize());
+#endif
 	 freeList.remove(s);
          spinlock_softirq_exit(&heapLock);
 
