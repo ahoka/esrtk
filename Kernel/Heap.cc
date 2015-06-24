@@ -78,26 +78,23 @@ Heap::allocate(std::size_t size)
    printf("Allocating %zu, FreeList items: %lu\n", size, freeList.count());
 #endif
 
-   auto iterator = freeList.getIterator();
-   while (iterator.hasNext())
+   for (auto s = freeList.begin(); s != freeList.end(); ++s)
    {
-      auto s = iterator.getNext();
+      s->dump();
 
-      s.dump();
-
-      if (s.getSize() >= size)
+      if (s->getSize() >= size)
       {
-	 printf("Found item with size: %zu\n", s.getSize());
-	 iterator.remove();
+	 printf("Found item with size: %zu\n", s->getSize());
+	 freeList.remove(s);
          spinlock_softirq_exit(&heapLock);
 
-	 s.updateChecksum();
-	 s.markAllocated();
+	 s->updateChecksum();
+	 s->markAllocated();
 #ifdef DEBUG
-	 printf("Debug: allocating from freelist: %p\n", (void*)s.getAddress());
+	 printf("Debug: allocating from freelist: %p\n", (void*)s->getAddress());
 #endif
-         std::memset((void*)s.getAddress(), 0, s.getSize());
-	 return reinterpret_cast<void*>(s.getAddress());
+         std::memset((void*)s->getAddress(), 0, s->getSize());
+	 return reinterpret_cast<void*>(s->getAddress());
       }
    }
 

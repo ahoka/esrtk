@@ -12,9 +12,9 @@ class Segment
 {
 public:
    Segment() :
-      size(0),
-      prevSegment(this),
-      nextSegment(this),
+      sizeM(0),
+      prevM(this),
+      nextM(this),
       allocated(false),
       checksum(0)
    {
@@ -33,12 +33,12 @@ public:
 
    void setSize(uintptr_t newSize)
    {
-      size = newSize;
+      sizeM = newSize;
    }
 
    std::size_t getSize() const
    {
-      return size;
+      return sizeM;
    }
 
    uintptr_t getAddress() const
@@ -98,18 +98,18 @@ public:
 		  "next:	     %p\n",
 		  this,
 		  (void*)getAddress(),
-		  size,
+		  sizeM,
 		  allocated,
 		  checksum,
-		  prevSegment,
-		  nextSegment);
+		  prevM,
+		  nextM);
    }
 
 private:
-   std::size_t size;
+   std::size_t sizeM;
 
-   Segment* prevSegment;
-   Segment* nextSegment;
+   Segment* prevM;
+   Segment* nextM;
 
    bool allocated;
    uint8_t checksum;

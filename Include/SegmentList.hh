@@ -7,72 +7,119 @@ class SegmentList
 {
 public:
    SegmentList()
-      : countM(0)
+      : headM(),
+        countM(0)
    {
    }
 
    class Iterator
    {
    public:
-      Iterator(SegmentList* list)
-	 : next(list->head.nextSegment),
-           segmentList(list)
+      Iterator()
+         : next(nullptr)
       {
       }
 
-      bool hasNext()
+      Iterator(const Iterator& other)
+         : next(other.next)
       {
-	 return next != &segmentList->head;
       }
 
-      Segment& getNext()
+      Iterator& operator=(const Iterator& other)
       {
-	 Segment* item = next;
+         if (&other != this)
+         {
+            next = other.next;
+         }
 
-	 KASSERT(item != &segmentList->head);
-
-	 next = next->nextSegment;
-
-	 return *item;
+         return *this;         
       }
 
-      void remove()
+      bool operator==(const Iterator& other)
       {
-         KASSERT(next != &segmentList->head);
+         return next == other.next;
+      }
 
-	 Segment* item = next->prevSegment;
+      bool operator!=(const Iterator& other)
+      {
+         return !(*this == other);
+      }
 
-	 Segment* oldNext = item->nextSegment;
-	 Segment* oldPrev = item->prevSegment;
+      Segment* operator*()
+      {
+	 return next;
+      }
 
-	 oldPrev->nextSegment = oldNext;
-	 oldNext->prevSegment = oldPrev;
+      Segment* operator->()
+      {
+         return next;
+      }
 
-         --segmentList->countM;
+      Iterator& operator++()
+      {
+	 next = next->nextM;
+
+         return *this;
+      }
+
+      Iterator operator++(int)
+      {
+         Segment* oldNext = next;
+         next = next->nextM;
+
+         return Iterator(oldNext);
       }
 
    private:
+      Iterator(Segment* next)
+	 : next(next)
+      {
+      }
+
       Segment *next;
-      SegmentList *segmentList;
+
+      friend class SegmentList;
    };
 
-   SegmentList::Iterator getIterator()
+   SegmentList::Iterator begin()
    {
-      return SegmentList::Iterator(this);
+      return SegmentList::Iterator(this->headM.nextM);
+   }
+
+   SegmentList::Iterator end()
+   {
+      SegmentList::Iterator iterator;
+      iterator.next = &headM;
+
+      return iterator;
    }
 
    void add(Segment* item)
    {
-      Segment* prev = head.prevSegment;
-      Segment* next = &head;
+      Segment* prev = headM.prevM;
+      Segment* next = &headM;
 
-      item->nextSegment = next;
-      item->prevSegment = prev;
-
-      prev->nextSegment = item;
-      next->prevSegment = item;
+      item->nextM = next;
+      item->prevM = prev;
+      prev->nextM = item;
+      next->prevM = item;
 
       ++countM;
+   }
+
+   Iterator remove(Iterator iterator)
+   {
+      Segment* item = iterator.next;
+
+      Segment* oldNext = item->nextM;
+      Segment* oldPrev = item->prevM;
+
+      oldPrev->nextM = oldNext;
+      oldNext->prevM = oldPrev;
+
+      --countM;
+
+      return Iterator(oldNext);
    }
 
    unsigned long count()
@@ -81,7 +128,7 @@ public:
    }
 
 private:
-   Segment head;
+   Segment headM;
    unsigned long countM;
 };
 
