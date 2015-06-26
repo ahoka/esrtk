@@ -37,6 +37,12 @@ Process::Process(uintptr_t pd)
    printf("Process creation: %p (existing pd: %p)\n", this, (void*)pd);
 }
 
+Process*
+Process::createProcess()
+{
+   return new Process();
+}
+
 Process::~Process()
 {
    printf("Process deletion: %p\n", this);

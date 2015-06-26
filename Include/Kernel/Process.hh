@@ -8,25 +8,31 @@
 namespace Kernel
 {
    class ProcessContext;
+   class Scheduler;
    
    class Process final
    {
    public:
-      Process();
-      explicit Process(uintptr_t);
       ~Process();
 
       Thread* createThread();
       ProcessContext* getContext() const;
 
       void dump();
+
+      static Process* createProcess();
       
       static void printAll();
 
      private:
+      Process();
+      explicit Process(uintptr_t);
+
       unsigned long idM;
       ProcessContext* contextM;
       std::list<Thread*> threadsM;
+
+      friend class ::Kernel::Scheduler;
    };
 };
 

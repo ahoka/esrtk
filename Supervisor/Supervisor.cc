@@ -67,8 +67,8 @@ Supervisor::run()
    Kernel::Thread* t2 = Kernel::Thread::createKernelThread();
    Kernel::Thread* t3 = Kernel::Thread::createKernelThread();
 
-   Kernel::Process p;
-   p.createThread();
+   Kernel::Process* p = Kernel::Process::createProcess();
+   p->createThread();
 
    unsigned int seed = (unsigned int)rdtsc();
    printf("seeding prng: 0x%x\n", seed);
