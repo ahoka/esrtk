@@ -20,21 +20,23 @@ public:
 
    static int getInterruptLevel();
 
-   static void setController(InterruptController* interruptController);
-   static void handleInterrupt(irq_t irq);
-
    static void printStatistics();
+
+   // XXX should not be accessed globally
+   static void handleInterrupt(irq_t irq);
 
 private:
    static void appendHandler(InterruptHandler* h, InterruptHandler* handler);
    static void removeHandler(InterruptHandler* h, InterruptHandler* handler);
 
+   static void setController(InterruptController* interruptController);
+
    enum
    {
       MaxInterrupts = 16
    };
-   static InterruptController* controller;
 
+   static InterruptController* controller;
    static InterruptHandler* getInterruptHandler(unsigned int interrupt);
 
    friend class InterruptController;
