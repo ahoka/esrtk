@@ -3,6 +3,21 @@
 #include <InterruptController.hh>
 
 #include <cstdio>
+#include <cstdint>
+
+// interrupt handler collecting statistics
+class DefaultInterruptHandler : public InterruptHandler
+{
+public:
+   DefaultInterruptHandler();
+   void handleInterrupt();
+
+   uint64_t getCounter();
+   void executeAllHandlers();
+
+private:
+   uint64_t counter;
+};
 
 InterruptController* Interrupt::controller = 0;
 
@@ -139,7 +154,7 @@ Interrupt::disableInterrupt(irq_t irq)
 //   printf("Interrupt::disableInterrupt(%u)\n", irq);
 
    KASSERT(controller != 0);
-   controller->disableInterrupt(irq);   
+   controller->disableInterrupt(irq);
 
    return true;
 }
@@ -159,7 +174,7 @@ Interrupt::handleInterrupt(irq_t irq)
    KASSERT(irq < MaxInterrupts);
 
    static_cast<DefaultInterruptHandler*>(getInterruptHandler(irq))->executeAllHandlers();
-   
+
    KASSERT(controller != 0);
    controller->endOfInterrupt(irq);
 }
