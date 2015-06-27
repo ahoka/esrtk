@@ -1,23 +1,17 @@
-/* 
- * File:   Debug.cpp
- * Author: edmmhka
- * 
- * Created on August 17, 2012, 1:39 PM
- */
-
 #include <Debug.hh>
-#include <StackTrace.hh>
-#include <Power.hh>
-#include <Clock.hh>
+#include <Kernel/StackTrace.hh>
+#include <Kernel/Power.hh>
+#include <Kernel/Clock.hh>
+#include <Kernel/Cpu.hh>
+
 #include <cstdio>
-#include <Hal.hh>
 
 Debug::DebugLevel Debug::debugLevel = Debug::DebugLevel::Verbose;
 
 void
 Debug::panic(const char* message, ...)
 {
-   Hal::disableLocalInterrupts();
+   Cpu::disableLocalInterrupts();
 
    va_list va;
    va_start(va, message);

@@ -21,7 +21,7 @@ printCpuFeatures()
 {
    struct cpuid id;
 
-   cpuid(1, &id);
+   x86_cpuid(1, &id);
 
    if (id.edx & CPUID::FPU)
    {

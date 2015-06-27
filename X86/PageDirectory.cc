@@ -254,7 +254,7 @@ PageDirectory::mapPage(uint32_t vAddress, uint32_t pAddress, uint32_t** pageDire
 
    vpt[addressToPteIndex(vAddress)] = (unsigned long )pAddress | Present | Writable;
 
-   invlpg(vAddress);
+   x86_invlpg(vAddress);
 
    return true;
 }
@@ -292,7 +292,7 @@ PageDirectory::unmapPage(uint32_t vAddress, uint32_t** pageDirectory)
 
    vpt[addressToPteIndex(vAddress)] = 0;
 
-   invlpg(vAddress);
+   x86_invlpg(vAddress);
 
    return true;
 }
@@ -331,7 +331,7 @@ PageDirectory::mapPage(uint32_t pageDirectoryBase, uint32_t pageTableBase,
       *pde = newPde;
 
       uintptr_t newpte = (uintptr_t )addressToPte(vAddress, pageTableBase) & ~PageMask;
-      invlpg(newpte);
+      x86_invlpg(newpte);
 
       std::memset((void *)newpte, 0, PageSize);
    }
@@ -380,7 +380,7 @@ PageDirectory::mapPage(uint32_t pageDirectoryBase, uint32_t pageTableBase,
 
    *pte = (pAddress & ~0xfffu) | fl;
 
-   invlpg(vAddress);
+   x86_invlpg(vAddress);
 
 #ifdef DEBUG
    printf("Results: pde %p, pte %p\n", (void* )*pde, (void* )*pte);
@@ -426,7 +426,7 @@ PageDirectory::unmapPage(uint32_t vAddress)
    // TODO free page directory if empty
    *pte = Writable;
 
-   invlpg(vAddress);
+   x86_invlpg(vAddress);
 
    return true;
 }

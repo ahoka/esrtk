@@ -1,8 +1,7 @@
 #include <Mutex.hh>
 #include <Debug.hh>
-#include <Interrupt.hh>
 #include <cstdio>
-#include <X86/Processor.hh>
+#include <Kernel/Cpu.hh>
 
 //
 // DO NOT CALL OTHER CLASSES/FUNCTIONS FROM HERE!
@@ -23,8 +22,8 @@ Mutex::~Mutex()
 void
 Mutex::enter()
 {
-   eflagsM = get_eflags();
-   x86_cli();
+   Cpu::saveLocalInterrupts(eflagsM);
+   Cpu::disableLocalInterrupts();
    long ret = spinlock_enter(&lockM);
 
    KASSERT(ret == 0);
@@ -43,10 +42,7 @@ Mutex::exit()
 {
    long ret = spinlock_exit(&lockM);
 
-   if (eflagsM & InterruptEnable)
-   {
-      x86_sti();
-   }
+   Cpu::restoreLocalInterrupts(eflagsM);
 
    KASSERT(ret == 1);
 }

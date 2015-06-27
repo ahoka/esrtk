@@ -1,5 +1,5 @@
-#ifndef ASSEMBLY_HH
-#define ASSEMBLY_HH
+#ifndef PROCESSOR_HH
+#define PROCESSOR_HH
 
 #include <stdint.h>
 
@@ -53,25 +53,25 @@ extern "C" void x86_wrmsr(uint32_t address, uint64_t value);
 extern "C" uint64_t x86_rdmsr(uint32_t address);
 extern "C" uint64_t x86_rdpmc(uint32_t counter);
 
-extern "C" uint64_t rdtsc();
+extern "C" uint64_t x86_rdtsc();
 
-extern "C" void cpuid(uint32_t eax, cpuid* result);
-extern "C" uint32_t cpuid0(char* result);
+extern "C" void x86_cpuid(uint32_t eax, cpuid* result);
+extern "C" uint32_t x86_cpuid0(char* result);
 
-extern "C" uint32_t get_eflags();
-extern "C" void set_eflags(uint32_t eflags);
+extern "C" uint32_t x86_get_eflags();
+extern "C" void x86_set_eflags(uint32_t eflags);
 
-extern "C" uint32_t get_cr2();
+extern "C" uint32_t x86_get_cr2();
 
-extern "C" void invlpg(uint32_t page);
-extern "C" void set_cr3(uint32_t cr3);
-extern "C" uint32_t get_cr3();
-extern "C" void setCr0(uint32_t cr0);
-extern "C" uint32_t get_cr0();
-extern "C" void set_cr4(uint32_t cr4);
-extern "C" uint32_t get_cr4();
+extern "C" void x86_invlpg(uint32_t page);
+extern "C" void x86_set_cr3(uint32_t cr3);
+extern "C" uint32_t x86_get_cr3();
+extern "C" void x86_set_cr0(uint32_t cr0);
+extern "C" uint32_t x86_get_cr0();
+extern "C" void x86_set_cr4(uint32_t cr4);
+extern "C" uint32_t x86_get_cr4();
 
-extern "C" uintptr_t get_eip();
+extern "C" uintptr_t x86_get_eip();
 
 extern "C" void x86_init_paging(uint32_t cr3);
 

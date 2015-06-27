@@ -1,5 +1,5 @@
 #include <spinlock.h>
-#include <X86/Processor.hh>
+#include <Kernel/Cpu.hh>
 
 extern "C" void
 spinlock_softirq_init(spinlock_softirq_t* lock)
@@ -11,8 +11,8 @@ spinlock_softirq_init(spinlock_softirq_t* lock)
 extern "C" long
 spinlock_softirq_enter(spinlock_softirq_t* lock)
 {
-   lock->flags = get_eflags();
-   x86_cli();
+   Cpu::saveLocalInterrupts(lock->flags);
+   Cpu::disableLocalInterrupts();
 
    return spinlock_enter(&lock->lock);
 }
@@ -22,10 +22,7 @@ spinlock_softirq_exit(spinlock_softirq_t* lock)
 {
    long ret = spinlock_exit(&lock->lock);
 
-   if (lock->flags & InterruptEnable)
-   {
-      x86_sti();
-   }
+   Cpu::restoreLocalInterrupts(lock->flags);
 
    return ret;
 }

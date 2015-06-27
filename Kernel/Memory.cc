@@ -6,7 +6,6 @@
 #include <Templates.hh>
 #include <Modules.hh>
 #include <Memory.hh>
-#include <Hal.hh>
 
 #include <X86/ThreadContext.hh>
 #include <X86/PageDirectory.hh>
@@ -202,10 +201,6 @@ Memory::createKernelStack(uintptr_t& top)
    top = bottom + PageSize;
 
    printf("Creating new kernel stack: %p-%p (%u)\n", (void* )top, (void* )(bottom), PageSize);
-
-//   uintptr_t newStack = Hal::initKernelStack(top, &Kernel::Thread::main, );
-
-//   top = newStack;
 
    return true;
 }

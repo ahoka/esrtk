@@ -4,7 +4,7 @@
 #include <CompilerSupport.hh>
 #include <Kernel/Scheduler.hh>
 #include <Supervisor/Monitor.hh>
-#include <X86/Processor.hh>
+#include <Kernel/Cpu.hh>
 
 #include <Debug.hh>
 #include <Power.hh>
@@ -70,7 +70,7 @@ Supervisor::run()
    Kernel::Process* p = Kernel::Process::createProcess();
    p->createThread();
 
-   unsigned int seed = (unsigned int)rdtsc();
+   unsigned int seed = (unsigned int)Cpu::getTimestamp();
    printf("seeding prng: 0x%x\n", seed);
    srand(seed);
 

@@ -39,11 +39,11 @@ void
 ProcessContext::switchContext()
 {
    printf("Switching PD to %p\n", (void*)pageDirectoryM);
-   uint32_t flags = get_eflags();
+   uint32_t flags = x86_get_eflags();
    x86_cli();
-   uint32_t cr3 = get_cr3();
+   uint32_t cr3 = x86_get_cr3();
    printf("Old CR3: %p\n", (void*)cr3);
-   set_cr3(pageDirectoryM);
-   set_eflags(flags);
+   x86_set_cr3(pageDirectoryM);
+   x86_set_eflags(flags);
    printf("Switch OK\n");
 }

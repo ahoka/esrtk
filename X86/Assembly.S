@@ -51,9 +51,9 @@ FUNCTION(x86_wrmsr)
 	wrmsr
 	ret
 END(x86_wrmsr)
-	
+
 // rdtsc, serialized with cpuid instruction
-FUNCTION(rdtsc)
+FUNCTION(x86_rdtsc)
 	pushl %ebx
 	pushl %edi
         xorl %eax, %eax
@@ -62,10 +62,10 @@ FUNCTION(rdtsc)
         popl %edi
 	popl %ebx
 	ret
-END(rdtsc)
+END(x86_rdtsc)
 
 // cpuid(u32 eax, u32* result)
-FUNCTION(cpuid)
+FUNCTION(x86_cpuid)
 	pushl %ebx
 	pushl %edi
 	movl 12(%esp), %eax
@@ -81,10 +81,10 @@ FUNCTION(cpuid)
 	popl %edi
 	popl %ebx
 	ret
-END(cpuid)
+END(x86_cpuid)
 
 // u32 cpuid0(char* vendorid)
-FUNCTION(cpuid0)
+FUNCTION(x86_cpuid0)
 	pushl %ebx
 	pushl %edi
 	movl 12(%esp), %edi
@@ -100,69 +100,69 @@ FUNCTION(cpuid0)
 	popl %edi
 	popl %ebx
 	ret
-END(cpuid0)
+END(x86_cpuid0)
 
-FUNCTION(get_eflags)
+FUNCTION(x86_get_eflags)
 	pushfl
 	popl %eax
 	ret
-END(get_eflags)
+END(x86_get_eflags)
 
-FUNCTION(get_cr2)
+FUNCTION(x86_get_cr2)
         movl %cr2, %eax
         ret
-END(get_cr2)
+END(x86_get_cr2)
 
-FUNCTION(set_eflags)
+FUNCTION(x86_set_eflags)
 	movl 4(%esp), %eax
 	pushl %eax
 	popfl
 	ret
-END(set_eflags)
+END(x86_set_eflags)
 
-FUNCTION(set_cr3)
+FUNCTION(x86_set_cr3)
 	movl 4(%esp), %eax
         movl %eax, %cr3
 	ret
-END(set_cr3)
+END(x86_set_cr3)
 
-FUNCTION(get_cr3)
+FUNCTION(x86_get_cr3)
         movl %cr3, %eax
 	ret
-END(get_cr3)
+END(x86_get_cr3)
 
-FUNCTION(get_cr0)
+FUNCTION(x86_get_cr0)
         movl %cr0, %eax
         ret
-END(get_cr0)
+END(x86_get_cr0)
 
-FUNCTION(set_cr0)
+FUNCTION(x86_set_cr0)
         movl 4(%esp), %eax
         movl %eax, %cr0
         ret
-END(set_cr0)
+END(x86_set_cr0)
 
-FUNCTION(get_cr4)
+FUNCTION(x86_get_cr4)
         movl %cr4, %eax
         ret
-END(get_cr4)
+END(x86_get_cr4)
 
-FUNCTION(set_cr4)
+FUNCTION(x86_set_cr4)
         movl 4(%esp), %eax
         movl %eax, %cr4
         ret
-END(set_cr4)
+END(x86_set_cr4)
 
-FUNCTION(invlpg)
+FUNCTION(x86_invlpg)
         movl 4(%esp), %eax
         invlpg (%eax)
         ret
-END(invlpg)
+END(x86_invlpg)
 
-FUNCTION(get_eip)
+FUNCTION(x86_get_eip)
 	popl %eax
 	jmpl *%eax
-END(get_eip)
+END(x86_get_eip)
 
 FUNCTION(x86_init_paging)
         movl 4(%esp), %edx
@@ -176,7 +176,7 @@ FUNCTION(x86_init_paging)
         movl %eax, %cr4
 
         movl %edx, %cr3
-        
+
         movl %cr0, %eax
         orl $(1 << 31), %eax
         movl %eax, %cr0
@@ -186,7 +186,7 @@ END(x86_init_paging)
 
 // not yet finised
 #if 0
-	
+
 rgdt:
 .long 0x00000000
 .long 0x00000000
@@ -209,7 +209,7 @@ biosidt:
 .global bios16
 bios16:
 	cli
-	
+
         movl %cr0, %eax
         andl $(~(1 << 31)), %eax
         movl %eax, %cr0
@@ -238,7 +238,7 @@ p16:
 
 	movl $biosidt, %eax
 	lidt (%eax)
-	
+
         movl %cr0, %eax
         orl $(1 << 31), %eax
         movl %eax, %cr0

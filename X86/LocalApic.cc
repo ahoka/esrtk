@@ -71,7 +71,7 @@ LocalApic::probe()
    struct cpuid id;
 
    // probe
-   cpuid(1, &id);
+   x86_cpuid(1, &id);
    if ((id.ecx & (1 << 21)) == 0)
    {
       return 0;
@@ -85,7 +85,7 @@ LocalApic::init()
 {
    struct cpuid id;
 
-   cpuid(0x1, &id);
+   x86_cpuid(0x1, &id);
 
    if (id.eax & CPUID::APIC)
    {

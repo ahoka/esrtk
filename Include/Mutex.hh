@@ -2,6 +2,7 @@
 #define MUTEX_HH
 
 #include <spinlock.h>
+#include <cstdint>
 
 class Mutex
 {
@@ -15,7 +16,7 @@ public:
 
 private:
    int flagsM;
-   unsigned long eflagsM;
+   uint32_t eflagsM;
    spinlock_t lockM;
 };
 

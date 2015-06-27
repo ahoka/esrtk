@@ -1,18 +1,19 @@
 #ifndef __SPINLOCK_H__
 #define __SPINLOCK_H__
 
+#include <stdint.h>
+
 #ifdef __cplusplus
 extern "C"
 {
 #endif
 
 typedef long spinlock_t;
-typedef long irq_flags_t;
 
 typedef struct spinlock_softirq
 {
    spinlock_t lock;
-   irq_flags_t flags;
+   uint32_t flags;
 } spinlock_softirq_t;
 
 #define SPINLOCK_STATIC_INITIALIZER 0

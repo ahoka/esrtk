@@ -1,5 +1,3 @@
-#include <Hal.hh>
-
 #include <X86/ThreadContext.hh>
 #include <X86/Processor.hh>
 
@@ -59,7 +57,7 @@ ThreadContext::initUserStack(uintptr_t top, uintptr_t main, uintptr_t arg)
    CallFrame* frame = reinterpret_cast<CallFrame*>(top - sizeof(CallFrame));
    frame->arg = arg;
    frame->rip = 0;
-   
+
    InterruptFrame* context = (InterruptFrame*)stack;
 
    context->gs = UserDataSegment | 3;

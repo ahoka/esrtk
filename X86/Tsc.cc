@@ -31,9 +31,9 @@ Tsc::calibrate()
 
    for (auto i = 0; i < measurements; i++)
    {
-      uint64_t tsc0 = rdtsc();
+      uint64_t tsc0 = x86_rdtsc();
       Pit::msleep(delay);
-      uint64_t tsc1 = rdtsc();
+      uint64_t tsc1 = x86_rdtsc();
 
       results[i] = (unsigned long)(tsc1 - tsc0) / delay;
    }
@@ -68,7 +68,7 @@ Tsc::calibrate()
 
    // Enable Channel 2, disable speaker
    outb(0x61, (keyboard & ~0x2) | 0x1);
-   
+
    outb(0xb0, 0x43);
 
    unsigned int ms = 10u;
@@ -80,8 +80,8 @@ Tsc::calibrate()
    {
       outb(divisor & 0xff, 0x42);
       outb((divisor >> 8) & 0xff, 0x42);
-      
-      uint64_t tsc0 = rdtsc();
+
+      uint64_t tsc0 = x86_rdtsc();
 
       unsigned long cycles = 0;
 
@@ -90,8 +90,8 @@ Tsc::calibrate()
          cycles++;
          // empty
       }
-      
-      uint64_t tsc1 = rdtsc();
+
+      uint64_t tsc1 = x86_rdtsc();
 
       printf("Delta: %lu (%lu cycles)\n", (unsigned long )((tsc1 - tsc0) / 50), cycles);
       frequency = (unsigned long )((tsc1 - tsc0) / 50);
@@ -115,7 +115,7 @@ Tsc::getFrequency()
 uint64_t
 Tsc::getValue()
 {
-   return rdtsc();
+   return x86_rdtsc();
 }
 
 int
@@ -129,7 +129,7 @@ Tsc::startClock()
 {
    struct cpuid id;
 
-   cpuid(0x80000007, &id);
+   x86_cpuid(0x80000007, &id);
    if (id.eax & (1 << 8))
    {
       Debug::info("CPU supports invariant TSC\n");
