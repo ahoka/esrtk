@@ -1,8 +1,5 @@
-/*	$OpenBSD: limits.h,v 1.13 2013/08/07 15:34:00 kettenis Exp $	*/
-/*	$NetBSD: limits.h,v 1.11 1995/12/21 01:08:59 mycroft Exp $	*/
-
-/*
- * Copyright (c) 1988 The Regents of the University of California.
+/*-
+ * Copyright (c) 2006 Joseph Koshy
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
@@ -13,14 +10,11 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of the University nor the names of its contributors
- *    may be used to endorse or promote products derived from this software
- *    without specific prior written permission.
  *
- * THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+ * THIS SOFTWARE IS PROVIDED BY THE AUTHOR AND CONTRIBUTORS ``AS IS'' AND
  * ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
  * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
- * ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+ * ARE DISCLAIMED.  IN NO EVENT SHALL THE AUTHOR OR CONTRIBUTORS BE LIABLE
  * FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
  * DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
  * OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
@@ -28,29 +22,30 @@
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
- *
- *	@(#)limits.h	7.2 (Berkeley) 6/28/90
  */
 
-#ifndef _I386_LIMITS_H_
-#define _I386_LIMITS_H_
-
 #include <sys/cdefs.h>
+__FBSDID("$FreeBSD: releng/10.1/lib/libelf/elf_version.c 164190 2006-11-11 17:16:35Z jkoshy $");
 
-#if __POSIX_VISIBLE || __XPG_VISIBLE
-#ifndef	SIZE_MAX
-#define	SIZE_MAX	ULONG_MAX	/* max value for a size_t */
-#endif
-#define	SSIZE_MAX	LONG_MAX	/* max value for a ssize_t */
-#endif
+#include <libelf.h>
 
-#if __BSD_VISIBLE
-#define	SIZE_T_MAX	ULONG_MAX	/* max value for a size_t (historic) */
+#include "_libelf.h"
 
-#define	UQUAD_MAX	0xffffffffffffffffULL		/* max unsigned quad */
-#define	QUAD_MAX	0x7fffffffffffffffLL		/* max signed quad */
-#define	QUAD_MIN	(-0x7fffffffffffffffLL-1)	/* min signed quad */
+unsigned int
+elf_version(unsigned int v)
+{
+	unsigned int old;
 
-#endif /* __BSD_VISIBLE */
+	if ((old = LIBELF_PRIVATE(version)) == EV_NONE)
+		old = EV_CURRENT;
 
-#endif /* _MACHINE_LIMITS_H_ */
+	if (v == EV_NONE)
+		return old;
+	if (v > EV_CURRENT) {
+		LIBELF_SET_ERROR(VERSION, 0);
+		return EV_NONE;
+	}
+
+	LIBELF_PRIVATE(version) = v;
+	return (old);
+}

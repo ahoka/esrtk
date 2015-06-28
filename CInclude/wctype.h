@@ -35,19 +35,19 @@
 #include <sys/cdefs.h>
 #include <machine/_types.h>
 
-#ifndef	_WINT_T_DEFINED_
-#define	_WINT_T_DEFINED_
-typedef	__wint_t    wint_t;
+#ifndef _WCTRANS_T
+typedef int wctrans_t;
+#define _WCTRANS_T
 #endif
 
-#ifndef	_WCTRANS_T_DEFINED_
-#define	_WCTRANS_T_DEFINED_
-typedef	__wctrans_t	wctrans_t;
+#ifndef _WCTYPE_T
+typedef unsigned long wctype_t;
+#define _WCTYPE_T
 #endif
 
-#ifndef	_WCTYPE_T_DEFINED_
-#define	_WCTYPE_T_DEFINED_
-typedef	__wctype_t	wctype_t;
+#ifndef _WINT_T_DECLARED
+typedef __wint_t wint_t;
+#define _WINT_T_DECLARED
 #endif
 
 #ifndef WEOF

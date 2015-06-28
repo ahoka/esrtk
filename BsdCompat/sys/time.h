@@ -1,7 +1,4 @@
-/*	$OpenBSD: time.h,v 1.35 2013/10/25 04:42:48 guenther Exp $	*/
-/*	$NetBSD: time.h,v 1.18 1996/04/23 10:29:33 mycroft Exp $	*/
-
-/*
+/*-
  * Copyright (c) 1982, 1986, 1993
  *	The Regents of the University of California.  All rights reserved.
  *
@@ -13,7 +10,7 @@
  * 2. Redistributions in binary form must reproduce the above copyright
  *    notice, this list of conditions and the following disclaimer in the
  *    documentation and/or other materials provided with the distribution.
- * 3. Neither the name of the University nor the names of its contributors
+ * 4. Neither the name of the University nor the names of its contributors
  *    may be used to endorse or promote products derived from this software
  *    without specific prior written permission.
  *
@@ -29,42 +26,16 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- *	@(#)time.h	8.2 (Berkeley) 7/10/94
+ *	@(#)time.h	8.5 (Berkeley) 5/4/95
+ * $FreeBSD: releng/10.1/sys/sys/time.h 270240 2014-08-20 18:40:29Z davide $
  */
 
 #ifndef _SYS_TIME_H_
-#define _SYS_TIME_H_
+#define	_SYS_TIME_H_
 
+#include <sys/_timeval.h>
 #include <sys/types.h>
-
-/*
- * Structure returned by gettimeofday(2) system call,
- * and used in other calls.
- */
-struct timeval {
-	time_t		tv_sec;		/* seconds */
-	suseconds_t	tv_usec;	/* and microseconds */
-};
-
-#ifndef _TIMESPEC_DECLARED
-#define _TIMESPEC_DECLARED
-/*
- * Structure defined by POSIX.1b to be like a timeval.
- */
-struct timespec {
-	time_t	tv_sec;		/* seconds */
-	long	tv_nsec;	/* and nanoseconds */
-};
-#endif
-
-#define	TIMEVAL_TO_TIMESPEC(tv, ts) {					\
-	(ts)->tv_sec = (tv)->tv_sec;					\
-	(ts)->tv_nsec = (tv)->tv_usec * 1000;				\
-}
-#define	TIMESPEC_TO_TIMEVAL(tv, ts) {					\
-	(tv)->tv_sec = (ts)->tv_sec;					\
-	(tv)->tv_usec = (ts)->tv_nsec / 1000;				\
-}
+#include <sys/timespec.h>
 
 struct timezone {
 	int	tz_minuteswest;	/* minutes west of Greenwich */
@@ -78,10 +49,244 @@ struct timezone {
 #define	DST_EET		5	/* Eastern European dst */
 #define	DST_CAN		6	/* Canada */
 
+#if __BSD_VISIBLE
+struct bintime {
+	time_t	sec;
+	uint64_t frac;
+};
+
+static __inline void
+bintime_addx(struct bintime *_bt, uint64_t _x)
+{
+	uint64_t _u;
+
+	_u = _bt->frac;
+	_bt->frac += _x;
+	if (_u > _bt->frac)
+		_bt->sec++;
+}
+
+static __inline void
+bintime_add(struct bintime *_bt, const struct bintime *_bt2)
+{
+	uint64_t _u;
+
+	_u = _bt->frac;
+	_bt->frac += _bt2->frac;
+	if (_u > _bt->frac)
+		_bt->sec++;
+	_bt->sec += _bt2->sec;
+}
+
+static __inline void
+bintime_sub(struct bintime *_bt, const struct bintime *_bt2)
+{
+	uint64_t _u;
+
+	_u = _bt->frac;
+	_bt->frac -= _bt2->frac;
+	if (_u < _bt->frac)
+		_bt->sec--;
+	_bt->sec -= _bt2->sec;
+}
+
+static __inline void
+bintime_mul(struct bintime *_bt, u_int _x)
+{
+	uint64_t _p1, _p2;
+
+	_p1 = (_bt->frac & 0xffffffffull) * _x;
+	_p2 = (_bt->frac >> 32) * _x + (_p1 >> 32);
+	_bt->sec *= _x;
+	_bt->sec += (_p2 >> 32);
+	_bt->frac = (_p2 << 32) | (_p1 & 0xffffffffull);
+}
+
+static __inline void
+bintime_shift(struct bintime *_bt, int _exp)
+{
+
+	if (_exp > 0) {
+		_bt->sec <<= _exp;
+		_bt->sec |= _bt->frac >> (64 - _exp);
+		_bt->frac <<= _exp;
+	} else if (_exp < 0) {
+		_bt->frac >>= -_exp;
+		_bt->frac |= (uint64_t)_bt->sec << (64 + _exp);
+		_bt->sec >>= -_exp;
+	}
+}
+
+#define	bintime_clear(a)	((a)->sec = (a)->frac = 0)
+#define	bintime_isset(a)	((a)->sec || (a)->frac)
+#define	bintime_cmp(a, b, cmp)						\
+	(((a)->sec == (b)->sec) ?					\
+	    ((a)->frac cmp (b)->frac) :					\
+	    ((a)->sec cmp (b)->sec))
+
+#define	SBT_1S	((sbintime_t)1 << 32)
+#define	SBT_1M	(SBT_1S * 60)
+#define	SBT_1MS	(SBT_1S / 1000)
+#define	SBT_1US	(SBT_1S / 1000000)
+#define	SBT_1NS	(SBT_1S / 1000000000)
+#define	SBT_MAX 0x7fffffffffffffff
+
+static __inline int
+sbintime_getsec(sbintime_t _sbt)
+{
+
+	return (_sbt >> 32);
+}
+
+static __inline sbintime_t
+bttosbt(const struct bintime _bt)
+{
+
+	return (((sbintime_t)_bt.sec << 32) + (_bt.frac >> 32));
+}
+
+static __inline struct bintime
+sbttobt(sbintime_t _sbt)
+{
+	struct bintime _bt;
+
+	_bt.sec = _sbt >> 32;
+	_bt.frac = _sbt << 32;
+	return (_bt);
+}
+
+/*-
+ * Background information:
+ *
+ * When converting between timestamps on parallel timescales of differing
+ * resolutions it is historical and scientific practice to round down rather
+ * than doing 4/5 rounding.
+ *
+ *   The date changes at midnight, not at noon.
+ *
+ *   Even at 15:59:59.999999999 it's not four'o'clock.
+ *
+ *   time_second ticks after N.999999999 not after N.4999999999
+ */
+
+static __inline void
+bintime2timespec(const struct bintime *_bt, struct timespec *_ts)
+{
+
+	_ts->tv_sec = _bt->sec;
+	_ts->tv_nsec = ((uint64_t)1000000000 *
+	    (uint32_t)(_bt->frac >> 32)) >> 32;
+}
+
+static __inline void
+timespec2bintime(const struct timespec *_ts, struct bintime *_bt)
+{
+
+	_bt->sec = _ts->tv_sec;
+	/* 18446744073 = int(2^64 / 1000000000) */
+	_bt->frac = _ts->tv_nsec * (uint64_t)18446744073LL;
+}
+
+static __inline void
+bintime2timeval(const struct bintime *_bt, struct timeval *_tv)
+{
+
+	_tv->tv_sec = _bt->sec;
+	_tv->tv_usec = ((uint64_t)1000000 * (uint32_t)(_bt->frac >> 32)) >> 32;
+}
+
+static __inline void
+timeval2bintime(const struct timeval *_tv, struct bintime *_bt)
+{
+
+	_bt->sec = _tv->tv_sec;
+	/* 18446744073709 = int(2^64 / 1000000) */
+	_bt->frac = _tv->tv_usec * (uint64_t)18446744073709LL;
+}
+
+static __inline struct timespec
+sbttots(sbintime_t _sbt)
+{
+	struct timespec _ts;
+
+	_ts.tv_sec = _sbt >> 32;
+	_ts.tv_nsec = ((uint64_t)1000000000 * (uint32_t)_sbt) >> 32;
+	return (_ts);
+}
+
+static __inline sbintime_t
+tstosbt(struct timespec _ts)
+{
+
+	return (((sbintime_t)_ts.tv_sec << 32) +
+	    (_ts.tv_nsec * (((uint64_t)1 << 63) / 500000000) >> 32));
+}
+
+static __inline struct timeval
+sbttotv(sbintime_t _sbt)
+{
+	struct timeval _tv;
+
+	_tv.tv_sec = _sbt >> 32;
+	_tv.tv_usec = ((uint64_t)1000000 * (uint32_t)_sbt) >> 32;
+	return (_tv);
+}
+
+static __inline sbintime_t
+tvtosbt(struct timeval _tv)
+{
+
+	return (((sbintime_t)_tv.tv_sec << 32) +
+	    (_tv.tv_usec * (((uint64_t)1 << 63) / 500000) >> 32));
+}
+#endif /* __BSD_VISIBLE */
+
+#ifdef _KERNEL
+
+/* Operations on timespecs */
+#define	timespecclear(tvp)	((tvp)->tv_sec = (tvp)->tv_nsec = 0)
+#define	timespecisset(tvp)	((tvp)->tv_sec || (tvp)->tv_nsec)
+#define	timespeccmp(tvp, uvp, cmp)					\
+	(((tvp)->tv_sec == (uvp)->tv_sec) ?				\
+	    ((tvp)->tv_nsec cmp (uvp)->tv_nsec) :			\
+	    ((tvp)->tv_sec cmp (uvp)->tv_sec))
+#define	timespecadd(vvp, uvp)						\
+	do {								\
+		(vvp)->tv_sec += (uvp)->tv_sec;				\
+		(vvp)->tv_nsec += (uvp)->tv_nsec;			\
+		if ((vvp)->tv_nsec >= 1000000000) {			\
+			(vvp)->tv_sec++;				\
+			(vvp)->tv_nsec -= 1000000000;			\
+		}							\
+	} while (0)
+#define	timespecsub(vvp, uvp)						\
+	do {								\
+		(vvp)->tv_sec -= (uvp)->tv_sec;				\
+		(vvp)->tv_nsec -= (uvp)->tv_nsec;			\
+		if ((vvp)->tv_nsec < 0) {				\
+			(vvp)->tv_sec--;				\
+			(vvp)->tv_nsec += 1000000000;			\
+		}							\
+	} while (0)
+
 /* Operations on timevals. */
-#define	timerclear(tvp)		(tvp)->tv_sec = (tvp)->tv_usec = 0
+
+#define	timevalclear(tvp)		((tvp)->tv_sec = (tvp)->tv_usec = 0)
+#define	timevalisset(tvp)		((tvp)->tv_sec || (tvp)->tv_usec)
+#define	timevalcmp(tvp, uvp, cmp)					\
+	(((tvp)->tv_sec == (uvp)->tv_sec) ?				\
+	    ((tvp)->tv_usec cmp (uvp)->tv_usec) :			\
+	    ((tvp)->tv_sec cmp (uvp)->tv_sec))
+
+/* timevaladd and timevalsub are not inlined */
+
+#endif /* _KERNEL */
+
+#ifndef _KERNEL			/* NetBSD/OpenBSD compatible interfaces */
+
+#define	timerclear(tvp)		((tvp)->tv_sec = (tvp)->tv_usec = 0)
 #define	timerisset(tvp)		((tvp)->tv_sec || (tvp)->tv_usec)
-#define	timercmp(tvp, uvp, cmp)						\
+#define	timercmp(tvp, uvp, cmp)					\
 	(((tvp)->tv_sec == (uvp)->tv_sec) ?				\
 	    ((tvp)->tv_usec cmp (uvp)->tv_usec) :			\
 	    ((tvp)->tv_sec cmp (uvp)->tv_sec))
@@ -103,32 +308,7 @@ struct timezone {
 			(vvp)->tv_usec += 1000000;			\
 		}							\
 	} while (0)
-
-/* Operations on timespecs. */
-#define	timespecclear(tsp)		(tsp)->tv_sec = (tsp)->tv_nsec = 0
-#define	timespecisset(tsp)		((tsp)->tv_sec || (tsp)->tv_nsec)
-#define	timespeccmp(tsp, usp, cmp)					\
-	(((tsp)->tv_sec == (usp)->tv_sec) ?				\
-	    ((tsp)->tv_nsec cmp (usp)->tv_nsec) :			\
-	    ((tsp)->tv_sec cmp (usp)->tv_sec))
-#define	timespecadd(tsp, usp, vsp)					\
-	do {								\
-		(vsp)->tv_sec = (tsp)->tv_sec + (usp)->tv_sec;		\
-		(vsp)->tv_nsec = (tsp)->tv_nsec + (usp)->tv_nsec;	\
-		if ((vsp)->tv_nsec >= 1000000000L) {			\
-			(vsp)->tv_sec++;				\
-			(vsp)->tv_nsec -= 1000000000L;			\
-		}							\
-	} while (0)
-#define	timespecsub(tsp, usp, vsp)					\
-	do {								\
-		(vsp)->tv_sec = (tsp)->tv_sec - (usp)->tv_sec;		\
-		(vsp)->tv_nsec = (tsp)->tv_nsec - (usp)->tv_nsec;	\
-		if ((vsp)->tv_nsec < 0) {				\
-			(vsp)->tv_sec--;				\
-			(vsp)->tv_nsec += 1000000000L;			\
-		}							\
-	} while (0)
+#endif
 
 /*
  * Names of the interval timers, and structure
@@ -138,118 +318,72 @@ struct timezone {
 #define	ITIMER_VIRTUAL	1
 #define	ITIMER_PROF	2
 
-struct	itimerval {
+struct itimerval {
 	struct	timeval it_interval;	/* timer interval */
 	struct	timeval it_value;	/* current value */
 };
 
-#if __BSD_VISIBLE
 /*
- * clock information structure for sysctl({CTL_KERN, KERN_CLOCKRATE})
+ * Getkerninfo clock information structure
  */
 struct clockinfo {
 	int	hz;		/* clock frequency */
 	int	tick;		/* micro-seconds per hz tick */
-	int	tickadj;	/* clock skew rate for adjtime() */
+	int	spare;
 	int	stathz;		/* statistics clock frequency */
 	int	profhz;		/* profiling clock frequency */
 };
-#endif /* __BSD_VISIBLE */
 
-#if defined(_KERNEL) || defined(_STANDALONE)
-#include <sys/_time.h>
+/* These macros are also in time.h. */
+#ifndef CLOCK_REALTIME
+#define	CLOCK_REALTIME	0
+#define	CLOCK_VIRTUAL	1
+#define	CLOCK_PROF	2
+#define	CLOCK_MONOTONIC	4
+#define	CLOCK_UPTIME	5		/* FreeBSD-specific. */
+#define	CLOCK_UPTIME_PRECISE	7	/* FreeBSD-specific. */
+#define	CLOCK_UPTIME_FAST	8	/* FreeBSD-specific. */
+#define	CLOCK_REALTIME_PRECISE	9	/* FreeBSD-specific. */
+#define	CLOCK_REALTIME_FAST	10	/* FreeBSD-specific. */
+#define	CLOCK_MONOTONIC_PRECISE	11	/* FreeBSD-specific. */
+#define	CLOCK_MONOTONIC_FAST	12	/* FreeBSD-specific. */
+#define	CLOCK_SECOND	13		/* FreeBSD-specific. */
+#define	CLOCK_THREAD_CPUTIME_ID	14
+#define	CLOCK_PROCESS_CPUTIME_ID	15
+#endif
 
-/* Time expressed as seconds and fractions of a second + operations on it. */
-struct bintime {
-	time_t	sec;
-	uint64_t frac;
-};
+#ifndef TIMER_ABSTIME
+#define	TIMER_RELTIME	0x0	/* relative timer */
+#define	TIMER_ABSTIME	0x1	/* absolute timer */
+#endif
 
-static __inline void
-bintime_addx(struct bintime *bt, uint64_t x)
-{
-	uint64_t u;
+#if __BSD_VISIBLE
+#define	CPUCLOCK_WHICH_PID	0
+#define	CPUCLOCK_WHICH_TID	1
+#endif
 
-	u = bt->frac;
-	bt->frac += x;
-	if (u > bt->frac)
-		bt->sec++;
-}
+#ifdef _KERNEL
 
-static __inline void
-bintime_add(struct bintime *bt, struct bintime *bt2)
-{
-	uint64_t u;
-
-	u = bt->frac;
-	bt->frac += bt2->frac;
-	if (u > bt->frac)
-		bt->sec++;
-	bt->sec += bt2->sec;
-}
-
-static __inline void
-bintime_sub(struct bintime *bt, struct bintime *bt2)
-{
-	uint64_t u;
-
-	u = bt->frac;
-	bt->frac -= bt2->frac;
-	if (u < bt->frac)
-		bt->sec--;
-	bt->sec -= bt2->sec;
-}
-
-/*-
- * Background information:
- *
- * When converting between timestamps on parallel timescales of differing
- * resolutions it is historical and scientific practice to round down rather
- * than doing 4/5 rounding.
- *
- *   The date changes at midnight, not at noon.
- *
- *   Even at 15:59:59.999999999 it's not four'o'clock.
- *
- *   time_second ticks after N.999999999 not after N.4999999999
+/*
+ * Kernel to clock driver interface.
  */
+void	inittodr(time_t base);
+void	resettodr(void);
 
-static __inline void
-bintime2timespec(struct bintime *bt, struct timespec *ts)
-{
-
-	ts->tv_sec = bt->sec;
-	ts->tv_nsec = (long)(((uint64_t)1000000000 * (uint32_t)(bt->frac >> 32)) >> 32);
-}
-
-static __inline void
-timespec2bintime(struct timespec *ts, struct bintime *bt)
-{
-
-	bt->sec = ts->tv_sec;
-	/* 18446744073 = int(2^64 / 1000000000) */
-	bt->frac = (uint64_t)ts->tv_nsec * (uint64_t)18446744073ULL; 
-}
-
-static __inline void
-bintime2timeval(struct bintime *bt, struct timeval *tv)
-{
-
-	tv->tv_sec = bt->sec;
-	tv->tv_usec = (long)(((uint64_t)1000000 * (uint32_t)(bt->frac >> 32)) >> 32);
-}
-
-static __inline void
-timeval2bintime(struct timeval *tv, struct bintime *bt)
-{
-
-	bt->sec = (time_t)tv->tv_sec;
-	/* 18446744073709 = int(2^64 / 1000000) */
-	bt->frac = (uint64_t)tv->tv_usec * (uint64_t)18446744073709ULL;
-}
-
-extern volatile time_t time_second;	/* Seconds since epoch, wall time. */
-extern volatile time_t time_uptime;	/* Seconds since reboot. */
+extern volatile time_t	time_second;
+extern volatile time_t	time_uptime;
+extern struct bintime boottimebin;
+extern struct timeval boottime;
+extern struct bintime tc_tick_bt;
+extern sbintime_t tc_tick_sbt;
+extern struct bintime tick_bt;
+extern sbintime_t tick_sbt;
+extern int tc_precexp;
+extern int tc_timepercentage;
+extern struct bintime bt_timethreshold;
+extern struct bintime bt_tickthreshold;
+extern sbintime_t sbt_timethreshold;
+extern sbintime_t sbt_tickthreshold;
 
 /*
  * Functions for looking at our clock: [get]{bin,nano,micro}[up]time()
@@ -260,7 +394,7 @@ extern volatile time_t time_uptime;	/* Seconds since reboot. */
  * "bin"   == struct bintime  == seconds + 64 bit fraction of seconds.
  * "nano"  == struct timespec == seconds + nanoseconds.
  * "micro" == struct timeval  == seconds + microseconds.
- *              
+ *
  * Functions containing "up" returns time relative to boot and
  * should be used for calculating time intervals.
  *
@@ -268,86 +402,96 @@ extern volatile time_t time_uptime;	/* Seconds since reboot. */
  *
  * Functions with the "get" prefix returns a less precise result
  * much faster than the functions without "get" prefix and should
- * be used where a precision of 10 msec is acceptable or where
- * performance is priority. (NB: "precision", _not_ "resolution" !) 
+ * be used where a precision of 1/hz seconds is acceptable or where
+ * performance is priority. (NB: "precision", _not_ "resolution" !)
  */
 
-void	bintime(struct bintime *);
-void	nanotime(struct timespec *);
-void	microtime(struct timeval *);
+void	binuptime(struct bintime *bt);
+void	nanouptime(struct timespec *tsp);
+void	microuptime(struct timeval *tvp);
 
-void	getnanotime(struct timespec *);
-void	getmicrotime(struct timeval *);
+static __inline sbintime_t
+sbinuptime(void)
+{
+	struct bintime _bt;
 
-void	binuptime(struct bintime *);
-void	nanouptime(struct timespec *);
-void	microuptime(struct timeval *);
+	binuptime(&_bt);
+	return (bttosbt(_bt));
+}
 
-void	getnanouptime(struct timespec *);
-void	getmicrouptime(struct timeval *);
+void	bintime(struct bintime *bt);
+void	nanotime(struct timespec *tsp);
+void	microtime(struct timeval *tvp);
 
-struct proc;
-int	clock_gettime(struct proc *, clockid_t, struct timespec *);
+void	getbinuptime(struct bintime *bt);
+void	getnanouptime(struct timespec *tsp);
+void	getmicrouptime(struct timeval *tvp);
 
-int	timespecfix(struct timespec *);
-int	itimerfix(struct timeval *);
+static __inline sbintime_t
+getsbinuptime(void)
+{
+	struct bintime _bt;
+
+	getbinuptime(&_bt);
+	return (bttosbt(_bt));
+}
+
+void	getbintime(struct bintime *bt);
+void	getnanotime(struct timespec *tsp);
+void	getmicrotime(struct timeval *tvp);
+
+/* Other functions */
 int	itimerdecr(struct itimerval *itp, int usec);
-void	itimerround(struct timeval *);
-int	settime(struct timespec *);
-int	ratecheck(struct timeval *, const struct timeval *);
+int	itimerfix(struct timeval *tv);
 int	ppsratecheck(struct timeval *, int *, int);
+int	ratecheck(struct timeval *, const struct timeval *);
+void	timevaladd(struct timeval *t1, const struct timeval *t2);
+void	timevalsub(struct timeval *t1, const struct timeval *t2);
+int	tvtohz(struct timeval *tv);
 
-/*
- * "POSIX time" to/from "YY/MM/DD/hh/mm/ss"
- */
-struct clock_ymdhms {
-        u_short dt_year;
-        u_char dt_mon;
-        u_char dt_day;
-        u_char dt_wday; /* Day of week */
-        u_char dt_hour;
-        u_char dt_min;
-        u_char dt_sec;
-};
+#define	TC_DEFAULTPERC		5
 
-time_t clock_ymdhms_to_secs(struct clock_ymdhms *);
-void clock_secs_to_ymdhms(time_t, struct clock_ymdhms *);
-/*
- * BCD to decimal and decimal to BCD.
- */
-#define FROMBCD(x)      (((x) >> 4) * 10 + ((x) & 0xf))
-#define TOBCD(x)        (((x) / 10 * 16) + ((x) % 10))
+#define	BT2FREQ(bt)                                                     \
+	(((uint64_t)0x8000000000000000 + ((bt)->frac >> 2)) /           \
+	    ((bt)->frac >> 1))
 
-/* Some handy constants. */
-#define SECDAY          86400L
-#define SECYR           (SECDAY * 365)
+#define	SBT2FREQ(sbt)	((SBT_1S + ((sbt) >> 1)) / (sbt))
 
-/* Traditional POSIX base year */
-#define POSIX_BASE_YEAR 1970
+#define	FREQ2BT(freq, bt)                                               \
+{									\
+	(bt)->sec = 0;                                                  \
+	(bt)->frac = ((uint64_t)0x8000000000000000  / (freq)) << 1;     \
+}
+
+#define	TIMESEL(sbt, sbt2)						\
+	(((sbt2) >= sbt_timethreshold) ?				\
+	    ((*(sbt) = getsbinuptime()), 1) : ((*(sbt) = sbinuptime()), 0))
 
 #else /* !_KERNEL */
 #include <time.h>
 
-#if __XPG_VISIBLE >= 420 && __XPG_VISIBLE < 600
-#include <sys/select.h>	/* must be after type declarations */
-#endif
+#include <sys/cdefs.h>
+#include <sys/select.h>
 
-#if __BSD_VISIBLE || __XPG_VISIBLE
 __BEGIN_DECLS
+int	setitimer(int, const struct itimerval *, struct itimerval *);
+int	utimes(const char *, const struct timeval *);
+
 #if __BSD_VISIBLE
 int	adjtime(const struct timeval *, struct timeval *);
-int	adjfreq(const int64_t *, int64_t *);
-#endif
-#if __XPG_VISIBLE
+int	clock_getcpuclockid2(id_t, int, clockid_t *);
 int	futimes(int, const struct timeval *);
+int	futimesat(int, const char *, const struct timeval [2]);
+int	lutimes(const char *, const struct timeval *);
+int	settimeofday(const struct timeval *, const struct timezone *);
+#endif
+
+#if __XSI_VISIBLE
 int	getitimer(int, struct itimerval *);
 int	gettimeofday(struct timeval *, struct timezone *);
-int	setitimer(int, const struct itimerval *, struct itimerval *);
-int	settimeofday(const struct timeval *, const struct timezone *);
-int	utimes(const char *, const struct timeval *);
-#endif /* __XPG_VISIBLE */
+#endif
+
 __END_DECLS
-#endif /* __BSD_VISIBLE || __XPG_VISIBLE */
 
 #endif /* !_KERNEL */
 

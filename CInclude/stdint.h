@@ -20,11 +20,7 @@
 #define _SYS_STDINT_H_
 
 #include <sys/cdefs.h>
-#ifdef __esrtk__
-#include <i386/_types.h>
-#else
 #include <machine/_types.h>
-#endif
 
 #ifndef	__BIT_TYPES_DEFINED__
 #define	__BIT_TYPES_DEFINED__

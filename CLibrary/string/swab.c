@@ -32,6 +32,7 @@
  */
 
 #include <unistd.h>
+#include <stddef.h>
 
 void
 swab(const void *from, void *to, size_t len)

@@ -46,7 +46,7 @@ SIZE=		${TOOLPREFIX}${CROSS}size
 STRIP=		${TOOLPREFIX}${CROSS}strip
 FIND=		find
 
-INCDIRS=	Include CInclude CxxInclude Templates Include/Kernel
+INCDIRS=	Include CInclude CxxInclude Templates Include/Kernel ElfLibrary
 
 INCPATHS=	${INCDIRS:S/^/${BUILD_ROOT}\//}
 
@@ -65,7 +65,7 @@ CPPFLAGS+=	-D__esrtk__
 #CPPFLAGS+=	-D_BSD_SOURCE
 
 SRCDIR=		Supervisor CLibrary CxxLibrary CxxAbi Drivers Kernel ${PLATFORM} \
-		FileSystem Hal Loader Acpi/Source
+		FileSystem Hal Loader Acpi/Source ElfLibrary
 TESTDIR=	Test
 
 TCCFILES:=	${FIND} ${TESTDIR} -name '*.cc'
