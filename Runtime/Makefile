@@ -22,7 +22,7 @@ COPTS+=		-O2 -march=i686 -g \
 		-Wall -Wextra \
 		-nostdlib -nostdinc -fno-builtin \
 		-fno-omit-frame-pointer \
-		-fno-stack-protector
+		-fno-stack-protector -fpic
 
 LDFLAGS=	${COPTS}
 AFLAGS+=	-g ${COPTS}
@@ -89,6 +89,10 @@ depend: .depend
 .NOPATH: .depend
 .depend: ${DFILES}
 	@cat ${DFILES} > ${BUILD_ROOT}/.depend
+
+.PHONY: clean
+clean:
+	-rm *.o runtime.elf
 
 runtime.elf: ${OFILES}
 	@echo Linking kernel executable
