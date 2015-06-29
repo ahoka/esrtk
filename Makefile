@@ -15,8 +15,11 @@ ${MAKEOBJDIR}:
 
 .PHONY: build
 build: ${MAKEOBJDIR}
+	@echo "---- Building kernel ----"
 	${SYSMAKECMD} depend
 	${SYSMAKECMD} all
+	@echo "---- Building runtime ----"
+	cd Runtime && ./build.sh
 
 .PHONY: run
 run: build
