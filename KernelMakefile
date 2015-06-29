@@ -65,7 +65,7 @@ CPPFLAGS+=	-D__esrtk__
 #CPPFLAGS+=	-D_BSD_SOURCE
 
 SRCDIR=		Supervisor CLibrary CxxLibrary CxxAbi Drivers Kernel ${PLATFORM} \
-		FileSystem Hal Loader Acpi/Source ElfLibrary
+		FileSystem Loader Acpi/Source ElfLibrary
 TESTDIR=	Test
 
 TCCFILES:=	${FIND} ${TESTDIR} -name '*.cc'
