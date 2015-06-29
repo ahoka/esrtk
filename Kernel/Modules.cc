@@ -4,6 +4,8 @@
 #include <Multiboot.hh>
 #include <Parameters.hh>
 
+#include <ElfLoader.hh>
+
 #include <cstring>
 
 using namespace Multiboot;
@@ -91,29 +93,34 @@ Modules::add(uintptr_t address, std::size_t size, const char* name)
 void
 Modules::handleModules()
 {
+   printf("Handling load modules\n");
+
    for (unsigned int i = 0; i < nextFree; i++)
    {
       printf("Module name: %s\n", list[i].name);
 
-      ModuleHeader* h = reinterpret_cast<ModuleHeader*>(list[i].address);
-
-      printf("%p %p\n", h, (void*)list[i].address);
-
-      if (h->magic != Modules:: Magic)
+      uint32_t magic = *(reinterpret_cast<uint32_t*>(list[i].address));
+      printf("Module magic: 0x%x\n", magic);
+      if (magic == Modules::RamdiskMagic)
       {
-	 printf("Module is invalid! Magic: 0x%x\n", h->magic);
-      }
+         ModuleHeader* h = reinterpret_cast<ModuleHeader*>(list[i].address);
 
-      if (h->type < NumberOfTypes)
-      {
-	 printf("Module type: %s\n", typeToTypename[h->type]);
+         if (h->type < NumberOfTypes)
+         {
+            printf("Module type: %s\n", typeToTypename[h->type]);
+         }
+         else
+         {
+            printf("Module type: 0x%x\n", h->type);
+         }
+         
+         printf("Module size: %lu\n", (unsigned long )h->size);
       }
-      else
+      else if (magic == Modules::ElfMagic)
       {
-	 printf("Module type: 0x%x\n", h->type);
+         // manovarazslat :-)
+         ElfLoader::loader().load(list[i].address, list[i].size);
       }
-
-      printf("Module size: %lu\n", (unsigned long )h->size);
    }
 }
 

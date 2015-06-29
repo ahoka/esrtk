@@ -28,7 +28,8 @@ public:
 
    enum
    {
-      Magic = 0x30646f4d
+      RamdiskMagic = 0x30646f4d,
+      ElfMagic = 0x464c457f
    };
 
    enum Type

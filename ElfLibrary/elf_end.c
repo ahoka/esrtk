@@ -74,8 +74,10 @@ elf_end(Elf *e)
 			break;
 		}
 
+#ifndef __esrtk__
 		if (e->e_flags & LIBELF_F_MMAP)
 			(void) munmap(e->e_rawfile, e->e_rawsize);
+#endif
 
 		sv = e;
 		if ((e = e->e_parent) != NULL)
