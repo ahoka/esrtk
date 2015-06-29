@@ -58,6 +58,8 @@ printSections(Elf* elf)
       return;
    }
 
+   printf("Section\t\t\tVirtual Address\tSize\tOffset\tAlignment\n");
+
    section = 0;
    while ((section = elf_nextscn(elf, section)) != 0)
    {
@@ -71,10 +73,12 @@ printSections(Elf* elf)
       if (name == 0)
       {
          printf("elf_strptr error: %s\n", elf_errmsg(-1));
-         return;         
+         return;
       }
 
-      printf("  %s\n", name);
+      printf("%-16s\t0x%08lx\t%lu\t0x%08lx\t%lu\n", name, (unsigned long)sectionHeader.sh_addr,
+             (unsigned long)sectionHeader.sh_size, (unsigned long)sectionHeader.sh_offset,
+             (unsigned long)sectionHeader.sh_addralign);
    }
 }
 
@@ -108,7 +112,6 @@ ElfLoader::load(uintptr_t address, size_t size)
       default:
          printf("Unknown\n");
    }
-   
+
    elf_end(elf);
 }
-
