@@ -279,6 +279,7 @@ typedef	int	_Bool;
 typedef	_Bool	bool;
 #endif /* !__bool_true_false_are_defined && !__cplusplus */
 
+#undef offsetof
 #define offsetof(type, field) __offsetof(type, field)
 
 #endif /* !_KERNEL */
