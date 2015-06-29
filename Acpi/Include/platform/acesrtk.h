@@ -138,39 +138,6 @@
 #define ACPI_USE_NATIVE_DIVIDE
 #define ACPI_USE_SYSTEM_CLIBRARY
 
-#ifdef _KERNEL
-
-#include <sys/ctype.h>
-#include <sys/param.h>
-#include <sys/systm.h>
-#include <sys/libkern.h>
-#include <machine/acpica_machdep.h>
-#include <machine/stdarg.h>
-
-#include "opt_acpi.h"
-
-#define ACPI_MUTEX_TYPE     ACPI_OSL_MUTEX
-
-#ifdef ACPI_DEBUG
-#define ACPI_DEBUG_OUTPUT   /* for backward compatibility */
-#define ACPI_DISASSEMBLER
-#endif
-
-#ifdef ACPI_DEBUG_OUTPUT
-#include "opt_ddb.h"
-#ifdef DDB
-#define ACPI_DEBUGGER
-#endif /* DDB */
-#endif /* ACPI_DEBUG_OUTPUT */
-
-#ifdef DEBUGGER_THREADING
-#undef DEBUGGER_THREADING
-#endif /* DEBUGGER_THREADING */
-
-#define DEBUGGER_THREADING  0   /* integrated with DDB */
-
-#else /* _KERNEL */
-
 #if __STDC_HOSTED__
 #include <ctype.h>
 #endif
@@ -181,7 +148,5 @@
 
 #define ACPI_FLUSH_CPU_CACHE()
 #define __cdecl
-
-#endif /* _KERNEL */
 
 #endif /* __ACFREEBSD_H__ */
