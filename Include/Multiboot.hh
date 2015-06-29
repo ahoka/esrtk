@@ -201,6 +201,7 @@ namespace Multiboot
    } __attribute__((packed));
 
    const MultibootStructure* getMultibootStructure();
+   void getSymbols();
 };
 
 #endif

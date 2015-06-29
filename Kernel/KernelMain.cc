@@ -3,6 +3,7 @@
 #include <Platform.hh>
 #include <CompilerSupport.hh>
 #include <Kernel/Scheduler.hh>
+#include <Multiboot.hh>
 
 //#include <X86/LocalApic.hh>
 #include <X86/PageDirectory.hh>
@@ -53,6 +54,8 @@ kmain()
    __cxaimpl_call_constructors();
 
    Platform::init();
+
+   Multiboot::getSymbols();
 
    Supervisor::Supervisor::init();
 

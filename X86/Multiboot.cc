@@ -1,5 +1,6 @@
 #include <Multiboot.hh>
 #include <Parameters.hh>
+#include <Debug.hh>
 
 #include <cstring>
 
@@ -34,4 +35,17 @@ const MultibootStructure*
 Multiboot::getMultibootStructure()
 {
    return &mbCopy;
+}
+
+void
+Multiboot::getSymbols()
+{
+   printf("Populating kernel symbol table\n");
+
+   auto m = getMultibootStructure();
+   if ((m->flags & MultibootStructure::ElfHeaderValid) == 0)
+   {
+      printf("0x%08x\n", m->flags);
+//      Debug::panic("Multiboot symbol header is invalid!");
+   }
 }
