@@ -24,6 +24,8 @@ build: ${MAKEOBJDIR}
 .PHONY: iso
 iso:
 	@echo "---- Creating ISO ----"
+	pwd
+	ls -la
 	mkdir -p iso/boot/grub
 	cp obj.${MACHINE}/kernel.elf iso/boot
 	cp Runtime/obj.${MACHINE}/runtime.elf iso/boot
