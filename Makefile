@@ -22,7 +22,7 @@ build: ${MAKEOBJDIR}
 	cd Runtime && ./build.sh
 
 .PHONY: iso
-iso: build
+iso:
 	@echo "---- Creating ISO ----"
 	mkdir -p iso/boot/grub
 	cp obj.${MACHINE}/kernel.elf iso/boot
