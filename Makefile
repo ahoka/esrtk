@@ -21,6 +21,18 @@ build: ${MAKEOBJDIR}
 	@echo "---- Building runtime ----"
 	cd Runtime && ./build.sh
 
+.PHONY: iso
+iso: build
+	@echo "---- Creating ISO ----"
+	mkdir -p iso/boot/grub
+	cp obj.${MACHINE}/kernel.elf iso/boot
+	cp Runtime/obj.${MACHINE}/runtime.elf iso/boot
+	cp Loader/menu.lst iso/boot/grub
+	cp Loader/stage2_eltorito iso/boot/grub
+	genisoimage -R -b boot/grub/stage2_eltorito -no-emul-boot -boot-load-size 4 \
+	 -boot-info-table -o esrtk.iso iso
+	rm -rf iso
+
 .PHONY: run
 run: build
 	${SYSMAKECMD} run

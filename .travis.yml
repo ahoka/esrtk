@@ -5,9 +5,8 @@ sudo: required
 before_install:
   - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
   - sudo apt-get update -qq -y
-  - sudo apt-get install -y pmake
+  - sudo apt-get install -y pmake gcc-5 g++-5 genisoimage
   - sudo ln -s /usr/bin/pmake /usr/bin/bmake
-  - sudo apt-get install -y gcc-5 g++-5
   - wget 'https://onedrive.live.com/download?cid=C3ABD0BC4C0161ED&resid=C3ABD0BC4C0161ED%2115450&authkey=AEvNf51Lv0uc9aU' -O i686-elf.tar.xz
   - tar xJf i686-elf.tar.xz
   - export PATH=${PATH}:$PWD/i686-elf/bin
@@ -16,6 +15,7 @@ before_install:
 
 script:
   - make autobuild
+  - make iso
   - make test
 
 notifications:
