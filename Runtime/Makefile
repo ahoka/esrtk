@@ -24,7 +24,7 @@ COPTS+=		-O2 -march=i686 -g \
 		-fno-omit-frame-pointer \
 		-fno-stack-protector -fpic
 
-LDFLAGS=	${COPTS}
+LDFLAGS=	${COPTS} -shared
 AFLAGS+=	-g ${COPTS}
 CFLAGS=		-std=c11 ${COPTS}
 CXXFLAGS=	-std=c++14 ${COPTS} -fno-exceptions -fno-rtti

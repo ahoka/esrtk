@@ -5,8 +5,13 @@ int uninitedglobalvar;
 
 const char* name = "My name is string";
 
+extern int externvar;
+void externfun();
+
 int
 testfunction()
 {
-   return uninitedglobalvar;
+   externfun();
+
+   return externvar;
 }
