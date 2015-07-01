@@ -15,7 +15,6 @@ before_install:
 
 script:
   - make autobuild
-  - make iso
   - make test
 
 notifications:
