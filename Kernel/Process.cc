@@ -86,3 +86,9 @@ Process::getContext() const
 {
    return contextM;
 }
+
+unsigned long
+Process::getId() const
+{
+   return idM;
+}

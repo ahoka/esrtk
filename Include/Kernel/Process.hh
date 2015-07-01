@@ -17,6 +17,7 @@ namespace Kernel
 
       Thread* createThread();
       ProcessContext* getContext() const;
+      unsigned long getId() const;
 
       void dump();
 
