@@ -97,11 +97,7 @@ hiloader:
         call copy_multiboot_structure
 	call kmain
 
-	/* set up the real kernel stack now that we have paging */
-	/* movl $StackStart, %eax */
-        movl $thread_zero_stack, %eax
-	movl %eax, %esp
-
+        /* we should not get here! */
 	cli
 hang:
 	hlt
