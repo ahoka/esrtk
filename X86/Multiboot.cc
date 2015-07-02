@@ -2,6 +2,13 @@
 #include <Parameters.hh>
 #include <Debug.hh>
 
+// XXX BSD compat leaking int the kernel!
+namespace elf
+{
+#include <sys/types.h>
+#include <sys/elf32.h>
+}
+
 #include <cstring>
 
 using Multiboot::MultibootStructure;
@@ -43,9 +50,21 @@ Multiboot::getSymbols()
    printf("Populating kernel symbol table\n");
 
    auto m = getMultibootStructure();
-   if ((m->flags & MultibootStructure::ElfHeaderValid) == 0)
+   if ((m->flags & MultibootStructure::ElfHeaderValid))
    {
-      printf("0x%08x\n", m->flags);
-//      Debug::panic("Multiboot symbol header is invalid!");
+      auto elf = &m->symbol.elf;
+      printf("ELF Header valid: %u\n", elf->number);
+
+#if 0
+      // xxx map this for access
+      for (int i = 0; i < elf->number; i++)
+      {
+         auto section = (elf::Elf32_Shdr*)(elf->address + elf->size * i);
+
+         printf("Type: %u\n", section->sh_type);
+         printf("Address: %p\n", (void*)section->sh_addr);
+         printf("Size: %u\n", section->sh_size);
+      }
+#endif
    }
 }
