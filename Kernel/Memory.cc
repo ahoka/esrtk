@@ -104,9 +104,14 @@ Memory::init()
 	 p->init(addr);
 	 if ((addr >= KernelLoadAddress) && (addr < firstFreePage - KernelVirtualBase))
 	 {
-	    D(printf("Found used page: %p\n", (void* )addr));
+	    D(printf("Found used page by kernel: %p\n", (void* )addr));
 	    usedPages.insert(p);
 	 }
+         else if (__end_modules != 0u && addr >= __start_modules && addr < __end_modules)
+         {
+	    D(printf("Found used page by modules: %p\n", (void* )addr));
+	    usedPages.insert(p);
+         }
 	 else
 	 {
 	    D(printf("Inserting free page: %p\n", (void* )addr));
