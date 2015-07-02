@@ -5,12 +5,11 @@
 #include <Kernel/Scheduler.hh>
 #include <Multiboot.hh>
 
-//#include <X86/LocalApic.hh>
+// XXX remove these
 #include <X86/PageDirectory.hh>
 #include <X86/Idt.hh>
-#include <X86/Gdt.hh>
-#include <X86/Tss.hh>
 #include <X86/EarlySerial.hh>
+
 #include <Kernel/ProcessContext.hh>
 #include <Supervisor/Supervisor.hh>
 
