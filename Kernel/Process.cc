@@ -35,6 +35,7 @@ Process::Process(uintptr_t pd)
      contextM(new ProcessContext(pd))
 {
    printf("Process creation: %p (existing pd: %p)\n", this, (void*)pd);
+   getProcessList().push_back(this);
 }
 
 Process*
