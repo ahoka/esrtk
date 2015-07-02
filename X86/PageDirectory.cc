@@ -105,7 +105,7 @@ PageDirectory::init()
 
    // kernel + initial page directory entries + physmap bootstrap page
 
-   uintptr_t highestKernelAddress = max((uintptr_t )&__end_kernel, __end_modules);
+   uintptr_t highestKernelAddress = max((uintptr_t )&__end_kernel, __end_modules  + KernelVirtualBase);
    uintptr_t last = (roundTo<uintptr_t>(highestKernelAddress, PageSize)
 		     + PageSize * PageFrameCount + PageSize) - KernelVirtualBase;
 
