@@ -58,11 +58,14 @@ x86_isr_page_fault(InterruptFrame* frame)
    frame->print();
 
    printf("\nPage fault: %s\n", (frame->error & (1 << 0)) ? "protection violation" : "page not present");
-   printf("%s 0x%x from 0x%x in %s mode\nError Code: 0x%x\n",
+   printf("%s 0x%x from 0x%x in %s mode\nError Code: 0x%x\n\n",
 	  (frame->error & (1 << 1)) ? "Writing" : "Reading",
 	  cr2, frame->eip,
 	  (frame->error & (1 << 2)) ? "user" : "supervisor",
 	  frame->error);
+
+   printf("Current Process: %lu, Current Thread: %lu\n\n",
+          Scheduler::getCurrentProcess()->getId(), Scheduler::getCurrentThread()->getId());
 
    StackTrace::printStackTrace(reinterpret_cast<void*>(frame->ebp));
 
