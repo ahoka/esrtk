@@ -1,5 +1,5 @@
 default 0
-timeout 3
+timeout 1
 
 title Experimental Soft Real-Time Kernel
 kernel /boot/kernel.elf
