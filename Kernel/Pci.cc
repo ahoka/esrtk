@@ -4,6 +4,43 @@
 
 static PciDriver* pciDrivers = 0;
 
+static const char*
+Pci::getTypeName(uint8_t type)
+{
+   const char* typeNames[] = {
+      "32bit",
+      "reserved (16bit)",
+      "64bit"
+   };
+
+   if (type > 3)
+   {
+      return "invalid";
+   }
+   else
+   {
+      return typeNames[type];
+   }
+}
+
+void
+Pci::printBar(uint32_t bar)
+{
+   if ((bar & Bar::Type::IoSpace) == 0)
+   {
+      uint32_t address = bar & 0xfffffff0;
+      uint8_t type = (bar >> 1) & 0x3;
+      bool prefetchable = (bar >> 3) & 0x1;
+      
+      printf("Memory: 0x%08x, %s, %s\n", address, getTypeName(type),
+             prefetchable ? "prefetchable" : "non-prefetchable");
+   }
+   else
+   {
+      printf("I/O: %u\n", bar & 0xffffffc0);
+   }
+}
+
 void
 Pci::getDeviceInfo(PciDevice pciDevice)
 {
@@ -21,6 +58,16 @@ Pci::getDeviceInfo(PciDevice pciDevice)
    if (interruptPin != 0 && interruptPin <= 4)
    {
       printf("IRQ%u (%s)\n", interruptLine, pins[interruptPin]);
+   }
+
+   for (unsigned int i = Pci::Config::Bar0; i <= Pci::Config::Bar5; i += 4)
+   {
+      auto bar = pciDevice.readConfigurationRegister32(i);
+      if (bar)
+      {
+         printf("BAR%u: ", i);
+         printBar(bar);
+      }
    }
 }
 

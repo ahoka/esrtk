@@ -28,7 +28,10 @@ namespace Pci
    uint16_t getVendorId(uint8_t bus, uint8_t device, uint8_t function);
    uint16_t getDeviceId(uint8_t bus, uint8_t device, uint8_t function);
 
+   void printBar(uint32_t bar);
+
    const char* getClassName(uint8_t classId);
+   static const char* getTypeName(uint8_t type);
 
    struct Config
    {
@@ -46,6 +49,18 @@ namespace Pci
          Bar5 = 0x24,
          InterruptPin = 0x3d,
          InterruptLine = 0x3c
+      };
+   };
+
+   struct Bar
+   {
+      struct Type
+      {
+         enum
+         {
+            MemorySpace = 0,
+            IoSpace = 1
+         };
       };
    };
 };
