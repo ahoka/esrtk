@@ -31,13 +31,13 @@ Pci::printBar(uint32_t bar)
       uint32_t address = bar & 0xfffffff0;
       uint8_t type = (bar >> 1) & 0x3;
       bool prefetchable = (bar >> 3) & 0x1;
-      
+
       printf("Memory: 0x%08x, %s, %s\n", address, getTypeName(type),
              prefetchable ? "prefetchable" : "non-prefetchable");
    }
    else
    {
-      printf("I/O: %u\n", bar & 0xffffffc0);
+      printf("I/O: 0x%x\n", bar & 0xffffffc0);
    }
 }
 
@@ -65,7 +65,7 @@ Pci::getDeviceInfo(PciDevice pciDevice)
       auto bar = pciDevice.readConfigurationRegister32(i);
       if (bar)
       {
-         printf("BAR%u: ", i);
+         printf("BAR%u: ", i / 4);
          printBar(bar);
       }
    }
