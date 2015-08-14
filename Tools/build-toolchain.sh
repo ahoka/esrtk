@@ -2,13 +2,14 @@
 
 set -e
 
-GCC_VERSION=5.1.0
+GCC_VERSION=5.2.0
 BINUTILS_VERSION=2.25
 MPFR_VERSION=3.1.3
 GMP_VERSION=6.0.0
 MPC_VERSION=1.0.3
 ICONV_VERSION=1.14
-ISL_VERSION=0.14
+ISL_VERSION=0.15
+CLOOG_VERSION=0.18.1
 
 TARGET=i686-elf
 PREFIX=/opt/${TARGET}
@@ -32,6 +33,7 @@ download()
         wget -N https://ftp.gnu.org/gnu/mpc/mpc-${MPC_VERSION}.tar.gz
         wget -N https://ftp.gnu.org/gnu/libiconv/libiconv-${ICONV_VERSION}.tar.gz
         wget -N http://isl.gforge.inria.fr/isl-${ISL_VERSION}.tar.bz2
+        wget ftp://gcc.gnu.org/pub/gcc/infrastructure/cloog-${CLOOG_VERSION}.tar.gz
 }
 
 extract()
@@ -71,11 +73,17 @@ extract()
         tar xjf isl-${ISL_VERSION}.tar.bz2
     fi
 
+    if [ ! -e cloog-${CLOOG_VERSION} ]
+    then
+        tar xzf cloog-${CLOOG_VERSION}.tar.gz
+    fi
+
     ln -fs ${ROOTDIR}/mpfr-${MPFR_VERSION} gcc-${GCC_VERSION}/mpfr
     ln -fs ${ROOTDIR}/gmp-${GMP_VERSION} gcc-${GCC_VERSION}/gmp
     ln -fs ${ROOTDIR}/mpc-${MPC_VERSION} gcc-${GCC_VERSION}/mpc
     ln -fs ${ROOTDIR}/libiconv-${ICONV_VERSION} gcc-${GCC_VERSION}/libiconv
     ln -fs ${ROOTDIR}/isl-${MPC_VERSION} gcc-${GCC_VERSION}/isl
+    ln -fs ${ROOTDIR}/cloog-${CLOOG_VERSION} gcc-${GCC_VERSION}/cloog
 }
 
 configure_binutils()
