@@ -89,7 +89,9 @@ typedef	struct fd_set {
 } while (0)
 
 #if __BSD_VISIBLE
+#ifndef NBBY
 #define	NBBY	__NBBY
+#endif
 #define fd_mask	__fd_mask
 #define NFDBITS	__NFDBITS
 #ifndef howmany

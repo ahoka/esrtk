@@ -39,6 +39,8 @@ __FBSDID("$FreeBSD: releng/10.1/lib/libelf/elf_begin.c 210351 2010-07-21 13:18:5
 
 #include "_libelf.h"
 
+#ifndef __esrtk__
+
 static Elf *
 _libelf_open_object(int fd, Elf_Cmd c)
 {
@@ -157,3 +159,6 @@ elf_begin(int fd, Elf_Cmd c, Elf *a)
 
 	return (e);
 }
+
+#endif
+

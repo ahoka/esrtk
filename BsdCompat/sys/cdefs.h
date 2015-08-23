@@ -561,8 +561,14 @@
 	__asm__(".symver impl, sym@verid")
 #define	__sym_default(impl,sym,verid)	\
 	__asm__(".symver impl, sym@@verid")
+
 #endif	/* __STDC__ */
 #endif	/* __GNUC__ || __INTEL_COMPILER */
+
+/* NetBSD compat */
+#define	__weak_alias(alias,sym)                  \
+   __asm__(".weak " #alias "\n"                  \
+           #alias " = " #sym);
 
 #define	__GLOBL1(sym)	__asm__(".globl " #sym)
 #define	__GLOBL(sym)	__GLOBL1(sym)
