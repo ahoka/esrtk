@@ -10,11 +10,12 @@ MPC_VERSION=1.0.3
 ICONV_VERSION=1.14
 ISL_VERSION=0.15
 CLOOG_VERSION=0.18.1
+CDRTOOLS_VERSION=3.01a31
 
 TARGET=i686-elf
 PREFIX=/opt/${TARGET}
-
 ROOTDIR=${PWD}
+DESTDIR=${ROOTDIR}/toolchain
 
 CORES=$(nproc)
 if [ -z "$CORES" ]
@@ -33,7 +34,9 @@ download()
         wget -N https://ftp.gnu.org/gnu/mpc/mpc-${MPC_VERSION}.tar.gz
         wget -N https://ftp.gnu.org/gnu/libiconv/libiconv-${ICONV_VERSION}.tar.gz
         wget -N http://isl.gforge.inria.fr/isl-${ISL_VERSION}.tar.bz2
-        wget ftp://gcc.gnu.org/pub/gcc/infrastructure/cloog-${CLOOG_VERSION}.tar.gz
+        wget -N ftp://gcc.gnu.org/pub/gcc/infrastructure/cloog-${CLOOG_VERSION}.tar.gz
+        wget -N http://www.crufty.net/ftp/pub/sjg/bmake.tar.gz
+        wget -N http://downloads.sourceforge.net/project/cdrtools/alpha/cdrtools-3.01a31.tar.bz2
 }
 
 extract()
@@ -76,6 +79,16 @@ extract()
     if [ ! -e cloog-${CLOOG_VERSION} ]
     then
         tar xzf cloog-${CLOOG_VERSION}.tar.gz
+    fi
+
+    if [ -e bmake.tar.gz ]
+    then
+        tar xvzf bmake.tar.gz
+    fi
+
+    if [ -e cdrtools-${CDRTOOLS_VERSION}.tar.bz2 ]
+    then
+        tar xvjf cdrtools-${CDRTOOLS_VERSION}.tar.bz2
     fi
 
     ln -fs ${ROOTDIR}/mpfr-${MPFR_VERSION} gcc-${GCC_VERSION}/mpfr
@@ -126,14 +139,47 @@ build_gcc()
 install_binutils()
 {
     cd ${ROOTDIR}/binutils
-    sudo make install
+    make DESTDIR=${DESTDIR} install
 }
 
 install_gcc()
 {
     cd ${ROOTDIR}/gcc
-    sudo make install-gcc
-    sudo make install-target-libgcc
+    make DESTDIR=${DESTDIR} install-gcc
+    make DESTDIR=${DESTDIR} install-target-libgcc
+}
+
+configure_bmake()
+{
+    rm -rf ${ROOTDIR}/bmake-build
+    mkdir ${ROOTDIR}/bmake-build
+
+    cd ${ROOTDIR}/bmake-build
+    ${ROOTDIR}/bmake/configure --prefix=${PREFIX}
+}
+
+build_bmake()
+{
+    cd ${ROOTDIR}/bmake-build
+    make
+}
+
+install_bmake()
+{
+    cd ${ROOTDIR}/bmake-build
+    make DESTDIR=${DESTDIR} install
+}
+
+build_mkisofs()
+{
+    cd ${ROOTDIR}/cdrtools-3.01/mkisofs
+    make
+}
+
+install_mkisofs()
+{
+    cd ${ROOTDIR}/cdrtools-3.01/mkisofs
+    install -m 0777 -v OBJ/*/mkisofs ${DESTDIR}${PREFIX}/bin/mkisofs
 }
 
 if [ $# -gt 0 ]
@@ -142,10 +188,12 @@ then
         install )
             install_binutils         
             install_gcc
+            install_bmake
             ;;
         build )
             build_binutils
             build_gcc
+            build_bmake
             ;;
         prepare )
             download
@@ -156,6 +204,18 @@ then
             extract
             configure_binutils
             configure_gcc
+            configure_bmake
+            ;;
+        bmake )
+            download
+            extract
+            configure_bmake
+            build_bmake
+            install_bmake
+            ;;
+        mkisofs )
+            build_mkisofs
+            install_mkisofs
             ;;
     esac
 else
@@ -169,4 +229,11 @@ else
     configure_gcc
     build_gcc
     install_gcc
+
+    configure_bmake
+    build_bmake
+    install_bmake
+
+    build_mkisofs
+    install_mkisofs
 fi
