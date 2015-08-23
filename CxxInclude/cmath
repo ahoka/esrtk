@@ -746,7 +746,7 @@ atan2(_A1 __lcpp_y, _A2 __lcpp_x) _NOEXCEPT
 using ::ceil;
 using ::ceilf;
 
-#if !(defined(_LIBCPP_MSVCRT) || defined(_AIX))
+#if !(defined(_LIBCPP_MSVCRT) || defined(_AIX) || defined(__esrtk__))
 inline _LIBCPP_INLINE_VISIBILITY float       ceil(float __lcpp_x) _NOEXCEPT       {return ceilf(__lcpp_x);}
 inline _LIBCPP_INLINE_VISIBILITY long double ceil(long double __lcpp_x) _NOEXCEPT {return ceill(__lcpp_x);}
 #endif

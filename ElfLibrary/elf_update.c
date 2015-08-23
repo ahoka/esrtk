@@ -702,6 +702,7 @@ _libelf_write_scn(Elf *e, char *nf, Elf_Scn *s, off_t rc)
  * filled with the fill character set by elf_fill(3).
  */
 
+#ifndef __esrtk__
 static off_t
 _libelf_write_elf(Elf *e, off_t newsize)
 {
@@ -913,6 +914,7 @@ _libelf_write_elf(Elf *e, off_t newsize)
 
 	return ((off_t) -1);
 }
+#endif
 
 off_t
 elf_update(Elf *e, Elf_Cmd c)
@@ -964,5 +966,9 @@ elf_update(Elf *e, Elf_Cmd c)
 		return ((off_t) -1);
 	}
 
+#ifndef __esrtk__
 	return (_libelf_write_elf(e, rc));
+#else
+        return NULL;
+#endif
 }

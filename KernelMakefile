@@ -18,7 +18,6 @@ QEMU=		qemu-system-i386
 
 QEMU_ARGS=	-m 64M -M q35 -watchdog i6300esb -device rtl8139 -boot order=c -serial stdio -d cpu_reset -no-reboot
 
-# XXX -flto
 COPTS+=		-O2 -march=i686 -g \
 		-Wall -Wextra \
 		-nostdlib -nostdinc -fno-builtin \
@@ -28,10 +27,11 @@ COPTS+=		-O2 -march=i686 -g \
 # XXX ACPICA
 #COPTS+=		-Werror
 
-LDFLAGS=	-flto ${COPTS}
-ASFLAGS+=	-flto -g ${COPTS}
-CFLAGS=		-std=c11 -flto ${COPTS}
-CXXFLAGS=	-std=c++14 -flto ${COPTS} -fno-exceptions -fno-rtti
+LTO=		#-flto
+LDFLAGS=	${LTO} ${COPTS}
+ASFLAGS+=	${LTO} -g ${COPTS}
+CFLAGS=		-std=c11 ${LTO} ${COPTS}
+CXXFLAGS=	-std=c++14 ${LTO} ${COPTS} -fno-exceptions -fno-rtti
 
 CC=		${TOOLPREFIX}${CROSS}gcc
 CXX=		${TOOLPREFIX}${CROSS}g++
