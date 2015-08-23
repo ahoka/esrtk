@@ -1,14 +1,25 @@
 language: cpp
 
-sudo: required
+sudo: false
+
+addons:
+  apt:
+    sources:
+      - ubuntu-toolchain-r/test
+    packages:
+      - pmake
+      - gcc-5
+      - g++-5
+      - genisoimage
 
 before_install:
-  - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
-  - sudo apt-get update -qq -y
-  - sudo apt-get install -y pmake gcc-5 g++-5 genisoimage
-  - sudo ln -s /usr/bin/pmake /usr/bin/bmake
+#  - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+#  - sudo apt-get update -qq -y
+#  - sudo apt-get install -y pmake gcc-5 g++-5 genisoimage
+#  - sudo ln -s /usr/bin/pmake /usr/bin/bmake
   - wget 'https://onedrive.live.com/download?cid=C3ABD0BC4C0161ED&resid=C3ABD0BC4C0161ED%2115450&authkey=AEvNf51Lv0uc9aU' -O i686-elf.tar.xz
   - tar xJf i686-elf.tar.xz
+  - ln -s /usr/bin/pmake $PWD/i686-elf/bin/bmake
   - export PATH=${PATH}:$PWD/i686-elf/bin
   - export CXX=g++-5
   - export CC=gcc-5
