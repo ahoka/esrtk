@@ -59,6 +59,7 @@ SECTIONS
     /DISCARD/ :
     {
 /*	*(.debug_*) */
+        *(.note.*)
         *(.comment)
         *(.comment.*)
         *(.eh_frame) /* C++ exceptions. */

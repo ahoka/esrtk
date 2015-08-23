@@ -25,13 +25,13 @@ build: ${MAKEOBJDIR}
 iso: build
 	@echo "---- Creating ISO ----"
 	mkdir -p iso/boot/grub
-	cp obj.${MACHINE}/kernel.elf iso/boot
-	cp Runtime/obj.${MACHINE}/runtime.elf iso/boot
+	i686-elf-objcopy --strip-debug obj.${MACHINE}/kernel.elf iso/boot/kernel.elf
+	i686-elf-objcopy --strip-debug Runtime/obj.${MACHINE}/runtime.elf iso/boot/runtime.elf
 	cp Loader/menu.lst iso/boot/grub
 	cp Loader/stage2_eltorito iso/boot/grub
 	mkisofs -R -b boot/grub/stage2_eltorito -no-emul-boot -boot-load-size 4 \
 	 -boot-info-table -o esrtk.iso iso
-	rm -rf iso
+#	rm -rf iso
 
 .PHONY: run
 run: build
