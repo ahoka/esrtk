@@ -109,7 +109,7 @@ configure_binutils()
 
     mkdir ${ROOTDIR}/binutils
     cd ${ROOTDIR}/binutils
-    ${ROOTDIR}/binutils-${BINUTILS_VERSION}/configure --prefix=${PREFIX} --target=${TARGET} --enable-lto --enable-gold=default --enable-plugins --with-sysroot --disable-nls --disable-werror
+    ${ROOTDIR}/binutils-${BINUTILS_VERSION}/configure --prefix=${PREFIX} --target=${TARGET} --enable-lto --enable-gold --enable-plugins --with-sysroot --disable-nls --disable-werror
 }
 
 build_binutils()
