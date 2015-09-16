@@ -24,6 +24,8 @@
  * SUCH DAMAGE.
  */
 
+#if 0
+
 #include <sys/cdefs.h>
 __FBSDID("$FreeBSD: releng/10.1/lib/libelf/elf_update.c 247221 2013-02-24 15:15:50Z markj $");
 
@@ -966,3 +968,4 @@ elf_update(Elf *e, Elf_Cmd c)
 
 	return (_libelf_write_elf(e, rc));
 }
+#endif
