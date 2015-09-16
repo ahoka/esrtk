@@ -1,7 +1,7 @@
 #ifndef SYMBOLTABLE_HH
 #define SYMBOLTABLE_HH
 
-#include <unordered_map>
+#include <map>
 #include <string>
 #include <utility>
 
@@ -18,7 +18,7 @@ public:
    std::pair<Symbol, bool> lookup(std::string name);
 
 private:
-   std::unordered_map<std::string, Symbol> symbolsM;
+   std::map<std::string, Symbol> symbolsM;
 };
 
 #endif
