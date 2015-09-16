@@ -30,7 +30,7 @@
  * SUCH DAMAGE.
  *
  *	@(#)cdefs.h	8.8 (Berkeley) 1/9/95
- * $FreeBSD: releng/10.1/sys/sys/cdefs.h 251804 2013-06-16 10:48:47Z ed $
+ * $FreeBSD: releng/10.2/sys/sys/cdefs.h 284948 2015-06-30 08:40:15Z tijl $
  */
 
 #ifndef	_SYS_CDEFS_H_
@@ -40,6 +40,9 @@
  * Testing against Clang-specific extensions.
  */
 
+#ifndef	__has_attribute
+#define	__has_attribute(x)	0
+#endif
 #ifndef	__has_extension
 #define	__has_extension		__has_feature
 #endif
@@ -89,7 +92,7 @@
 #  undef __GNUCLIKE_BUILTIN_CONSTANT_P
 # endif
 
-#if (__GNUC_MINOR__ > 95 || __GNUC__ >= 3) && !defined(__INTEL_COMPILER)
+#if (__GNUC_MINOR__ > 95 || __GNUC__ >= 3)
 # define __GNUCLIKE_BUILTIN_VARARGS 1
 # define __GNUCLIKE_BUILTIN_STDARG 1
 # define __GNUCLIKE_BUILTIN_VAALIST 1
@@ -203,30 +206,29 @@
  * for a given compiler, let the compile fail if it is told to use
  * a feature that we cannot live without.
  */
+#define __dead __dead2
 #ifdef lint
-#define __dead
 #define	__dead2
 #define	__pure2
 #define	__unused
 #define	__packed
 #define	__aligned(x)
 #define	__section(x)
+#define	__weak_symbol
 #else
+#define	__weak_symbol	__attribute__((__weak__))
 #if !__GNUC_PREREQ__(2, 5) && !defined(__INTEL_COMPILER)
-#define __dead
 #define	__dead2
 #define	__pure2
 #define	__unused
 #endif
 #if __GNUC__ == 2 && __GNUC_MINOR__ >= 5 && __GNUC_MINOR__ < 7 && !defined(__INTEL_COMPILER)
-#define	__dead		__attribute__((__noreturn__))
 #define	__dead2		__attribute__((__noreturn__))
 #define	__pure2		__attribute__((__const__))
 #define	__unused
 /* XXX Find out what to do for __packed, __aligned and __section */
 #endif
 #if __GNUC_PREREQ__(2, 7)
-#define	__dead		__attribute__((__noreturn__))
 #define	__dead2		__attribute__((__noreturn__))
 #define	__pure2		__attribute__((__const__))
 #define	__unused	__attribute__((__unused__))
@@ -236,7 +238,6 @@
 #define	__section(x)	__attribute__((__section__(x)))
 #endif
 #if defined(__INTEL_COMPILER)
-#define __dead		__attribute__((__noreturn__))
 #define __dead2		__attribute__((__noreturn__))
 #define __pure2		__attribute__((__const__))
 #define __unused	__attribute__((__unused__))
@@ -245,7 +246,7 @@
 #define __aligned(x)	__attribute__((__aligned__(x)))
 #define __section(x)	__attribute__((__section__(x)))
 #endif
-#endif
+#endif /* lint */
 
 #if !__GNUC_PREREQ__(2, 95)
 #define	__alignof(x)	__offsetof(struct { char __a; x __b; }, __b)
@@ -255,7 +256,7 @@
  * Keywords added in C11.
  */
 
-#if !defined(__STDC_VERSION__) || __STDC_VERSION__ < 201112L
+#if !defined(__STDC_VERSION__) || __STDC_VERSION__ < 201112L || defined(lint)
 
 #if !__has_extension(c_alignas)
 #if (defined(__cplusplus) && __cplusplus >= 201103L) || \
@@ -294,7 +295,8 @@
 #elif defined(__COUNTER__)
 #define	_Static_assert(x, y)	__Static_assert(x, __COUNTER__)
 #define	__Static_assert(x, y)	___Static_assert(x, y)
-#define	___Static_assert(x, y)	typedef char __assert_ ## y[(x) ? 1 : -1]
+#define	___Static_assert(x, y)	typedef char __assert_ ## y[(x) ? 1 : -1] \
+				__unused
 #else
 #define	_Static_assert(x, y)	struct __hack
 #endif
@@ -358,8 +360,10 @@
 
 #if __GNUC_PREREQ__(3, 4)
 #define	__fastcall	__attribute__((__fastcall__))
+#define	__result_use_check	__attribute__((__warn_unused_result__))
 #else
 #define	__fastcall
+#define	__result_use_check
 #endif
 
 #if __GNUC_PREREQ__(4, 1)
@@ -368,6 +372,7 @@
 #define	__returns_twice
 #endif
 
+/* for esrtk */
 /*
  * __only_inline makes the compiler only use this function definition
  * for inlining; references that can't be inlined will be left as
@@ -455,7 +460,7 @@
 #define __predict_false(exp)    (exp)
 #endif
 
-#if __GNUC_PREREQ__(4, 2)
+#if __GNUC_PREREQ__(4, 0)
 #define	__hidden	__attribute__((__visibility__("hidden")))
 #define	__exported	__attribute__((__visibility__("default")))
 #else
@@ -561,11 +566,10 @@
 	__asm__(".symver impl, sym@verid")
 #define	__sym_default(impl,sym,verid)	\
 	__asm__(".symver impl, sym@@verid")
-
 #endif	/* __STDC__ */
 #endif	/* __GNUC__ || __INTEL_COMPILER */
 
-/* NetBSD compat */
+/* for esrtk: NetBSD compat */
 #define	__weak_alias(alias,sym)                  \
    __asm__(".weak " #alias "\n"                  \
            #alias " = " #sym);
@@ -589,7 +593,7 @@
  * Embed the rcs id of a source file in the resulting library.  Note that in
  * more recent ELF binutils, we use .ident allowing the ID to be stripped.
  * Usage:
- *	__FBSDID("$FreeBSD: releng/10.1/sys/sys/cdefs.h 251804 2013-06-16 10:48:47Z ed $");
+ *	__FBSDID("$FreeBSD: releng/10.2/sys/sys/cdefs.h 284948 2015-06-30 08:40:15Z tijl $");
  */
 #ifndef	__FBSDID
 #if !defined(lint) && !defined(STRIP_FBSDID)
