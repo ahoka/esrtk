@@ -27,7 +27,7 @@ COPTS+=		-O2 -march=i686 -g \
 # XXX ACPICA
 #COPTS+=		-Werror
 
-LTO=		-flto
+LTO=		#-flto
 
 # force bfd as gold is producing incorrect binary for some reason
 #
@@ -59,7 +59,7 @@ CPPFLAGS+=	${INCPATHS:S/^/-I/} -isystem${BUILD_ROOT}/Acpi/Include
 
 # XXX these should be only provided for Standard
 #
-CPPFLAGS+=	-I${BUILD_ROOT}/BsdCompat
+CPPFLAGS+=	-I${BUILD_ROOT}/BsdCompat -I${BUILD_ROOT}/BsdEthernet
 CPPFLAGS+=	-DHAVE_NBTOOL_CONFIG_H=0 -DLIBCXXABI_BAREMETAL=1
 
 CPPFLAGS+=	-DHAVE_STRLCAT=0 -DHAVE_STRSEP=0 -DHAVE_STRLCPY=0 -D__ELF__
@@ -69,7 +69,7 @@ CPPFLAGS+=	-D_KERNEL
 #CPPFLAGS+=	-D_BSD_SOURCE
 
 SRCDIR=		Supervisor CLibrary CxxLibrary CxxAbi Drivers Kernel ${PLATFORM} \
-		FileSystem Loader Acpi/Source ElfLibrary
+		FileSystem Loader Acpi/Source ElfLibrary BsdEthernet BsdSupport
 TESTDIR=	Test
 
 TCCFILES:=	${FIND} ${TESTDIR} -name '*.cc'

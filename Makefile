@@ -34,8 +34,8 @@ iso: build
 #	rm -rf iso
 
 .PHONY: run
-run: build
-	${SYSMAKECMD} run
+run: iso
+	./simulator.sh
 
 .PHONY: debug
 debug: build

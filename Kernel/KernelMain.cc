@@ -18,6 +18,7 @@
 #include <cstdio>
 
 extern unsigned int magic;
+extern "C" void mi_startup(void);
 
 extern "C" void
 kmain()
@@ -57,6 +58,9 @@ kmain()
    Multiboot::getSymbols();
 
    Supervisor::Supervisor::init();
+
+   printf("Initializing BSD...\n");
+   mi_startup();
 
    printf("Becoming idle thread...\n");
    for (;;)
