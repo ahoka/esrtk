@@ -10,7 +10,7 @@ MPC_VERSION=1.0.3
 ICONV_VERSION=1.14
 ISL_VERSION=0.15
 CLOOG_VERSION=0.18.1
-CDRTOOLS_VERSION=3.01a31
+CDRTOOLS_VERSION=3.02a01
 
 TARGET=i686-elf
 PREFIX=/opt/${TARGET}
@@ -23,7 +23,7 @@ then
     CORES=1
 fi
 
-export PATH=${PREFIX}/bin:${PATH}
+export PATH=${DESTDIR}/${PREFIX}/bin:${PATH}
 
 download()
 {
@@ -36,7 +36,7 @@ download()
         wget -N http://isl.gforge.inria.fr/isl-${ISL_VERSION}.tar.bz2
         wget -N ftp://gcc.gnu.org/pub/gcc/infrastructure/cloog-${CLOOG_VERSION}.tar.gz
         wget -N http://www.crufty.net/ftp/pub/sjg/bmake.tar.gz
-        wget -N http://downloads.sourceforge.net/project/cdrtools/alpha/cdrtools-3.01a31.tar.bz2
+        wget -N http://downloads.sourceforge.net/project/cdrtools/alpha/cdrtools-${CDRTOOLS_VERSION}.tar.bz2
 }
 
 extract()
@@ -109,7 +109,7 @@ configure_binutils()
 
     mkdir ${ROOTDIR}/binutils
     cd ${ROOTDIR}/binutils
-    ${ROOTDIR}/binutils-${BINUTILS_VERSION}/configure --prefix=${PREFIX} --target=${TARGET} --enable-lto --enable-gold --enable-plugins --with-sysroot --disable-nls --disable-werror
+    ${ROOTDIR}/binutils-${BINUTILS_VERSION}/configure --prefix=${PREFIX} --target=${TARGET} --enable-lto --enable-plugins --with-sysroot --disable-nls --disable-werror
 }
 
 build_binutils()
@@ -172,13 +172,13 @@ install_bmake()
 
 build_mkisofs()
 {
-    cd ${ROOTDIR}/cdrtools-3.01/mkisofs
+    cd ${ROOTDIR}/cdrtools-3.02
     make
 }
 
 install_mkisofs()
 {
-    cd ${ROOTDIR}/cdrtools-3.01/mkisofs
+    cd ${ROOTDIR}/cdrtools-3.02/mkisofs
     install -m 0777 -v OBJ/*/mkisofs ${DESTDIR}${PREFIX}/bin/mkisofs
 }
 
