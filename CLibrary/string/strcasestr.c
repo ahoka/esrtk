@@ -36,6 +36,9 @@
 #include <ctype.h>
 #include <string.h>
 
+// XXX this should come from string.h
+int	 strncasecmp(const char *, const char *, size_t);
+
 /*
  * Find the first occurrence of find in s, ignore case.
  */

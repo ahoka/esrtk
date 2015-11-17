@@ -116,7 +116,7 @@ LocalApic::init()
       Debug::panic("APIC is disabled\n");
    }
 
-   printf("APIC: base address: 0x%lx\n", apicAddressM);
+   printf("APIC: base address: 0x%x\n", apicAddressM);
 
    apicAddressM = Memory::mapRegion(apicAddressM, 4096u, Memory::MapUncacheable);
    KASSERT(apicAddressM != 0);

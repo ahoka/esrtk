@@ -14,7 +14,7 @@ namespace Kernel
          int probe();
          bool startTimer();
          bool stopTimer();
-         
+
          unsigned int getFrequency();
          void delay(unsigned long ms);
 

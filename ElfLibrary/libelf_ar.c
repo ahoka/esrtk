@@ -211,7 +211,7 @@ _libelf_ar_process_symtab(Elf *e, size_t *count)
 {
 	size_t n, nentries, off;
 	Elf_Arsym *symtab, *sym;
-	unsigned char  *p, *s, *end;
+	char  *p, *s, *end;
 
 	assert(e != NULL);
 	assert(count != NULL);
@@ -221,7 +221,7 @@ _libelf_ar_process_symtab(Elf *e, size_t *count)
 		return (NULL);
 	}
 
-	p = (unsigned char *) e->e_u.e_ar.e_rawsymtab;
+	p = (char *) e->e_u.e_ar.e_rawsymtab;
 	end = p + e->e_u.e_ar.e_rawsymtabsz;
 
 	GET_WORD(p, nentries);

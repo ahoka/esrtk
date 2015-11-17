@@ -142,7 +142,7 @@ __cxaimpl_zero_bss()
    uintptr_t start = (uintptr_t )(&__start_bss) - KernelVirtualBase;
    uintptr_t end = (uintptr_t )(&__end_bss) - KernelVirtualBase;
    
-   Debug::verbose("Zeroing .bss section: 0x%0lx-0x%0lx\n", start, end);
+   Debug::verbose("Zeroing .bss section: 0x%0x-0x%0x\n", start, end);
 
    for (uint8_t* p = (uint8_t* )start; p != (uint8_t* )end; p++)
    {

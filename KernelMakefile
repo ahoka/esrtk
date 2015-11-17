@@ -24,8 +24,13 @@ COPTS+=		-O2 -march=i686 -g \
 		-fno-omit-frame-pointer \
 		-fno-stack-protector
 
-# XXX ACPICA
 #COPTS+=		-Werror
+COPTS+=		-Wno-error=unused-parameter \
+		-Wno-error=unused-variable \
+		-Wno-error=unused-function \
+		-Wno-error=unused-but-set-variable
+
+COPTS+=		-Wmissing-format-attribute
 
 LTO=		#-flto
 

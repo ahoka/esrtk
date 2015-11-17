@@ -218,7 +218,9 @@
 
 #define	NZERO	0		/* default "nice" */
 
+#ifndef NBBY
 #define	NBBY	8		/* number of bits in a byte */
+#endif
 #define	NBPW	sizeof(int)	/* number of bytes per word (integer) */
 
 #define	CMASK	022		/* default file mask: S_IWGRP|S_IWOTH */

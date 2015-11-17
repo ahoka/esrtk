@@ -66,10 +66,12 @@ typedef	__mbstate_t	mbstate_t;
 
 #include <_null.h>
 
+#if 0
 #if __GNUC_PREREQ__(4, 0)
 #define	offsetof(type, member)	__builtin_offsetof(type, member)
 #else
 #define	offsetof(type, member)	((size_t)(&((type *)0)->member))
+#endif
 #endif
 
 #endif /* _STDDEF_H_ */

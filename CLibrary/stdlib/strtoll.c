@@ -152,4 +152,4 @@ strtoll(const char *nptr, char **endptr, int base)
 	return (acc);
 }
 
-__strong_alias(strtoq, strtoll);
+//__strong_alias(strtoq, strtoll);

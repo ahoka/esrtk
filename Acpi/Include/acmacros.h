@@ -116,6 +116,8 @@
 #ifndef __ACMACROS_H__
 #define __ACMACROS_H__
 
+// UB!
+#define ACPI_MISALIGNMENT_NOT_SUPPORTED
 
 /*
  * Extract data using a pointer. Any more than a byte and we

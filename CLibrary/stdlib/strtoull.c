@@ -110,4 +110,4 @@ strtoull(const char *nptr, char **endptr, int base)
 	return (acc);
 }
 
-__strong_alias(strtouq, strtoull);
+//__strong_alias(strtouq, strtoull);
