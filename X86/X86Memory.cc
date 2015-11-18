@@ -28,7 +28,7 @@ Memory::copyMemoryMap()
    {
       if (map->type == MultibootStructure::MemoryMap::Available)
       {
-         printf("Usable memory at %p-%p\n", (void *)map->address, (void *)(map->address + map->length));
+         printf("Usable memory at %p-%p\n", (void *)map->address, (void *)(map->address + map->length - 1));
          if (map->address + map->length <= 0x100000)
          {
             // dont add low mem to the pool
@@ -43,15 +43,15 @@ Memory::copyMemoryMap()
       }
       else if (map->type == MultibootStructure::MemoryMap::Reserved)
       {
-         printf("Reserved memory at %p-%p\n", (void *)map->address, (void *)(map->address + map->length));
+         printf("Reserved memory at %p-%p\n", (void *)map->address, (void *)(map->address + map->length - 1));
       }
       else if (map->type == MultibootStructure::MemoryMap::Acpi)
       {
-         printf("ACPI memory at %p-%p\n", (void *)map->address, (void *)(map->address + map->length));
+         printf("ACPI memory at %p-%p\n", (void *)map->address, (void *)(map->address + map->length - 1));
       }
       else if (map->type == MultibootStructure::MemoryMap::Nvs)
       {
-         printf("NVS memory at %p-%p\n", (void *)map->address, (void *)(map->address + map->length));
+         printf("NVS memory at %p-%p\n", (void *)map->address, (void *)(map->address + map->length - 1));
       }
    }
 
