@@ -6,6 +6,7 @@
 #include <cstdint>
 
 // interrupt handler collecting statistics
+namespace {
 class DefaultInterruptHandler : public InterruptHandler
 {
 public:
@@ -18,6 +19,7 @@ public:
 private:
    uint64_t counter;
 };
+}
 
 InterruptController* Interrupt::controller = 0;
 

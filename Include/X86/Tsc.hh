@@ -5,7 +5,7 @@
 
 #include <cstdint>
 
-class Tsc : ClockProvider
+class Tsc final : ClockProvider
 {
 public:
    Tsc();

@@ -4,6 +4,8 @@
 #include <DoublyLinkedItem.hh>
 #include <DoublyLinkedList.hh>
 
+#pragma GCC diagnostic ignored "-Wsuggest-final-types"
+
 namespace Vfs
 {
    struct Stats;

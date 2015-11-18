@@ -12,22 +12,24 @@
 #include <cstdio>
 #include <cstdint>
 
-class SerialConsole : Driver, InterruptHandler, Console
-{
-public:
-   SerialConsole();
-   ~SerialConsole();
+namespace {
+   class SerialConsole : Driver, InterruptHandler, Console
+   {
+   public:
+      SerialConsole();
+      ~SerialConsole();
 
-   int probe();
-   bool init();
-   bool finalize();
-   const char* name() const;
+      int probe();
+      bool init();
+      bool finalize();
+      const char* name() const;
 
-   virtual void putChar(char ch);
+      virtual void putChar(char ch);
 
-   // this should be interruptHandler()
-   void handleInterrupt();
-};
+      // this should be interruptHandler()
+      void handleInterrupt();
+   };
+}
 
 SerialConsole::SerialConsole()
 {

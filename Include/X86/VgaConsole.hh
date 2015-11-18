@@ -9,7 +9,7 @@
 
 typedef uint16_t VgaCharacter;
 
-class VgaConsole : public FrameBuffer
+class VgaConsole final : public FrameBuffer
 {
 public:
    VgaConsole();

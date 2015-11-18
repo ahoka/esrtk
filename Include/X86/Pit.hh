@@ -6,7 +6,7 @@
 
 #include <cstdio>
 
-class Pit : InterruptHandler, SystemTimer
+class Pit final : InterruptHandler, SystemTimer
 {
 public:
    Pit();

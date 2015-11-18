@@ -30,7 +30,8 @@ COPTS+=		-Wno-error=unused-parameter \
 		-Wno-error=unused-function \
 		-Wno-error=unused-but-set-variable
 
-COPTS+=		-Wmissing-format-attribute
+COPTS+=		-Wmissing-format-attribute \
+		-Wsuggest-final-types
 
 LTO=		#-flto
 
