@@ -33,6 +33,8 @@ COPTS+=		-Wno-error=unused-parameter \
 COPTS+=		-Wmissing-format-attribute \
 		-Wsuggest-final-types
 
+#COPTS+=		-Wconversion -Wno-sign-conversion
+
 LTO=		#-flto
 
 # force bfd as gold is producing incorrect binary for some reason
