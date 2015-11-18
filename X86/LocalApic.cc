@@ -9,6 +9,8 @@
 
 #include <X86/Pit.hh>
 
+#include <Kernel/Cpu.hh>
+
 #include <cstdio>
 
 LocalApic::LocalApic(uintptr_t physicalAddress)
@@ -180,6 +182,9 @@ LocalApic::init()
    write32(LvtTimer, timerLvt);
 
    printf("Calibrating LAPIC timer\n");
+   Cpu::InterruptFlags flags;
+   Cpu::saveLocalInterrupts(flags);
+   Cpu::disableLocalInterrupts();
 
    uint64_t sum = 0;
    for (int i = 0; i < 10; i++)
@@ -191,6 +196,7 @@ LocalApic::init()
       uint32_t current = read32(CurrentCount);
       sum += 0xffffffff - current;
    }
+   Cpu::restoreLocalInterrupts(flags);
 
    printf("100 ms is %llu\n", sum / 10);
 
