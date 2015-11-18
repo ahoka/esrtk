@@ -98,7 +98,7 @@ bintime_mul(struct bintime *_bt, u_int _x)
 	_p1 = (_bt->frac & 0xffffffffull) * _x;
 	_p2 = (_bt->frac >> 32) * _x + (_p1 >> 32);
 	_bt->sec *= _x;
-	_bt->sec += (_p2 >> 32);
+	_bt->sec += (time_t)(_p2 >> 32);
 	_bt->frac = (_p2 << 32) | (_p1 & 0xffffffffull);
 }
 
@@ -174,8 +174,8 @@ bintime2timespec(const struct bintime *_bt, struct timespec *_ts)
 {
 
 	_ts->tv_sec = _bt->sec;
-	_ts->tv_nsec = ((uint64_t)1000000000 *
-	    (uint32_t)(_bt->frac >> 32)) >> 32;
+	_ts->tv_nsec = (long)(((uint64_t)1000000000 *
+                               (uint32_t)(_bt->frac >> 32)) >> 32);
 }
 
 static __inline void
@@ -209,8 +209,8 @@ sbttots(sbintime_t _sbt)
 {
 	struct timespec _ts;
 
-	_ts.tv_sec = _sbt >> 32;
-	_ts.tv_nsec = ((uint64_t)1000000000 * (uint32_t)_sbt) >> 32;
+	_ts.tv_sec = (time_t)(_sbt >> 32);
+	_ts.tv_nsec = (long)(((uint64_t)1000000000 * (uint32_t)_sbt) >> 32);
 	return (_ts);
 }
 
@@ -227,8 +227,8 @@ sbttotv(sbintime_t _sbt)
 {
 	struct timeval _tv;
 
-	_tv.tv_sec = _sbt >> 32;
-	_tv.tv_usec = ((uint64_t)1000000 * (uint32_t)_sbt) >> 32;
+	_tv.tv_sec = (time_t)(_sbt >> 32);
+	_tv.tv_usec = (long)(((uint64_t)1000000 * (uint32_t)_sbt) >> 32);
 	return (_tv);
 }
 
