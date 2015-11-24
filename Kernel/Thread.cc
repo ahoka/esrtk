@@ -65,7 +65,6 @@ Thread::init0(uintptr_t stack)
 
    Debug::verbose("Initializing idle thread (thread0): %p...\n", (void*)stack);
 
-   Scheduler::insert(this);
    getThreadList().push_back(this);
 
    nameM = "idle";
@@ -125,6 +124,7 @@ Thread::init()
 bool
 Thread::addJob(const std::function<void()>& task)
 {
+   Debug::verbose("Thread::addJob\n");
    jobsM.emplace(task);
 
    return true;

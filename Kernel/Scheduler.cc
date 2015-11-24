@@ -66,6 +66,8 @@ Scheduler::getKernelProcess()
 void
 Scheduler::init()
 {
+   printf("Initializing scheduler\n");
+
    static std::list<Thread*> readyListInstance;
    static std::list<Thread*> idleListInstance;
 
@@ -82,8 +84,6 @@ Scheduler::init()
    setCurrentProcess(&process0);
 
    process0.getContext()->switchContext();
-
-   readyList->push_back(thread0);
 }
 
 void
