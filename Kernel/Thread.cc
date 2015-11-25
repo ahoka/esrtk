@@ -65,7 +65,9 @@ Thread::init0(uintptr_t stack)
 
    Debug::verbose("Initializing idle thread (thread0): %p...\n", (void*)stack);
 
+   spinlock_softirq_enter(&threadLock);
    getThreadList().push_back(this);
+   spinlock_softirq_exit(&threadLock);
 
    nameM = "idle";
 
@@ -116,7 +118,9 @@ Thread::init()
    Debug::verbose("Thread's new kernel stack is %p\n", (void*)kernelStackM);
 
    Scheduler::insert(this);
+   spinlock_softirq_enter(&threadLock);
    getThreadList().push_back(this);
+   spinlock_softirq_exit(&threadLock);
 
    return success;
 }
@@ -125,7 +129,9 @@ bool
 Thread::addJob(const std::function<void()>& task)
 {
    Debug::verbose("Thread::addJob\n");
+   lockM.enter();
    jobsM.emplace(task);
+   lockM.exit();
 
    return true;
 }
@@ -158,10 +164,12 @@ void
 Thread::printAll()
 {
    printf(" id\tkstack\t\tustack\t\tstate\ttype\toncpu\tname\n");
+   spinlock_softirq_enter(&threadLock);
    for (auto& t : getThreadList())
    {
       t->dump();
    }
+   spinlock_softirq_exit(&threadLock);
 }
 
 void
@@ -176,14 +184,18 @@ Thread::main(Thread* thread)
       if (thread->stateM == Ready)
       {
          thread->stateM = Running;
+         thread->lockM.enter();
          while (!thread->jobsM.empty())
          {
             printf("Running job\n");
             Job job = thread->jobsM.back();
             thread->jobsM.pop();
 
+            thread->lockM.exit();
             job.execute();
+            thread->lockM.enter();
          }
+         thread->lockM.exit();
       }
       else if (thread->stateM == Agony)
       {
