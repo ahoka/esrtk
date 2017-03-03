@@ -1,19 +1,20 @@
 #!/bin/sh
 
 set -e
+set -x
 
-GCC_VERSION=5.2.0
-BINUTILS_VERSION=2.25
-MPFR_VERSION=3.1.3
-GMP_VERSION=6.0.0
+GCC_VERSION=6.3.0
+BINUTILS_VERSION=2.28
+MPFR_VERSION=3.1.5
+GMP_VERSION=6.1.2
 MPC_VERSION=1.0.3
-ICONV_VERSION=1.14
-ISL_VERSION=0.15
-CLOOG_VERSION=0.18.1
-CDRTOOLS_VERSION=3.02a01
+ICONV_VERSION=1.15
+ISL_VERSION=0.18
+CLOOG_VERSION=0.18.4
+CDRTOOLS_VERSION=3.02a07
 
 TARGET=i686-elf
-PREFIX=/opt/${TARGET}
+PREFIX=$HOME/gcc/${TARGET}
 ROOTDIR=${PWD}
 DESTDIR=${ROOTDIR}/toolchain
 
@@ -30,11 +31,11 @@ download()
         wget -N https://ftp.gnu.org/gnu/binutils/binutils-${BINUTILS_VERSION}.tar.bz2
         wget -N https://ftp.gnu.org/gnu/gcc/gcc-${GCC_VERSION}/gcc-${GCC_VERSION}.tar.bz2
         wget -N http://www.mpfr.org/mpfr-current/mpfr-${MPFR_VERSION}.tar.bz2
-        wget -N https://gmplib.org/download/gmp/gmp-${GMP_VERSION}a.tar.bz2
+        wget -N https://gmplib.org/download/gmp/gmp-${GMP_VERSION}.tar.bz2
         wget -N https://ftp.gnu.org/gnu/mpc/mpc-${MPC_VERSION}.tar.gz
         wget -N https://ftp.gnu.org/gnu/libiconv/libiconv-${ICONV_VERSION}.tar.gz
         wget -N http://isl.gforge.inria.fr/isl-${ISL_VERSION}.tar.bz2
-        wget -N ftp://gcc.gnu.org/pub/gcc/infrastructure/cloog-${CLOOG_VERSION}.tar.gz
+        wget -N http://www.bastoul.net/cloog/pages/download/cloog-${CLOOG_VERSION}.tar.gz
         wget -N http://www.crufty.net/ftp/pub/sjg/bmake.tar.gz
         wget -N http://downloads.sourceforge.net/project/cdrtools/alpha/cdrtools-${CDRTOOLS_VERSION}.tar.bz2
 }
@@ -58,7 +59,7 @@ extract()
 
     if [ ! -e gmp-${GMP_VERSION} ]
     then
-        tar xjf gmp-${GMP_VERSION}a.tar.bz2
+        tar xjf gmp-${GMP_VERSION}.tar.bz2
     fi
 
     if [ ! -e mpc-${MPC_VERSION} ]
@@ -114,6 +115,7 @@ configure_binutils()
 
 build_binutils()
 {
+    cd ${ROOTDIR}/binutils
     make -j "$CORES"
 }
 
@@ -132,6 +134,7 @@ configure_gcc()
 
 build_gcc()
 {
+    cd ${ROOTDIR}/gcc
     make -j "$CORES" all-gcc
     make -j "$CORES" all-target-libgcc
 }
@@ -195,13 +198,11 @@ then
             build_gcc
             build_bmake
             ;;
-        prepare )
+        download )
             download
             extract
             ;;
         configure )
-            download
-            extract
             configure_binutils
             configure_gcc
             configure_bmake
