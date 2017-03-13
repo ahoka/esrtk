@@ -44,7 +44,7 @@ namespace Kernel
 
       Process* getProcess() const;
 
-      unsigned long getId() const;
+      uint64_t getId() const;
 
       void setRunning();
       void setReady();
@@ -73,7 +73,7 @@ namespace Kernel
       bool init();
       bool init0(uintptr_t stack);
 
-      unsigned long idM;
+      uint64_t idM;
       uintptr_t userStackM;
       uintptr_t kernelStackM;
       State stateM;
@@ -87,8 +87,6 @@ namespace Kernel
 
       mutable Mutex lockM;
       std::queue<Job> jobsM;
-
-      static unsigned long nextThreadId;
 
       friend class ::Kernel::Scheduler;
    };

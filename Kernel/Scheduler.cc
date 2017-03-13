@@ -89,7 +89,7 @@ Scheduler::init()
 void
 Scheduler::insert(Thread* t)
 {
-   printf("Scheduler: inserting thread %lu\n", t->getId());
+   printf("Scheduler: inserting thread %llu\n", t->getId());
 
    spinlock_softirq_enter(&schedulerLock);
 
@@ -101,7 +101,7 @@ Scheduler::insert(Thread* t)
 void
 Scheduler::remove(Thread* t)
 {
-   printf("Scheduler: removing thread %lu\n", t->getId());
+   printf("Scheduler: removing thread %llu\n", t->getId());
 
    spinlock_softirq_enter(&schedulerLock);
 

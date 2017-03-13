@@ -17,7 +17,7 @@ namespace Kernel
 
       Thread* createThread();
       ProcessContext* getContext() const;
-      unsigned long getId() const;
+      uint64_t getId() const;
 
       void dump();
 
@@ -29,7 +29,7 @@ namespace Kernel
       Process();
       explicit Process(uintptr_t);
 
-      unsigned long idM;
+      uint64_t idM;
       ProcessContext* contextM;
       std::list<Thread*> threadsM;
 

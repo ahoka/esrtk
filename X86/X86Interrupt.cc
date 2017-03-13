@@ -64,7 +64,7 @@ x86_isr_page_fault(InterruptFrame* frame)
 	  (frame->error & (1 << 2)) ? "user" : "supervisor",
 	  frame->error);
 
-   printf("Current Process: %lu, Current Thread: %lu\n\n",
+   printf("Current Process: %llu, Current Thread: %llu\n\n",
           Scheduler::getCurrentProcess()->getId(), Scheduler::getCurrentThread()->getId());
 
    StackTrace::printStackTrace(reinterpret_cast<void*>(frame->ebp));

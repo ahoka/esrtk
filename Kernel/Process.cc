@@ -6,9 +6,9 @@ using namespace Kernel;
 
 namespace
 {
-   volatile unsigned long nextId = 0;
+   volatile uint64_t nextId = 0;
 
-   unsigned long getNextId()
+   uint64_t getNextId()
    {
       return __sync_fetch_and_add(&nextId, 1);
    }
@@ -26,7 +26,7 @@ Process::Process()
    : idM(getNextId()),
      contextM(new ProcessContext)
 {
-   printf("Process creation: %p\n", this);
+   printf("Process creation: %p (%llu)\n", this, idM);
    getProcessList().push_back(this);
 }
 
@@ -59,7 +59,7 @@ Process::~Process()
 void
 Process::dump()
 {
-   printf(" %lu\n", idM);
+   printf(" %llu\n", idM);
 }
 
 void
@@ -88,7 +88,7 @@ Process::getContext() const
    return contextM;
 }
 
-unsigned long
+uint64_t
 Process::getId() const
 {
    return idM;

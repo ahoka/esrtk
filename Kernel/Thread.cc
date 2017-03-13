@@ -23,9 +23,14 @@ namespace
 
       return threadList;
    }
-};
 
-unsigned long Thread::nextThreadId = 1;
+   volatile uint64_t nextId = 1;
+
+   uint64_t getNextId()
+   {
+      return __sync_fetch_and_add(&nextId, 1);
+   }
+};
 
 Thread::Thread(Thread::Type type)
    : idM(-1ul),
@@ -88,8 +93,8 @@ Thread::init()
 
    spinlock_softirq_enter(&threadLock);
 
-   KASSERT(nextThreadId != 0);
-   idM = nextThreadId++;
+   idM = getNextId();
+   KASSERT(idM != 0);
 
    bool success = Memory::createKernelStack(kernelStackM);
    if (!success)
@@ -155,7 +160,7 @@ const char* threadState[] =
 void
 Thread::dump()
 {
-   printf(" %lu\t%p\t%p\t%s\t%s\t%lu\t%s\n", idM, (void *)kernelStackM,
+   printf(" %llu\t%p\t%p\t%s\t%s\t%lu\t%s\n", idM, (void *)kernelStackM,
           (void*)userStackM, threadState[stateM], threadType[typeM],
           onCpuM, nameM.c_str());
 }
@@ -236,7 +241,7 @@ Thread::createKernelThread()
    thread->init();
 
    // XXX should be done before init, but init gaves a thread an id
-   int len = snprintf(threadName, sizeof(threadName), "KernelThread-%lu", thread->getId());
+   int len = snprintf(threadName, sizeof(threadName), "KernelThread-%llu", thread->getId());
    KASSERT(len < (int)sizeof(threadName));
    thread->setName(threadName);
 
@@ -255,7 +260,7 @@ Thread::createUserThread(Process* process)
    return thread;
 }
 
-unsigned long
+uint64_t
 Thread::getId() const
 {
    return idM;
