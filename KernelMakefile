@@ -77,7 +77,8 @@ CPPFLAGS+=	-D_KERNEL
 #CPPFLAGS+=	-D_BSD_SOURCE
 
 SRCDIR=		Supervisor CLibrary CxxLibrary CxxAbi Drivers Kernel ${PLATFORM} \
-		FileSystem Loader Acpi/Source ElfLibrary BsdEthernet BsdSupport
+		Loader Acpi/Source ElfLibrary BsdEthernet BsdSupport
+# Crashes: FileSystem
 TESTDIR=	Test
 
 TCCFILES:=	${FIND} ${TESTDIR} -name '*.cc'
@@ -90,7 +91,7 @@ DFILES=		${SRC:C/\.(cc|cpp|c|S)$/.d/}
 
 .PATH:		${DIR:S/^/${BUILD_ROOT}\//}
 
-HIDE=	@
+#HIDE=	@
 .SUFFIXES:	.c .cc .cpp .S .d .o
 
 all:	MultiLoader.o kernel.elf
