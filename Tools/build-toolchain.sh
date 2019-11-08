@@ -3,11 +3,11 @@
 set -e
 set -x
 
-GCC_VERSION=6.3.0
-BINUTILS_VERSION=2.28
-MPFR_VERSION=3.1.5
+GCC_VERSION=9.2.0
+BINUTILS_VERSION=2.32
+MPFR_VERSION=4.0.2
 GMP_VERSION=6.1.2
-MPC_VERSION=1.0.3
+MPC_VERSION=1.1.0
 ICONV_VERSION=1.15
 ISL_VERSION=0.18
 CLOOG_VERSION=0.18.4
@@ -16,6 +16,7 @@ CDRTOOLS_VERSION=3.02a07
 TARGET=i686-elf
 PREFIX=$HOME/gcc/${TARGET}
 ROOTDIR=${PWD}
+BUILDROOT=${ROOTDIR}/buildroot
 DESTDIR=${ROOTDIR}/toolchain
 
 CORES=$(nproc)
@@ -24,13 +25,15 @@ then
     CORES=1
 fi
 
+TAR="tar -C ${BUILDROOT}"
+
 export PATH=${DESTDIR}/${PREFIX}/bin:${PATH}
 
 download()
 {
         wget -N https://ftp.gnu.org/gnu/binutils/binutils-${BINUTILS_VERSION}.tar.bz2
-        wget -N https://ftp.gnu.org/gnu/gcc/gcc-${GCC_VERSION}/gcc-${GCC_VERSION}.tar.bz2
-        wget -N http://www.mpfr.org/mpfr-current/mpfr-${MPFR_VERSION}.tar.bz2
+        wget -N https://ftp.gnu.org/gnu/gcc/gcc-${GCC_VERSION}/gcc-${GCC_VERSION}.tar.gz
+        wget -N https://www.mpfr.org/mpfr-current/mpfr-${MPFR_VERSION}.tar.bz2
         wget -N https://gmplib.org/download/gmp/gmp-${GMP_VERSION}.tar.bz2
         wget -N https://ftp.gnu.org/gnu/mpc/mpc-${MPC_VERSION}.tar.gz
         wget -N https://ftp.gnu.org/gnu/libiconv/libiconv-${ICONV_VERSION}.tar.gz
@@ -42,62 +45,64 @@ download()
 
 extract()
 {
+    mkdir -p ${BUILDROOT}
+    
     if [ ! -e binutils-${BINUTILS_VERSION} ]
     then
-        tar xjf binutils-${BINUTILS_VERSION}.tar.bz2
+        ${TAR} -xjf binutils-${BINUTILS_VERSION}.tar.bz2
     fi
 
     if [ ! -e gcc-${GCC_VERSION} ]
     then
-        tar xjf gcc-${GCC_VERSION}.tar.bz2
+        ${TAR} -xzf gcc-${GCC_VERSION}.tar.gz
     fi
 
     if [ ! -e mpfr-${MPFR_VERSION} ]
     then
-        tar xjf mpfr-${MPFR_VERSION}.tar.bz2
+        ${TAR} -xjf mpfr-${MPFR_VERSION}.tar.bz2
     fi
 
     if [ ! -e gmp-${GMP_VERSION} ]
     then
-        tar xjf gmp-${GMP_VERSION}.tar.bz2
+        ${TAR} -xjf gmp-${GMP_VERSION}.tar.bz2
     fi
 
     if [ ! -e mpc-${MPC_VERSION} ]
     then
-        tar xzf mpc-${MPC_VERSION}.tar.gz
+        ${TAR} -xzf mpc-${MPC_VERSION}.tar.gz
     fi
 
     if [ ! -e libiconv-${ICONV_VERSION} ]
     then
-        tar xzf libiconv-${ICONV_VERSION}.tar.gz
+        ${TAR} -xzf libiconv-${ICONV_VERSION}.tar.gz
     fi
 
     if [ ! -e isl-${ISL_VERSION} ]
     then
-        tar xjf isl-${ISL_VERSION}.tar.bz2
+        ${TAR} -xjf isl-${ISL_VERSION}.tar.bz2
     fi
 
     if [ ! -e cloog-${CLOOG_VERSION} ]
     then
-        tar xzf cloog-${CLOOG_VERSION}.tar.gz
+        ${TAR} -xzf cloog-${CLOOG_VERSION}.tar.gz
     fi
 
-    if [ -e bmake.tar.gz ]
+    if [ ! -e ${BUILDROOT}/bmake.tar.gz ]
     then
-        tar xvzf bmake.tar.gz
+        ${TAR} -xzf bmake.tar.gz
     fi
 
-    if [ -e cdrtools-${CDRTOOLS_VERSION}.tar.bz2 ]
+    if [ ! -e ${BUILDROOT}/cdrtools-${CDRTOOLS_VERSION}.tar.bz2 ]
     then
-        tar xvjf cdrtools-${CDRTOOLS_VERSION}.tar.bz2
+        ${TAR} -xjf cdrtools-${CDRTOOLS_VERSION}.tar.bz2
     fi
 
-    ln -fs ${ROOTDIR}/mpfr-${MPFR_VERSION} gcc-${GCC_VERSION}/mpfr
-    ln -fs ${ROOTDIR}/gmp-${GMP_VERSION} gcc-${GCC_VERSION}/gmp
-    ln -fs ${ROOTDIR}/mpc-${MPC_VERSION} gcc-${GCC_VERSION}/mpc
-    ln -fs ${ROOTDIR}/libiconv-${ICONV_VERSION} gcc-${GCC_VERSION}/libiconv
-    ln -fs ${ROOTDIR}/isl-${MPC_VERSION} gcc-${GCC_VERSION}/isl
-    ln -fs ${ROOTDIR}/cloog-${CLOOG_VERSION} gcc-${GCC_VERSION}/cloog
+    ln -fs ${BUILDROOT}/mpfr-${MPFR_VERSION} ${BUILDROOT}/gcc-${GCC_VERSION}/mpfr
+    ln -fs ${BUILDROOT}/gmp-${GMP_VERSION} ${BUILDROOT}/gcc-${GCC_VERSION}/gmp
+    ln -fs ${BUILDROOT}/mpc-${MPC_VERSION} ${BUILDROOT}/gcc-${GCC_VERSION}/mpc
+    ln -fs ${BUILDROOT}/libiconv-${ICONV_VERSION} ${BUILDROOT}/gcc-${GCC_VERSION}/libiconv
+    ln -fs ${BUILDROOT}/isl-${MPC_VERSION} ${BUILDROOT}/gcc-${GCC_VERSION}/isl
+    ln -fs ${BUILDROOT}/cloog-${CLOOG_VERSION} ${BUILDROOT}/gcc-${GCC_VERSION}/cloog
 }
 
 configure_binutils()
@@ -106,16 +111,16 @@ configure_binutils()
     echo "Configuring binutils..."
     echo "====================================="
 
-    rm -rf ${ROOTDIR}/binutils
+    rm -rf ${BUILDROOT}/binutils
 
-    mkdir ${ROOTDIR}/binutils
-    cd ${ROOTDIR}/binutils
-    ${ROOTDIR}/binutils-${BINUTILS_VERSION}/configure --prefix=${PREFIX} --target=${TARGET} --enable-lto --enable-plugins --with-sysroot --disable-nls --disable-werror
+    mkdir ${BUILDROOT}/binutils
+    cd ${BUILDROOT}/binutils
+    ${BUILDROOT}/binutils-${BINUTILS_VERSION}/configure --prefix=${PREFIX} --target=${TARGET} --enable-lto --enable-plugins --with-sysroot --disable-nls --disable-werror
 }
 
 build_binutils()
 {
-    cd ${ROOTDIR}/binutils
+    cd ${BUILDROOT}/binutils
     make -j "$CORES"
 }
 
@@ -125,63 +130,63 @@ configure_gcc()
     echo "Configuring gcc..."
     echo "====================================="
 
-    rm -rf ${ROOTDIR}/gcc
+    rm -rf ${BUILDROOT}/gcc
 
-    mkdir ${ROOTDIR}/gcc
-    cd ${ROOTDIR}/gcc
-    ${ROOTDIR}/gcc-${GCC_VERSION}/configure --prefix=${PREFIX} --target=${TARGET} --disable-nls --enable-languages=c,c++ --without-headers --disable-werror
+    mkdir ${BUILDROOT}/gcc
+    cd ${BUILDROOT}/gcc
+    ${BUILDROOT}/gcc-${GCC_VERSION}/configure --prefix=${PREFIX} --target=${TARGET} --disable-nls --enable-languages=c,c++ --without-headers --disable-werror
 }
 
 build_gcc()
 {
-    cd ${ROOTDIR}/gcc
+    cd ${BUILDROOT}/gcc
     make -j "$CORES" all-gcc
     make -j "$CORES" all-target-libgcc
 }
 
 install_binutils()
 {
-    cd ${ROOTDIR}/binutils
+    cd ${BUILDROOT}/binutils
     make DESTDIR=${DESTDIR} install
 }
 
 install_gcc()
 {
-    cd ${ROOTDIR}/gcc
+    cd ${BUILDROOT}/gcc
     make DESTDIR=${DESTDIR} install-gcc
     make DESTDIR=${DESTDIR} install-target-libgcc
 }
 
 configure_bmake()
 {
-    rm -rf ${ROOTDIR}/bmake-build
-    mkdir ${ROOTDIR}/bmake-build
+    rm -rf ${BUILDROOT}/bmake-build
+    mkdir ${BUILDROOT}/bmake-build
 
-    cd ${ROOTDIR}/bmake-build
-    ${ROOTDIR}/bmake/configure --prefix=${PREFIX}
+    cd ${BUILDROOT}/bmake-build
+    ${BUILDROOT}/bmake/configure --prefix=${PREFIX}
 }
 
 build_bmake()
 {
-    cd ${ROOTDIR}/bmake-build
+    cd ${BUILDROOT}/bmake-build
     make
 }
 
 install_bmake()
 {
-    cd ${ROOTDIR}/bmake-build
+    cd ${BUILDROOT}/bmake-build
     make DESTDIR=${DESTDIR} install
 }
 
 build_mkisofs()
 {
-    cd ${ROOTDIR}/cdrtools-3.02
+    cd ${BUILDROOT}/cdrtools-3.02
     make
 }
 
 install_mkisofs()
 {
-    cd ${ROOTDIR}/cdrtools-3.02/mkisofs
+    cd ${BUILDROOT}/cdrtools-3.02/mkisofs
     install -m 0777 -v OBJ/*/mkisofs ${DESTDIR}${PREFIX}/bin/mkisofs
 }
 
@@ -202,6 +207,9 @@ then
             download
             extract
             ;;
+	extract )
+            extract
+	    ;;
         configure )
             configure_binutils
             configure_gcc
