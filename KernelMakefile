@@ -42,7 +42,7 @@ LTO=		#-flto
 LDFLAGS=	${LTO} ${COPTS} -fuse-ld=bfd
 ASFLAGS+=	${LTO} -g ${COPTS}
 CFLAGS=		-std=c11 ${LTO} ${COPTS}
-CXXFLAGS=	-std=c++17 ${LTO} ${COPTS} -fno-exceptions -fno-rtti
+CXXFLAGS=	-std=c++14 ${LTO} ${COPTS} -fno-exceptions -fno-rtti
 
 CC=		${TOOLPREFIX}${CROSS}gcc
 CXX=		${TOOLPREFIX}${CROSS}g++
