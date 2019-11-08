@@ -1,6 +1,7 @@
 #include <Kernel/Process.hh>
 #include <Kernel/Thread.hh>
 #include <Kernel/ProcessContext.hh>
+#include <Mutex.hh>
 
 using namespace Kernel;
 
@@ -12,6 +13,8 @@ namespace
    {
       return __sync_fetch_and_add(&nextId, 1);
    }
+
+   Mutex processListLock;
 };
 
 std::list<Process*>&
@@ -26,8 +29,10 @@ Process::Process()
    : idM(getNextId()),
      contextM(new ProcessContext)
 {
-   printf("Process creation: %p (%llu)\n", this, idM);
+   printf("Process creation: %p, PID: %llu\n", this, idM);
+   processListLock.enter();
    getProcessList().push_back(this);
+   processListLock.exit();
 }
 
 Process::Process(uintptr_t pd)
@@ -35,7 +40,9 @@ Process::Process(uintptr_t pd)
      contextM(new ProcessContext(pd))
 {
    printf("Process creation: %p (existing pd: %p)\n", this, (void*)pd);
+   processListLock.enter();
    getProcessList().push_back(this);
+   processListLock.exit();
 }
 
 Process*
@@ -46,7 +53,12 @@ Process::createProcess()
 
 Process::~Process()
 {
-   printf("Process deletion: %p\n", this);
+   printf("Process deletion: %p, PID: %llu\n", this, idM);
+
+   processListLock.enter();
+   getProcessList().remove(this);
+   processListLock.exit();
+
 
    for (auto& t : threadsM)
    {
