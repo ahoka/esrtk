@@ -2,6 +2,7 @@
 #define __SPINLOCK_H__
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #ifdef __cplusplus
 extern "C"
@@ -22,6 +23,8 @@ typedef struct spinlock_softirq
 long spinlock_enter(spinlock_t* lock);
 long spinlock_exit(spinlock_t* lock);
 long spinlock_try(spinlock_t* lock);
+// ONLY FOR DEBUG!
+bool spinlock_is_held(spinlock_t* lock);
 
 // Spinlocks callable from interrupt routine
 // Disables local interrupts on lock, restores
@@ -30,6 +33,8 @@ long spinlock_try(spinlock_t* lock);
 void spinlock_softirq_init(spinlock_softirq_t* lock);
 long spinlock_softirq_enter(spinlock_softirq_t* lock);
 long spinlock_softirq_exit(spinlock_softirq_t* lock);
+// ONLY FOR DEBUG!
+bool spinlock_softirq_is_held(spinlock_softirq_t* lock);
 
 #ifdef __cplusplus
 }

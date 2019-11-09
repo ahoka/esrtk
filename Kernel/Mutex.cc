@@ -16,7 +16,7 @@ Mutex::Mutex(int flags)
 
 Mutex::~Mutex()
 {
-   // assert its not held!
+   KASSERT(!spinlock_is_held(&lockM));
 }
 
 void

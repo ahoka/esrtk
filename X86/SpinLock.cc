@@ -1,6 +1,12 @@
 #include <spinlock.h>
 #include <Kernel/Cpu.hh>
 
+extern "C" bool
+spinlock_is_held(spinlock_t* lock)
+{
+   return *lock != SPINLOCK_STATIC_INITIALIZER;
+}
+
 extern "C" void
 spinlock_softirq_init(spinlock_softirq_t* lock)
 {
@@ -25,4 +31,10 @@ spinlock_softirq_exit(spinlock_softirq_t* lock)
    Cpu::restoreLocalInterrupts(lock->flags);
 
    return ret;
+}
+
+extern "C" bool
+spinlock_softirq_is_held(spinlock_softirq_t* lock)
+{
+  return spinlock_is_held(&lock->lock);
 }
