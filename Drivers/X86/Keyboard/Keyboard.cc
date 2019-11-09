@@ -74,6 +74,12 @@ Keyboard::handleInterrupt()
 
    Scancodes::Codes code = Scancodes::codes[scanCode];
 
+   // For Kernel debug. This should be a cleaner interface.
+   if (code.type == Scancodes::Special && code.ascii == Scancodes::F10)
+   {
+      Debug::panic("Kernel panic was requested from keyboard.\n");
+   }
+
    if (code.type == Scancodes::Regular && isBreak)
    {
       return;

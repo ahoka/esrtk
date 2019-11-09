@@ -35,8 +35,13 @@ x86_isr_page_fault(InterruptFrame* frame)
 
    // protect the kernel from trying to handle nested page faults
    //
-   if (nestingFlag > 0)
+   if (nestingFlag > 1)
    {
+      Power::reboot();
+   }
+   else if (nestingFlag > 0)
+   {
+      nestingFlag++;
       Debug::panic("Nested page fault");
       Power::reboot();
    }
@@ -67,7 +72,8 @@ x86_isr_page_fault(InterruptFrame* frame)
    printf("Current Process: %llu, Current Thread: %llu\n\n",
           Scheduler::getCurrentProcess()->getId(), Scheduler::getCurrentThread()->getId());
 
-   StackTrace::printStackTrace(reinterpret_cast<void*>(frame->ebp));
+   StackTrace::printStackTrace(reinterpret_cast<void*>(frame->ebp),
+			       reinterpret_cast<void*>(frame->eip));
 
    bool isUser = frame->error & (1 << 2);
    if (isUser)
@@ -116,7 +122,8 @@ x86_isr_general_protection_fault(InterruptFrame* frame)
 
    printf("\n\n");
 
-   StackTrace::printStackTrace(reinterpret_cast<void*>(frame->ebp));
+   StackTrace::printStackTrace(reinterpret_cast<void*>(frame->ebp),
+			       reinterpret_cast<void*>(frame->eip));
 
    x86_cli();
    Power::halt();
@@ -156,7 +163,11 @@ x86_isr_dispatcher(InterruptFrame* frame)
    interruptedThread->setReady();
 
    // TODO: make a list of handlers and register them there to be run from dispatcher
-   if (frame->interrupt == 13)
+   if (frame->interrupt == 2)
+   {
+      printf("NMI!\n");
+   }
+   else if (frame->interrupt == 13)
    {
       x86_isr_general_protection_fault(frame);
    }

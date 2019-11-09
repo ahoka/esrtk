@@ -27,6 +27,7 @@ getProcessList()
 
 Process::Process()
    : idM(getNextId()),
+     nameM(std::string("Process-") + std::to_string(idM)),
      contextM(new ProcessContext)
 {
    printf("Process creation: %p, PID: %llu\n", this, idM);
@@ -37,6 +38,7 @@ Process::Process()
 
 Process::Process(uintptr_t pd)
    : idM(getNextId()),
+     nameM(std::string("Process-") + std::to_string(idM)),
      contextM(new ProcessContext(pd))
 {
    printf("Process creation: %p (existing pd: %p)\n", this, (void*)pd);
@@ -71,12 +73,14 @@ Process::~Process()
 void
 Process::dump()
 {
-   printf(" %llu\n", idM);
+   printf(" %llu\t%p\t%s\n", idM, (void *)contextM, nameM.c_str());
 }
 
 void
 Process::printAll()
 {
+   printf(" Id\tContext\tName\n");
+   
    for (auto& p : getProcessList())
    {
       p->dump();
@@ -104,4 +108,10 @@ uint64_t
 Process::getId() const
 {
    return idM;
+}
+
+std::string
+Process::getName() const
+{
+   return nameM;
 }

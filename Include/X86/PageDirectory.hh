@@ -19,6 +19,7 @@ namespace PageDirectory
    void init();
    bool mapPage(uint32_t vAddress, uint32_t pAddress, int flags = Flags::None);
    bool unmapPage(uint32_t vAddress);
+  bool isMapped(uint32_t vAddress);
 
    uintptr_t getPageTableEntry(uint32_t vAddress);
    uintptr_t getPhysicalPage(uint32_t vAddress);

@@ -481,3 +481,25 @@ PageDirectory::createPageDirectory()
 
    return physicalPage;
 }
+
+bool
+PageDirectory::isMapped(uint32_t vAddress)
+{
+   vAddress = vAddress & ~PageMask;
+
+   uint32_t* pde = addressToPde(vAddress, PageDirectoryBase);
+
+   if ((*pde & Present) == 0)
+   {
+      return false;
+   }
+       
+   uint32_t* pte = addressToPte(vAddress, PageTableBase);
+
+   if ((*pte & Present) == 0)
+   {
+      return false;
+   }
+
+   return true;
+}
