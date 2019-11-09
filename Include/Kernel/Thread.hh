@@ -60,6 +60,7 @@ namespace Kernel
       enum State
       {
          New,
+	 Initialized,
          Idle,
          Ready,
          Running,

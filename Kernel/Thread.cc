@@ -33,7 +33,7 @@ namespace
 };
 
 Thread::Thread(Thread::Type type)
-   : idM(-1ul),
+   : idM(getNextId()),
      userStackM(0),
      kernelStackM(0),
      stateM(New),
@@ -55,8 +55,12 @@ Thread::Thread(Thread::Type type)
 Thread::~Thread()
 {
    // XXX free stack space!
-   printf("Deleteing thread: %p...\n", this);
+   printf("Deleting thread: %p...\n", this);
 
+   spinlock_softirq_enter(&threadLock);
+   getThreadList().remove(this);
+   spinlock_softirq_enter(&threadLock);
+   
    Scheduler::remove(this);
 }
 
@@ -84,16 +88,15 @@ Thread::init()
 {
    if (typeM == Thread::Type::UserThread)
    {
-      Debug::verbose("Initializing user thread %p...\n", this);
+      Debug::verbose("Initializing user thread %p, TID: %llu...\n", this, idM);
    }
    else
    {
-      Debug::verbose("Initializing kernel thread %p...\n", this);
+      Debug::verbose("Initializing kernel thread %p, TID: %llu...\n", this, idM);
    }
 
    spinlock_softirq_enter(&threadLock);
 
-   idM = getNextId();
    KASSERT(idM != 0);
 
    bool success = Memory::createKernelStack(kernelStackM);
@@ -127,6 +130,8 @@ Thread::init()
    getThreadList().push_back(this);
    spinlock_softirq_exit(&threadLock);
 
+   stateM = Initialized;
+
    return success;
 }
 
@@ -150,6 +155,7 @@ const char* threadType[] =
 const char* threadState[] =
 {
    "New",
+   "Initalized",
    "Idle",
    "Ready",
    "Running",
