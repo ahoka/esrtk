@@ -13,6 +13,7 @@
 #include <Kernel/ProcessContext.hh>
 #include <Supervisor/Supervisor.hh>
 
+#include <Kernel/PerfCounter.hh>
 #include <Kernel/Heap.hh>
 #include <Power.hh>
 #include <cstdio>
