@@ -11,3 +11,6 @@ pad
 nbproject
 testsuite
 esrtk.iso
+Tools/buildroot
+Tools/toolchain
+Tools/*.tar.*
