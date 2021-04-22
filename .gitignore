@@ -14,3 +14,4 @@ esrtk.iso
 Tools/buildroot
 Tools/toolchain
 Tools/*.tar.*
+iso/
