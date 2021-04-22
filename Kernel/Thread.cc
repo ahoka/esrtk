@@ -243,13 +243,10 @@ Thread::createKernelThread()
 
    Thread* thread = new Thread(Type::KernelThread);
    thread->processM = Scheduler::getKernelProcess();
-
-   thread->init();
-
-   // XXX should be done before init, but init gaves a thread an id
    int len = snprintf(threadName, sizeof(threadName), "KernelThread-%llu", thread->getId());
    KASSERT(len < (int)sizeof(threadName));
    thread->setName(threadName);
+   thread->init();
 
    printf("Kernel thread created: %s\n", threadName);
 
