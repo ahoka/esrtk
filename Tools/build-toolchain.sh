@@ -14,10 +14,10 @@ CLOOG_VERSION=0.18.4
 CDRTOOLS_VERSION=3.02a07
 
 TARGET=i686-elf
-PREFIX=$HOME/gcc/${TARGET}
-ROOTDIR=${PWD}
-BUILDROOT=${ROOTDIR}/buildroot
-DESTDIR=${ROOTDIR}/toolchain
+PREFIX="$HOME/gcc/${TARGET}"
+ROOTDIR="${PWD}"
+BUILDROOT="${ROOTDIR}/buildroot"
+DESTDIR="${ROOTDIR}/toolchain"
 
 CORES=$(nproc)
 if [ -z "$CORES" ]
@@ -27,13 +27,13 @@ fi
 
 TAR="tar -C ${BUILDROOT}"
 
-export PATH=${DESTDIR}/${PREFIX}/bin:${PATH}
+export PATH="${DESTDIR}/${PREFIX}/bin:${PATH}"
 
 download()
 {
         wget -N https://ftp.gnu.org/gnu/binutils/binutils-${BINUTILS_VERSION}.tar.bz2
         wget -N https://ftp.gnu.org/gnu/gcc/gcc-${GCC_VERSION}/gcc-${GCC_VERSION}.tar.gz
-        wget -N https://www.mpfr.org/mpfr-current/mpfr-${MPFR_VERSION}.tar.bz2
+        wget -N https://www.mpfr.org/mpfr-${MPFR_VERSION}/mpfr-${MPFR_VERSION}.tar.bz2
         wget -N https://gmplib.org/download/gmp/gmp-${GMP_VERSION}.tar.bz2
         wget -N https://ftp.gnu.org/gnu/mpc/mpc-${MPC_VERSION}.tar.gz
         wget -N https://ftp.gnu.org/gnu/libiconv/libiconv-${ICONV_VERSION}.tar.gz
