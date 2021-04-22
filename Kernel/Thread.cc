@@ -59,7 +59,7 @@ Thread::~Thread()
 
    spinlock_softirq_enter(&threadLock);
    getThreadList().remove(this);
-   spinlock_softirq_enter(&threadLock);
+   spinlock_softirq_exit(&threadLock);
    
    Scheduler::remove(this);
 }
