@@ -16,19 +16,20 @@ CROSS=		${MACHINE}-elf-
 
 QEMU=		qemu-system-i386
 
-QEMU_ARGS=	-m 64M -M q35 -watchdog i6300esb -device rtl8139 -boot order=c -serial stdio -d cpu_reset -no-reboot -enable-kvm -cpu host
+QEMU_ARGS=	-m 64M -M q35 -watchdog i6300esb -boot order=c -serial mon:stdio -d cpu_reset -no-reboot -nographic
 
-COPTS+=		-O2 -march=i686 -g \
+COPTS+=	-O2 -march=i686 -ggdb3 \
 		-Wall -Wextra \
 		-nostdlib -nostdinc -fno-builtin \
 		-fno-omit-frame-pointer \
 		-fno-stack-protector
 
-#COPTS+=		-Werror
+COPTS+=		-Werror
 COPTS+=		-Wno-error=unused-parameter \
 		-Wno-error=unused-variable \
 		-Wno-error=unused-function \
-		-Wno-error=unused-but-set-variable
+		-Wno-error=unused-but-set-variable \
+		-Wno-error=implicit-fallthrough
 
 COPTS+=		-Wmissing-format-attribute \
 		-Wsuggest-final-types
@@ -77,7 +78,7 @@ CPPFLAGS+=	-D_KERNEL
 #CPPFLAGS+=	-D_BSD_SOURCE
 
 SRCDIR=		Supervisor CLibrary CxxLibrary CxxAbi Drivers Kernel ${PLATFORM} \
-		Loader Acpi/Source ElfLibrary BsdEthernet BsdSupport
+		Loader Acpi/Source ElfLibrary #\BsdEthernet BsdSupport
 # Crashes: FileSystem
 TESTDIR=	Test
 

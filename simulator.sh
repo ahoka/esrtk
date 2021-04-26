@@ -3,10 +3,10 @@
 MEMORY=256M
 
 QEMU=qemu-system-i386
-if [ -x /usr/bin/kvm ]
-then
-    QEMU=kvm
-fi
+# if [ -x /usr/bin/kvm ]
+# then
+#     QEMU=kvm
+# fi
 
 if [ $# -eq 1 ]
 then
@@ -26,4 +26,4 @@ then
     esac
 fi
 
-$QEMU -m ${MEMORY} -M q35 -watchdog i6300esb -device rtl8139 -boot order=c -serial stdio -d cpu_reset -no-reboot -cdrom esrtk.iso 2>&1 | tee run.log
+$QEMU -m ${MEMORY} -s -S -M q35 -watchdog i6300esb -boot order=c -serial mon:stdio -d cpu_reset -no-reboot -nographic -cdrom esrtk.iso 2>&1 | tee run.log
