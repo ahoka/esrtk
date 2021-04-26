@@ -15,6 +15,7 @@
 
 #include <Kernel/PerfCounter.hh>
 #include <Kernel/Heap.hh>
+#include <Kernel/Thread.hh>
 #include <Power.hh>
 #include <cstdio>
 
@@ -61,11 +62,9 @@ kmain()
    Supervisor::Supervisor::init();
 
    printf("Initializing BSD...\n");
-   mi_startup();
+   //mi_startup();
 
-   printf("Becoming idle thread...\n");
-   for (;;)
-   {
-      Power::halt();
-   }
+   printf("Kernel initialized!\n");
+
+   Kernel::Thread::main(Kernel::Scheduler::getKernelThread());
 }

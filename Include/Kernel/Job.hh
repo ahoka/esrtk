@@ -8,14 +8,15 @@ namespace Kernel
    class Job
    {
    public:
-      Job(const std::function<void()>&);
+      Job(void (* main)(void *), void * arg);
       Job(const Job&);
       ~Job();
 
       void execute();
 
    private:
-      std::function<void()> functionM;
+      void (* mainM)(void * arg);
+      void * argM;
    };
 };
 

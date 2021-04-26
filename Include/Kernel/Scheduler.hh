@@ -13,6 +13,8 @@ namespace Kernel
 
       static void insert(Thread* t);
       static void remove(Thread* t);
+      static void setReady(Thread *t);
+
       static void schedule();
 
       static Thread* getCurrentThread();
@@ -22,6 +24,7 @@ namespace Kernel
       static void setCurrentProcess(Process*);
 
       static Process* getKernelProcess();
+      static Thread* getKernelThread();
       static Thread* getIdleThread();
       
       static void printAll();

@@ -1,5 +1,6 @@
 #include <Kernel/Scheduler.hh>
 #include <Kernel/Thread.hh>
+#include <Kernel/Power.hh>
 #include <X86/ThreadContext.hh>
 
 #include <Parameters.hh>
@@ -24,7 +25,7 @@ namespace
       return threadList;
    }
 
-   volatile uint64_t nextId = 1;
+   volatile uint64_t nextId = 2;
 
    uint64_t getNextId()
    {
@@ -42,14 +43,6 @@ Thread::Thread(Thread::Type type)
      nextM(0),
      onCpuM(0)
 {
-   if (type == Thread::Type::UserThread)
-   {
-      Debug::verbose("Creating user thread...\n");
-   }
-   else
-   {
-      Debug::verbose("Creating thread...\n");
-   }
 }
 
 Thread::~Thread()
@@ -72,13 +65,40 @@ Thread::init0(uintptr_t stack)
    kernelStackM = stack;
    processM = Scheduler::getKernelProcess();
 
-   Debug::verbose("Initializing idle thread (thread0): %p...\n", (void*)stack);
+   Debug::verbose("Initializing thread0: %p...\n", (void*)stack);
 
    spinlock_softirq_enter(&threadLock);
    getThreadList().push_back(this);
    spinlock_softirq_exit(&threadLock);
 
-   nameM = "idle";
+   nameM = "Kernel";
+
+   return true;
+}
+
+bool
+Thread::initIdle()
+{
+   Debug::verbose("Initializing idle thread...");
+
+   idM = 1;
+   stateM = Ready;
+   nameM = "Idle";
+
+   bool success = Memory::createKernelStack(kernelStackM);
+   if (!success)
+   {
+      return false;
+   }
+   
+   processM = Scheduler::getKernelProcess();
+
+   kernelStackM = ThreadContext::initKernelStack(kernelStackM,
+                                                reinterpret_cast<uintptr_t>(&Power::onIdle), 0);
+
+   spinlock_softirq_enter(&threadLock);
+   getThreadList().push_back(this);
+   spinlock_softirq_exit(&threadLock);
 
    return true;
 }
@@ -97,7 +117,7 @@ Thread::init()
 
    spinlock_softirq_enter(&threadLock);
 
-   KASSERT(idM != 0);
+   KASSERT(idM > 2);
 
    bool success = Memory::createKernelStack(kernelStackM);
    if (!success)
@@ -125,23 +145,25 @@ Thread::init()
 
    Debug::verbose("Thread's new kernel stack is %p\n", (void*)kernelStackM);
 
+   this->stateM = Idle;
    Scheduler::insert(this);
    spinlock_softirq_enter(&threadLock);
    getThreadList().push_back(this);
    spinlock_softirq_exit(&threadLock);
 
-   stateM = Initialized;
-
    return success;
 }
 
 bool
-Thread::addJob(const std::function<void()>& task)
+Thread::addJob(const Job& job)
 {
-   Debug::verbose("Thread::addJob\n");
+   Debug::verbose("Adding job to Thread %llu\n", this->idM);
+
    lockM.enter();
-   jobsM.emplace(task);
+   jobsM.emplace(job);
    lockM.exit();
+
+   Scheduler::setReady(this);
 
    return true;
 }
@@ -174,7 +196,7 @@ Thread::dump()
 void
 Thread::printAll()
 {
-   printf(" id\tkstack\t\tustack\t\tstate\ttype\toncpu\tname\n");
+   printf(" id\tkstack\t\tustack\t\t\tstate\ttype\toncpu\tname\n");
    spinlock_softirq_enter(&threadLock);
    for (auto& t : getThreadList())
    {
@@ -188,11 +210,9 @@ Thread::main(Thread* thread)
 {
    printf("Thread main called on %p (%p)!\n", thread, &thread);
 
-   thread->stateM = Ready;
-
    for (;;)
    {
-      if (thread->stateM == Ready)
+      if (thread->stateM == Ready || thread->stateM == Running)
       {
          thread->stateM = Running;
          thread->lockM.enter();
@@ -208,17 +228,20 @@ Thread::main(Thread* thread)
          }
          thread->lockM.exit();
       }
-      else if (thread->stateM == Agony)
-      {
-         printf("Thread %p is exiting...\n", thread);
-         thread->stateM = Dead;
-         for (;;)
-         {
-            // wait for destruction
-            asm volatile("pause");
-         }
-      }
+      // else if (thread->stateM == Agony)
+      // {
+      //    printf("Thread %p is exiting...\n", thread);
+      //    thread->stateM = Dead;
 
+      //    // TODO: yield?
+      //    for (;;)
+      //    {
+      //       // wait for destruction
+      //       asm volatile("pause");
+      //    }
+      // }
+
+      // TODO: yield to scheduler
       thread->stateM = Idle;
    }
 }
@@ -226,6 +249,8 @@ Thread::main(Thread* thread)
 Thread*
 Thread::createKernelThread(const char* name)
 {
+   printf("Creating kernel thread: %s\n", name);
+
    Thread* thread = new Thread(Type::KernelThread);
    thread->processM = Scheduler::getKernelProcess();
    thread->setName(name);
@@ -328,4 +353,10 @@ void
 Thread::setReady()
 {
    stateM = Ready;
+}
+
+bool
+Thread::isIdle()
+{
+   return stateM == Idle;
 }

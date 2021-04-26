@@ -19,8 +19,8 @@ public:
    ~Monitor();
 
    static void registerCommand(MonitorCommand* command, std::string name);
-   std::string getCommand();
    void enter();
+   std::string getCommand();
 };
 
 #endif

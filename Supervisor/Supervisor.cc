@@ -17,6 +17,21 @@
 
 #define TEST
 
+namespace
+{
+   void supervisor_main(void *arg)
+   {
+      auto supervisor = (Supervisor::Supervisor *)arg;
+      supervisor->run();
+   }
+
+   void monitor_main(void *arg)
+   {
+      auto monitor = (Monitor *)arg;
+      monitor->enter();
+   }
+}
+
 namespace Supervisor
 {
 
@@ -26,12 +41,12 @@ Supervisor::init()
    printf("---> Supervisor starting\n");
 
    static Supervisor supervisor;
-   static Kernel::Thread* supervisorThread = Kernel::Thread::createKernelThread("Supervisor");
-   supervisorThread->addJob(std::bind(&Supervisor::run, &supervisor));
+   Kernel::Thread* supervisorThread = Kernel::Thread::createKernelThread("Supervisor");
+   supervisorThread->addJob(Kernel::Job(supervisor_main, &supervisor));
 
    static Monitor monitor;
-   static Kernel::Thread* monitorThread = Kernel::Thread::createKernelThread("Monitor");
-   monitorThread->addJob(std::bind(&Monitor::enter, &monitor));
+   Kernel::Thread* monitorThread = Kernel::Thread::createKernelThread("Monitor");
+   monitorThread->addJob(Kernel::Job(monitor_main, &monitor));
 }
 
 void

@@ -2,8 +2,9 @@
 
 using namespace Kernel;
 
-Job::Job(const std::function<void()>& f)
-   : functionM(f)
+Job::Job(void (* main)(void *), void * arg) :
+   mainM(main),
+   argM(arg)
 {
 }
 
@@ -14,7 +15,8 @@ Job::Job(const Job& other)
       return;
    }
 
-   functionM = other.functionM;
+   mainM = other.mainM;
+   argM = other.argM;
 }
 
 Job::~Job()
@@ -24,5 +26,5 @@ Job::~Job()
 void
 Job::execute()
 {
-   functionM();
+   mainM(argM);
 }

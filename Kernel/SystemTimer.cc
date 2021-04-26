@@ -1,6 +1,7 @@
 #include <SystemTimer.hh>
 
 #include <Kernel/Scheduler.hh>
+#include <Kernel/Watchdog.hh>
 
 #include <Time.hh>
 #include <Debug.hh>
@@ -28,6 +29,7 @@ SystemTimer::tick()
    Time::increment(1000 / getFrequency());
 
    Kernel::Scheduler::schedule();
+   Watchdog::kick();
 }
 
 void

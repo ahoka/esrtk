@@ -28,7 +28,7 @@ namespace Kernel
 
       ~Thread();
 
-      bool addJob(const std::function<void()>&);
+      bool addJob(const Job&);
       void dump();
 
       void setName(const char*);
@@ -48,6 +48,7 @@ namespace Kernel
 
       void setRunning();
       void setReady();
+      bool isIdle();
 
       static void printAll();
       static void main [[noreturn]] (Thread*);
@@ -56,6 +57,8 @@ namespace Kernel
       static Thread* createKernelThread(const char*);
 
       static Thread* createUserThread(Process*);
+
+      static Thread* yield();
 
       enum State
       {
@@ -69,15 +72,15 @@ namespace Kernel
       };
 
    private:
-
       Thread(Type);
       bool init();
       bool init0(uintptr_t stack);
+      bool initIdle();
 
       uint64_t idM;
       uintptr_t userStackM;
       uintptr_t kernelStackM;
-      State stateM;
+      volatile State stateM;
       Type typeM;
       Process* processM;
       Thread* nextM;

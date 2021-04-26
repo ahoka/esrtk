@@ -10,12 +10,12 @@ class Supervisor
 {
 public:
    static void init();
+   void run();
 
    Supervisor() = default;
    ~Supervisor() = default;
 
 private:
-   void run();
    Supervisor(const Supervisor& orig) = delete;
 };
 

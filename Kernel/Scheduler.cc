@@ -1,7 +1,6 @@
 #include <Kernel/Scheduler.hh>
 #include <Kernel/Thread.hh>
 #include <Kernel/Process.hh>
-#include <Kernel/Watchdog.hh>
 #include <Kernel/ProcessContext.hh>
 #include <X86/PageDirectory.hh>
 
@@ -29,8 +28,8 @@ namespace
 Thread*
 Scheduler::getIdleThread()
 {
-   static Thread thread0(Kernel::Thread::KernelThread);
-   return &thread0;
+   static Thread idleThread(Kernel::Thread::KernelThread);
+   return &idleThread;
 }
 
 void
@@ -63,6 +62,14 @@ Scheduler::getKernelProcess()
    return kernelProcess;
 }
 
+Thread*
+Scheduler::getKernelThread()
+{
+   static Thread thread0(Kernel::Thread::KernelThread);
+
+   return &thread0;
+}
+
 void
 Scheduler::init()
 {
@@ -77,8 +84,12 @@ Scheduler::init()
    static Process process0(PageDirectory::getKernelPageDirectory());
    kernelProcess = &process0;
 
-   Thread* thread0 = getIdleThread();
+   Thread* thread0 = getKernelThread();
    thread0->init0(KernelStackStart);
+   
+   readyList->push_back(thread0);
+   Thread* idle = getIdleThread();
+   idle->initIdle();
 
    setCurrentThread(thread0);
    setCurrentProcess(&process0);
@@ -93,7 +104,16 @@ Scheduler::insert(Thread* t)
 
    spinlock_softirq_enter(&schedulerLock);
 
-   readyList->push_back(t);
+   KASSERT(t->isIdle());
+
+   if (t->isIdle())
+   {
+      idleList->push_back(t);
+   }
+   else
+   {
+      readyList->push_back(t);
+   }
 
    spinlock_softirq_exit(&schedulerLock);
 }
@@ -105,14 +125,36 @@ Scheduler::remove(Thread* t)
 
    spinlock_softirq_enter(&schedulerLock);
 
-   readyList->remove(t);
+   if (t->isIdle())
+   {
+      idleList->remove(t);
+   }
+   else
+   {
+      readyList->remove(t);
+   }
 
    // XXX
    if (t == getCurrentThread())
    {
       printf("Removing currently running thread: %p\n", t);
-      readyList->remove(getIdleThread());
       setCurrentThread(getIdleThread());
+   }
+
+   spinlock_softirq_exit(&schedulerLock);
+}
+
+void
+Scheduler::setReady(Thread *t)
+{
+   spinlock_softirq_enter(&schedulerLock);
+
+   KASSERT(t->isIdle());
+   if (t->isIdle())
+   {
+      idleList->remove(t);
+      t->setReady();
+      readyList->push_back(t);
    }
 
    spinlock_softirq_exit(&schedulerLock);
@@ -125,17 +167,36 @@ Scheduler::schedule()
 
    // move interrupted thread to end of ready list
    Thread* lastRunning = getCurrentThread();
-   readyList->push_back(lastRunning);
+
+   if (lastRunning != getIdleThread())
+   {
+      if (lastRunning->isIdle())
+      {
+         idleList->push_back(lastRunning);
+      }
+      else
+      {
+         readyList->push_back(lastRunning);
+      }
+   }
 
    // schedule the first thread in the ready list
-   KASSERT(readyList->size() > 0);
-   Thread* next = readyList->front();
+   // KASSERT(readyList->size() > 0);
+   Thread* next = 0;
+   if (readyList->empty())
+   {
+      next = getIdleThread();
+   }
+   else
+   {
+      next = readyList->front();
+      readyList->pop_front();
+   }
+
    KASSERT(next != 0);
-   readyList->pop_front();
+   
    setCurrentThread(next);
    setCurrentProcess(next->getProcess());
 
    spinlock_softirq_exit(&schedulerLock);
-
-   Watchdog::kick();
 }
