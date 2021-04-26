@@ -21,7 +21,7 @@ namespace
    Process* kernelProcess = 0;
 
    std::list<Thread*>* readyList;
-   std::list<Thread*>* idleList;
+   std::list<Thread*>* blockedList;
 
 };
 
@@ -76,10 +76,10 @@ Scheduler::init()
    printf("Initializing scheduler\n");
 
    static std::list<Thread*> readyListInstance;
-   static std::list<Thread*> idleListInstance;
+   static std::list<Thread*> blockedListInstance;
 
    readyList = &readyListInstance;
-   idleList = &idleListInstance;
+   blockedList = &blockedListInstance;
 
    static Process process0(PageDirectory::getKernelPageDirectory());
    kernelProcess = &process0;
@@ -104,11 +104,11 @@ Scheduler::insert(Thread* t)
 
    spinlock_softirq_enter(&schedulerLock);
 
-   KASSERT(t->isIdle());
+   KASSERT(t->isBlocked());
 
-   if (t->isIdle())
+   if (t->isBlocked())
    {
-      idleList->push_back(t);
+      blockedList->push_back(t);
    }
    else
    {
@@ -125,9 +125,9 @@ Scheduler::remove(Thread* t)
 
    spinlock_softirq_enter(&schedulerLock);
 
-   if (t->isIdle())
+   if (t->isBlocked())
    {
-      idleList->remove(t);
+      blockedList->remove(t);
    }
    else
    {
@@ -149,10 +149,10 @@ Scheduler::setReady(Thread *t)
 {
    spinlock_softirq_enter(&schedulerLock);
 
-   KASSERT(t->isIdle());
-   if (t->isIdle())
+   KASSERT(t->isBlocked());
+   if (t->isBlocked())
    {
-      idleList->remove(t);
+      blockedList->remove(t);
       t->setReady();
       readyList->push_back(t);
    }
@@ -170,9 +170,9 @@ Scheduler::schedule()
 
    if (lastRunning != getIdleThread())
    {
-      if (lastRunning->isIdle())
+      if (lastRunning->isBlocked())
       {
-         idleList->push_back(lastRunning);
+         blockedList->push_back(lastRunning);
       }
       else
       {
@@ -195,6 +195,7 @@ Scheduler::schedule()
 
    KASSERT(next != 0);
    
+   next->setRunning();
    setCurrentThread(next);
    setCurrentProcess(next->getProcess());
 

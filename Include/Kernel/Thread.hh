@@ -48,7 +48,10 @@ namespace Kernel
 
       void setRunning();
       void setReady();
-      bool isIdle();
+      void setBlocked();
+      bool isReady();
+      bool isBlocked();
+      bool isRunning();
 
       static void printAll();
       static void main [[noreturn]] (Thread*);
@@ -58,17 +61,11 @@ namespace Kernel
 
       static Thread* createUserThread(Process*);
 
-      static Thread* yield();
-
       enum State
       {
-         New,
-	 Initialized,
-         Idle,
          Ready,
-         Running,
-         Agony,
-         Dead
+         Blocked,
+         Running
       };
 
    private:

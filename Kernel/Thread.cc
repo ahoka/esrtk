@@ -37,7 +37,7 @@ Thread::Thread(Thread::Type type)
    : idM(getNextId()),
      userStackM(0),
      kernelStackM(0),
-     stateM(New),
+     stateM(Blocked),
      typeM(type),
      processM(0),
      nextM(0),
@@ -62,6 +62,9 @@ bool
 Thread::init0(uintptr_t stack)
 {
    idM = 0;
+   stateM = Running;
+   nameM = "Kernel";
+
    kernelStackM = stack;
    processM = Scheduler::getKernelProcess();
 
@@ -70,8 +73,6 @@ Thread::init0(uintptr_t stack)
    spinlock_softirq_enter(&threadLock);
    getThreadList().push_back(this);
    spinlock_softirq_exit(&threadLock);
-
-   nameM = "Kernel";
 
    return true;
 }
@@ -145,7 +146,6 @@ Thread::init()
 
    Debug::verbose("Thread's new kernel stack is %p\n", (void*)kernelStackM);
 
-   this->stateM = Idle;
    Scheduler::insert(this);
    spinlock_softirq_enter(&threadLock);
    getThreadList().push_back(this);
@@ -176,13 +176,9 @@ const char* threadType[] =
 };
 const char* threadState[] =
 {
-   "New",
-   "Initalized",
-   "Idle",
    "Ready",
-   "Running",
-   "Agony",
-   "Dead"
+   "Blocked",
+   "Running"
 };
 
 void
@@ -212,37 +208,19 @@ Thread::main(Thread* thread)
 
    for (;;)
    {
-      if (thread->stateM == Ready || thread->stateM == Running)
+      thread->lockM.enter();
+      while (!thread->jobsM.empty())
       {
-         thread->stateM = Running;
-         thread->lockM.enter();
-         while (!thread->jobsM.empty())
-         {
-            printf("Running job\n");
-            Job job = thread->jobsM.back();
-            thread->jobsM.pop();
+         printf("Running job\n");
+         Job job = thread->jobsM.back();
+         thread->jobsM.pop();
 
-            thread->lockM.exit();
-            job.execute();
-            thread->lockM.enter();
-         }
          thread->lockM.exit();
+         job.execute();
+         thread->lockM.enter();
       }
-      // else if (thread->stateM == Agony)
-      // {
-      //    printf("Thread %p is exiting...\n", thread);
-      //    thread->stateM = Dead;
-
-      //    // TODO: yield?
-      //    for (;;)
-      //    {
-      //       // wait for destruction
-      //       asm volatile("pause");
-      //    }
-      // }
-
-      // TODO: yield to scheduler
-      thread->stateM = Idle;
+      thread->stateM = Blocked;
+      thread->lockM.exit();
    }
 }
 
@@ -355,8 +333,26 @@ Thread::setReady()
    stateM = Ready;
 }
 
-bool
-Thread::isIdle()
+void
+Thread::setBlocked()
 {
-   return stateM == Idle;
+   stateM = Blocked;
+}
+
+bool
+Thread::isReady()
+{
+   return stateM == Ready;
+}
+
+bool
+Thread::isRunning()
+{
+   return stateM == Running;
+}
+
+bool
+Thread::isBlocked()
+{
+   return stateM == Blocked;
 }
