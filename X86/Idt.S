@@ -50,14 +50,14 @@ x86_isr_vector_common:
 	movl %eax, %fs
 	movl %eax, %gs
 
-        movl %esp, %eax
-        pushl %eax
+	movl %esp, %eax
+	pushl %eax
 
-        // clear ebp to make call chains sane in
-        // interrupt handlers
-        //xorl %ebp, %ebp
-        
-        call x86_isr_dispatcher
+	// clear ebp to make call chains sane in
+	// interrupt handlers
+	//xorl %ebp, %ebp
+	
+	call x86_isr_dispatcher
 	
 	// esp was pushed to stack for isrDispatcher,
 	// so remove it

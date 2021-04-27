@@ -160,7 +160,6 @@ x86_isr_dispatcher(InterruptFrame* frame)
    Process* interruptedProcess = interruptedThread->getProcess();
    KASSERT(interruptedProcess == Scheduler::getCurrentProcess());
    interruptedThread->setKernelStack((uintptr_t )frame);
-   //interruptedThread->setReady();
 
    // TODO: make a list of handlers and register them there to be run from dispatcher
    if (frame->interrupt == 2)
